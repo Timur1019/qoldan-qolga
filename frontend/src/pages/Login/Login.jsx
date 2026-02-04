@@ -20,7 +20,12 @@ export default function Login() {
     setSubmitting(true)
     try {
       const res = await authApi.login(email, password)
-      setAuth(res.token, { id: res.userId, email: res.email, displayName: res.displayName })
+      setAuth(res.token, {
+        id: res.userId,
+        email: res.email,
+        displayName: res.displayName,
+        role: res.role || 'USER',
+      })
       navigate(from, { replace: true })
     } catch (err) {
       setError(err.message || 'Ошибка входа')

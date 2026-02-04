@@ -18,6 +18,12 @@
 
 Запуск: `cd frontend && npm install && npm run dev`
 
+## Админ-панель
+
+- Роль `ADMIN` в таблице `users` (поле `role`). Первого админа задать вручную в БД:
+  `UPDATE users SET role = 'ADMIN' WHERE email = 'your@email.com';`
+- Фронт: раздел «Админ» в меню и маршрут `/admin` только для админов.
+
 ## Требования
 
 - PostgreSQL (БД `qoldan-qolga`)

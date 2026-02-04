@@ -11,12 +11,14 @@ import org.mapstruct.Mapping;
 public interface UserMapper extends BaseMapper<User, UserInfo> {
 
     @Override
+    @Mapping(target = "role", source = "role", resultType = String.class)
     UserInfo toDto(User user);
 
     @Mapping(target = "token", source = "token")
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "displayName", source = "user.displayName")
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "role", source = "user.role", resultType = String.class)
     AuthResponse toAuthResponse(User user, String token);
 
     @Mapping(target = "id", ignore = true)

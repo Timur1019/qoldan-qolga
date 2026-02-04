@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext'
 import styles from './Layout.module.css'
 
 export default function Layout() {
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, user, logout, isAdmin } = useAuth()
 
   return (
     <div className={styles.layout}>
@@ -16,6 +16,7 @@ export default function Layout() {
           {isAuthenticated ? (
             <>
               <Link to="/dashboard">Кабинет</Link>
+              {isAdmin && <Link to="/admin">Админ</Link>}
               <span className={styles.userName}>{user?.displayName ?? user?.email}</span>
               <button type="button" onClick={logout} className={styles.logoutBtn}>
                 Выход

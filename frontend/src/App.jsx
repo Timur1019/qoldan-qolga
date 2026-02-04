@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
-import { Layout, ProtectedRoute } from './components'
-import { Home, Login, Register, Dashboard } from './pages'
+import { Layout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { Home, Login, Register, Dashboard, AdminDashboard } from './pages'
 
 export default function App() {
   return (
@@ -17,6 +17,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+      </Route>
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
       </Route>
     </Routes>
   )

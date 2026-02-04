@@ -37,3 +37,7 @@ export const authApi = {
     }),
   me: () => apiRequest('/auth/me'),
 }
+
+export const adminApi = {
+  dashboard: () => apiRequest('/admin/dashboard'),
+}

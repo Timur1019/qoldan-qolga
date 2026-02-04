@@ -1,0 +1,56 @@
+.adminLayout {
+  display: flex;
+  min-height: 60vh;
+}
+
+.sidebar {
+  width: 220px;
+  padding: 1.5rem 1rem;
+  border-right: 1px solid var(--color-border, #e5e5e5);
+  background: var(--color-bg-subtle, #f8f8f8);
+}
+
+.sidebarTitle {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebarNav a {
+  padding: 0.5rem 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.sidebarNav a:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.sidebarNav a.active {
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+}
+
+.backLink {
+  margin-top: 1.5rem;
+  display: inline-block;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.main {
+  flex: 1;
+  padding: 1.5rem;
+}

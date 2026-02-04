@@ -19,7 +19,12 @@ export default function Register() {
     setSubmitting(true)
     try {
       const res = await authApi.register({ email, password, displayName })
-      setAuth(res.token, { id: res.userId, email: res.email, displayName: res.displayName })
+      setAuth(res.token, {
+        id: res.userId,
+        email: res.email,
+        displayName: res.displayName,
+        role: res.role || 'USER',
+      })
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(err.message || 'Ошибка регистрации')
