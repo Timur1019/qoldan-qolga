@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useLang } from '../../context/LangContext'
 import { authApi } from '../../api/client'
 import styles from './Register.module.css'
 
 export default function Register() {
   const navigate = useNavigate()
   const { setAuth } = useAuth()
+  const { t } = useLang()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
@@ -36,11 +38,11 @@ export default function Register() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Регистрация</h1>
+        <h1 className={styles.title}>{t('auth.registerTitle')}</h1>
         <form onSubmit={handleSubmit} className={styles.form}>
           {error && <p className={styles.error}>{error}</p>}
           <label className={styles.label}>
-            Имя
+            {t('auth.displayName')}
             <input
               type="text"
               value={displayName}
@@ -51,7 +53,7 @@ export default function Register() {
             />
           </label>
           <label className={styles.label}>
-            Email
+            {t('auth.email')}
             <input
               type="email"
               value={email}
@@ -62,7 +64,7 @@ export default function Register() {
             />
           </label>
           <label className={styles.label}>
-            Пароль (не менее 6 символов)
+            {t('auth.password')} (6+)
             <input
               type="password"
               value={password}
@@ -74,11 +76,11 @@ export default function Register() {
             />
           </label>
           <button type="submit" disabled={submitting} className={styles.submit}>
-            {submitting ? 'Регистрация…' : 'Зарегистрироваться'}
+            {submitting ? t('common.loading') : t('nav.register')}
           </button>
         </form>
         <p className={styles.footer}>
-          Уже есть аккаунт? <Link to="/login">Вход</Link>
+          {t('auth.hasAccount')} <Link to="/login">{t('nav.login')}</Link>
         </p>
       </div>
     </div>

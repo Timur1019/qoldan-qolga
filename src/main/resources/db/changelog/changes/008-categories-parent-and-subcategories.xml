@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="008-categories-add-parent" author="qoldan-qolga">
+        <addColumn tableName="categories">
+            <column name="parent_id" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="categories" baseColumnNames="parent_id"
+            constraintName="fk_categories_parent" referencedTableName="categories" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="008-insert-perevody" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Tarjima', 'Переводы', 'Perevody', 1, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <changeSet id="008-insert-perevod-subcategories" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ruscha tarjima', 'Переводчик на русский', 'Perevod_ru', 1, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Inglizcha tarjima', 'Переводчик на английский', 'Perevod_en', 2, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Fransuzcha tarjima', 'Переводчик на французский', 'Perevod_fr', 3, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

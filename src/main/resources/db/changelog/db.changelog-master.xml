@@ -7,4 +7,10 @@
 
     <include file="changes/001-create-users-table.xml" relativeToChangelogFile="true"/>
     <include file="changes/002-add-users-role.xml" relativeToChangelogFile="true"/>
+    <include file="changes/003-add-role-column-sql.xml" relativeToChangelogFile="true"/>
+    <include file="changes/004-create-advertisements-tables.xml" relativeToChangelogFile="true"/>
+    <include file="changes/005-create-reference-tables.xml" relativeToChangelogFile="true"/>
+    <include file="changes/006-insert-districts-full.xml" relativeToChangelogFile="true"/>
+    <include file="changes/007-create-favorites-table.xml" relativeToChangelogFile="true"/>
+    <include file="changes/008-categories-parent-and-subcategories.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -39,6 +39,9 @@ out/
 ### Logs ###
 logs/
 
+### Uploads (server) ###
+uploads/
+
 ### Frontend ###
 frontend/node_modules/
 frontend/dist/

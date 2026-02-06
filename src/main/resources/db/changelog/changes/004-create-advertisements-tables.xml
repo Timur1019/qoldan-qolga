@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="004-create-advertisements-table" author="qoldan-qolga">
+        <createTable tableName="advertisements">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="advertisements_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" defaultValue="UZS"/>
+            <column name="category" type="VARCHAR(50)" defaultValue="Xizmatlar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(100)"/>
+            <column name="region" type="VARCHAR(50)"/>
+            <column name="district" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_negotiable" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="false" references="users(id)" foreignKeyName="fk_ads_user"/>
+            </column>
+            <column name="views" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-ad-images-table" author="qoldan-qolga">
+        <createTable tableName="ad_images">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="ad_images_pkey"/>
+            </column>
+            <column name="ad_id" type="BIGINT">
+                <constraints nullable="false" references="advertisements(id)" foreignKeyName="fk_ad_images_ad" deleteCascade="true"/>
+            </column>
+            <column name="url" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_main" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="order_num" type="INT" defaultValueNumeric="0"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-ad-views-table" author="qoldan-qolga">
+        <createTable tableName="ad_views">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="ad_views_pkey"/>
+            </column>
+            <column name="ad_id" type="BIGINT">
+                <constraints nullable="false" references="advertisements(id)" foreignKeyName="fk_ad_views_ad" deleteCascade="true"/>
+            </column>
+            <column name="user_id" type="VARCHAR(36)"/>
+            <column name="viewed_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-advertisements-indexes" author="qoldan-qolga">
+        <createIndex tableName="advertisements" indexName="idx_ads_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_ads_user">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_ads_region">
+            <column name="region"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_ads_price">
+            <column name="price"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_ads_created">
+            <column name="created_at" descending="true"/>
+        </createIndex>
+        <createIndex tableName="ad_images" indexName="idx_ad_images_ad">
+            <column name="ad_id"/>
+        </createIndex>
+        <createIndex tableName="ad_views" indexName="idx_ad_views_ad">
+            <column name="ad_id"/>
+            <column name="viewed_at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

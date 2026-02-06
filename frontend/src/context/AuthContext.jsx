@@ -3,18 +3,23 @@ import { authApi } from '../api/client'
 
 const STORAGE_KEY = 'token'
 
+function getStorage(remember) {
+  return remember ? localStorage : sessionStorage
+}
+
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const setAuth = useCallback((token, userData) => {
+  const setAuth = useCallback((token, userData, rememberMe = true) => {
+    localStorage.removeItem(STORAGE_KEY)
+    sessionStorage.removeItem(STORAGE_KEY)
     if (token) {
-      localStorage.setItem(STORAGE_KEY, token)
+      getStorage(rememberMe).setItem(STORAGE_KEY, token)
       setUser(userData)
     } else {
-      localStorage.removeItem(STORAGE_KEY)
       setUser(null)
     }
   }, [])
@@ -24,7 +29,7 @@ export function AuthProvider({ children }) {
   }, [setAuth])
 
   const loadUser = useCallback(async () => {
-    const token = localStorage.getItem(STORAGE_KEY)
+    const token = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem(STORAGE_KEY)
     if (!token) {
       setLoading(false)
       return
@@ -34,6 +39,7 @@ export function AuthProvider({ children }) {
       setUser(data)
     } catch {
       localStorage.removeItem(STORAGE_KEY)
+      sessionStorage.removeItem(STORAGE_KEY)
       setUser(null)
     } finally {
       setLoading(false)

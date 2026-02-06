@@ -7,7 +7,7 @@
 
     <changeSet id="002-add-users-role" author="qoldan-qolga">
         <preConditions onFail="MARK_RAN">
-            <not><columnExists tableName="users" columnName="role"/></columnExists>
+            <not><columnExists tableName="users" columnName="role"/></not>
         </preConditions>
         <addColumn tableName="users">
             <column name="role" type="VARCHAR(20)" defaultValue="USER">

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Запасной changeset: добавляет role через SQL, если колонки ещё нет -->
+    <changeSet id="003-add-role-column-sql" author="qoldan-qolga">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="role"/>
+            </not>
+        </preConditions>
+        <sql>ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'USER';</sql>
+    </changeSet>
+</databaseChangeLog>

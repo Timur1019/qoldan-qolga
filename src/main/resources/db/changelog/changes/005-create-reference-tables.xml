@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="005-create-regions-table" author="qoldan-qolga">
+        <createTable tableName="regions">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="regions_pkey"/>
+            </column>
+            <column name="name_uz" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(50)"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+        </createTable>
+        <addUniqueConstraint tableName="regions" columnNames="code" constraintName="uk_regions_code"/>
+    </changeSet>
+
+    <changeSet id="005-create-districts-table" author="qoldan-qolga">
+        <createTable tableName="districts">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="districts_pkey"/>
+            </column>
+            <column name="name_uz" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="region_id" type="BIGINT">
+                <constraints nullable="false" references="regions(id)" foreignKeyName="fk_districts_region"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="005-create-categories-table" author="qoldan-qolga">
+        <createTable tableName="categories">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="categories_pkey"/>
+            </column>
+            <column name="name_uz" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_categories_code"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="show_on_home" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="005-insert-regions" author="qoldan-qolga">
+        <insert tableName="regions">
+            <column name="name_uz" value="Andijon viloyati"/>
+            <column name="name_ru" value="Андижанская область"/>
+            <column name="code" value="andijon"/>
+            <column name="sort_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Buxoro viloyati"/>
+            <column name="name_ru" value="Бухарская область"/>
+            <column name="code" value="buxoro"/>
+            <column name="sort_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Farg'ona viloyati"/>
+            <column name="name_ru" value="Ферганская область"/>
+            <column name="code" value="fargona"/>
+            <column name="sort_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Jizzax viloyati"/>
+            <column name="name_ru" value="Джизакская область"/>
+            <column name="code" value="jizzax"/>
+            <column name="sort_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Qoraqalpog'iston Respublikasi"/>
+            <column name="name_ru" value="Республика Каракалпакстан"/>
+            <column name="code" value="qoraqalpogiston"/>
+            <column name="sort_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Qashqadaryo viloyati"/>
+            <column name="name_ru" value="Кашкадарьинская область"/>
+            <column name="code" value="qashqadaryo"/>
+            <column name="sort_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Xorazm viloyati"/>
+            <column name="name_ru" value="Хорезмская область"/>
+            <column name="code" value="xorazm"/>
+            <column name="sort_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Namangan viloyati"/>
+            <column name="name_ru" value="Наманганская область"/>
+            <column name="code" value="namangan"/>
+            <column name="sort_order" valueNumeric="8"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Navoiy viloyati"/>
+            <column name="name_ru" value="Навоийская область"/>
+            <column name="code" value="navoiy"/>
+            <column name="sort_order" valueNumeric="9"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Samarqand viloyati"/>
+            <column name="name_ru" value="Самаркандская область"/>
+            <column name="code" value="samarqand"/>
+            <column name="sort_order" valueNumeric="10"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Sirdaryo viloyati"/>
+            <column name="name_ru" value="Сырдарьинская область"/>
+            <column name="code" value="sirdaryo"/>
+            <column name="sort_order" valueNumeric="11"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Surxondaryo viloyati"/>
+            <column name="name_ru" value="Сурхандарьинская область"/>
+            <column name="code" value="surxondaryo"/>
+            <column name="sort_order" valueNumeric="12"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Toshkent viloyati"/>
+            <column name="name_ru" value="Ташкентская область"/>
+            <column name="code" value="toshkent_viloyat"/>
+            <column name="sort_order" valueNumeric="13"/>
+        </insert>
+        <insert tableName="regions">
+            <column name="name_uz" value="Toshkent shahri"/>
+            <column name="name_ru" value="г. Ташкент"/>
+            <column name="code" value="toshkent_shahar"/>
+            <column name="sort_order" valueNumeric="14"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="005-insert-categories" author="qoldan-qolga">
+        <insert tableName="categories">
+            <column name="name_uz" value="Xizmatlar"/>
+            <column name="name_ru" value="Услуги"/>
+            <column name="code" value="Xizmatlar"/>
+            <column name="sort_order" valueNumeric="1"/>
+            <column name="show_on_home" valueBoolean="true"/>
+        </insert>
+        <insert tableName="categories">
+            <column name="name_uz" value="Ish"/>
+            <column name="name_ru" value="Работа"/>
+            <column name="code" value="Ish"/>
+            <column name="sort_order" valueNumeric="2"/>
+            <column name="show_on_home" valueBoolean="false"/>
+        </insert>
+        <insert tableName="categories">
+            <column name="name_uz" value="Transport"/>
+            <column name="name_ru" value="Транспорт"/>
+            <column name="code" value="Transport"/>
+            <column name="sort_order" valueNumeric="3"/>
+            <column name="show_on_home" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+    <!-- Районы: по одному на регион для старта; остальные можно добавить через админку или новые changeset’ы -->
+    <changeSet id="005-insert-districts-sample" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Andijon', 'Андижан', id, 1 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Buxoro', 'Бухара', id, 1 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Farg''ona', 'Фергана', id, 1 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Jizzax', 'Джизак', id, 1 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Nukus', 'Нукус', id, 1 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Qarshi', 'Карши', id, 1 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Urganch', 'Ургенч', id, 1 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Namangan', 'Наманган', id, 1 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Navoiy', 'Навои', id, 1 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Samarqand', 'Самарканд', id, 1 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Guliston', 'Гулистан', id, 1 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Termiz', 'Термез', id, 1 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Nurafshon', 'Нурафшон', id, 1 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Chilonzor', 'Чиланзар', id, 1 FROM regions WHERE code='toshkent_shahar';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

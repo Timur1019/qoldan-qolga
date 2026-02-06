@@ -1,5 +1,5 @@
 .home {
-  max-width: 720px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -10,5 +10,232 @@
 
 .lead {
   margin: 0;
-  color: var(--color-muted, #666);
+  color: var(--color-muted);
+}
+
+.welcome {
+  margin: 0.5rem 0 1rem;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+/* Карточка категории: светлый фон, сильно скруглённая, название слева, иконка «выглядывает» справа */
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 24px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s, box-shadow 0.2s;
+  min-height: 80px;
+}
+
+.card:hover {
+  background: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.cardTitle {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  color: #111827;
+  z-index: 1;
+}
+
+.cardIconPeek {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  margin: -0.5rem -0.5rem -0.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.cardIcon {
+  width: 56px;
+  height: 56px;
+}
+
+.cardAll {
+  background: #e5e7eb;
+}
+
+.cardAll .cardArrow {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+}
+
+.cta {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.cta:hover {
+  opacity: 0.9;
+}
+
+/* Секция объявлений на главной */
+.adsSection {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.adsSectionTitle {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.adsLoading,
+.adsEmpty {
+  margin: 0;
+  color: var(--color-muted, #6b7280);
+}
+
+.adsGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.adCard {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s;
+}
+
+.adCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.adCardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.adCardImageWrap {
+  position: relative;
+  display: block;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+
+.adCardImage {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.adCardImagePlaceholder {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--color-bg-subtle, #f3f4f6);
+}
+
+.favoriteBtn {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #374151;
+  transition: color 0.15s, transform 0.15s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.favoriteBtn:hover {
+  color: #e11d48;
+  transform: scale(1.06);
+}
+
+.heartFilled {
+  color: #e11d48;
+}
+
+.adCardBody {
+  padding: 1rem 1.25rem;
+}
+
+.adCardPrice {
+  margin: 0 0 0.4rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.adCardTitle {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #a21caf;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+}
+
+.adCardMeta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.adCardDate {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.adsMoreLink {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-weight: 500;
+  color: var(--color-primary, #2563eb);
+  text-decoration: none;
+}
+
+.adsMoreLink:hover {
+  text-decoration: underline;
 }

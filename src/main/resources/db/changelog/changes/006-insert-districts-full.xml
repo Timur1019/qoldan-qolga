@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Полный список районов по областям (дополнение к одному району на область из 005). 13 областей + г.Ташкент = 14. -->
+
+    <changeSet id="006-districts-andijon" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Asaka','Асака',id,2 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Baliqchi','Баликчи',id,3 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Bo''ston','Бустан',id,4 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Buloqboshi','Булоқбоши',id,5 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Izboskan','Избоскан',id,6 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Jalaquduq','Жалақудуқ',id,7 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Marhamat','Мархамат',id,8 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Oltinko''l','Олтинкоъл',id,9 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Paxtaobod','Пахтаобод',id,10 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Qo''rg''ontepa','Қўрғонтепа',id,11 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Shahrixon','Шахрихон',id,12 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Ulug''nor','Улуғнор',id,13 FROM regions WHERE code='andijon'
+            UNION ALL SELECT 'Xo''jaobod','Хўжаобод',id,14 FROM regions WHERE code='andijon';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-buxoro" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'G''ijduvon','Ғиждувон',id,2 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Jondor','Жондор',id,3 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Kogon','Когон',id,4 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Olot','Олот',id,5 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Peshku','Пешку',id,6 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Qorako''l','Қоракоъл',id,7 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Qorovulbozor','Қоровулбозор',id,8 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Romitan','Ромитан',id,9 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Shofirkon','Шофиркон',id,10 FROM regions WHERE code='buxoro'
+            UNION ALL SELECT 'Vobkent','Вобкент',id,11 FROM regions WHERE code='buxoro';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-fargona" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Bog''dod','Богъдод',id,2 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Beshariq','Бешариқ',id,3 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Buvayda','Бувайда',id,4 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Dang''ara','Дангъара',id,5 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Furqat','Фурқат',id,6 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Qo''shtepa','Қўштента',id,7 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Quva','Қува',id,8 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Quvasoy','Қувасой',id,9 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Rishton','Риштон',id,10 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'So''x','Сўх',id,11 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Toshloq','Тошлоқ',id,12 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Uchko''prik','Учкоўприк',id,13 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'O''zbekiston','Ўзбекистон',id,14 FROM regions WHERE code='fargona'
+            UNION ALL SELECT 'Yozyovon','Ёзёвон',id,15 FROM regions WHERE code='fargona';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-jizzax" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Arnasoy','Арнасой',id,2 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Baxmal','Бахмал',id,3 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Do''stlik','Дўстлик',id,4 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Forish','Фориш',id,5 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'G''allaorol','Ғаллаорол',id,6 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Mirzacho''l','Мирзачўл',id,7 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Paxtakor','Пахтакор',id,8 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Yangiobod','Янгиобод',id,9 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Zafarobod','Зафаробод',id,10 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Zarbdor','Зарбдор',id,11 FROM regions WHERE code='jizzax'
+            UNION ALL SELECT 'Zomin','Зомин',id,12 FROM regions WHERE code='jizzax';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-qoraqalpogiston" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Amudaryo','Амударё',id,2 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Beruniy','Беруний',id,3 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Chimboy','Чимбой',id,4 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Ellikqala','Элликқала',id,5 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Kegayli','Кегейли',id,6 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Mo''ynoq','Мўйноқ',id,7 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Nukus tumani','Нукус тумани',id,8 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Qonliko''l','Қонликоъл',id,9 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Qorao''zak','Қораўзак',id,10 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Shumanay','Шуманай',id,11 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Taxtako''pir','Тахтакоъпир',id,12 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'To''rtko''l','Тўрткоъл',id,13 FROM regions WHERE code='qoraqalpogiston'
+            UNION ALL SELECT 'Xo''jayli','Хўжайли',id,14 FROM regions WHERE code='qoraqalpogiston';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-qashqadaryo" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Chiroqchi','Чироқчи',id,2 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Dehqonobod','Деҳқонобод',id,3 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'G''uzor','Ғузор',id,4 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Qamashi','Қамаши',id,5 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Koson','Косон',id,6 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Kasbi','Касби',id,7 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Kitob','Китоб',id,8 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Mirishkor','Миришкор',id,9 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Muborak','Муборак',id,10 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Nishon','Нишон',id,11 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Shahrisabz','Шаҳрисабз',id,12 FROM regions WHERE code='qashqadaryo'
+            UNION ALL SELECT 'Yakkabog''','Яккабоғ',id,13 FROM regions WHERE code='qashqadaryo';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-xorazm" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Bog''ot','Боғот',id,2 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Gurlan','Гурлен',id,3 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Xonqa','Хонқа',id,4 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Hazorasp','Ҳазарасп',id,5 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Xiva','Хива',id,6 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Qo''shkupir','Қўшкупир',id,7 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Shovot','Шовот',id,8 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Yangiariq','Янгиариқ',id,9 FROM regions WHERE code='xorazm'
+            UNION ALL SELECT 'Yangibozor','Янгибозор',id,10 FROM regions WHERE code='xorazm';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-namangan" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Chortoq','Чортўқ',id,2 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Chust','Чуст',id,3 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Kosonsoy','Косонсой',id,4 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Mingbuloq','Мингбулоқ',id,5 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Norin','Норин',id,6 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Pop','Поп',id,7 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'To''raqo''rg''on','Тўрақўрғон',id,8 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Uchqo''rg''on','Учқўрғон',id,9 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Uychi','Уйчи',id,10 FROM regions WHERE code='namangan'
+            UNION ALL SELECT 'Yangiqo''rg''on','Янгиқўрғон',id,11 FROM regions WHERE code='namangan';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-navoiy" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Karmana','Кармана',id,2 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Konimex','Конимех',id,3 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Navbahor','Навбаҳор',id,4 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Nurota','Нурота',id,5 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Qiziltepa','Қизилтепа',id,6 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Tomdi','Томди',id,7 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Uchquduq','Учқудуқ',id,8 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Xatirchi','Хатирчи',id,9 FROM regions WHERE code='navoiy'
+            UNION ALL SELECT 'Zarafshon','Зарафшон',id,10 FROM regions WHERE code='navoiy';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-samarqand" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Bulung''ur','Булунғур',id,2 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Ishtixon','Иштихон',id,3 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Jomboy','Жомбой',id,4 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Kattaqo''rg''on','Каттақўрғон',id,5 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Narpay','Нарпай',id,6 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Nurobod','Нуробод',id,7 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Oqdaryo','Оқдарё',id,8 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Paxtachi','Пахтачи',id,9 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Payariq','Паяриқ',id,10 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Pastdarg''om','Пастдарғом',id,11 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Qo''shrabot','Қўшработ',id,12 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Toyloq','Тойлоқ',id,13 FROM regions WHERE code='samarqand'
+            UNION ALL SELECT 'Urgut','Ургут',id,14 FROM regions WHERE code='samarqand';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-sirdaryo" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Boyovut','Боёвут',id,2 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Oqoltin','Оқолтин',id,3 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Sardoba','Сардоба',id,4 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Sayxunobod','Сайхунобод',id,5 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Sirdaryo','Сирдарё',id,6 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Xavos','Хавос',id,7 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Shirin','Ширин',id,8 FROM regions WHERE code='sirdaryo'
+            UNION ALL SELECT 'Yangiyer','Янгиер',id,9 FROM regions WHERE code='sirdaryo';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-surxondaryo" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Angor','Ангор',id,2 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Bandixon','Бандихон',id,3 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Boysun','Бойсун',id,4 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Denov','Денов',id,5 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Jarqo''rg''on','Жарқўрғон',id,6 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Qiziriq','Қизириқ',id,7 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Qumqo''rg''on','Қумқўрғон',id,8 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Muzrabot','Музработ',id,9 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Oltinsoy','Олтинсой',id,10 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Sariosiyo','Сариосиё',id,11 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Sherobod','Шеробод',id,12 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Sho''rchi','Шўрчи',id,13 FROM regions WHERE code='surxondaryo'
+            UNION ALL SELECT 'Uzun','Узун',id,14 FROM regions WHERE code='surxondaryo';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-toshkent-viloyat" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Bekobod','Бекобод',id,2 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Bo''stonliq','Бўстонлиқ',id,3 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Bo''ka','Бўка',id,4 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Chinoz','Чиноз',id,5 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Qibray','Қибрай',id,6 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Ohangaron','Оҳангарон',id,7 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Oqqo''rg''on','Оққўрғон',id,8 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Parkent','Паркент',id,9 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Piskent','Пискент',id,10 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Quyichirchiq','Қуйичирчиқ',id,11 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Zangiota','Зангиота',id,12 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'O''rta Chirchiq','Ўрта Чирчиқ',id,13 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Yuqori Chirchiq','Юқори Чирчиқ',id,14 FROM regions WHERE code='toshkent_viloyat'
+            UNION ALL SELECT 'Yangiyo''l','Янгийўл',id,15 FROM regions WHERE code='toshkent_viloyat';
+        </sql>
+    </changeSet>
+
+    <changeSet id="006-districts-toshkent-shahar" author="qoldan-qolga">
+        <sql>
+            INSERT INTO districts (name_uz, name_ru, region_id, sort_order)
+            SELECT 'Bektemir','Бектемир',id,2 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Yashnobod','Яшнаобод',id,3 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Mirobod','Миробод',id,4 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Mirzo Ulug''bek','Мирзо Улуғбек',id,5 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Sergeli','Сергели',id,6 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Shayxontohur','Шайхонтоҳур',id,7 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Olmazor','Олмазор',id,8 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Uchtepa','Учтепа',id,9 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Yakkasaray','Яккасарай',id,10 FROM regions WHERE code='toshkent_shahar'
+            UNION ALL SELECT 'Yunusobod','Юнусобод',id,11 FROM regions WHERE code='toshkent_shahar';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

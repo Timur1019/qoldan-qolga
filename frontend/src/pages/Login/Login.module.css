@@ -37,12 +37,12 @@
 
 .input:focus {
   outline: none;
-  border-color: #646cff;
+  border-color: var(--color-primary);
 }
 
 .error {
   margin: 0;
-  color: #c00;
+  color: var(--color-error);
   font-size: 0.9rem;
 }
 
@@ -52,14 +52,14 @@
   font-size: 1rem;
   font-weight: 500;
   color: #fff;
-  background: #646cff;
+  background: var(--color-primary);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .submit:hover:not(:disabled) {
-  background: #535bf2;
+  background: var(--color-primary-hover);
 }
 
 .submit:disabled {
@@ -74,5 +74,5 @@
 }
 
 .footer a {
-  color: #646cff;
+  color: var(--color-primary);
 }
