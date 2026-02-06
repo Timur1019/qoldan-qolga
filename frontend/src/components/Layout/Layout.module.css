@@ -308,6 +308,30 @@
   margin-left: 0.5rem;
 }
 
+.navLinkWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.navBadge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.1rem;
+  color: #fff;
+  background: #22c55e;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
 .navLink {
   display: inline-flex;
   flex-direction: column;
@@ -519,6 +543,22 @@
 
 .profileMenuItem:hover {
   background: rgba(0, 0, 0, 0.04);
+}
+
+.profileMenuBadge {
+  margin-left: auto;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  color: #fff;
+  background: #22c55e;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profileMenuIcon {

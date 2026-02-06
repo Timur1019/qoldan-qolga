@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useSearchParams } from 'react-router-dom'
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { adsApi, imageUrl } from '../../api/client'
+import { adsApi, chatApi, imageUrl } from '../../api/client'
+import { ROUTES } from '../../constants/routes'
 import styles from './AdDetail.module.css'
 
 function HeartIcon({ filled }) {
@@ -25,12 +26,14 @@ function formatDate(iso) {
 
 export default function AdDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { t } = useLang()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const [ad, setAd] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [chatGoing, setChatGoing] = useState(false)
 
   const openAuthModal = () => {
     setSearchParams((prev) => {
@@ -38,6 +41,21 @@ export default function AdDetail() {
       next.set('auth', 'login')
       return next
     }, { replace: true })
+  }
+
+  const handleWriteSeller = () => {
+    if (!isAuthenticated) {
+      openAuthModal()
+      return
+    }
+    if (ad.userId === user?.id) return
+    setChatGoing(true)
+    chatApi
+      .getOrCreateConversation(ad.id)
+      .then((conv) => {
+        navigate(`${ROUTES.CHAT}?conversation=${encodeURIComponent(conv.id)}`)
+      })
+      .catch(() => setChatGoing(false))
   }
 
   const handleFavoriteClick = () => {
@@ -124,6 +142,18 @@ export default function AdDetail() {
         </div>
         <div className={styles.section}>
           <h2>{t('ads.contact')}</h2>
+          {isAuthenticated && ad.userId !== user?.id && (
+            <p className={styles.contactActions}>
+              <button
+                type="button"
+                className={styles.writeSellerBtn}
+                onClick={handleWriteSeller}
+                disabled={chatGoing}
+              >
+                {chatGoing ? t('common.loading') : t('chat.writeSeller')}
+              </button>
+            </p>
+          )}
           <p><strong>{t('ads.phone')}:</strong> {ad.phone}</p>
           {ad.email && <p><strong>{t('ads.email')}:</strong> {ad.email}</p>}
           {ad.region && <p><strong>{t('ads.region')}:</strong> {ad.region}</p>}

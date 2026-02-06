@@ -3,17 +3,165 @@
   margin: 0 auto;
 }
 
+.topRow {
+  margin-bottom: 1.5rem;
+}
+
+.useful {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.usefulTitle {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.usefulCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.usefulCard {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+}
+
+.usefulCardIcon,
+.usefulCardIconShield {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e879f9 0%, #c026d3 100%);
+}
+
+.usefulCardIconShield {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.usefulCardTitle {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.guideBtn {
+  font-size: 0.875rem;
+  color: var(--color-primary, #2563eb);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.guideBtn:hover {
+  text-decoration: underline;
+}
+
+.myAdsSection {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
 .title {
   margin: 0 0 1rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tab,
+.tabActive {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #f3f4f6;
+  color: #6b7280;
+  font: inherit;
+}
+
+.tab:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.tabActive {
+  background: #111827;
+  color: #fff;
+}
+
+.empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+
+.emptyIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem;
+  color: #9ca3af;
+  border-radius: 12px;
+}
+
+.emptyIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.emptyText {
+  margin: 0 0 1.25rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.placeAdWrap {
+  margin-top: 1.25rem;
+}
+
+.placeAdBtn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111827;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.placeAdBtn:hover {
+  background: #374151;
+  color: #fff;
 }
 
 .error {
   color: var(--color-error, #c00);
-}
-
-.noAds {
-  color: var(--color-muted, #666);
 }
 
 .grid {

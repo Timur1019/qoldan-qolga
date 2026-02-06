@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Outlet, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { referenceApi } from '../../api/client'
+import { useAuthModal } from '../../hooks'
+import { referenceApi, chatApi } from '../../api/client'
+import { PARAMS, ROUTES } from '../../constants/routes'
 import AuthModal from '../AuthModal/AuthModal'
 import CategoriesModal from '../CategoriesModal/CategoriesModal'
 import styles from './Layout.module.css'
@@ -122,21 +124,42 @@ export default function Layout() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [regions, setRegions] = useState([])
   const [regionOpen, setRegionOpen] = useState(false)
-  const authParam = searchParams.get('auth')
-  const authOpen = authParam === 'login' || authParam === 'register'
-  const authInitialMode = authParam === 'register' ? 'register' : 'login'
-  const selectedRegionCode = location.pathname === '/ads' ? (searchParams.get('region') || '') : ''
+  const [chatCount, setChatCount] = useState(0)
+  const openAuthModal = useAuthModal()
+
+  const refreshChatCount = useCallback(() => {
+    if (!isAuthenticated) return
+    chatApi.getConversations().then((list) => {
+      const total = (list || []).reduce((s, c) => s + (c.incomingMessageCount ?? 0), 0)
+      setChatCount(total)
+    }).catch(() => setChatCount(0))
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setChatCount(0)
+      return
+    }
+    refreshChatCount()
+    const onRefresh = () => refreshChatCount()
+    window.addEventListener('chat-count-refresh', onRefresh)
+    return () => window.removeEventListener('chat-count-refresh', onRefresh)
+  }, [isAuthenticated, refreshChatCount])
+  const authParam = searchParams.get(PARAMS.AUTH)
+  const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
+  const authInitialMode = authParam === PARAMS.AUTH_REGISTER ? 'register' : 'login'
+  const selectedRegionCode = location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.REGION) || '') : ''
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
   }, [])
 
   useEffect(() => {
-    if (searchParams.get('open') === 'categories') {
+    if (searchParams.get(PARAMS.OPEN_CATEGORIES) === PARAMS.OPEN_CATEGORIES_VALUE) {
       setCategoriesOpen(true)
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
-        next.delete('open')
+        next.delete(PARAMS.OPEN_CATEGORIES)
         return next
       }, { replace: true })
     }
@@ -149,24 +172,16 @@ export default function Layout() {
 
   const handleSelectRegion = (code) => {
     setRegionOpen(false)
-    if (location.pathname === '/ads') {
+    if (location.pathname === ROUTES.ADS) {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
-        if (code) next.set('region', code)
-        else next.delete('region')
+        if (code) next.set(PARAMS.REGION, code)
+        else next.delete(PARAMS.REGION)
         return next
       })
     } else {
-      navigate(code ? `/ads?region=${encodeURIComponent(code)}` : '/ads')
+      navigate(code ? `${ROUTES.ADS}?${PARAMS.REGION}=${encodeURIComponent(code)}` : ROUTES.ADS)
     }
-  }
-
-  const openAuthModal = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set('auth', 'login')
-      return next
-    }, { replace: true })
   }
 
   return (
@@ -281,10 +296,17 @@ export default function Layout() {
                     <span className={styles.navIcon}>{NavIcons.heart}</span>
                     <span className={styles.navLabel}>{t('nav.favorites')}</span>
                   </Link>
-                  <Link to="/dashboard" className={styles.navLink}>
-                    <span className={styles.navIcon}>{NavIcons.message}</span>
-                    <span className={styles.navLabel}>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
-                  </Link>
+                  <span className={styles.navLinkWrap}>
+                    <Link to={ROUTES.CHAT} className={styles.navLink}>
+                      <span className={styles.navIcon}>{NavIcons.message}</span>
+                      <span className={styles.navLabel}>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
+                    </Link>
+                    {chatCount > 0 && (
+                      <span className={styles.navBadge} aria-label={lang === 'ru' ? `Сообщений: ${chatCount}` : `Xabarlar: ${chatCount}`}>
+                        {chatCount > 99 ? '99+' : chatCount}
+                      </span>
+                    )}
+                  </span>
                   <div className={styles.profileWrap}>
                     <button
                       type="button"
@@ -335,9 +357,12 @@ export default function Layout() {
                               <span className={styles.profileMenuIcon}>{NavIcons.star}</span>
                               <span>{lang === 'ru' ? 'Мои отзывы' : 'Mening sharhlarim'}</span>
                             </Link>
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
+                            <Link to={ROUTES.CHAT} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.message}</span>
                               <span>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
+                              {chatCount > 0 && (
+                                <span className={styles.profileMenuBadge}>{chatCount > 99 ? '99+' : chatCount}</span>
+                              )}
                             </Link>
                             <div className={styles.profileMenuDivider} />
                             <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
@@ -405,7 +430,7 @@ export default function Layout() {
                   setCategoriesOpen(false)
                   setSearchParams((prev) => {
                     const next = new URLSearchParams(prev)
-                    next.delete('open')
+                    next.delete(PARAMS.OPEN_CATEGORIES)
                     return next
                   }, { replace: true })
                 }}

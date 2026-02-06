@@ -81,12 +81,13 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   color: #6b7280;
   transition: color 0.15s, transform 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .favoriteBtn:hover {
@@ -102,6 +103,10 @@
 .heartIcon {
   width: 20px;
   height: 20px;
+}
+
+.heartOutline {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.9));
 }
 
 .heartFilled {

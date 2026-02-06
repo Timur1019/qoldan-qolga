@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { Layout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { Layout, ProfileLayout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
 import {
   Home,
   Dashboard,
@@ -10,6 +10,7 @@ import {
   CreateAd,
   Favorites,
   CategoryView,
+  Chat,
 } from './pages'
 
 export default function App() {
@@ -21,14 +22,8 @@ export default function App() {
         <Route path="register" element={<Navigate to="/?auth=register" replace />} />
         <Route path="ads" element={<AdsList />} />
         <Route path="categories/:code" element={<CategoryView />} />
-        <Route
-          path="ads/my"
-          element={
-            <ProtectedRoute>
-              <MyAds />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="ads/my" element={<Navigate to="/dashboard/ads" replace />} />
+        <Route path="favorites" element={<Navigate to="/dashboard/favorites" replace />} />
         <Route
           path="ads/create"
           element={
@@ -39,21 +34,20 @@ export default function App() {
         />
         <Route path="ads/:id" element={<AdDetail />} />
         <Route
-          path="favorites"
-          element={
-            <ProtectedRoute>
-              <Favorites />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <ProfileLayout>
+                <Outlet />
+              </ProfileLayout>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="ads" element={<MyAds />} />
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="chat" element={<Chat />} />
+        </Route>
       </Route>
       <Route
         path="/admin"

@@ -1,63 +1,30 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
 import { adsApi, imageUrl, referenceApi } from '../../api/client'
+import { useAuthModal, useFavoriteClick } from '../../hooks'
+import { formatPrice } from '../../utils/formatters'
+import { PARAMS, adsPath } from '../../constants/routes'
+import HeartIcon from '../../components/ui/HeartIcon'
 import styles from './AdsList.module.css'
-
-function HeartIcon({ filled, className }) {
-  return (
-    <svg className={`${className} ${filled ? styles.heartFilled : ''}`} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  )
-}
-
-function formatPrice(price, currency = 'UZS') {
-  if (price == null) return ''
-  return `${Number(price).toLocaleString()} ${currency}`
-}
 
 export default function AdsList() {
   const { t, lang } = useLang()
-  const { isAuthenticated } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
-  const category = searchParams.get('category') || ''
-  const region = searchParams.get('region') || ''
+  const category = searchParams.get(PARAMS.CATEGORY) || ''
+  const region = searchParams.get(PARAMS.REGION) || ''
   const [regions, setRegions] = useState([])
   const [data, setData] = useState({ content: [], totalPages: 0, number: 0 })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const openAuthModal = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set('auth', 'login')
-      return next
-    }, { replace: true })
-  }
-
-  const handleFavoriteClick = (e, ad) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!isAuthenticated) {
-      openAuthModal()
-      return
-    }
-    adsApi.toggleFavorite(ad.id)
-      .then((nowFavorite) => {
-        setData((prev) => ({
-          ...prev,
-          content: prev.content.map((a) => (a.id === ad.id ? { ...a, favorite: nowFavorite } : a)),
-        }))
-      })
-      .catch((err) => {
-        const msg = err.message || ''
-        if (msg.includes('401') || msg.includes('403') || msg.includes('Ошибка запроса') || msg.includes('авторизац') || msg.includes('Forbidden')) {
-          openAuthModal()
-        }
-      })
-  }
+  const updateAdFavorite = useCallback((adId, favorite) => {
+    setData((prev) => ({
+      ...prev,
+      content: prev.content.map((a) => (a.id === adId ? { ...a, favorite } : a)),
+    }))
+  }, [])
+  const handleFavoriteClick = useFavoriteClick(updateAdFavorite)
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
@@ -95,8 +62,8 @@ export default function AdsList() {
 
   const setRegion = (code) => {
     const next = new URLSearchParams(searchParams)
-    if (code) next.set('region', code)
-    else next.delete('region')
+    if (code) next.set(PARAMS.REGION, code)
+    else next.delete(PARAMS.REGION)
     setSearchParams(next)
   }
 
@@ -126,7 +93,7 @@ export default function AdsList() {
         <ul className={styles.grid}>
           {ads.map((ad) => (
             <li key={ad.id} className={styles.card}>
-              <Link to={`/ads/${ad.id}`} className={styles.cardLink}>
+              <Link to={adsPath(ad.id)} className={styles.cardLink}>
                 <span className={styles.cardImageWrap}>
                   {ad.mainImageUrl ? (
                     <img src={imageUrl(ad.mainImageUrl)} alt="" className={styles.cardImage} />
@@ -139,7 +106,11 @@ export default function AdsList() {
                     onClick={(e) => handleFavoriteClick(e, ad)}
                     aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
                   >
-                    <HeartIcon filled={!!ad.favorite} className={styles.heartIcon} />
+                    <HeartIcon
+                      filled={!!ad.favorite}
+                      className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
+                      size={20}
+                    />
                   </button>
                 </span>
                 <div className={styles.cardBody}>

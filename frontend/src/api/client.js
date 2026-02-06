@@ -1,9 +1,38 @@
 const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || ''
 const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : '/api'
 
+/** Базовый URL для WebSocket (SockJS) чата */
+export function getWsBaseUrl() {
+  const base = API_ORIGIN || (typeof window !== 'undefined' ? window.location.origin : '')
+  return base ? `${base.replace(/\/$/, '')}/ws` : '/ws'
+}
+
 const TOKEN_KEY = 'token'
 function getToken() {
   return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY)
+}
+
+/** Собрать query-строку из объекта (пустые значения не попадают в URL). */
+export function buildQueryString(params) {
+  if (!params || typeof params !== 'object') return ''
+  const search = new URLSearchParams()
+  Object.entries(params).forEach(([k, v]) => {
+    if (v != null && v !== '') search.set(k, String(v))
+  })
+  const str = search.toString()
+  return str ? `?${str}` : ''
+}
+
+/** Проверка: ошибка из-за отсутствия или невалидной авторизации. */
+export function isAuthError(err) {
+  const msg = err?.message || ''
+  return (
+    msg.includes('401') ||
+    msg.includes('403') ||
+    msg.includes('Ошибка запроса') ||
+    msg.includes('авторизац') ||
+    msg.includes('Forbidden')
+  )
 }
 
 export async function apiRequest(path, options = {}) {
@@ -56,15 +85,9 @@ export const referenceApi = {
 }
 
 export const adsApi = {
-  list: (params) => {
-    const search = new URLSearchParams(params).toString()
-    return apiRequest(`/ads${search ? `?${search}` : ''}`)
-  },
+  list: (params) => apiRequest(`/ads${buildQueryString(params)}`),
   getById: (id) => apiRequest(`/ads/${id}`),
-  myAds: (params) => {
-    const search = new URLSearchParams(params).toString()
-    return apiRequest(`/ads/my${search ? `?${search}` : ''}`)
-  },
+  myAds: (params) => apiRequest(`/ads/my${buildQueryString(params)}`),
   create: (body) =>
     apiRequest('/ads', {
       method: 'POST',
@@ -98,10 +121,24 @@ export const adsApi = {
 
 /** Избранное (требуется авторизация) */
 export const favoritesApi = {
-  list: (params = {}) => {
-    const search = new URLSearchParams(params).toString()
-    return apiRequest(`/favorites${search ? `?${search}` : ''}`)
-  },
+  list: (params = {}) => apiRequest(`/favorites${buildQueryString(params)}`),
+}
+
+/** Чат с продавцом/покупателем (WebSocket + REST) */
+export const chatApi = {
+  getConversations: () => apiRequest('/chat/conversations'),
+  getOrCreateConversation: (adId) =>
+    apiRequest('/chat/conversations', {
+      method: 'POST',
+      body: JSON.stringify({ adId }),
+    }),
+  getMessages: (conversationId) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`),
+  sendMessage: (conversationId, text) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    }),
 }
 
 /** Для отображения картинок: если url относительный (/uploads/...), подставляем origin бэкенда */
