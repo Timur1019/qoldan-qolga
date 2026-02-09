@@ -1,16 +1,15 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { Layout, ProfileLayout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { AdDetail, AdsList, CategoryView, CreateAd, Favorites } from './features/ad'
 import {
   Home,
   Dashboard,
   AdminDashboard,
-  AdsList,
-  AdDetail,
   MyAds,
-  CreateAd,
-  Favorites,
-  CategoryView,
+  MyReviews,
+  EditProfile,
   Chat,
+  SellerProfile,
 } from './pages'
 
 export default function App() {
@@ -32,7 +31,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="ads/:id/edit"
+          element={
+            <ProtectedRoute>
+              <CreateAd edit />
+            </ProtectedRoute>
+          }
+        />
         <Route path="ads/:id" element={<AdDetail />} />
+        <Route path="users/:id" element={<SellerProfile />} />
         <Route
           path="dashboard"
           element={
@@ -44,8 +52,10 @@ export default function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="profile/edit" element={<EditProfile />} />
           <Route path="ads" element={<MyAds />} />
           <Route path="favorites" element={<Favorites />} />
+          <Route path="reviews" element={<MyReviews />} />
           <Route path="chat" element={<Chat />} />
         </Route>
       </Route>

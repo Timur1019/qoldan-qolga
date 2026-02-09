@@ -18,6 +18,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     void deleteByUserIdAndAdvertisementId(String userId, Long advertisementId);
 
+    void deleteByAdvertisementId(Long advertisementId);
+
     Page<Favorite> findByUserIdOrderByCreatedAtDesc(String userId, Pageable pageable);
 
     @Query("SELECT f.advertisementId FROM Favorite f WHERE f.userId = :userId")

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
 import { referenceApi } from '../../api/client'
+import { categoryPath, adsCategoryPath } from '../../constants/routes'
 import styles from './CategoriesModal.module.css'
 
 const CATEGORY_ICONS = { Xizmatlar: 'clipboard', Ish: 'briefcase', Transport: 'car' }
@@ -173,7 +174,7 @@ export default function CategoriesModal({ onClose }) {
                       {child.hasChildren ? (
                         <>
                           <Link
-                            to={'/categories/' + encodeURIComponent(child.code)}
+                            to={categoryPath(child.code)}
                             className={styles.groupTitle}
                             onClick={onClose}
                           >
@@ -183,7 +184,7 @@ export default function CategoriesModal({ onClose }) {
                           <ul className={styles.groupList}>
                             {(groupChildren[child.code] || []).slice(0, MAX_ITEMS_PER_GROUP).map((sub) => (
                               <li key={sub.code}>
-                                <Link to={'/ads?category=' + encodeURIComponent(sub.code)} className={styles.groupItem} onClick={onClose}>
+                                <Link to={adsCategoryPath(sub.code)} className={styles.groupItem} onClick={onClose}>
                                   {name(sub)}
                                 </Link>
                               </li>
@@ -191,7 +192,7 @@ export default function CategoriesModal({ onClose }) {
                           </ul>
                           {(groupChildren[child.code]?.length || 0) > MAX_ITEMS_PER_GROUP && (
                             <Link
-                              to={'/categories/' + encodeURIComponent(child.code)}
+                              to={categoryPath(child.code)}
                               className={styles.moreLink}
                               onClick={onClose}
                             >
@@ -201,7 +202,7 @@ export default function CategoriesModal({ onClose }) {
                         </>
                       ) : (
                         <Link
-                          to={'/ads?category=' + encodeURIComponent(child.code)}
+                          to={adsCategoryPath(child.code)}
                           className={styles.groupTitle}
                           onClick={onClose}
                         >

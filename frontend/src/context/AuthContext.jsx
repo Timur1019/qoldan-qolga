@@ -50,11 +50,24 @@ export function AuthProvider({ children }) {
     loadUser()
   }, [loadUser])
 
+  const refreshUser = useCallback(async () => {
+    const token = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem(STORAGE_KEY)
+    if (!token) return
+    try {
+      const data = await authApi.me()
+      setUser(data)
+      return data
+    } catch {
+      setUser(null)
+    }
+  }, [])
+
   const value = {
     user,
     loading,
     setAuth,
     logout,
+    refreshUser,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'ADMIN',
   }

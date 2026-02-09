@@ -18,8 +18,10 @@ public class ConversationDto {
     private String adTitle;
     private String otherPartyName;  // продавец для покупателя, покупатель для продавца
     private String otherPartyId;
+    private String otherPartyAvatar;
     private Instant createdAt;
     private long messageCount;
-    /** Сообщений от собеседника (мне написали) — для бейджа в шапке и сайдбаре */
     private long incomingMessageCount;
+    /** Непрочитанных сообщений от собеседника — пока не откроешь диалог */
+    private long unreadCount;
 }

@@ -12,7 +12,11 @@ export const ROUTES = {
   CATEGORIES_OPEN: '/?open=categories',
   /** Профиль: избранное (внутри dashboard с сайдбаром) */
   FAVORITES: '/dashboard/favorites',
+  /** Мои отзывы */
+  REVIEWS_MY: '/dashboard/reviews',
   CHAT: '/dashboard/chat',
+  /** Редактирование профиля */
+  PROFILE_EDIT: '/dashboard/profile/edit',
   DASHBOARD: '/dashboard',
   ADMIN: '/admin',
 }
@@ -25,10 +29,15 @@ export const PARAMS = {
   OPEN_CATEGORIES_VALUE: 'categories',
   CATEGORY: 'category',
   REGION: 'region',
+  PAGE: 'page',
 }
 
 export function adsPath(id) {
   return `${ROUTES.ADS}/${id}`
+}
+
+export function adsEditPath(id) {
+  return `${ROUTES.ADS}/${id}/edit`
 }
 
 export function adsCategoryPath(code) {
@@ -37,4 +46,8 @@ export function adsCategoryPath(code) {
 
 export function categoryPath(code) {
   return `/categories/${encodeURIComponent(code)}`
+}
+
+export function sellerPath(userId) {
+  return `/users/${encodeURIComponent(userId)}`
 }

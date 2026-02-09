@@ -1,0 +1,19 @@
+package com.test.qoldanqolga.model;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class UserSubscriptionId implements Serializable {
+    private String subscriberId;
+    private String subscribedToId;
+}

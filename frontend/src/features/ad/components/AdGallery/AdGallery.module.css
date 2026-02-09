@@ -1,0 +1,255 @@
+.galleryWrap {
+  display: flex;
+  gap: 0.75rem;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+
+.thumbStrip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.thumbBtn {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #f3f4f6;
+}
+
+.thumbBtn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbBtnActive {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 1px #7c3aed;
+}
+
+.mainImageWrap {
+  flex: 1;
+  min-width: 0;
+  max-height: 70vh;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+  position: relative;
+}
+
+.mainImageClickable {
+  position: relative;
+  cursor: pointer;
+  display: block;
+  max-height: 70vh;
+}
+
+.mainImageClickable:focus-visible {
+  outline: 2px solid var(--color-primary, #2563eb);
+  outline-offset: 2px;
+}
+
+.mainImageHoverOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.mainImageClickable:hover .mainImageHoverOverlay,
+.mainImageClickable:focus .mainImageHoverOverlay {
+  opacity: 1;
+}
+
+.enlargeText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.galleryArrow,
+.galleryArrowRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 56px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 2;
+  color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.mainImageWrap:hover .galleryArrow,
+.mainImageWrap:hover .galleryArrowRight {
+  opacity: 1;
+}
+
+.galleryArrow:hover,
+.galleryArrowRight:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  backdrop-filter: none;
+}
+
+.galleryArrow {
+  left: 0;
+}
+
+.galleryArrowRight {
+  right: 0;
+  left: auto;
+}
+
+.mainImage {
+  width: 100%;
+  height: 100%;
+  max-height: 70vh;
+  aspect-ratio: 4/3;
+  object-fit: contain;
+  display: block;
+}
+
+.mainImagePlaceholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  max-height: 70vh;
+  background: #e5e7eb;
+}
+
+/* Lightbox */
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: #111;
+  font-size: 1.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.lightboxClose:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.lightboxImageWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  position: relative;
+}
+
+.lightboxArrow,
+.lightboxArrowRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 64px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 2.5rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.lightboxOverlay:hover .lightboxArrow,
+.lightboxOverlay:hover .lightboxArrowRight {
+  opacity: 1;
+}
+
+.lightboxArrow:hover,
+.lightboxArrowRight:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  backdrop-filter: none;
+}
+
+.lightboxArrow {
+  left: 0;
+}
+
+.lightboxArrowRight {
+  right: 0;
+  left: auto;
+}
+
+.lightboxContent {
+  max-width: 75vw;
+  max-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightboxImage {
+  max-width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+}
+
+.lightboxFooter {
+  flex-shrink: 0;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

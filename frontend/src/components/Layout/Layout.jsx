@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from 'react'
 import { Outlet, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { useAuthModal } from '../../hooks'
-import { referenceApi, chatApi } from '../../api/client'
+import { useAuthModal, useChatUnreadCount } from '../../hooks'
+import { referenceApi, imageUrl } from '../../api/client'
 import { PARAMS, ROUTES } from '../../constants/routes'
-import AuthModal from '../AuthModal/AuthModal'
+import { AuthModal } from '../../features/auth'
 import CategoriesModal from '../CategoriesModal/CategoriesModal'
 import styles from './Layout.module.css'
+
+const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 const locationIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 18, height: 18, flexShrink: 0 }} aria-hidden>
@@ -124,27 +126,9 @@ export default function Layout() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [regions, setRegions] = useState([])
   const [regionOpen, setRegionOpen] = useState(false)
-  const [chatCount, setChatCount] = useState(0)
   const openAuthModal = useAuthModal()
+  const chatUnreadCount = useChatUnreadCount()
 
-  const refreshChatCount = useCallback(() => {
-    if (!isAuthenticated) return
-    chatApi.getConversations().then((list) => {
-      const total = (list || []).reduce((s, c) => s + (c.incomingMessageCount ?? 0), 0)
-      setChatCount(total)
-    }).catch(() => setChatCount(0))
-  }, [isAuthenticated])
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setChatCount(0)
-      return
-    }
-    refreshChatCount()
-    const onRefresh = () => refreshChatCount()
-    window.addEventListener('chat-count-refresh', onRefresh)
-    return () => window.removeEventListener('chat-count-refresh', onRefresh)
-  }, [isAuthenticated, refreshChatCount])
   const authParam = searchParams.get(PARAMS.AUTH)
   const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
   const authInitialMode = authParam === PARAMS.AUTH_REGISTER ? 'register' : 'login'
@@ -296,17 +280,17 @@ export default function Layout() {
                     <span className={styles.navIcon}>{NavIcons.heart}</span>
                     <span className={styles.navLabel}>{t('nav.favorites')}</span>
                   </Link>
-                  <span className={styles.navLinkWrap}>
-                    <Link to={ROUTES.CHAT} className={styles.navLink}>
+                  <Link to={ROUTES.CHAT} className={styles.navLink}>
+                    <span className={styles.navLinkWrap}>
                       <span className={styles.navIcon}>{NavIcons.message}</span>
-                      <span className={styles.navLabel}>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
-                    </Link>
-                    {chatCount > 0 && (
-                      <span className={styles.navBadge} aria-label={lang === 'ru' ? `Сообщений: ${chatCount}` : `Xabarlar: ${chatCount}`}>
-                        {chatCount > 99 ? '99+' : chatCount}
-                      </span>
-                    )}
-                  </span>
+                      {chatUnreadCount > 0 && (
+                        <span className={styles.navBadge} aria-label={t('chat.messagesCount')}>
+                          {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+                        </span>
+                      )}
+                    </span>
+                    <span className={styles.navLabel}>{t('profile.chat')}</span>
+                  </Link>
                   <div className={styles.profileWrap}>
                     <button
                       type="button"
@@ -317,7 +301,15 @@ export default function Layout() {
                       aria-label={t('nav.profile')}
                     >
                       <span className={styles.profileAvatar}>
-                        <span className={styles.profileAvatarIcon}>{NavIcons.user}</span>
+                        <span className={styles.profileAvatarIcon}>
+                          {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
+                            <img src={imageUrl(user.avatar)} alt="" className={styles.profileAvatarImg} />
+                          ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
+                            AVATAR_EMOJI[user.avatar]
+                          ) : (
+                            NavIcons.user
+                          )}
+                        </span>
                       </span>
                       <span className={styles.navLabel}>{t('nav.profile')}</span>
                     </button>
@@ -331,10 +323,24 @@ export default function Layout() {
                         />
                         <div className={styles.profileDropdown} role="menu">
                           <div className={styles.profileDropdownHeader}>
-                            <span className={styles.profileDropdownAvatar}>
-                              <span className={styles.profileDropdownAvatarIcon}>{NavIcons.user}</span>
-                            </span>
-                            <span className={styles.profileDropdownTitle}>{t('nav.profile')}</span>
+                            <Link
+                              to={ROUTES.PROFILE_EDIT}
+                              className={styles.profileDropdownProfileLink}
+                              onClick={() => setProfileOpen(false)}
+                            >
+                              <span className={styles.profileDropdownAvatar}>
+                                <span className={styles.profileDropdownAvatarIcon}>
+                                  {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
+                                    <img src={imageUrl(user.avatar)} alt="" className={styles.profileDropdownAvatarImg} />
+                                  ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
+                                    AVATAR_EMOJI[user.avatar]
+                                  ) : (
+                                    NavIcons.user
+                                  )}
+                                </span>
+                              </span>
+                              <span className={styles.profileDropdownTitle}>{t('nav.profile')}</span>
+                            </Link>
                             <Link
                               to="/ads/create"
                               className={styles.profileSellBtn}
@@ -353,15 +359,17 @@ export default function Layout() {
                               <span className={styles.profileMenuIcon}>{NavIcons.megaphone}</span>
                               <span>{t('nav.myAds')}</span>
                             </Link>
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
+                            <Link to={ROUTES.REVIEWS_MY} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.star}</span>
                               <span>{lang === 'ru' ? 'Мои отзывы' : 'Mening sharhlarim'}</span>
                             </Link>
                             <Link to={ROUTES.CHAT} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.message}</span>
-                              <span>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
-                              {chatCount > 0 && (
-                                <span className={styles.profileMenuBadge}>{chatCount > 99 ? '99+' : chatCount}</span>
+                              <span>{t('profile.chat')}</span>
+                              {chatUnreadCount > 0 && (
+                                <span className={styles.profileMenuBadge} aria-label={t('chat.messagesCount')}>
+                                  {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+                                </span>
                               )}
                             </Link>
                             <div className={styles.profileMenuDivider} />

@@ -17,6 +17,7 @@ public class MessageDto {
     private String conversationId;
     private String senderId;
     private String senderName;
+    private String senderAvatar;
     private String text;
     private Instant createdAt;
 }

@@ -69,6 +69,10 @@ export const authApi = {
       body: JSON.stringify(body),
     }),
   me: () => apiRequest('/auth/me'),
+  updateProfile: (body) =>
+    apiRequest('/auth/me', { method: 'PATCH', body: JSON.stringify(body) }),
+  /** Отзывы, которые я оставил другим пользователям (приватная страница «Мои отзывы»). */
+  getMyReviews: (params) => apiRequest(`/auth/me/reviews${buildQueryString(params)}`),
 }
 
 export const adminApi = {
@@ -84,15 +88,48 @@ export const referenceApi = {
   getCategoriesForHome: () => apiRequest('/categories/home'),
 }
 
+const AD_VIEWED_KEY = 'ad-viewed'
+
 export const adsApi = {
   list: (params) => apiRequest(`/ads${buildQueryString(params)}`),
   getById: (id) => apiRequest(`/ads/${id}`),
+  recordView: (id) => apiRequest(`/ads/${id}/view`, { method: 'POST' }),
+  wasAdViewedInSession: (id) => {
+    try {
+      const raw = sessionStorage.getItem(AD_VIEWED_KEY)
+      const set = raw ? new Set(JSON.parse(raw)) : new Set()
+      return set.has(String(id))
+    } catch {
+      return false
+    }
+  },
+  markAdViewedInSession: (id) => {
+    try {
+      const raw = sessionStorage.getItem(AD_VIEWED_KEY)
+      const set = raw ? new Set(JSON.parse(raw)) : new Set()
+      set.add(String(id))
+      sessionStorage.setItem(AD_VIEWED_KEY, JSON.stringify([...set]))
+    } catch {
+      // ignore
+    }
+  },
   myAds: (params) => apiRequest(`/ads/my${buildQueryString(params)}`),
   create: (body) =>
     apiRequest('/ads', {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  update: (id, body) =>
+    apiRequest(`/ads/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  delete: (id) =>
+    apiRequest(`/ads/${id}`, { method: 'DELETE' }),
+  archive: (id) =>
+    apiRequest(`/ads/archive/${id}`, { method: 'POST' }),
+  restore: (id) =>
+    apiRequest(`/ads/restore/${id}`, { method: 'POST' }),
   addFavorite: (adId) =>
     apiRequest(`/ads/${adId}/favorite`, { method: 'POST' }),
   removeFavorite: (adId) =>
@@ -101,6 +138,11 @@ export const adsApi = {
     const result = await apiRequest(`/ads/${adId}/favorite/toggle`, { method: 'POST' })
     return result === true || result === false ? result : !!result
   },
+  report: (adId, body) =>
+    apiRequest(`/ads/${adId}/report`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
   upload: async (file) => {
     const formData = new FormData()
     formData.append('file', file)
@@ -139,6 +181,35 @@ export const chatApi = {
       method: 'POST',
       body: JSON.stringify({ text }),
     }),
+  markAsRead: (conversationId) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/read`, { method: 'POST' }),
+  updateMessage: (conversationId, messageId, text) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages/${messageId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ text }),
+    }),
+  deleteMessage: (conversationId, messageId) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages/${messageId}`, { method: 'DELETE' }),
+  deleteConversation: (conversationId) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}`, { method: 'DELETE' }),
+}
+
+/** Профиль продавца и подписки */
+export const usersApi = {
+  getProfile: (id) => apiRequest(`/users/${id}`),
+  getAds: (id, params) => apiRequest(`/users/${id}/ads${buildQueryString(params)}`),
+  getReviews: (id, params) => apiRequest(`/users/${id}/reviews${buildQueryString(params)}`),
+  createReview: (id, body) =>
+    apiRequest(`/users/${id}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  subscribe: (id) => apiRequest(`/users/${id}/subscribe`, { method: 'POST' }),
+  unsubscribe: (id) => apiRequest(`/users/${id}/subscribe`, { method: 'DELETE' }),
+  toggleSubscribe: async (id) => {
+    const result = await apiRequest(`/users/${id}/subscribe/toggle`, { method: 'POST' })
+    return result === true || result === false ? result : !!result
+  },
 }
 
 /** Для отображения картинок: если url относительный (/uploads/...), подставляем origin бэкенда */

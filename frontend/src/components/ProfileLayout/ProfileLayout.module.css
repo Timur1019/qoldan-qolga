@@ -21,14 +21,38 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.25rem 0;
+}
+
+.profileHead:hover {
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .avatar {
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--color-primary, #2563eb);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  overflow: hidden;
+}
+
+.avatarImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .contact {
@@ -55,7 +79,8 @@
 }
 
 .viewProfileLink:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .nav {
@@ -88,8 +113,8 @@
 }
 
 .navItemActive {
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
   font-weight: 500;
 }
 
@@ -99,7 +124,7 @@
 }
 
 .navItemActive .navIcon {
-  color: #22c55e;
+  color: var(--color-primary, #2563eb);
 }
 
 .navItem span:last-of-type:not(.navArrow) {
@@ -116,7 +141,7 @@
   font-weight: 700;
   line-height: 1.25rem;
   color: #fff;
-  background: #22c55e;
+  background: var(--color-primary, #2563eb);
   border-radius: 10px;
   display: inline-flex;
   align-items: center;

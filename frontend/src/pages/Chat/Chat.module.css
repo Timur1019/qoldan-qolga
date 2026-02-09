@@ -49,7 +49,9 @@
 
 .convBtn,
 .convBtnActive {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   padding: 0.85rem 1rem;
   text-align: left;
@@ -59,13 +61,32 @@
   font: inherit;
 }
 
+.convAvatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #4b5563;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.convInfo {
+  flex: 1;
+  min-width: 0;
+}
+
 .convBtn:hover {
   background: #f9fafb;
 }
 
 .convBtnActive {
   background: rgba(34, 197, 94, 0.08);
-  border-left: 3px solid #22c55e;
+  border-left: 3px solid var(--color-primary, #2563eb);
 }
 
 .convTitle {
@@ -101,8 +122,8 @@
   font-weight: 700;
   line-height: 1.25rem;
   color: #fff;
-  background: #22c55e;
-  border-radius: 10px;
+  background: #2563eb;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,6 +156,27 @@
   flex-wrap: wrap;
 }
 
+.threadDeleteBtn {
+  margin-left: auto;
+  padding: 0.35rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.threadDeleteBtn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.threadDeleteIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .threadTitle {
   font-weight: 600;
   font-size: 0.95rem;
@@ -163,16 +205,30 @@
 }
 
 .threadAdLink:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .messages {
   flex: 1;
+  min-height: 280px;
+  max-height: 480px;
   overflow-y: auto;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.dateHeader {
+  align-self: center;
+  padding: 0.35rem 0.75rem;
+  margin: 0.5rem 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 999px;
 }
 
 .msgRow {
@@ -202,7 +258,7 @@
 }
 
 .msgAvatarOwn {
-  background: #22c55e;
+  background: var(--color-primary, #2563eb);
   color: #fff;
 }
 
@@ -215,8 +271,8 @@
 }
 
 .msgBubbleOwn {
-  background: #dcfce7;
-  border: 1px solid #bbf7d0;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
   border-top-left-radius: 12px;
   border-top-right-radius: 4px;
 }
@@ -239,6 +295,94 @@
 .msgTime {
   font-size: 0.7rem;
   color: var(--color-muted, #9ca3af);
+}
+
+.msgBubbleWrap {
+  position: relative;
+  max-width: 75%;
+}
+
+.msgBubbleClickable {
+  cursor: pointer;
+}
+
+.msgBubbleClickable:hover {
+  filter: brightness(0.98);
+}
+
+.msgMenu {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.msgMenuBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  color: #374151;
+  cursor: pointer;
+}
+
+.msgMenuBtn:hover {
+  background: rgba(0, 0, 0, 0.12);
+  color: #111;
+}
+
+.msgEditInput {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.msgEditInput:focus {
+  outline: none;
+  border-color: var(--color-primary, #2563eb);
+}
+
+.msgActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.msgActionBtn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.msgActionBtn:first-of-type {
+  background: var(--color-primary, #2563eb);
+  color: #fff;
+}
+
+.msgActionBtn:first-of-type:hover {
+  background: var(--color-primary-hover, #1d4ed8);
+}
+
+.msgActionBtn:last-of-type {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.msgActionBtn:last-of-type:hover {
+  background: #d1d5db;
 }
 
 .sendForm {
@@ -268,14 +412,14 @@
   font-weight: 600;
   font-size: 0.9rem;
   color: #fff;
-  background: #22c55e;
+  background: var(--color-primary, #2563eb);
   border: none;
   border-radius: 10px;
   cursor: pointer;
 }
 
 .sendBtn:hover:not(:disabled) {
-  background: #16a34a;
+  background: var(--color-primary-hover, #1d4ed8);
 }
 
 .sendBtn:disabled {

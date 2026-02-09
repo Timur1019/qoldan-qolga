@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="014-create-reviews-table" author="qoldan-qolga">
+        <createTable tableName="reviews">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="pk_reviews"/>
+            </column>
+            <column name="author_id" type="VARCHAR(36)">
+                <constraints nullable="false" references="users(id)" foreignKeyName="fk_reviews_author"/>
+            </column>
+            <column name="target_user_id" type="VARCHAR(36)">
+                <constraints nullable="false" references="users(id)" foreignKeyName="fk_reviews_target"/>
+            </column>
+            <column name="ad_id" type="BIGINT">
+                <constraints nullable="true" references="advertisements(id)" foreignKeyName="fk_reviews_ad"/>
+            </column>
+            <column name="rating" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </createTable>
+        <createIndex tableName="reviews" indexName="idx_reviews_target_user">
+            <column name="target_user_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

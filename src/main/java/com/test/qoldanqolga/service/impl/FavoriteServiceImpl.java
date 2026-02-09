@@ -1,8 +1,8 @@
 package com.test.qoldanqolga.service.impl;
 
 import com.test.qoldanqolga.dto.ad.AdListItemDto;
+import com.test.qoldanqolga.exception.ResourceNotFoundException;
 import com.test.qoldanqolga.mapper.AdvertisementMapper;
-import com.test.qoldanqolga.model.AdImage;
 import com.test.qoldanqolga.model.Advertisement;
 import com.test.qoldanqolga.model.Favorite;
 import com.test.qoldanqolga.repository.AdvertisementRepository;
@@ -33,7 +33,7 @@ public class FavoriteServiceImpl implements FavoriteService {
             return;
         }
         if (!advertisementRepository.existsById(advertisementId)) {
-            throw new IllegalArgumentException("Объявление не найдено");
+            throw new ResourceNotFoundException("Объявление", advertisementId);
         }
         Favorite f = new Favorite();
         f.setUserId(userId);
@@ -45,6 +45,12 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Transactional
     public void remove(String userId, Long advertisementId) {
         favoriteRepository.deleteByUserIdAndAdvertisementId(userId, advertisementId);
+    }
+
+    @Override
+    @Transactional
+    public void removeAllByAdvertisementId(Long advertisementId) {
+        favoriteRepository.deleteByAdvertisementId(advertisementId);
     }
 
     @Override
@@ -90,20 +96,11 @@ public class FavoriteServiceImpl implements FavoriteService {
                 .filter(Objects::nonNull)
                 .map(ad -> {
                     AdListItemDto dto = advertisementMapper.toListItemDto(ad);
-                    dto.setMainImageUrl(getMainImageUrl(ad));
+                    dto.setMainImageUrl(advertisementMapper.getMainImageUrl(ad));
                     dto.setFavorite(true);
                     return dto;
                 })
                 .toList();
         return new PageImpl<>(dtos, pageable, favorites.getTotalElements());
-    }
-
-    private static String getMainImageUrl(Advertisement ad) {
-        if (ad.getImages() == null || ad.getImages().isEmpty()) return null;
-        return ad.getImages().stream()
-                .filter(AdImage::getIsMain)
-                .findFirst()
-                .map(AdImage::getUrl)
-                .orElse(ad.getImages().get(0).getUrl());
     }
 }

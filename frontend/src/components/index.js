@@ -1,6 +1,5 @@
 export { default as Layout } from './Layout/Layout'
 export { default as ProfileLayout } from './ProfileLayout/ProfileLayout'
-export { default as AuthModal } from './AuthModal/AuthModal'
 export { default as ProtectedRoute } from './ProtectedRoute/ProtectedRoute'
 export { default as AdminRoute } from './AdminRoute/AdminRoute'
 export { default as AdminLayout } from './AdminLayout/AdminLayout'

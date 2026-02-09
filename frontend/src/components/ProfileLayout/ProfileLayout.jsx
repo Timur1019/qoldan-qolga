@@ -1,12 +1,14 @@
-import { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { chatApi } from '../../api/client'
-import { ROUTES } from '../../constants/routes'
+import { useChatUnreadCount } from '../../hooks'
+import { ROUTES, sellerPath } from '../../constants/routes'
+import { imageUrl } from '../../api/client'
 import styles from './ProfileLayout.module.css'
 
 const iconStyle = { width: 22, height: 22, flexShrink: 0 }
+
+const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 const NavIcons = {
   idCheck: (
@@ -43,6 +45,11 @@ const NavIcons = {
       <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
     </svg>
   ),
+  star: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  ),
   exit: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
@@ -58,37 +65,27 @@ export default function ProfileLayout({ children }) {
   const path = location.pathname
   const isMyAds = path === '/dashboard/ads' || path.startsWith('/dashboard/ads')
   const isFavorites = path === '/dashboard/favorites' || path.startsWith('/dashboard/favorites')
+  const isMyReviews = path === '/dashboard/reviews' || path.startsWith('/dashboard/reviews')
   const isChat = path === '/dashboard/chat' || path.startsWith('/dashboard/chat')
-  const [chatCount, setChatCount] = useState(0)
-
-  const refreshChatCount = useCallback(() => {
-    if (!isAuthenticated) return
-    chatApi.getConversations().then((list) => {
-      const total = (list || []).reduce((s, c) => s + (c.incomingMessageCount ?? 0), 0)
-      setChatCount(total)
-    }).catch(() => setChatCount(0))
-  }, [isAuthenticated])
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setChatCount(0)
-      return
-    }
-    refreshChatCount()
-    const onRefresh = () => refreshChatCount()
-    window.addEventListener('chat-count-refresh', onRefresh)
-    return () => window.removeEventListener('chat-count-refresh', onRefresh)
-  }, [isAuthenticated, refreshChatCount])
+  const chatUnreadCount = useChatUnreadCount()
 
   return (
     <div className={styles.wrap}>
       <aside className={styles.sidebar}>
-        <div className={styles.profileHead}>
-          <span className={styles.avatar} aria-hidden />
+        <Link to={ROUTES.PROFILE_EDIT} className={styles.profileHead}>
+          <span className={styles.avatar} aria-hidden>
+            {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
+              <img src={imageUrl(user.avatar)} alt="" className={styles.avatarImg} />
+            ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
+              AVATAR_EMOJI[user.avatar]
+            ) : (
+              ''
+            )}
+          </span>
           <span className={styles.contact}>{user?.phone || user?.email || '—'}</span>
           <span className={styles.arrow} aria-hidden>›</span>
-        </div>
-        <Link to={ROUTES.DASHBOARD} className={styles.viewProfileLink}>
+        </Link>
+        <Link to={user?.id ? sellerPath(user.id) : ROUTES.DASHBOARD} className={styles.viewProfileLink}>
           {t('profile.viewProfile')} ›
         </Link>
         <nav className={styles.nav}>
@@ -107,11 +104,18 @@ export default function ProfileLayout({ children }) {
             <span>{t('nav.favorites')}</span>
             <span className={styles.navArrow}>›</span>
           </Link>
+          <Link to={ROUTES.REVIEWS_MY} className={isMyReviews ? styles.navItemActive : styles.navItem}>
+            <span className={styles.navIcon}>{NavIcons.star}</span>
+            <span>{t('profile.myReviews')}</span>
+            <span className={styles.navArrow}>›</span>
+          </Link>
           <Link to={ROUTES.CHAT} className={isChat ? styles.navItemActive : styles.navItem}>
             <span className={styles.navIcon}>{NavIcons.chat}</span>
             <span>{t('profile.chat')}</span>
-            {chatCount > 0 && (
-              <span className={styles.navBadge}>{chatCount > 99 ? '99+' : chatCount}</span>
+            {chatUnreadCount > 0 && (
+              <span className={styles.navBadge} aria-label={t('chat.messagesCount')}>
+                {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+              </span>
             )}
             <span className={styles.navArrow}>›</span>
           </Link>

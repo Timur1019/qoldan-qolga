@@ -60,6 +60,52 @@ public class ChatController {
         return ResponseEntity.ok(chatService.sendMessage(conversationId, user.getUsername(), request.getText()));
     }
 
+    @PostMapping("/conversations/{conversationId}/read")
+    public ResponseEntity<Void> markAsRead(
+            @PathVariable String conversationId,
+            @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        chatService.markAsRead(conversationId, user.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/conversations/{conversationId}/messages/{messageId}")
+    public ResponseEntity<MessageDto> updateMessage(
+            @PathVariable String conversationId,
+            @PathVariable Long messageId,
+            @Valid @RequestBody SendMessageRequest request,
+            @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(chatService.updateMessage(conversationId, messageId, user.getUsername(), request.getText()));
+    }
+
+    @DeleteMapping("/conversations/{conversationId}/messages/{messageId}")
+    public ResponseEntity<Void> deleteMessage(
+            @PathVariable String conversationId,
+            @PathVariable Long messageId,
+            @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        chatService.deleteMessage(conversationId, messageId, user.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/conversations/{conversationId}")
+    public ResponseEntity<Void> deleteConversation(
+            @PathVariable String conversationId,
+            @AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        chatService.deleteConversation(conversationId, user.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
     @lombok.Data
     public static class GetOrCreateRequest {
         private Long adId;

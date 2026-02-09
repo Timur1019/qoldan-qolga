@@ -14,6 +14,9 @@ public interface FavoriteService {
     /** Remove ad from user's favorites. Idempotent. */
     void remove(String userId, Long advertisementId);
 
+    /** Remove all favorites for an advertisement (e.g. when ad is deleted). */
+    void removeAllByAdvertisementId(Long advertisementId);
+
     /** Toggle: add if not present, remove if present. Returns new state (true = in favorites). */
     boolean toggle(String userId, Long advertisementId);
 

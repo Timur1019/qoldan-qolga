@@ -8,28 +8,36 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* Базовый размер шрифта и стандарты типографики */
+  font-size: 17px;
+  --font-size-title-lg: 1.35rem;   /* крупные заголовки */
+  --font-size-title: 1.2rem;       /* заголовки секций */
+  --font-size-body: 1.0625rem;    /* основной текст, описание */
+  --font-size-small: 1rem;        /* подписи, вторичный текст */
+  --font-size-buttons: 1rem;      /* кнопки */
+
   /* Светлая тема по умолчанию */
   color: #1a1a1a;
-  background-color: #f8f9fa;
+  background-color: #fff;
 
-  /* Переменные для модулей */
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
+  /* Переменные для модулей (светло-синий) */
+  --color-primary: #60a5fa;
+  --color-primary-hover: #3b82f6;
   --color-border: #e5e7eb;
   --color-bg-header: #fff;
   --color-bg-card: #fff;
-  --color-bg-subtle: #f1f5f9;
+  --color-bg-subtle: #f3f4f6;
   --color-muted: #6b7280;
   --color-error: #dc2626;
   --radius: 8px;
   --radius-sm: 6px;
-  /* Шапка: верхняя полоса (не чёрный) и низ (бежевый + синий) */
-  --header-top-bg: #4b5563;
+  /* Шапка: почти чёрный, чуть светлее */
+  --header-top-bg: #252525;
   --header-top-text: #f9fafb;
-  --header-bottom-bg: #f5f0e8;
-  --header-bottom-border: #e8e2d9;
-  --header-cta-bg: #2563eb;
-  --header-cta-hover: #1d4ed8;
+  --header-bottom-bg: #fff;
+  --header-bottom-border: #e5e7eb;
+  --header-cta-bg: #60a5fa;
+  --header-cta-hover: #3b82f6;
 }
 
 a {
@@ -40,7 +48,8 @@ a {
 
 a:hover {
   color: var(--color-primary-hover);
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 body {
@@ -63,7 +72,7 @@ button {
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   padding: 0.5em 1em;
-  font-size: 1rem;
+  font-size: var(--font-size-buttons, 1rem);
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;

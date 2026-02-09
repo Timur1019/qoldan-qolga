@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws", "/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/regions", "/api/categories", "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ads/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/regions", "/api/categories", "/api/categories/home").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

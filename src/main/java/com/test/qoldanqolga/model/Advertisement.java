@@ -25,7 +25,7 @@ public class Advertisement {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, precision = 12, scale = 2)
+    @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal price;
 
     @Column(length = 3)
@@ -51,6 +51,9 @@ public class Advertisement {
 
     @Column(nullable = false)
     private Boolean isNegotiable = false;
+
+    @Column(name = "can_deliver", nullable = false)
+    private Boolean canDeliver = false;
 
     @Column(name = "user_id", nullable = false, length = 36)
     private String userId;

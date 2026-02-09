@@ -50,6 +50,8 @@ public class CreateAdRequest {
 
     private Boolean isNegotiable = false;
 
+    private Boolean canDeliver = false;
+
     @NotNull
     private Instant expiresAt;
 
