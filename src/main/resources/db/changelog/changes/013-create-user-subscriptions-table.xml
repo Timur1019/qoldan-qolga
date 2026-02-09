@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="013-create-user-subscriptions-table" author="qoldan-qolga">
+        <createTable tableName="user_subscriptions">
+            <column name="subscriber_id" type="VARCHAR(36)">
+                <constraints nullable="false" references="users(id)" foreignKeyName="fk_user_subs_subscriber"/>
+            </column>
+            <column name="subscribed_to_id" type="VARCHAR(36)">
+                <constraints nullable="false" references="users(id)" foreignKeyName="fk_user_subs_subscribed_to"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="user_subscriptions" columnNames="subscriber_id, subscribed_to_id" constraintName="pk_user_subscriptions"/>
+    </changeSet>
+</databaseChangeLog>

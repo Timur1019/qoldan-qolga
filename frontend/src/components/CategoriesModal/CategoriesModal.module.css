@@ -282,7 +282,8 @@
 }
 
 .moreLink:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .hint {

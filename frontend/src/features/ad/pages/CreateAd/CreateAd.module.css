@@ -1,0 +1,442 @@
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+  background: #fff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.error {
+  color: #dc2626;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.35rem;
+}
+
+.cardHint {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 0.75rem;
+}
+
+.cardHint:last-child {
+  margin-bottom: 0;
+}
+
+/* Photos */
+.uploadZone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  background: #f8fafc;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.uploadZone:hover,
+.uploadZone.dragover {
+  border-color: var(--color-primary, #2563eb);
+  background: #eff6ff;
+}
+
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  background: #334155;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.uploadBtn:hover {
+  background: #1e293b;
+}
+
+.uploadSub {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.uploadSpecs {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.fileInput {
+  display: none;
+}
+
+.previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.previewWrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.removeImg {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeImg:hover {
+  background: #b91c1c;
+}
+
+/* Inputs */
+.input {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #1e293b;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Deal conditions */
+.giveAwayRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.giveAwayLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.giveAwayIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #93c5fd 0%, #bfdbfe 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.giveAwayLabel {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 13px;
+  background: #cbd5e1;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggle.on {
+  background: var(--color-primary, #2563eb);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.toggle.on .toggleKnob {
+  transform: translateX(22px);
+}
+
+/* Price */
+.priceRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+  margin-bottom: 0.75rem;
+}
+
+.priceInputWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.currencyBtns {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.currencyBtn {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.currencyBtn.active {
+  background: #334155;
+  color: #fff;
+  border-color: #334155;
+}
+
+.currencyBtn:not(.active):hover {
+  background: #f1f5f9;
+}
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.checkRow input {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  accent-color: var(--color-primary, #2563eb);
+}
+
+.checkRow span {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+/* Description counter */
+.descWrap {
+  position: relative;
+  min-width: 0;
+}
+
+.descCounter {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Location */
+.locationActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.myLocationBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.myLocationBtn:hover {
+  background: #e2e8f0;
+}
+
+.mapWrap {
+  margin-bottom: 1rem;
+}
+
+/* Contacts */
+.contactMethodsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.contactMethodRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.contactMethodRow:last-child {
+  border-bottom: none;
+}
+
+.contactMethodLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.contactMethodIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.contactMethodIcon.chat {
+  background: #dcfce7;
+  color: var(--color-primary, #2563eb);
+}
+
+.contactMethodIcon.phone {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.contactMethodIcon.telegram {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.contactMethodLabel {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.contactMethodSub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+/* Submit */
+.actions {
+  margin-top: 0.5rem;
+}
+
+.submit {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--color-primary, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--color-primary-hover, #1d4ed8);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.uploading {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}

@@ -1,0 +1,403 @@
+/* Layout */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: #fff;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumb {
+  margin: 0;
+  font-size: var(--font-size-small, 1rem);
+  color: var(--color-muted, #666);
+}
+
+.favoriteBtnTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-small, 1rem);
+  font-family: inherit;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.favoriteBtnTop:hover {
+  color: #e11d48;
+  background: rgba(225, 29, 72, 0.08);
+}
+
+.favoriteHeart {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.breadcrumb a {
+  color: var(--color-muted, #666);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: none;
+  color: var(--color-primary, #2563eb);
+  font-weight: 600;
+}
+
+.breadcrumbSep {
+  margin: 0 0.35rem;
+}
+
+.breadcrumbCurrent {
+  color: #111;
+}
+
+.mainContent {
+  background: #fff;
+  border-radius: 12px;
+}
+
+.threeCol {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 0;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .threeCol {
+    grid-template-columns: 1fr;
+  }
+}
+
+.leftCol {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.leftCard {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 1.5rem;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.leftCard + .leftCard {
+  padding-top: 0;
+}
+
+.rightCol {
+  position: sticky;
+  top: 1rem;
+  padding: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .rightCol {
+    padding-top: 1.5rem;
+  }
+}
+
+.rightCard {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.adMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.adMetaRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.adMetaLabel {
+  color: #6b7280;
+  font-family: inherit;
+  font-weight: 400;
+}
+
+.adMetaValue {
+  color: #111;
+  font-family: inherit;
+  font-weight: 400;
+}
+
+.actionBtns {
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.reportBtn {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0.85rem 2rem;
+  font-size: var(--font-size-buttons, 1rem);
+  font-weight: 400;
+  font-family: inherit;
+  color: #111;
+  background: #e9e9e9;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.reportBtn:hover {
+  background: #dcdcdc;
+  color: #111;
+}
+
+.error {
+  color: var(--color-error, #c00);
+}
+
+/* Report Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.modalClose {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  color: #111;
+}
+
+.modalBody {
+  padding: 1.25rem;
+}
+
+.reportReasonLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.reportReasonLabel input {
+  width: 18px;
+  height: 18px;
+}
+
+.modalFooter {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.reportSubmitBtn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-primary, #2563eb);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reportSubmitBtn:hover:not(:disabled) {
+  background: var(--color-primary-hover, #1d4ed8);
+}
+
+.reportSubmitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Lightbox footer (seller + contact buttons at bottom of image modal) */
+.lightboxFooterWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.lightboxFooterSeller {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lightboxFooterAvatarWrap {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightboxFooterAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lightboxFooterEmoji {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.lightboxFooterInitial {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lightboxFooterName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+.lightboxFooterName:hover {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.lightboxFooterSince {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0.15rem;
+}
+
+.lightboxFooterBtns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.lightboxFooterBtnChat,
+.lightboxFooterBtnPhone,
+.lightboxFooterBtnTelegram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.lightboxFooterBtnChat {
+  color: #fff;
+  background: #22c55e;
+}
+
+.lightboxFooterBtnChat:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.lightboxFooterBtnChat:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.lightboxFooterBtnPhone {
+  color: #fff;
+  background: #c026d3;
+}
+
+.lightboxFooterBtnPhone:hover {
+  background: #a21caf;
+}
+
+.lightboxFooterBtnTelegram {
+  color: #fff;
+  background: #0ea5e9;
+}
+
+.lightboxFooterBtnTelegram:hover {
+  background: #0284c7;
+}
+
+.lightboxFooterBtnTelegramIcon {
+  margin-right: 0.35rem;
+  font-size: 0.9em;
+}

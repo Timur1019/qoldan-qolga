@@ -1,35 +1,12 @@
-import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { useAuth } from '../../context/AuthContext'
 import { referenceApi, adsApi, imageUrl } from '../../api/client'
+import { useFavoriteClick } from '../../hooks'
+import { formatPrice, formatAdDate } from '../../utils/formatters'
+import { ROUTES, adsPath, categoryPath, adsCategoryPath } from '../../constants/routes'
+import HeartIcon from '../../components/ui/HeartIcon'
 import styles from './Home.module.css'
-
-function HeartIcon({ filled, className }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden style={{ width: 20, height: 20 }}>
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  )
-}
-
-function formatPrice(price, currency = 'UZS') {
-  if (price == null) return ''
-  const cur = (currency || 'UZS').toUpperCase()
-  const name = cur === 'UZS' ? 'сум' : cur
-  return `${Number(price).toLocaleString('ru-RU')} ${name}`
-}
-
-function formatAdDate(isoString) {
-  if (!isoString) return ''
-  const d = new Date(isoString)
-  const day = String(d.getDate()).padStart(2, '0')
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const year = d.getFullYear()
-  const h = String(d.getHours()).padStart(2, '0')
-  const m = String(d.getMinutes()).padStart(2, '0')
-  return `${day}.${month}.${year}, ${h}:${m}`
-}
 
 const CATEGORY_ICONS = {
   Xizmatlar: 'clipboard',
@@ -76,11 +53,17 @@ function CategoryCardIcon({ code }) {
 
 export default function Home() {
   const { t, lang } = useLang()
-  const { isAuthenticated } = useAuth()
-  const [searchParams, setSearchParams] = useSearchParams()
   const [categories, setCategories] = useState([])
   const [adsData, setAdsData] = useState({ content: [] })
   const [adsLoading, setAdsLoading] = useState(true)
+
+  const updateAdFavorite = useCallback((adId, favorite) => {
+    setAdsData((prev) => ({
+      ...prev,
+      content: (prev.content || []).map((a) => (a.id === adId ? { ...a, favorite } : a)),
+    }))
+  }, [])
+  const handleFavoriteClick = useFavoriteClick(updateAdFavorite)
 
   useEffect(() => {
     referenceApi.getCategoriesForHome()
@@ -100,39 +83,7 @@ export default function Home() {
       .finally(() => setAdsLoading(false))
   }, [])
 
-  const openAuthModal = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set('auth', 'login')
-      return next
-    }, { replace: true })
-  }
-
-  const handleFavoriteClick = (e, ad) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!isAuthenticated) {
-      openAuthModal()
-      return
-    }
-    adsApi.toggleFavorite(ad.id)
-      .then((nowFavorite) => {
-        setAdsData((prev) => ({
-          ...prev,
-          content: (prev.content || []).map((a) => (a.id === ad.id ? { ...a, favorite: nowFavorite } : a)),
-        }))
-      })
-      .catch((err) => {
-        const msg = err.message || ''
-        if (msg.includes('401') || msg.includes('403') || msg.includes('Ошибка') || msg.includes('авторизац') || msg.includes('Forbidden')) {
-          openAuthModal()
-        }
-      })
-  }
-
   const categoryName = (c) => (c ? (lang === 'ru' ? c.nameRu : c.nameUz) : '')
-  const allCategoriesLabel = lang === 'ru' ? 'Все категории' : 'Barcha kategoriyalar'
-  const adsTitle = t('ads.listTitle')
   const ads = adsData.content || []
 
   return (
@@ -144,7 +95,7 @@ export default function Home() {
         {categories.map((cat) => (
           <Link
             key={cat.code}
-            to={cat.hasChildren ? `/categories/${encodeURIComponent(cat.code)}` : `/ads?category=${encodeURIComponent(cat.code)}`}
+            to={cat.hasChildren ? categoryPath(cat.code) : adsCategoryPath(cat.code)}
             className={styles.card}
           >
             <span className={styles.cardTitle}>{categoryName(cat)}</span>
@@ -153,17 +104,17 @@ export default function Home() {
             </span>
           </Link>
         ))}
-        <Link to="/?open=categories" className={styles.card + ' ' + styles.cardAll}>
-          <span className={styles.cardTitle}>{allCategoriesLabel}</span>
+        <Link to={ROUTES.CATEGORIES_OPEN} className={styles.card + ' ' + styles.cardAll}>
+          <span className={styles.cardTitle}>{t('home.allCategories')}</span>
           <span className={styles.cardArrow} aria-hidden>→</span>
         </Link>
       </div>
-      <Link to="/ads" className={styles.cta}>
+      <Link to={ROUTES.ADS} className={styles.cta}>
         {t('home.viewAds')}
       </Link>
 
       <section className={styles.adsSection}>
-        <h2 className={styles.adsSectionTitle}>{adsTitle}</h2>
+        <h2 className={styles.adsSectionTitle}>{t('ads.listTitle')}</h2>
         {adsLoading ? (
           <p className={styles.adsLoading}>{t('common.loading')}</p>
         ) : ads.length === 0 ? (
@@ -172,7 +123,7 @@ export default function Home() {
           <ul className={styles.adsGrid}>
             {ads.map((ad) => (
               <li key={ad.id} className={styles.adCard}>
-                <Link to={`/ads/${ad.id}`} className={styles.adCardLink}>
+                <Link to={adsPath(ad.id)} className={styles.adCardLink}>
                   <span className={styles.adCardImageWrap}>
                     {ad.mainImageUrl ? (
                       <img src={imageUrl(ad.mainImageUrl)} alt="" className={styles.adCardImage} />
@@ -185,7 +136,7 @@ export default function Home() {
                       onClick={(e) => handleFavoriteClick(e, ad)}
                       aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
                     >
-                      <HeartIcon filled={!!ad.favorite} className={ad.favorite ? styles.heartFilled : ''} />
+                      <HeartIcon filled={!!ad.favorite} className={ad.favorite ? styles.heartFilled : ''} size={20} />
                     </button>
                   </span>
                   <div className={styles.adCardBody}>
@@ -203,8 +154,8 @@ export default function Home() {
           </ul>
         )}
         {!adsLoading && ads.length > 0 && (
-          <Link to="/ads" className={styles.adsMoreLink}>
-            {lang === 'ru' ? 'Все объявления' : 'Barcha e\'lonlar'}
+          <Link to={ROUTES.ADS} className={styles.adsMoreLink}>
+            {t('home.allAds')}
           </Link>
         )}
       </section>

@@ -28,4 +28,19 @@ public interface AdvertisementMapper {
     default String userDisplayName(Advertisement ad) {
         return ad.getUser() != null ? ad.getUser().getDisplayName() : null;
     }
+
+    /**
+     * Единое место получения URL главного изображения объявления.
+     * Используется в AdvertisementService и FavoriteService (DRY).
+     */
+    default String getMainImageUrl(Advertisement ad) {
+        if (ad.getImages() == null || ad.getImages().isEmpty()) {
+            return null;
+        }
+        return ad.getImages().stream()
+                .filter(AdImage::getIsMain)
+                .findFirst()
+                .map(AdImage::getUrl)
+                .orElse(ad.getImages().get(0).getUrl());
+    }
 }

@@ -13,4 +13,13 @@
     <include file="changes/006-insert-districts-full.xml" relativeToChangelogFile="true"/>
     <include file="changes/007-create-favorites-table.xml" relativeToChangelogFile="true"/>
     <include file="changes/008-categories-parent-and-subcategories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/009-create-chat-tables.xml" relativeToChangelogFile="true"/>
+    <include file="changes/010-conversation-read.xml" relativeToChangelogFile="true"/>
+    <include file="changes/011-create-ad-reports-table.xml" relativeToChangelogFile="true"/>
+    <include file="changes/012-increase-ad-price-precision.xml" relativeToChangelogFile="true"/>
+    <include file="changes/013-create-user-subscriptions-table.xml" relativeToChangelogFile="true"/>
+    <include file="changes/014-create-reviews-table.xml" relativeToChangelogFile="true"/>
+    <include file="changes/015-add-users-avatar.xml" relativeToChangelogFile="true"/>
+    <include file="changes/016-add-ad-can-deliver.xml" relativeToChangelogFile="true"/>
+    <include file="changes/017-extend-users-avatar-length.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

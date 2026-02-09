@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="009-create-conversations-table" author="qoldan-qolga">
+        <createTable tableName="conversations">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="conversations_pkey"/>
+            </column>
+            <column name="ad_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="buyer_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="conversations" columnNames="ad_id, buyer_id" constraintName="uk_conversations_ad_buyer"/>
+        <addForeignKeyConstraint baseTableName="conversations" baseColumnNames="ad_id"
+            constraintName="fk_conversations_ad" referencedTableName="advertisements" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="conversations" baseColumnNames="buyer_id"
+            constraintName="fk_conversations_buyer" referencedTableName="users" referencedColumnNames="id"/>
+        <createIndex tableName="conversations" indexName="ix_conversations_buyer_id">
+            <column name="buyer_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="009-create-messages-table" author="qoldan-qolga">
+        <createTable tableName="messages">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="messages_pkey"/>
+            </column>
+            <column name="conversation_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="messages" baseColumnNames="conversation_id"
+            constraintName="fk_messages_conversation" referencedTableName="conversations" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="messages" baseColumnNames="sender_id"
+            constraintName="fk_messages_sender" referencedTableName="users" referencedColumnNames="id"/>
+        <createIndex tableName="messages" indexName="ix_messages_conversation_id">
+            <column name="conversation_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

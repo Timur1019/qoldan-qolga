@@ -3,7 +3,10 @@ package com.test.qoldanqolga.service.impl;
 import com.test.qoldanqolga.dto.auth.AuthResponse;
 import com.test.qoldanqolga.dto.auth.LoginRequest;
 import com.test.qoldanqolga.dto.auth.RegisterRequest;
+import com.test.qoldanqolga.dto.auth.UpdateProfileRequest;
 import com.test.qoldanqolga.dto.auth.UserInfo;
+import com.test.qoldanqolga.exception.ConflictException;
+import com.test.qoldanqolga.exception.InvalidCredentialsException;
 import com.test.qoldanqolga.mapper.UserMapper;
 import com.test.qoldanqolga.model.User;
 import com.test.qoldanqolga.repository.UserRepository;
@@ -27,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Пользователь с таким email уже зарегистрирован");
+            throw new ConflictException("Пользователь с таким email уже зарегистрирован");
         }
         User user = userMapper.toUser(request);
         user.setEmail(request.getEmail().trim().toLowerCase());
@@ -40,12 +43,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
-                .orElseThrow(() -> new IllegalArgumentException("Неверный email или пароль"));
+                .orElseThrow(() -> new InvalidCredentialsException("Неверный email или пароль"));
         if (user.isDeleted()) {
-            throw new IllegalArgumentException("Аккаунт недоступен");
+            throw new InvalidCredentialsException("Аккаунт недоступен");
         }
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("Неверный email или пароль");
+            throw new InvalidCredentialsException("Неверный email или пароль");
         }
         return userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
     }
@@ -56,5 +59,26 @@ public class AuthServiceImpl implements AuthService {
                 .filter(u -> !u.isDeleted())
                 .map(userMapper::toDto)
                 .orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public UserInfo updateProfile(String userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .filter(u -> !u.isDeleted())
+                .orElse(null);
+        if (user == null) return null;
+        user.setDisplayName(request.getDisplayName().trim());
+        String newEmail = request.getEmail() != null ? request.getEmail().trim().toLowerCase() : null;
+        if (newEmail != null && !newEmail.equals(user.getEmail())) {
+            if (userRepository.existsByEmail(newEmail)) {
+                throw new ConflictException("Пользователь с таким email уже зарегистрирован");
+            }
+            user.setEmail(newEmail);
+        }
+        String av = request.getAvatar();
+        user.setAvatar(av != null && !av.isBlank() && av.length() <= 512 ? av.trim() : null);
+        userRepository.save(user);
+        return userMapper.toDto(user);
     }
 }

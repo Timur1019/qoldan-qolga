@@ -27,6 +27,8 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
 
     Page<Advertisement> findByUserIdOrderByCreatedAtDesc(String userId, Pageable pageable);
 
+    long countByUserIdAndStatus(String userId, String status);
+
     @Query("SELECT a FROM Advertisement a LEFT JOIN FETCH a.user LEFT JOIN FETCH a.images WHERE a.id = :id")
     Optional<Advertisement> findByIdWithUserAndImages(Long id);
 

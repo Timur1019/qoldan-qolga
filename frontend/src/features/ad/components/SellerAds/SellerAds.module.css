@@ -1,0 +1,135 @@
+.wrap {
+  margin-top: 0;
+  padding: 1.5rem;
+}
+
+.section {
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-title, 1.2rem);
+  font-weight: 600;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.arrow,
+.arrowRight {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s;
+}
+
+.arrow:hover,
+.arrowRight:hover {
+  background: #e5e7eb;
+}
+
+.arrowRight {
+  background: #111;
+  color: #fff;
+}
+
+.arrowRight:hover {
+  background: #374151;
+}
+
+.scrollWrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.scrollWrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  padding-right: 1rem;
+}
+
+.grid li {
+  flex: 0 0 240px;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  width: 240px;
+  min-width: 240px;
+}
+
+.card:hover {
+  border-color: var(--color-primary, #2563eb);
+}
+
+.img,
+.imgPlaceholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.imgPlaceholder {
+  background: #e5e7eb;
+}
+
+.body {
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.price {
+  font-weight: 600;
+  font-size: var(--font-size-body, 1.0625rem);
+}
+
+.cardTitle {
+  font-size: var(--font-size-small, 1rem);
+  color: var(--color-muted, #666);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

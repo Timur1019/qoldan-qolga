@@ -26,6 +26,7 @@ public class AdDetailDto {
     private String district;
     private String status;
     private Boolean isNegotiable;
+    private Boolean canDeliver;
     private String userId;
     private String userDisplayName;
     private Integer views;

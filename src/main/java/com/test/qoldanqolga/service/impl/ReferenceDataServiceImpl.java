@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,32 +36,36 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getAllCategories() {
+        Set<Long> parentIds = getCategoryParentIdsWithChildren();
         return categoryRepository.findAllByOrderBySortOrderAscNameUzAsc().stream()
-                .map(c -> toCategoryDto(c, categoryRepository.countByParentId(c.getId()) > 0))
+                .map(c -> toCategoryDto(c, parentIds.contains(c.getId())))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getRootCategories() {
+        Set<Long> parentIds = getCategoryParentIdsWithChildren();
         return categoryRepository.findByParentIdIsNullOrderBySortOrderAscNameUzAsc().stream()
-                .map(c -> toCategoryDto(c, categoryRepository.countByParentId(c.getId()) > 0))
+                .map(c -> toCategoryDto(c, parentIds.contains(c.getId())))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<CategoryDto> getCategoryByCode(String code) {
+        Set<Long> parentIds = getCategoryParentIdsWithChildren();
         return categoryRepository.findByCode(code)
-                .map(c -> toCategoryDto(c, categoryRepository.countByParentId(c.getId()) > 0));
+                .map(c -> toCategoryDto(c, parentIds.contains(c.getId())));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getChildCategories(String parentCode) {
+        Set<Long> parentIds = getCategoryParentIdsWithChildren();
         return categoryRepository.findByCode(parentCode)
                 .map(parent -> categoryRepository.findByParentIdOrderBySortOrderAscNameUzAsc(parent.getId()).stream()
-                        .map(c -> toCategoryDto(c, categoryRepository.countByParentId(c.getId()) > 0))
+                        .map(c -> toCategoryDto(c, parentIds.contains(c.getId())))
                         .collect(Collectors.toList()))
                 .orElse(List.of());
     }
@@ -68,9 +73,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getCategoriesForHome() {
+        Set<Long> parentIds = getCategoryParentIdsWithChildren();
         return categoryRepository.findByShowOnHomeTrueOrderBySortOrderAscNameUzAsc().stream()
-                .map(c -> toCategoryDto(c, categoryRepository.countByParentId(c.getId()) > 0))
+                .map(c -> toCategoryDto(c, parentIds.contains(c.getId())))
                 .collect(Collectors.toList());
+    }
+
+    /** Один запрос вместо N для определения hasChildren у категорий. */
+    private Set<Long> getCategoryParentIdsWithChildren() {
+        return categoryRepository.findDistinctParentIds().stream().collect(Collectors.toSet());
     }
 
     private RegionDto toRegionDto(Region r) {

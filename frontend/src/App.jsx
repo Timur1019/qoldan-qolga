@@ -1,15 +1,15 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { Layout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { Layout, ProfileLayout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { AdDetail, AdsList, CategoryView, CreateAd, Favorites } from './features/ad'
 import {
   Home,
   Dashboard,
   AdminDashboard,
-  AdsList,
-  AdDetail,
   MyAds,
-  CreateAd,
-  Favorites,
-  CategoryView,
+  MyReviews,
+  EditProfile,
+  Chat,
+  SellerProfile,
 } from './pages'
 
 export default function App() {
@@ -21,14 +21,8 @@ export default function App() {
         <Route path="register" element={<Navigate to="/?auth=register" replace />} />
         <Route path="ads" element={<AdsList />} />
         <Route path="categories/:code" element={<CategoryView />} />
-        <Route
-          path="ads/my"
-          element={
-            <ProtectedRoute>
-              <MyAds />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="ads/my" element={<Navigate to="/dashboard/ads" replace />} />
+        <Route path="favorites" element={<Navigate to="/dashboard/favorites" replace />} />
         <Route
           path="ads/create"
           element={
@@ -37,23 +31,33 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="ads/:id" element={<AdDetail />} />
         <Route
-          path="favorites"
+          path="ads/:id/edit"
           element={
             <ProtectedRoute>
-              <Favorites />
+              <CreateAd edit />
             </ProtectedRoute>
           }
         />
+        <Route path="ads/:id" element={<AdDetail />} />
+        <Route path="users/:id" element={<SellerProfile />} />
         <Route
           path="dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <ProfileLayout>
+                <Outlet />
+              </ProfileLayout>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="profile/edit" element={<EditProfile />} />
+          <Route path="ads" element={<MyAds />} />
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="reviews" element={<MyReviews />} />
+          <Route path="chat" element={<Chat />} />
+        </Route>
       </Route>
       <Route
         path="/admin"

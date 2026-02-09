@@ -1,0 +1,718 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+
+/* Табы внутри секции объявлений */
+.profileTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  margin-bottom: 1rem;
+}
+
+.profileTab {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-muted, #666);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.profileTab:hover {
+  color: #111;
+}
+
+.profileTabActive {
+  color: var(--color-primary, #2563eb);
+  font-weight: 600;
+  border-bottom-color: var(--color-primary, #2563eb);
+}
+
+.tabDot {
+  color: var(--color-primary, #2563eb);
+  font-size: 0.7em;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profileCard {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarEmoji {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.avatarInitials {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.sellerName {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.profileStats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+  margin-bottom: 0.5rem;
+}
+
+.profileStatsList {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+}
+
+.profileStatsList li {
+  margin-bottom: 0.25rem;
+}
+
+.verificationBadge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.verificationBadgeOk {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.verificationBadgeNone {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.editBtn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+  border-radius: 10px;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+
+.editBtn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.profileSince {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+}
+
+.subscribeBtn {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #c026d3;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.subscribeBtn:hover {
+  background: #a21caf;
+}
+
+.subscribeBtnActive {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #6b7280;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Панель владельца: «Мои отзывы» (только при просмотре своего профиля) */
+.ownerPanelCard {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.ownerPanelTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ownerPanelLink {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--color-primary, #2563eb);
+  text-decoration: none;
+}
+
+.ownerPanelLink:hover {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ownerPanelCard .shareProfileBtn {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ownerPanelCard .shareProfileBtn:hover {
+  background: #333;
+}
+
+.leaveReviewCard {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.leaveReviewHint {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+}
+
+.leaveReviewBtn {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.leaveReviewBtn:hover {
+  background: #333;
+}
+
+.adsSection {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.adsTitle {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted, #666);
+}
+
+.adsGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.adCard {
+  position: relative;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.adLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.adImg,
+.adImgPlaceholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+}
+
+.adImg {
+  object-fit: cover;
+}
+
+.adImgPlaceholder {
+  background: #e5e7eb;
+}
+
+.adBody {
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.adPrice {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.adTitle {
+  font-size: 0.85rem;
+  color: var(--color-muted, #666);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adMeta {
+  font-size: 0.8rem;
+  color: var(--color-muted, #999);
+}
+
+.favBtn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error {
+  color: var(--color-error, #c00);
+}
+
+/* Reviews section */
+.reviewsSection {
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.reviewsSectionPage {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.reviewsSectionPage .shareProfileBtn {
+  background: #eff6ff;
+}
+
+.reviewsTitle {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.reviewsSummary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.rateLink {
+  margin-left: auto;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary, #2563eb);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.rateLink:hover {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reviewsEmpty {
+  padding: 1.5rem 0;
+  text-align: center;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.reviewsEmptyText {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: var(--color-muted, #666);
+}
+
+.reviewsEmptyBtn {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reviewsEmptyBtn:hover {
+  background: #333;
+}
+
+.shareProfileRow {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.shareProfileBtn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary, #2563eb);
+  background: none;
+  border: 1px solid var(--color-primary, #2563eb);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.shareProfileBtn:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.avgRating {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.reviewsCount {
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+}
+
+.starBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.starRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.starEmpty,
+.starFilled {
+  font-size: 0.9rem;
+}
+
+.starEmpty {
+  color: #d1d5db;
+}
+
+.starFilled {
+  color: #f59e0b;
+}
+
+.starCount {
+  font-size: 0.85rem;
+  color: var(--color-muted, #666);
+  min-width: 1.5rem;
+}
+
+.reviewsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  padding-top: 1rem;
+}
+
+.reviewItem {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.reviewItem:last-child {
+  border-bottom: none;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.reviewAuthor {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.reviewDate {
+  font-size: 0.85rem;
+  color: var(--color-muted, #666);
+}
+
+.reviewStars {
+  margin-bottom: 0.25rem;
+}
+
+.reviewText {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #374151;
+}
+
+/* Review modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.modalClose {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  color: #111;
+}
+
+.modalBody {
+  padding: 1.25rem;
+}
+
+.modalLabel {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.modalLabel:last-of-type {
+  margin-bottom: 0;
+}
+
+.ratingSelect {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.ratingBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.25rem;
+  color: #d1d5db;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ratingBtn:hover {
+  background: #e5e7eb;
+}
+
+.ratingBtnActive {
+  color: #f59e0b;
+  background: #fffbeb;
+}
+
+.reviewTextarea {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.reviewError {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-error, #c00);
+}
+
+.modalFooter {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #333;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* CTA блок */
+.ctaBlock {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.ctaTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ctaHint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+}

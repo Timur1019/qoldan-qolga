@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Outlet, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { referenceApi } from '../../api/client'
-import AuthModal from '../AuthModal/AuthModal'
+import { useAuthModal, useChatUnreadCount } from '../../hooks'
+import { referenceApi, imageUrl } from '../../api/client'
+import { PARAMS, ROUTES } from '../../constants/routes'
+import { AuthModal } from '../../features/auth'
 import CategoriesModal from '../CategoriesModal/CategoriesModal'
 import styles from './Layout.module.css'
+
+const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 const locationIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 18, height: 18, flexShrink: 0 }} aria-hidden>
@@ -122,21 +126,24 @@ export default function Layout() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [regions, setRegions] = useState([])
   const [regionOpen, setRegionOpen] = useState(false)
-  const authParam = searchParams.get('auth')
-  const authOpen = authParam === 'login' || authParam === 'register'
-  const authInitialMode = authParam === 'register' ? 'register' : 'login'
-  const selectedRegionCode = location.pathname === '/ads' ? (searchParams.get('region') || '') : ''
+  const openAuthModal = useAuthModal()
+  const chatUnreadCount = useChatUnreadCount()
+
+  const authParam = searchParams.get(PARAMS.AUTH)
+  const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
+  const authInitialMode = authParam === PARAMS.AUTH_REGISTER ? 'register' : 'login'
+  const selectedRegionCode = location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.REGION) || '') : ''
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
   }, [])
 
   useEffect(() => {
-    if (searchParams.get('open') === 'categories') {
+    if (searchParams.get(PARAMS.OPEN_CATEGORIES) === PARAMS.OPEN_CATEGORIES_VALUE) {
       setCategoriesOpen(true)
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
-        next.delete('open')
+        next.delete(PARAMS.OPEN_CATEGORIES)
         return next
       }, { replace: true })
     }
@@ -149,24 +156,16 @@ export default function Layout() {
 
   const handleSelectRegion = (code) => {
     setRegionOpen(false)
-    if (location.pathname === '/ads') {
+    if (location.pathname === ROUTES.ADS) {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
-        if (code) next.set('region', code)
-        else next.delete('region')
+        if (code) next.set(PARAMS.REGION, code)
+        else next.delete(PARAMS.REGION)
         return next
       })
     } else {
-      navigate(code ? `/ads?region=${encodeURIComponent(code)}` : '/ads')
+      navigate(code ? `${ROUTES.ADS}?${PARAMS.REGION}=${encodeURIComponent(code)}` : ROUTES.ADS)
     }
-  }
-
-  const openAuthModal = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set('auth', 'login')
-      return next
-    }, { replace: true })
   }
 
   return (
@@ -281,9 +280,16 @@ export default function Layout() {
                     <span className={styles.navIcon}>{NavIcons.heart}</span>
                     <span className={styles.navLabel}>{t('nav.favorites')}</span>
                   </Link>
-                  <Link to="/dashboard" className={styles.navLink}>
-                    <span className={styles.navIcon}>{NavIcons.message}</span>
-                    <span className={styles.navLabel}>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
+                  <Link to={ROUTES.CHAT} className={styles.navLink}>
+                    <span className={styles.navLinkWrap}>
+                      <span className={styles.navIcon}>{NavIcons.message}</span>
+                      {chatUnreadCount > 0 && (
+                        <span className={styles.navBadge} aria-label={t('chat.messagesCount')}>
+                          {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+                        </span>
+                      )}
+                    </span>
+                    <span className={styles.navLabel}>{t('profile.chat')}</span>
                   </Link>
                   <div className={styles.profileWrap}>
                     <button
@@ -295,7 +301,15 @@ export default function Layout() {
                       aria-label={t('nav.profile')}
                     >
                       <span className={styles.profileAvatar}>
-                        <span className={styles.profileAvatarIcon}>{NavIcons.user}</span>
+                        <span className={styles.profileAvatarIcon}>
+                          {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
+                            <img src={imageUrl(user.avatar)} alt="" className={styles.profileAvatarImg} />
+                          ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
+                            AVATAR_EMOJI[user.avatar]
+                          ) : (
+                            NavIcons.user
+                          )}
+                        </span>
                       </span>
                       <span className={styles.navLabel}>{t('nav.profile')}</span>
                     </button>
@@ -309,10 +323,24 @@ export default function Layout() {
                         />
                         <div className={styles.profileDropdown} role="menu">
                           <div className={styles.profileDropdownHeader}>
-                            <span className={styles.profileDropdownAvatar}>
-                              <span className={styles.profileDropdownAvatarIcon}>{NavIcons.user}</span>
-                            </span>
-                            <span className={styles.profileDropdownTitle}>{t('nav.profile')}</span>
+                            <Link
+                              to={ROUTES.PROFILE_EDIT}
+                              className={styles.profileDropdownProfileLink}
+                              onClick={() => setProfileOpen(false)}
+                            >
+                              <span className={styles.profileDropdownAvatar}>
+                                <span className={styles.profileDropdownAvatarIcon}>
+                                  {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
+                                    <img src={imageUrl(user.avatar)} alt="" className={styles.profileDropdownAvatarImg} />
+                                  ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
+                                    AVATAR_EMOJI[user.avatar]
+                                  ) : (
+                                    NavIcons.user
+                                  )}
+                                </span>
+                              </span>
+                              <span className={styles.profileDropdownTitle}>{t('nav.profile')}</span>
+                            </Link>
                             <Link
                               to="/ads/create"
                               className={styles.profileSellBtn}
@@ -331,13 +359,18 @@ export default function Layout() {
                               <span className={styles.profileMenuIcon}>{NavIcons.megaphone}</span>
                               <span>{t('nav.myAds')}</span>
                             </Link>
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
+                            <Link to={ROUTES.REVIEWS_MY} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.star}</span>
                               <span>{lang === 'ru' ? 'Мои отзывы' : 'Mening sharhlarim'}</span>
                             </Link>
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
+                            <Link to={ROUTES.CHAT} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.message}</span>
-                              <span>{lang === 'ru' ? 'Сообщения' : 'Xabarlar'}</span>
+                              <span>{t('profile.chat')}</span>
+                              {chatUnreadCount > 0 && (
+                                <span className={styles.profileMenuBadge} aria-label={t('chat.messagesCount')}>
+                                  {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+                                </span>
+                              )}
                             </Link>
                             <div className={styles.profileMenuDivider} />
                             <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
@@ -405,7 +438,7 @@ export default function Layout() {
                   setCategoriesOpen(false)
                   setSearchParams((prev) => {
                     const next = new URLSearchParams(prev)
-                    next.delete('open')
+                    next.delete(PARAMS.OPEN_CATEGORIES)
                     return next
                   }, { replace: true })
                 }}

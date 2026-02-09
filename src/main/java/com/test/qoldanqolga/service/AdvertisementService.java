@@ -12,7 +12,23 @@ public interface AdvertisementService {
 
     Page<AdListItemDto> listByUser(String userId, Pageable pageable);
 
+    Page<AdListItemDto> listByUser(String userId, Pageable pageable, String currentUserId);
+
+    long countByUser(String userId);
+
     AdDetailDto getById(Long id, String currentUserId);
 
+    void recordView(Long id);
+
     AdDetailDto create(CreateAdRequest request, String userId);
+
+    AdDetailDto update(Long id, CreateAdRequest request, String userId);
+
+    void delete(Long id, String userId);
+
+    /** Закрыть объявление (перенести в архив). */
+    void archive(Long id, String userId);
+
+    /** Вывести объявление из архива (вернуть в активные). */
+    void restore(Long id, String userId);
 }
