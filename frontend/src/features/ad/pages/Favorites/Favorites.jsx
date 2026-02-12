@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
-import { adsApi, favoritesApi, imageUrl } from '../../services/adApi'
+import { adsApi, favoritesApi } from '../../services/adApi'
 import { formatPrice } from '../../../../utils/formatters'
 import { ROUTES, adsPath } from '../../../../constants/routes'
 import HeartIcon from '../../../../components/ui/HeartIcon'
+import CardGallery from '../../components/CardGallery'
 import styles from './Favorites.module.css'
 
 export default function Favorites() {
@@ -38,6 +39,7 @@ export default function Favorites() {
           totalElements: newTotal,
         }
       })
+      window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
     }).catch(() => {})
   }
 
@@ -74,18 +76,16 @@ export default function Favorites() {
             <li key={ad.id} className={styles.card}>
               <Link to={adsPath(ad.id)} className={styles.cardLink}>
                 <span className={styles.cardImageWrap}>
-                  {ad.mainImageUrl ? (
-                    <img src={imageUrl(ad.mainImageUrl)} alt="" className={styles.cardImage} />
-                  ) : (
-                    <div className={styles.cardImagePlaceholder} />
-                  )}
+                  <CardGallery
+                    imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+                  />
                   <button
                     type="button"
                     className={styles.favoriteBtn}
                     onClick={(e) => handleRemoveFavorite(e, ad)}
                     aria-label={t('common.removeFromFavorites')}
                   >
-                    <HeartIcon filled className={styles.heartIcon} size={20} />
+                    <HeartIcon filled className={`${styles.heartIcon} ${styles.heartFilled}`} size={20} />
                   </button>
                 </span>
                 <div className={styles.cardBody}>

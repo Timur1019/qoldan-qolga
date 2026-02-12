@@ -13,11 +13,11 @@
  * Приватная страница «Мои отзывы» (отзывы, которые я оставил) — отдельно: /dashboard/reviews.
  */
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, Link, useSearchParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
 import { usersApi } from '../../api/client'
-import { useFavoriteClick } from '../../hooks'
+import { useFavoriteClick, useAuthModal } from '../../hooks'
 import SellerProfileSidebar from './SellerProfileSidebar'
 import SellerAdsSection from './SellerAdsSection'
 import SellerReviewsSection from './SellerReviewsSection'
@@ -31,7 +31,6 @@ export default function SellerProfile() {
   const { id } = useParams()
   const { t } = useLang()
   const { isAuthenticated, user } = useAuth()
-  const [searchParams, setSearchParams] = useSearchParams()
   const [profile, setProfile] = useState(null)
   const [adsData, setAdsData] = useState({ content: [], totalElements: 0 })
   const [reviewsData, setReviewsData] = useState(null)
@@ -42,13 +41,7 @@ export default function SellerProfile() {
   const [reviewError, setReviewError] = useState('')
   const [activeTab, setActiveTab] = useState('active')
 
-  const openAuthModal = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set('auth', 'login')
-      return next
-    }, { replace: true })
-  }
+  const openAuthModal = useAuthModal()
 
   const updateAdFavorite = (adId, favorite) => {
     setAdsData((prev) => ({

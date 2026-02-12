@@ -7,21 +7,21 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, String> {
 
     /** Id родительских категорий, у которых есть хотя бы одна дочерняя. Для заполнения hasChildren без N+1. */
     @Query("SELECT DISTINCT c.parentId FROM Category c WHERE c.parentId IS NOT NULL")
-    List<Long> findDistinctParentIds();
+    List<String> findDistinctParentIds();
 
     List<Category> findAllByOrderBySortOrderAscNameUzAsc();
 
     List<Category> findByParentIdIsNullOrderBySortOrderAscNameUzAsc();
 
-    List<Category> findByParentIdOrderBySortOrderAscNameUzAsc(Long parentId);
+    List<Category> findByParentIdOrderBySortOrderAscNameUzAsc(String parentId);
 
-    List<Category> findByParentId(Long parentId);
+    List<Category> findByParentId(String parentId);
 
-    long countByParentId(Long parentId);
+    long countByParentId(String parentId);
 
     List<Category> findByShowOnHomeTrueOrderBySortOrderAscNameUzAsc();
 

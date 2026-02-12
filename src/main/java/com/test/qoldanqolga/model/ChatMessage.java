@@ -1,20 +1,19 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "messages")
 @Getter
 @Setter
-public class ChatMessage {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ChatMessage extends BaseEntity {
 
     @Column(name = "conversation_id", nullable = false, length = 36)
     private String conversationId;
@@ -32,12 +31,4 @@ public class ChatMessage {
 
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")
     private String text;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) createdAt = Instant.now();
-    }
 }

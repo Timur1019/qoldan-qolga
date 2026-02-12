@@ -57,7 +57,7 @@
 
 .guideBtn {
   font-size: 0.875rem;
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   background: none;
   border: none;
   padding: 0;
@@ -156,12 +156,9 @@
   font-size: 1rem;
 }
 
-.placeAdWrap {
-  margin-top: 1.25rem;
-}
-
 .placeAdBtn {
   display: inline-block;
+  margin-top: 0.75rem;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
@@ -183,6 +180,166 @@
   color: var(--color-error, #c00);
 }
 
+/* Список объявлений: полноширинные строки, компактная высота */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.row {
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  background: #fff;
+  margin-bottom: 0.5rem;
+  overflow: visible;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.rowArchived {
+  opacity: 0.8;
+  background: #f9fafb;
+}
+
+.rowArchived .rowImage,
+.rowArchived .rowImagePlaceholder {
+  filter: grayscale(0.5);
+}
+
+.rowInner {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  min-height: 88px;
+}
+
+.rowLink {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  padding: 0.5rem 0;
+}
+
+.rowImageWrap {
+  flex-shrink: 0;
+  width: 180px;
+  height: 120px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.rowImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rowImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #e5e7eb;
+}
+
+.rowBody {
+  flex: 1;
+  min-width: 0;
+  padding: 0 1rem;
+}
+
+.rowTitle {
+  margin: 0 0 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.rowPrice {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.rowStatusPending {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #ea580c;
+}
+
+.rowBuyPromo {
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: #1c87dd;
+  border: 1px solid #0398f7;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rowBuyPromo:hover {
+  background: #2370bc;
+  border-color: #4792dc;
+  color: #fff;
+}
+
+.rowMenuBtn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin: auto 0.5rem auto 0;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rowMenuBtn:hover {
+  background: #f9fafb;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.rowMenuDots {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rowDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0.5rem;
+  margin-top: 0.25rem;
+  min-width: 200px;
+  padding: 0.25rem 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  border: 1px solid var(--color-border, #e5e7eb);
+}
+
 .grid {
   list-style: none;
   margin: 0;
@@ -190,6 +347,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
+  overflow: visible;
 }
 
 .card {
@@ -204,6 +362,7 @@
   background: #f5f5f5;
 }
 
+.cardArchived .cardLink img,
 .cardArchived .cardImage,
 .cardArchived .cardImagePlaceholder {
   filter: grayscale(0.6);
@@ -239,23 +398,25 @@
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.18);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.98);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  color: #1f2937;
 }
 
 .cardMenuBtn:hover {
   background: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.25);
 }
 
 .cardMenuDots {
@@ -267,14 +428,14 @@
 
 .cardDropdown {
   position: absolute;
-  top: 2.5rem;
+  top: 2.75rem;
   right: 0.5rem;
   min-width: 200px;
   padding: 0.25rem 0;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  z-index: 100;
   border: 1px solid var(--color-border, #e5e7eb);
 }
 
@@ -299,12 +460,12 @@
 }
 
 .cardDropdownItemDanger {
-  color: #dc2626;
+  color: var(--color-dark);
   font-weight: 500;
 }
 
 .cardDropdownItemDanger:hover {
-  background: #fef2f2;
+  background: var(--color-bg-subtle);
 }
 
 .cardBody {
@@ -324,6 +485,33 @@
 .cardPrice {
   margin: 0;
   font-weight: 600;
+  color: #111827;
+}
+
+.cardStatusPending {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #ea580c;
+}
+
+.cardBuyPromoBtn {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary, #7c3aed);
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cardBuyPromoBtn:hover {
+  background: rgba(124, 58, 237, 0.18);
+  border-color: var(--color-primary, #7c3aed);
 }
 
 .cardActions {
@@ -336,30 +524,169 @@
 .cardActionBtn {
   font-size: 0.85rem;
   padding: 0.35rem 0.75rem;
-  color: var(--color-primary, #2563eb);
-  background: #eff6ff;
+  color: var(--color-primary);
+  background: rgba(2, 153, 247, 0.1);
   border-radius: 6px;
   text-decoration: none;
   border: 1px solid transparent;
 }
 
 .cardActionBtn:hover {
-  background: #dbeafe;
-  color: var(--color-primary, #2563eb);
+  background: rgba(2, 153, 247, 0.18);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .cardActionBtnDanger {
   font-size: 0.85rem;
   padding: 0.35rem 0.75rem;
-  color: #dc2626;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  color: var(--color-dark);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   cursor: pointer;
   font: inherit;
 }
 
 .cardActionBtnDanger:hover {
-  background: #fee2e2;
+  background: #e5e7eb;
+  color: var(--color-dark-hover);
+}
+
+/* Модальное окно «Сделайте объявление заметнее» */
+.promoOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.promoModal {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.promoModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.promoModalTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.promoModalClose {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 1.25rem;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promoModalClose:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.promoModalBody {
+  padding: 1.5rem;
+}
+
+.promoOption {
+  padding: 1rem;
+  border: 2px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.promoOption:last-of-type {
+  margin-bottom: 0;
+}
+
+.promoOptionLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.promoRadio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary, #7c3aed);
+  cursor: pointer;
+}
+
+.promoOptionTitle {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.promoOptionPrice {
+  margin: 0.35rem 0 0 2rem;
+  font-size: 0.9rem;
+  color: var(--color-primary, #7c3aed);
+  font-weight: 500;
+}
+
+.promoOptionDesc {
+  margin: 0.25rem 0 0 2rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.promoWarning {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.promoModalFooter {
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.promoPayBtn {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-primary, #7c3aed);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.promoPayBtn:hover {
+  filter: brightness(1.05);
 }

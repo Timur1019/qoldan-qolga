@@ -14,7 +14,7 @@ import java.time.Instant;
 public class ConversationDto {
 
     private String id;
-    private Long adId;
+    private String adId;
     private String adTitle;
     private String otherPartyName;  // продавец для покупателя, покупатель для продавца
     private String otherPartyId;

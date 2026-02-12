@@ -15,3 +15,147 @@
 .error {
   color: var(--color-error, #c00);
 }
+
+.success {
+  color: var(--color-success, #0a0);
+  margin: 0 0 0.5rem;
+}
+
+.muted {
+  color: var(--color-muted, #666);
+  margin: 0;
+}
+
+.section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.sectionTitle {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #374151;
+  min-width: 180px;
+}
+
+.input,
+.select {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 240px;
+}
+
+.inputNum {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  width: 80px;
+}
+
+.checkWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.submitBtn {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background: var(--color-primary, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
+  opacity: 0.9;
+}
+
+.categoryTree {
+  margin-top: 0.5rem;
+}
+
+.treeTitle {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.treeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.treeItem {
+  margin-bottom: 0.5rem;
+}
+
+.treeName {
+  margin-right: 0.5rem;
+}
+
+.code {
+  font-size: 0.85em;
+  background: #f3f4f6;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  color: #6b7280;
+}
+
+.subBtn {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  background: transparent;
+  color: var(--color-primary, #2563eb);
+  border: 1px solid var(--color-primary, #2563eb);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.subBtn:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.treeSublist {
+  list-style: none;
+  margin: 0.25rem 0 0 1rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--color-border, #e5e7eb);
+}
+
+.treeSubitem {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}

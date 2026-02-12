@@ -1,10 +1,11 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "favorites", uniqueConstraints = {
@@ -12,23 +13,11 @@ import java.time.Instant;
 })
 @Getter
 @Setter
-public class Favorite {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Favorite extends BaseEntity {
 
     @Column(name = "user_id", nullable = false, length = 36)
     private String userId;
 
-    @Column(name = "advertisement_id", nullable = false)
-    private Long advertisementId;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) createdAt = Instant.now();
-    }
+    @Column(name = "advertisement_id", nullable = false, length = 36)
+    private String advertisementId;
 }

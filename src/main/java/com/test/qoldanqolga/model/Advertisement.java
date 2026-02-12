@@ -1,6 +1,16 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import com.test.qoldanqolga.constant.AdConstants;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,14 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "advertisements")
+@Table(name = "advertisements", indexes = {
+        @Index(name = "idx_ad_user_id", columnList = "user_id"),
+        @Index(name = "idx_ad_status", columnList = "status"),
+        @Index(name = "idx_ad_category", columnList = "category"),
+        @Index(name = "idx_ad_created_at", columnList = "created_at")
+})
 @Getter
 @Setter
-public class Advertisement {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Advertisement extends BaseEntity {
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -29,10 +40,10 @@ public class Advertisement {
     private BigDecimal price;
 
     @Column(length = 3)
-    private String currency = "UZS";
+    private String currency = AdConstants.CURRENCY_DEFAULT;
 
     @Column(nullable = false, length = 50)
-    private String category = "Xizmatlar";
+    private String category = AdConstants.CATEGORY_DEFAULT;
 
     @Column(nullable = false, length = 20)
     private String phone;
@@ -47,13 +58,28 @@ public class Advertisement {
     private String district;
 
     @Column(nullable = false, length = 20)
-    private String status = "ACTIVE";
+    private String status = AdConstants.STATUS_ACTIVE;
 
     @Column(nullable = false)
     private Boolean isNegotiable = false;
 
     @Column(name = "can_deliver", nullable = false)
     private Boolean canDeliver = false;
+
+    @Column(name = "seller_type", length = 20)
+    private String sellerType;
+
+    @Column(name = "has_license", nullable = false)
+    private Boolean hasLicense = false;
+
+    @Column(name = "works_by_contract", nullable = false)
+    private Boolean worksByContract = false;
+
+    @Column(name = "urgent_bargain", nullable = false)
+    private Boolean urgentBargain = false;
+
+    @Column(name = "give_away", nullable = false)
+    private Boolean giveAway = false;
 
     @Column(name = "user_id", nullable = false, length = 36)
     private String userId;
@@ -65,12 +91,6 @@ public class Advertisement {
     @Column(nullable = false)
     private Integer views = 0;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
-
     @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
 
@@ -78,15 +98,4 @@ public class Advertisement {
     @OrderBy("orderNum, id")
     private List<AdImage> images = new ArrayList<>();
 
-    @PrePersist
-    public void prePersist() {
-        Instant now = Instant.now();
-        if (createdAt == null) createdAt = now;
-        if (updatedAt == null) updatedAt = now;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = Instant.now();
-    }
 }

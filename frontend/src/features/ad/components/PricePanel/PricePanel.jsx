@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { useLang } from '../../../../context/LangContext'
-import { formatPrice, formatDate } from '../../utils/adFormatters'
+import { formatPrice, formatDate, maskPhone } from '../../utils/adFormatters'
 import styles from './PricePanel.module.css'
 
 function LightningIcon() {
@@ -25,8 +25,15 @@ function PricePanel({
   onChat,
   chatGoing,
   isOwner,
+  isAuthenticated,
+  phoneRevealed,
+  onPhoneClick,
 }) {
   const { t } = useLang()
+  const fullNumber = ad?.phone ? `+${(ad.phone || '').replace(/\D/g, '')}` : ''
+  const handlePhoneAction = () => {
+    if (onPhoneClick) onPhoneClick()
+  }
 
   return (
     <>
@@ -53,9 +60,23 @@ function PricePanel({
         >
           {chatGoing ? t('common.loading') : t('ads.chatWith')}
         </button>
-        <a href={`tel:${(ad?.phone || '').replace(/\D/g, '')}`} className={styles.contactBtnPhone}>
-          {t('ads.phone')}
-        </a>
+        {phoneRevealed && fullNumber ? (
+          <span className={styles.contactPhoneRevealed}>
+            <span className={styles.contactPhoneNumber}>{fullNumber}</span>
+            <a href={`tel:${(ad?.phone || '').replace(/\D/g, '')}`} className={styles.contactBtnCall}>
+              {t('ads.call')}
+            </a>
+          </span>
+        ) : (
+          <button
+            type="button"
+            className={styles.contactBtnPhone}
+            onClick={handlePhoneAction}
+            title={!isAuthenticated ? t('ads.phoneLoginRequired') : t('ads.phone')}
+          >
+            {ad?.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
+          </button>
+        )}
         <a
           href={`https://t.me/${(ad?.phone || '').replace(/\D/g, '').slice(-9)}`}
           target="_blank"

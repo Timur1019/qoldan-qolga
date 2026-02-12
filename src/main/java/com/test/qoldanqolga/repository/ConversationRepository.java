@@ -11,12 +11,16 @@ import java.util.Optional;
 public interface ConversationRepository extends JpaRepository<Conversation, String> {
 
     @Query("SELECT c FROM Conversation c LEFT JOIN FETCH c.ad LEFT JOIN FETCH c.buyer WHERE c.adId = :adId AND c.buyerId = :buyerId")
-    Optional<Conversation> findByAdIdAndBuyerIdWithAdAndBuyer(@Param("adId") Long adId, @Param("buyerId") String buyerId);
+    Optional<Conversation> findByAdIdAndBuyerIdWithAdAndBuyer(@Param("adId") String adId, @Param("buyerId") String buyerId);
 
-    default Optional<Conversation> findByAdIdAndBuyerId(Long adId, String buyerId) {
+    default Optional<Conversation> findByAdIdAndBuyerId(String adId, String buyerId) {
         return findByAdIdAndBuyerIdWithAdAndBuyer(adId, buyerId);
     }
 
-    @Query("SELECT DISTINCT c FROM Conversation c LEFT JOIN FETCH c.ad LEFT JOIN FETCH c.buyer WHERE c.buyerId = :userId OR c.ad.userId = :userId ORDER BY c.createdAt DESC")
+    @Query("SELECT DISTINCT c FROM Conversation c " +
+           "LEFT JOIN FETCH c.ad a " +
+           "LEFT JOIN FETCH a.user " +
+           "LEFT JOIN FETCH c.buyer " +
+           "WHERE c.buyerId = :userId OR a.userId = :userId ORDER BY c.createdAt DESC")
     List<Conversation> findAllByParticipant(@Param("userId") String userId);
 }

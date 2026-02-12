@@ -77,7 +77,7 @@
   align-items: center;
   justify-content: center;
   color: #fff;
-  background: #c026d3;
+  background: var(--color-primary);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -85,7 +85,7 @@
 }
 
 .askSend:hover:not(:disabled) {
-  background: #a21caf;
+  background: var(--color-primary-hover);
 }
 
 .sendIcon {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../../../context/AuthContext'
 import { useLang } from '../../../../context/LangContext'
+import { PARAMS, ROUTES } from '../../../../constants/routes'
 import { authApi } from '../../services/authApi'
 import styles from './AuthModal.module.css'
 
@@ -22,7 +23,7 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const redirectTo = searchParams.get('from') || '/dashboard'
+  const redirectTo = searchParams.get(PARAMS.FROM) || ROUTES.DASHBOARD
 
   const resetForm = () => {
     setError('')
@@ -36,8 +37,8 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
     resetForm()
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
-      next.delete('auth')
-      next.delete('from')
+      next.delete(PARAMS.AUTH)
+      next.delete(PARAMS.FROM)
       return next
     }, { replace: true })
     onClose()
@@ -90,7 +91,7 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
     setError('')
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
-      next.set('auth', newMode)
+      next.set(PARAMS.AUTH, newMode)
       return next
     }, { replace: true })
   }

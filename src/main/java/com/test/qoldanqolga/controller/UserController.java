@@ -6,6 +6,7 @@ import com.test.qoldanqolga.dto.user.ReviewDto;
 import com.test.qoldanqolga.dto.user.SellerProfileDto;
 import com.test.qoldanqolga.dto.user.UserReviewsSummaryDto;
 import com.test.qoldanqolga.service.ReviewService;
+import com.test.qoldanqolga.service.SellerProfileService;
 import com.test.qoldanqolga.service.UserSubscriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final SellerProfileService sellerProfileService;
     private final UserSubscriptionService subscriptionService;
     private final ReviewService reviewService;
 
@@ -31,7 +33,7 @@ public class UserController {
             @AuthenticationPrincipal UserDetails user
     ) {
         String currentUserId = user != null ? user.getUsername() : null;
-        return ResponseEntity.ok(subscriptionService.getSellerProfile(id, currentUserId));
+        return ResponseEntity.ok(sellerProfileService.getSellerProfile(id, currentUserId));
     }
 
     @GetMapping("/{id}/ads")
@@ -41,7 +43,7 @@ public class UserController {
             @AuthenticationPrincipal UserDetails user
     ) {
         String currentUserId = user != null ? user.getUsername() : null;
-        return ResponseEntity.ok(subscriptionService.getSellerAds(id, pageable, currentUserId));
+        return ResponseEntity.ok(sellerProfileService.getSellerAds(id, pageable, currentUserId));
     }
 
     @PostMapping("/{id}/subscribe")

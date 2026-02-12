@@ -67,7 +67,11 @@ export default function SellerAdsSection({
                   onClick={(e) => { e.preventDefault(); onFavoriteClick(ad) }}
                   aria-label={getFavoriteAriaLabel(ad)}
                 >
-                  <HeartIcon filled={!!ad.favorite} />
+                  <HeartIcon
+                  filled={!!ad.favorite}
+                  className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
+                  size={20}
+                />
                 </button>
               )}
             </li>

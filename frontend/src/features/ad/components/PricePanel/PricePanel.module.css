@@ -6,10 +6,10 @@
 }
 
 .price {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #111;
-  line-height: 1.2;
+  font-size: 2.1rem;
+  font-weight: var(--font-weight-bold, 700);
+  color: #111111;
+  line-height: 1.15;
 }
 
 .urgentPill {
@@ -41,21 +41,21 @@
 .title {
   margin: 0.25rem 0 0.5rem;
   font-size: var(--font-size-title, 1.2rem);
-  font-weight: 500;
+  font-weight: var(--font-weight-semibold, 600);
   line-height: 1.3;
-  color: #374151;
+  color: #111111;
 }
 
 .trackPriceLink {
-  font-size: var(--font-size-body, 1.0625rem);
-  color: #2563eb;
+  font-size: var(--font-size-body);
+  color: var(--color-primary);
   text-decoration: none;
   display: inline-block;
   margin: 0.25rem 0 0.75rem;
 }
 
 .trackPriceLink:hover {
-  text-decoration: none;
+  text-decoration: underline;
   font-weight: 600;
 }
 
@@ -80,10 +80,10 @@
   align-items: center;
   justify-content: center;
   padding: 0.65rem 1.15rem;
-  font-size: var(--font-size-buttons, 1rem);
+  font-size: var(--font-size-buttons);
   font-weight: 600;
   color: #fff;
-  background: #22c55e;
+  background: #965eeb;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -93,7 +93,7 @@
 }
 
 .contactBtnChat:hover:not(:disabled) {
-  background: #16a34a;
+  background: #7c3aed;
 }
 
 .contactBtnChat:disabled {
@@ -106,10 +106,10 @@
   align-items: center;
   justify-content: center;
   padding: 0.65rem 1.15rem;
-  font-size: var(--font-size-buttons, 1rem);
+  font-size: var(--font-size-buttons);
   font-weight: 600;
-  color: #fff;
-  background: #c026d3;
+  color: #fff !important;
+  background: #04d15c;
   border: none;
   border-radius: 10px;
   text-decoration: none;
@@ -119,7 +119,42 @@
 }
 
 .contactBtnPhone:hover {
-  background: #a21caf;
+  background: #04b84a;
+  color: #fff !important;
+}
+
+.contactPhoneRevealed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.contactPhoneNumber {
+  font-weight: 600;
+  color: #111827;
+  font-size: var(--font-size-buttons);
+}
+
+.contactBtnCall {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  font-size: var(--font-size-buttons);
+  font-weight: 600;
+  color: #fff !important;
+  background: #04d15c;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.contactBtnCall:hover {
+  background: #04b84a;
+  color: #fff !important;
 }
 
 .contactBtnTelegram {
@@ -127,10 +162,10 @@
   align-items: center;
   justify-content: center;
   padding: 0.65rem 1.15rem;
-  font-size: var(--font-size-buttons, 1rem);
+  font-size: var(--font-size-buttons);
   font-weight: 600;
-  color: #fff;
-  background: #0ea5e9;
+  color: #fff !important;
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
   text-decoration: none;
@@ -139,8 +174,13 @@
   transition: background 0.2s ease;
 }
 
+.contactBtnTelegram:visited {
+  color: #fff !important;
+}
+
 .contactBtnTelegram:hover {
-  background: #0284c7;
+  background: var(--color-primary-hover);
+  color: #fff !important;
 }
 
 .centerMeta {

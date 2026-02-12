@@ -29,7 +29,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,8 +80,8 @@
 
 .avatarAdd:hover,
 .avatarOption:hover {
-  border-color: var(--color-primary, #2563eb);
-  background: #eff6ff;
+  border-color: var(--color-primary);
+  background: rgba(2, 153, 247, 0.08);
 }
 
 .avatarOption {
@@ -114,7 +114,7 @@
   height: 20px;
   border-radius: 50%;
   border: none;
-  background: #dc2626;
+  background: var(--color-dark);
   color: #fff;
   font-size: 0.75rem;
   line-height: 1;
@@ -126,16 +126,16 @@
 }
 
 .avatarPhotoRemove:hover {
-  background: #b91c1c;
+  background: var(--color-dark-hover);
 }
 
 .avatarRemoveBtn {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid var(--color-border, #e5e7eb);
-  background: #fef2f2;
-  color: #dc2626;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  color: var(--color-dark);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -145,13 +145,13 @@
 }
 
 .avatarRemoveBtn:hover {
-  border-color: #dc2626;
-  background: #fee2e2;
+  border-color: var(--color-dark);
+  background: #e5e7eb;
 }
 
 .avatarOptionSelected {
-  border-color: var(--color-primary, #2563eb);
-  background: #eff6ff;
+  border-color: var(--color-primary);
+  background: rgba(2, 153, 247, 0.08);
 }
 
 .avatarCheck {
@@ -161,7 +161,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--color-primary, #2563eb);
+  background: var(--color-primary);
   color: #fff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -192,8 +192,8 @@
 
 .field input:focus {
   outline: none;
-  border-color: var(--color-primary, #2563eb);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  border-color: var(--color-primary);
+  box-shadow: var(--input-focus-shadow);
 }
 
 .inputDisabled {
@@ -203,13 +203,13 @@
 }
 
 .error {
-  color: var(--color-error, #dc2626);
+  color: var(--color-error);
   font-size: 0.9rem;
   margin: 0 0 1rem;
 }
 
 .success {
-  color: #059669;
+  color: var(--color-primary);
   font-size: 0.9rem;
   margin: 0 0 1rem;
 }
@@ -221,7 +221,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: var(--color-primary, #2563eb);
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -229,7 +229,7 @@
 }
 
 .saveBtn:hover:not(:disabled) {
-  background: var(--color-primary-hover, #1d4ed8);
+  background: var(--color-primary-hover);
 }
 
 .saveBtn:disabled {
@@ -249,7 +249,7 @@
 }
 
 .deleteLink:hover {
-  color: #dc2626;
+  color: var(--color-dark);
   text-decoration: none;
   font-weight: 600;
 }

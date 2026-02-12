@@ -69,6 +69,8 @@ export default function Chat() {
   const messagesContainerRef = useRef(null)
 
   const selected = conversations.find((c) => c.id === selectedId)
+  const selectedIdRef = useRef(selectedId)
+  selectedIdRef.current = selectedId
 
   useEffect(() => {
     const closeMenu = (e) => {
@@ -98,19 +100,19 @@ export default function Chat() {
     loadConversations()
   }, [loadConversations])
 
+  // Синхронизация выбора диалога с URL и списком. Без selectedId в deps — иначе при обновлении conversations (markAsRead) эффект перезапускается и даёт дрожание.
   useEffect(() => {
+    const current = selectedIdRef.current
     if (openId && conversations.some((c) => c.id === openId)) {
-      setSelectedId(openId)
-    } else if (conversations.length > 0 && !selectedId) {
+      if (current !== openId) setSelectedId(openId)
+    } else if (conversations.length > 0 && !current) {
       setSelectedId(openId || conversations[0].id)
     }
-  }, [openId, conversations, selectedId])
+  }, [openId, conversations])
 
   useEffect(() => {
-    if (!selectedId) {
-      setMessages([])
-      return
-    }
+    if (!selectedId) return
+    setMessages([])
     setMessagesLoading(true)
     chatApi
       .getMessages(selectedId)
@@ -283,7 +285,7 @@ export default function Chat() {
           {!selectedId ? (
             <p className={styles.hint}>{t('chat.selectConversation')}</p>
           ) : (
-            <>
+            <div key={selectedId} className={styles.threadContent}>
               <div className={styles.threadHead}>
                 <div className={styles.threadHeadTop}>
                   <span className={styles.threadTitle}>{selected?.adTitle || ''}</span>
@@ -423,7 +425,7 @@ export default function Chat() {
                   {t('chat.send')}
                 </button>
               </form>
-            </>
+            </div>
           )}
         </section>
       </div>

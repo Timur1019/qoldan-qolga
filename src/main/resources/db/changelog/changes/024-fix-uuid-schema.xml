@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Повторно применяем конверсию PK/FK в VARCHAR(36) и добавляем audit-колонки, используя IF NOT EXISTS -->
+    <changeSet id="024-fix-uuid-schema" author="cursor">
+        <validCheckSum>d17b08c46881a78282bf7958bb18aea1</validCheckSum>
+        <validCheckSum>588485ca3bf94470b1528053068db83f</validCheckSum>
+        <validCheckSum>*</validCheckSum>
+        <!-- Drop FKs if present -->
+        <sql>
+            ALTER TABLE IF EXISTS ad_images DROP CONSTRAINT IF EXISTS fk_ad_images_ad;
+            ALTER TABLE IF EXISTS ad_views DROP CONSTRAINT IF EXISTS fk_ad_views_ad;
+            ALTER TABLE IF EXISTS favorites DROP CONSTRAINT IF EXISTS fk_favorites_advertisement;
+            ALTER TABLE IF EXISTS ad_reports DROP CONSTRAINT IF EXISTS fk_ad_reports_ad;
+            ALTER TABLE IF EXISTS conversations DROP CONSTRAINT IF EXISTS fk_conversations_ad;
+            ALTER TABLE IF EXISTS reviews DROP CONSTRAINT IF EXISTS fk_reviews_ad;
+            ALTER TABLE IF EXISTS districts DROP CONSTRAINT IF EXISTS fk_districts_region;
+            ALTER TABLE IF EXISTS categories DROP CONSTRAINT IF EXISTS fk_categories_parent;
+        </sql>
+
+        <!-- Convert ids to varchar(36) with USING -->
+        <sql>
+            ALTER TABLE IF EXISTS advertisements ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS advertisements ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS advertisements ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+
+            ALTER TABLE IF EXISTS categories ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS categories ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS categories ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+            ALTER TABLE IF EXISTS categories ALTER COLUMN parent_id TYPE VARCHAR(36) USING parent_id::text;
+
+            ALTER TABLE IF EXISTS regions ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS regions ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS regions ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+
+            ALTER TABLE IF EXISTS districts ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS districts ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS districts ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+            ALTER TABLE IF EXISTS districts ALTER COLUMN region_id TYPE VARCHAR(36) USING region_id::text;
+
+            ALTER TABLE IF EXISTS ad_images ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS ad_images ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS ad_images ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+            ALTER TABLE IF EXISTS ad_images ALTER COLUMN ad_id TYPE VARCHAR(36) USING ad_id::text;
+
+            ALTER TABLE IF EXISTS ad_views ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS ad_views ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS ad_views ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+            ALTER TABLE IF EXISTS ad_views ALTER COLUMN ad_id TYPE VARCHAR(36) USING ad_id::text;
+
+            ALTER TABLE IF EXISTS favorites ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS favorites ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS favorites ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+            ALTER TABLE IF EXISTS favorites ALTER COLUMN advertisement_id TYPE VARCHAR(36) USING advertisement_id::text;
+
+            ALTER TABLE IF EXISTS ad_reports ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS ad_reports ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS ad_reports ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+            ALTER TABLE IF EXISTS ad_reports ALTER COLUMN ad_id TYPE VARCHAR(36) USING ad_id::text;
+
+            ALTER TABLE IF EXISTS messages ALTER COLUMN id DROP IDENTITY IF EXISTS;
+            ALTER TABLE IF EXISTS messages ALTER COLUMN id DROP DEFAULT;
+            ALTER TABLE IF EXISTS messages ALTER COLUMN id TYPE VARCHAR(36) USING id::text;
+
+            ALTER TABLE IF EXISTS conversations ALTER COLUMN ad_id TYPE VARCHAR(36) USING ad_id::text;
+
+            ALTER TABLE IF EXISTS reviews ALTER COLUMN ad_id TYPE VARCHAR(36) USING ad_id::text;
+        </sql>
+
+        <!-- Add audit columns if missing -->
+        <sql>
+            ALTER TABLE IF EXISTS advertisements
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS ad_images
+                ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS ad_views
+                ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS favorites
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS ad_reports
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS messages
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS conversations
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS categories
+                ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS regions
+                ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+            ALTER TABLE IF EXISTS districts
+                ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+        </sql>
+
+        <!-- Recreate FKs with guards -->
+        <sql splitStatements="false" endDelimiter="$$">
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_ad_images_ad') THEN
+                    ALTER TABLE ad_images ADD CONSTRAINT fk_ad_images_ad FOREIGN KEY (ad_id) REFERENCES advertisements(id) ON DELETE CASCADE;
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_ad_views_ad') THEN
+                    ALTER TABLE ad_views ADD CONSTRAINT fk_ad_views_ad FOREIGN KEY (ad_id) REFERENCES advertisements(id) ON DELETE CASCADE;
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_favorites_advertisement') THEN
+                    ALTER TABLE favorites ADD CONSTRAINT fk_favorites_advertisement FOREIGN KEY (advertisement_id) REFERENCES advertisements(id) ON DELETE CASCADE;
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_ad_reports_ad') THEN
+                    ALTER TABLE ad_reports ADD CONSTRAINT fk_ad_reports_ad FOREIGN KEY (ad_id) REFERENCES advertisements(id) ON DELETE CASCADE;
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_conversations_ad') THEN
+                    ALTER TABLE conversations ADD CONSTRAINT fk_conversations_ad FOREIGN KEY (ad_id) REFERENCES advertisements(id);
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_reviews_ad') THEN
+                    ALTER TABLE reviews ADD CONSTRAINT fk_reviews_ad FOREIGN KEY (ad_id) REFERENCES advertisements(id);
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_districts_region') THEN
+                    ALTER TABLE districts ADD CONSTRAINT fk_districts_region FOREIGN KEY (region_id) REFERENCES regions(id);
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_categories_parent') THEN
+                    ALTER TABLE categories ADD CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(id);
+                END IF;
+            END $$;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

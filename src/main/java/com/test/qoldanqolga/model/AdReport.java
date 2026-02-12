@@ -1,23 +1,22 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "ad_reports")
 @Getter
 @Setter
-public class AdReport {
+public class AdReport extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "ad_id", nullable = false)
-    private Long adId;
+    @Column(name = "ad_id", nullable = false, length = 36)
+    private String adId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ad_id", insertable = false, updatable = false)
@@ -31,12 +30,4 @@ public class AdReport {
 
     @Column(columnDefinition = "TEXT")
     private String comment;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) createdAt = Instant.now();
-    }
 }

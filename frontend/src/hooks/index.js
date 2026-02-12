@@ -1,4 +1,5 @@
 export { useAuthModal } from './useAuthModal'
 export { useChatUnreadCount } from './useChatUnreadCount'
+export { useFavoritesCount } from './useFavoritesCount'
 export { useFavoriteClick } from './useFavoriteClick'
 export { useStompChat } from './useStompChat'

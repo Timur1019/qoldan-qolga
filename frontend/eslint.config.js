@@ -26,4 +26,18 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  // Контексты экспортируют провайдеры и хуки — это допустимо
+  {
+    files: ['src/context/**/*.jsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  // Строгие правила React Hooks: отключаем set-state-in-effect для типичных data-loading эффектов
+  {
+    files: ['**/*.{js,jsx}'],
+    rules: {
+      'react-hooks/set-state-in-effect': 'warn',
+    },
+  },
 ])

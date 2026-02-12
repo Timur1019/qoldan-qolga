@@ -27,7 +27,7 @@
 }
 
 .sellerCardName:hover {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 700;
 }
@@ -93,10 +93,10 @@
   margin-top: 0.5rem;
   width: 100%;
   padding: 0.75rem 1.25rem;
-  font-size: var(--font-size-buttons, 1rem);
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: #686268;
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -104,18 +104,22 @@
 }
 
 .subscribeBtn:hover {
-  background: #747074;
+  background: var(--color-primary-hover);
 }
 
 .subscribeBtnActive {
   margin-top: 0.5rem;
   width: 100%;
   padding: 0.75rem 1.25rem;
-  font-size: var(--font-size-buttons, 1rem);
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
-  background: #4b5563;
+  background: #059669;
   border: none;
   border-radius: 10px;
   cursor: pointer;
+}
+
+.subscribeBtnActive:hover {
+  background: #047857;
 }

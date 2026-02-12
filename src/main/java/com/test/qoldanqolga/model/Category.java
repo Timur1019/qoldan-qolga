@@ -1,6 +1,8 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,11 +10,7 @@ import lombok.Setter;
 @Table(name = "categories")
 @Getter
 @Setter
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Category extends BaseEntity {
 
     @Column(name = "name_uz", nullable = false, length = 100)
     private String nameUz;
@@ -29,6 +27,6 @@ public class Category {
     @Column(name = "show_on_home")
     private Boolean showOnHome = false;
 
-    @Column(name = "parent_id")
-    private Long parentId;
+    @Column(name = "parent_id", length = 36)
+    private String parentId;
 }

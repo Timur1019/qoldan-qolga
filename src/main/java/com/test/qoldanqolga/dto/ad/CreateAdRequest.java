@@ -52,6 +52,18 @@ public class CreateAdRequest {
 
     private Boolean canDeliver = false;
 
+    /** PRIVATE | BUSINESS */
+    @Size(max = 20)
+    private String sellerType;
+
+    private Boolean hasLicense = false;
+
+    private Boolean worksByContract = false;
+
+    private Boolean urgentBargain = false;
+
+    private Boolean giveAway = false;
+
     @NotNull
     private Instant expiresAt;
 

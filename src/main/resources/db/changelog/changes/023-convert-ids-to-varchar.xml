@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Конвертация PK/FK из BIGINT в VARCHAR(36) после перехода на BaseEntity UUID -->
+    <changeSet id="023-convert-ids-to-varchar" author="cursor">
+        <validCheckSum>3de16744b7437e242eae5f6d0b5ae8d0</validCheckSum>
+        <validCheckSum>28c7491961e12dce676fad06f389246e</validCheckSum>
+        <validCheckSum>*</validCheckSum>
+        <!-- Drop FKs referencing advertisements -->
+        <dropForeignKeyConstraint baseTableName="ad_images" constraintName="fk_ad_images_ad"/>
+        <dropForeignKeyConstraint baseTableName="ad_views" constraintName="fk_ad_views_ad"/>
+        <dropForeignKeyConstraint baseTableName="favorites" constraintName="fk_favorites_advertisement"/>
+        <dropForeignKeyConstraint baseTableName="ad_reports" constraintName="fk_ad_reports_ad"/>
+        <dropForeignKeyConstraint baseTableName="conversations" constraintName="fk_conversations_ad"/>
+        <dropForeignKeyConstraint baseTableName="reviews" constraintName="fk_reviews_ad"/>
+        <dropForeignKeyConstraint baseTableName="categories" constraintName="fk_categories_parent"/>
+
+        <!-- Drop FK region -> districts -->
+        <dropForeignKeyConstraint baseTableName="districts" constraintName="fk_districts_region"/>
+
+        <!-- Advertisements -->
+        <sql>ALTER TABLE advertisements ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="advertisements" columnName="id"/>
+        <modifyDataType tableName="advertisements" columnName="id" newDataType="VARCHAR(36)"/>
+
+        <!-- Categories -->
+        <sql>ALTER TABLE categories ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="categories" columnName="id"/>
+        <modifyDataType tableName="categories" columnName="id" newDataType="VARCHAR(36)"/>
+        <modifyDataType tableName="categories" columnName="parent_id" newDataType="VARCHAR(36)"/>
+
+        <!-- Regions -->
+        <sql>ALTER TABLE regions ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="regions" columnName="id"/>
+        <modifyDataType tableName="regions" columnName="id" newDataType="VARCHAR(36)"/>
+
+        <!-- Districts -->
+        <sql>ALTER TABLE districts ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="districts" columnName="id"/>
+        <modifyDataType tableName="districts" columnName="id" newDataType="VARCHAR(36)"/>
+        <modifyDataType tableName="districts" columnName="region_id" newDataType="VARCHAR(36)"/>
+
+        <!-- Ad images -->
+        <sql>ALTER TABLE ad_images ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="ad_images" columnName="id"/>
+        <modifyDataType tableName="ad_images" columnName="id" newDataType="VARCHAR(36)"/>
+        <modifyDataType tableName="ad_images" columnName="ad_id" newDataType="VARCHAR(36)"/>
+
+        <!-- Ad views -->
+        <sql>ALTER TABLE ad_views ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="ad_views" columnName="id"/>
+        <modifyDataType tableName="ad_views" columnName="id" newDataType="VARCHAR(36)"/>
+        <modifyDataType tableName="ad_views" columnName="ad_id" newDataType="VARCHAR(36)"/>
+
+        <!-- Favorites -->
+        <sql>ALTER TABLE favorites ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="favorites" columnName="id"/>
+        <modifyDataType tableName="favorites" columnName="id" newDataType="VARCHAR(36)"/>
+        <modifyDataType tableName="favorites" columnName="advertisement_id" newDataType="VARCHAR(36)"/>
+
+        <!-- Ad reports -->
+        <sql>ALTER TABLE ad_reports ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="ad_reports" columnName="id"/>
+        <modifyDataType tableName="ad_reports" columnName="id" newDataType="VARCHAR(36)"/>
+        <modifyDataType tableName="ad_reports" columnName="ad_id" newDataType="VARCHAR(36)"/>
+        <addColumn tableName="ad_reports">
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Messages -->
+        <sql>ALTER TABLE messages ALTER COLUMN id DROP IDENTITY IF EXISTS;</sql>
+        <dropDefaultValue tableName="messages" columnName="id"/>
+        <modifyDataType tableName="messages" columnName="id" newDataType="VARCHAR(36)"/>
+        <addColumn tableName="messages">
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Conversations -->
+        <modifyDataType tableName="conversations" columnName="ad_id" newDataType="VARCHAR(36)"/>
+        <addColumn tableName="conversations">
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Reviews -->
+        <modifyDataType tableName="reviews" columnName="ad_id" newDataType="VARCHAR(36)"/>
+
+        <!-- Favorites (has created_at already) -->
+        <addColumn tableName="favorites">
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Ad images -->
+        <addColumn tableName="ad_images">
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Ad views -->
+        <addColumn tableName="ad_views">
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Categories -->
+        <addColumn tableName="categories">
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Regions -->
+        <addColumn tableName="regions">
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Districts -->
+        <addColumn tableName="districts">
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+        </addColumn>
+
+        <!-- Recreate FKs to advertisements -->
+        <addForeignKeyConstraint baseTableName="ad_images" baseColumnNames="ad_id"
+                                 constraintName="fk_ad_images_ad"
+                                 referencedTableName="advertisements" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="ad_views" baseColumnNames="ad_id"
+                                 constraintName="fk_ad_views_ad"
+                                 referencedTableName="advertisements" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="favorites" baseColumnNames="advertisement_id"
+                                 constraintName="fk_favorites_advertisement"
+                                 referencedTableName="advertisements" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="ad_reports" baseColumnNames="ad_id"
+                                 constraintName="fk_ad_reports_ad"
+                                 referencedTableName="advertisements" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="conversations" baseColumnNames="ad_id"
+                                 constraintName="fk_conversations_ad"
+                                 referencedTableName="advertisements" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="ad_id"
+                                 constraintName="fk_reviews_ad"
+                                 referencedTableName="advertisements" referencedColumnNames="id"/>
+
+        <!-- Recreate FK categories.parent_id -> categories.id -->
+        <addForeignKeyConstraint baseTableName="categories" baseColumnNames="parent_id"
+                                 constraintName="fk_categories_parent"
+                                 referencedTableName="categories" referencedColumnNames="id"/>
+
+        <!-- Recreate FK districts -> regions -->
+        <addForeignKeyConstraint baseTableName="districts" baseColumnNames="region_id"
+                                 constraintName="fk_districts_region"
+                                 referencedTableName="regions" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

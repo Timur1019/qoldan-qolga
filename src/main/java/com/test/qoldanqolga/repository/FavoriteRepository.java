@@ -10,18 +10,18 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
+public interface FavoriteRepository extends JpaRepository<Favorite, String> {
 
-    boolean existsByUserIdAndAdvertisementId(String userId, Long advertisementId);
+    boolean existsByUserIdAndAdvertisementId(String userId, String advertisementId);
 
-    Optional<Favorite> findByUserIdAndAdvertisementId(String userId, Long advertisementId);
+    Optional<Favorite> findByUserIdAndAdvertisementId(String userId, String advertisementId);
 
-    void deleteByUserIdAndAdvertisementId(String userId, Long advertisementId);
+    void deleteByUserIdAndAdvertisementId(String userId, String advertisementId);
 
-    void deleteByAdvertisementId(Long advertisementId);
+    void deleteByAdvertisementId(String advertisementId);
 
     Page<Favorite> findByUserIdOrderByCreatedAtDesc(String userId, Pageable pageable);
 
     @Query("SELECT f.advertisementId FROM Favorite f WHERE f.userId = :userId")
-    List<Long> findAdvertisementIdsByUserId(@Param("userId") String userId);
+    List<String> findAdvertisementIdsByUserId(@Param("userId") String userId);
 }

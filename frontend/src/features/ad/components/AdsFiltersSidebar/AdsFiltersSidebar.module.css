@@ -1,0 +1,237 @@
+.sidebar {
+  flex-shrink: 0;
+  width: 240px;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+}
+
+.sidebarTitle {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.sidebarBlock {
+  margin-bottom: 1.25rem;
+}
+
+.sidebarBlockTitle {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sidebarCatList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebarCatList li {
+  margin: 0;
+}
+
+.sidebarCatItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  color: #374151;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.sidebarCatItem:hover {
+  color: var(--color-primary);
+}
+
+.sidebarCatMore {
+  font-size: 0.9rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 0.4rem 0;
+  display: inline-block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.sidebarCatMore:hover {
+  text-decoration: underline;
+}
+
+.sidebarSelect {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.sidebarActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.sidebarBtnReset {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.sidebarBtnReset:hover {
+  background: #e5e7eb;
+}
+
+.sidebarBtnApply {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sidebarBtnApply:hover {
+  opacity: 0.95;
+}
+
+.filterRadioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.filterRadio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.filterRadio input {
+  accent-color: var(--color-primary, #7c3aed);
+}
+
+.filterCurrencyBtns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.filterCurrencyBtn {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+  font: inherit;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.filterCurrencyBtn:hover {
+  background: #e5e7eb;
+}
+
+.filterCurrencyBtnActive {
+  background: #374151;
+  border-color: #374151;
+  color: #fff;
+}
+
+.filterCurrencyBtnActive:hover {
+  background: #4b5563;
+}
+
+.filterPriceRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filterPriceInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  font: inherit;
+  background: #f9fafb;
+}
+
+.filterPriceInput::placeholder {
+  color: #9ca3af;
+}
+
+.filterToggles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterToggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.filterToggle {
+  flex-shrink: 0;
+  width: 40px;
+  height: 22px;
+  padding: 2px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filterToggle:hover {
+  background: #d1d5db;
+}
+
+.filterToggleOn {
+  background: var(--color-primary, #7c3aed);
+}
+
+.filterToggleOn:hover {
+  background: #6d28d9;
+}
+
+.filterToggleKnob {
+  display: block;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.filterToggleOn .filterToggleKnob {
+  transform: translateX(18px);
+}

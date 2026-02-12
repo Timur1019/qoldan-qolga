@@ -1,6 +1,7 @@
 package com.test.qoldanqolga.service;
 
 import com.test.qoldanqolga.dto.reference.CategoryDto;
+import com.test.qoldanqolga.dto.reference.CreateCategoryRequest;
 import com.test.qoldanqolga.dto.reference.RegionDto;
 import com.test.qoldanqolga.model.District;
 import com.test.qoldanqolga.model.Region;
@@ -13,6 +14,8 @@ public interface ReferenceDataService {
     List<RegionDto> getAllRegions();
 
     List<CategoryDto> getAllCategories();
+
+    CategoryDto createCategory(CreateCategoryRequest request);
 
     List<CategoryDto> getRootCategories();
 

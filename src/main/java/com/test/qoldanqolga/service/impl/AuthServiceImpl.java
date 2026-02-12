@@ -12,6 +12,7 @@ import com.test.qoldanqolga.model.User;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.security.JwtUtil;
 import com.test.qoldanqolga.service.AuthService;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setDisplayName(request.getDisplayName().trim());
         user = userRepository.save(user);
+        LogUtil.info(AuthServiceImpl.class, "User registered: id={} email={}", user.getId(), user.getEmail());
         return userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
     }
 
@@ -50,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new InvalidCredentialsException("Неверный email или пароль");
         }
+        LogUtil.debug(AuthServiceImpl.class, "User logged in: id={}", user.getId());
         return userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
     }
 
@@ -79,6 +82,7 @@ public class AuthServiceImpl implements AuthService {
         String av = request.getAvatar();
         user.setAvatar(av != null && !av.isBlank() && av.length() <= 512 ? av.trim() : null);
         userRepository.save(user);
+        LogUtil.info(AuthServiceImpl.class, "Profile updated: userId={}", userId);
         return userMapper.toDto(user);
     }
 }

@@ -7,7 +7,7 @@ import { PARAMS } from '../constants/routes'
  * Единое место работы с query-параметром auth — без магических строк в страницах.
  */
 export function useAuthModal() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
 
   const openAuthModal = useCallback(() => {
     setSearchParams(

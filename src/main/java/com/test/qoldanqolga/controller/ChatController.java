@@ -3,7 +3,7 @@ package com.test.qoldanqolga.controller;
 import com.test.qoldanqolga.dto.chat.ConversationDto;
 import com.test.qoldanqolga.dto.chat.MessageDto;
 import com.test.qoldanqolga.dto.chat.SendMessageRequest;
-import com.test.qoldanqolga.service.ChatService;
+import com.test.qoldanqolga.service.chat.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +74,7 @@ public class ChatController {
     @PutMapping("/conversations/{conversationId}/messages/{messageId}")
     public ResponseEntity<MessageDto> updateMessage(
             @PathVariable String conversationId,
-            @PathVariable Long messageId,
+            @PathVariable String messageId,
             @Valid @RequestBody SendMessageRequest request,
             @AuthenticationPrincipal UserDetails user) {
         if (user == null) {
@@ -86,7 +86,7 @@ public class ChatController {
     @DeleteMapping("/conversations/{conversationId}/messages/{messageId}")
     public ResponseEntity<Void> deleteMessage(
             @PathVariable String conversationId,
-            @PathVariable Long messageId,
+            @PathVariable String messageId,
             @AuthenticationPrincipal UserDetails user) {
         if (user == null) {
             return ResponseEntity.status(401).build();
@@ -108,6 +108,6 @@ public class ChatController {
 
     @lombok.Data
     public static class GetOrCreateRequest {
-        private Long adId;
+        private String adId;
     }
 }

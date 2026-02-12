@@ -20,5 +20,10 @@ public class CreateReviewRequest {
 
     private String text;
 
-    private Long adId;
+    private String adId;
+
+    /** Нормализованный текст (trim). */
+    public String getTextTrimmed() {
+        return text != null ? text.trim() : null;
+    }
 }

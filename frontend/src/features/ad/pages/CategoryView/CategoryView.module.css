@@ -1,7 +1,53 @@
 .page {
-  max-width: 720px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 1rem 0;
+  padding: 1rem;
+}
+
+.layoutWithSidebar {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.mainContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%);
+  border-radius: 12px;
+  color: #fff;
+}
+
+.bannerText {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.bannerBtn {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: #fff;
+  color: #7c3aed;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.bannerBtn:hover {
+  background: #f5f3ff;
 }
 
 .loading,
@@ -15,7 +61,7 @@
 }
 
 .backLink {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -31,7 +77,7 @@
 }
 
 .breadcrumb a {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -82,7 +128,7 @@
 }
 
 .card:hover {
-  border-color: var(--color-primary, #2563eb);
+  border-color: var(--color-primary);
   background: #fff;
 }
 

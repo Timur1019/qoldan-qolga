@@ -37,5 +37,17 @@ export function useChatUnreadCount() {
     return () => window.removeEventListener('chat-count-refresh', handler)
   }, [refresh])
 
+  /* Обновление при возврате на вкладку */
+  useEffect(() => {
+    const handler = () => refresh()
+    window.addEventListener('focus', handler)
+    const visHandler = () => { if (document.visibilityState === 'visible') refresh() }
+    document.addEventListener('visibilitychange', visHandler)
+    return () => {
+      window.removeEventListener('focus', handler)
+      document.removeEventListener('visibilitychange', visHandler)
+    }
+  }, [refresh])
+
   return count
 }

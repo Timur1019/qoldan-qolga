@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Подкатегории Переводы (под Xizmatlar) -->
+    <changeSet id="018-perevody-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ruscha-o''zbekcha', 'Переводчик с русского на узбекский', 'Perevod_ru_uz', 1, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'O''zbekcha-ruscha', 'Переводчик с узбекского на русский', 'Perevod_uz_ru', 2, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Inglizcha-o''zbekcha', 'Переводчик с английского на узбекский', 'Perevod_en_uz', 3, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'O''zbekcha-inglizcha', 'Переводчик с узбекского на английский', 'Perevod_uz_en', 4, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Turkcha-ruscha', 'Переводчик с турецкого на русский', 'Perevod_tr_ru', 5, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ruscha-xitoycha', 'Переводчик с русского на китайский', 'Perevod_ru_cn', 6, false, id FROM categories WHERE code = 'Perevody' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Автосервис, аренда -->
+    <changeSet id="018-avtoservis-parent" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Avtoservis, ijara', 'Автосервис, аренда', 'Avtoservis_arenda', 2, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-avtoservis-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Avtoservis', 'Автосервис', 'Avtoservis', 1, false, id FROM categories WHERE code = 'Avtoservis_arenda' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Avto ijara', 'Аренда авто', 'Arenda_avto', 2, false, id FROM categories WHERE code = 'Avtoservis_arenda' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Maxsus texnika ijara', 'Аренда спецтехники', 'Arenda_speztexnika', 3, false, id FROM categories WHERE code = 'Avtoservis_arenda' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Грузоперевозки -->
+    <changeSet id="018-gruzoperevozki" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yuk tashish', 'Грузоперевозки', 'Gruzoperevozki', 3, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Shahar ichida', 'По городу', 'Gruz_po_gorodu', 1, false, id FROM categories WHERE code = 'Gruzoperevozki' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Shaharlararo', 'Между городами', 'Gruz_mezhdu_gorodami', 2, false, id FROM categories WHERE code = 'Gruzoperevozki' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Xalqaro', 'Международные', 'Gruz_mezhdunarodnye', 3, false, id FROM categories WHERE code = 'Gruzoperevozki' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Пассажирские перевозки -->
+    <changeSet id="018-passazhirskie" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yo''lovchi tashish', 'Пассажирские перевозки', 'Passazhirskie_perevozki', 4, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Transfer', 'Трансфер', 'Transfer', 1, false, id FROM categories WHERE code = 'Passazhirskie_perevozki' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Avto buyurtma', 'Авто под заказ', 'Avto_pod_zakaz', 2, false, id FROM categories WHERE code = 'Passazhirskie_perevozki' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Boshqa', 'Другое', 'Passazhir_drugoe', 3, false, id FROM categories WHERE code = 'Passazhirskie_perevozki' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Грузчики, складские услуги -->
+    <changeSet id="018-gruzchiki-sklad" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yuk tashuvchilar, ombor', 'Грузчики, складские услуги', 'Gruzchiki_sklad', 5, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yuk tashuvchilar', 'Грузчики', 'Gruzchiki', 1, false, id FROM categories WHERE code = 'Gruzchiki_sklad' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Qadoqlash', 'Упаковка', 'Upakovka', 2, false, id FROM categories WHERE code = 'Gruzchiki_sklad' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ombor xizmatlari', 'Складские услуги', 'Skladskie_uslugi', 3, false, id FROM categories WHERE code = 'Gruzchiki_sklad' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Услуги эвакуатора -->
+    <changeSet id="018-evakuator" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Evakuator xizmati', 'Услуги эвакуатора', 'Evakuator', 6, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Ремонт и отделка -->
+    <changeSet id="018-remont-parent" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ta''mir va pardozlash', 'Ремонт и отделка', 'Remont_otdelka', 7, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-remont-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Kvartira uy ta''miri', 'Ремонт квартир и домов под ключ', 'Remont_kvartir', 1, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Interyer dizayni', 'Дизайн интерьеров', 'Dizayn_interyer', 2, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Santexnika', 'Сантехника', 'Santexnika', 3, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Elektrika', 'Электрика', 'Elektrika', 4, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Mebel yig''ish ta''miri', 'Сборка и ремонт мебели', 'Mebel_sborka', 5, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Derazalar balkonlar', 'Окна и балконы', 'Okna_balkony', 6, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Devor qog''oz bo''yoq', 'Поклейка обоев и малярные работы', 'Oboi_malyar', 7, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Shiftlar', 'Потолки', 'Potolki', 8, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Pollar', 'Полы и напольные покрытия', 'Poly', 9, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Gips ishlari', 'Штукатурные работы', 'Shtukaturka', 10, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Eshiklar', 'Двери', 'Dveri', 11, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Plitka ishlari', 'Плиточные работы', 'Plitka', 12, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Stolyar duradgor', 'Столярные и плотницкие работы', 'Stolyar', 13, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Gipsokarton', 'Гипсокартонные работы', 'Gipsokarton', 14, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Baland ishlar', 'Высотные работы', 'Vysotnye', 15, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Izolyatsiya', 'Изоляция и утепление', 'Izolyatsiya', 16, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Savdo binolari ta''miri', 'Ремонт коммерческих помещений', 'Remont_kommerch', 17, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ventilyatsiya konditsioner', 'Вентиляция и кондиционирование', 'Ventilyatsiya', 18, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Boshqa ta''mir', 'Другое', 'Remont_drugoe', 19, false, id FROM categories WHERE code = 'Remont_otdelka' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Строительство -->
+    <changeSet id="018-stroitelstvo-parent" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Qurilish', 'Строительство', 'Stroitelstvo', 8, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-stroitelstvo-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Uylar qurilishi', 'Строительство домов под ключ', 'Stroitelstvo_domov', 1, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Garaj hammom ayvon', 'Строительство гаражей, бань, веранд', 'Garazh_bani', 2, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yog''och uy hammom', 'Отделка деревянных домов, бань, саун', 'Derevyannye_doma', 3, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Qo''lda ishlar', 'Кладочные работы', 'Kladochnye', 4, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Tom ishlari', 'Кровельные работы', 'Krovelnye', 5, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Payvandlash kovka', 'Сварка, ковка, металлоконструкции', 'Svarka_kovka', 6, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Fundament beton', 'Фундаментные и бетонные работы', 'Fundament_beton', 7, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Almaz burg''ulash', 'Алмазное сверление и резка', 'Almaz_rezka', 8, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Demontaj', 'Снос и демонтаж', 'Snos_demontazh', 9, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Fasad ishlari', 'Фасадные работы', 'Fasadnye', 10, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Loyihalashtirish smeta', 'Проектирование и сметы', 'Proektirovanie', 11, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ishchi', 'Разнорабочие', 'Raznorabochye', 12, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Izyskatelnye', 'Изыскательные работы', 'Izyskatelnye', 13, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Narvonlar', 'Лестницы', 'Lestnitsy', 14, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Gazlashtirish', 'Газификация', 'Gazifikatsiya', 15, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Stroitelstvo boshqa', 'Другое', 'Stroitelstvo_drugoe', 16, false, id FROM categories WHERE code = 'Stroitelstvo' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Мастер на час, Сад, Компьютерная помощь, Красота, Ремонт техники, Обучение, Деловые, IT, Реклама, Уборка, Бытовые, Праздники, Охрана, Другое -->
+    <changeSet id="018-services-rest-parents" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Usta soatiga', 'Мастер на час', 'Master_na_chas', 9, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Bog'' obodonlashtirish', 'Сад, благоустройство', 'Sad_blagoustrojstvo', 10, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Komp yordam', 'Компьютерная помощь', 'Komp_pomosh', 11, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Guzallik salomatlik', 'Красота, здоровье', 'Krasota_zdorove', 12, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Texnika ta''miri', 'Ремонт и обслуживание техники', 'Remont_tehniki', 13, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Oborudovanie ishlab chiqarish', 'Оборудование, производство', 'Oborudovanie_proizvodstvo', 14, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'O''qitish kurslar', 'Обучение, курсы', 'Obuchenie_kursy', 15, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Biznes xizmatlari', 'Деловые услуги', 'Delovye_uslugi', 16, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'IT marketing', 'IT, маркетинг', 'It_marketing', 17, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Reklama poligrafiya', 'Реклама, полиграфия', 'Reklama_poligrafiya', 18, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Chiqqindilar', 'Вывоз мусора и вторсырья', 'Vyvoz_musora', 19, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Tozalash', 'Уборка', 'Uborka', 20, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Maishiy xizmatlar', 'Бытовые услуги', 'Bytovye_uslugi', 21, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Bayramlar tadbirlar', 'Праздники, мероприятия', 'Prazdniki_meropriyatiya', 22, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Xavfsizlik', 'Охрана, безопасность', 'Ohrana_bezopasnost', 23, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Boshqa xizmatlar', 'Другое', 'Xizmatlar_drugoe', 24, false, id FROM categories WHERE code = 'Xizmatlar' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Подкатегории: Сад, Компьютерная помощь, Красота, Ремонт техники, Обучение, Уборка, Бытовые -->
+    <changeSet id="018-sad-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Quduqlar septiklar', 'Скважины, септики, колодцы', 'Skvazhiny_septiki', 1, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Suv havzalari favvoralar', 'Водоёмы и фонтаны', 'Vodoemy_fontany', 2, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yo''l qurilishi', 'Дорожное строительство', 'Dorozhnoe_stroitelstvo', 3, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'To''siqlar markazlar', 'Ограждения, навесы, рольставни', 'Ograzhdeniya_navesy', 4, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yer ishlari', 'Земляные работы', 'Zemlyanye_raboty', 5, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Yashil maydon bog''', 'Озеленение, уход за садом и огородом', 'Ozelenenie_sad', 6, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Sad boshqa', 'Другое', 'Sad_drugoe', 7, false, id FROM categories WHERE code = 'Sad_blagoustrojstvo' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-komp-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Kompyuterlar', 'Компьютеры', 'Komp_kompyutery', 1, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Printerlar', 'Принтеры', 'Komp_printery', 2, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Mayning uskunalari', 'Оборудование для майнинга', 'Komp_mayning', 3, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'O''yin konsollari', 'Игровые приставки', 'Komp_konsoli', 4, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'OS dasturlar', 'ОС и программы', 'Komp_os_programmy', 5, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Internet tarmoqlar', 'Интернет и другие сети', 'Komp_internet', 6, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ta''mir sozlash', 'Ремонт и настройка', 'Komp_remont_nastroyka', 7, false, id FROM categories WHERE code = 'Komp_pomosh' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-krasota-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Manikur pedikur', 'Маникюр, педикюр', 'Krasota_manikur', 1, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Soch olchovi', 'Услуги парикмахера', 'Krasota_parikmaher', 2, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Qos kirpik', 'Ресницы, брови', 'Krasota_resnitsy', 3, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Kosmetologiya', 'Косметология', 'Krasota_kosmetologiya', 4, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'SPA massage', 'СПА-услуги, массаж', 'Krasota_spa_massazh', 5, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Fitness yoga', 'Фитнес, йога', 'Krasota_fitnes', 6, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Krasota boshqa', 'Другое', 'Krasota_drugoe', 7, false, id FROM categories WHERE code = 'Krasota_zdorove' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-uborka-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'General tozalash', 'Генеральная уборка', 'Uborka_generalnaya', 1, false, id FROM categories WHERE code = 'Uborka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Oyna yuvish', 'Мойка окон', 'Uborka_moyka_okon', 2, false, id FROM categories WHERE code = 'Uborka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Oddiy tozalash', 'Простая уборка', 'Uborka_prostaya', 3, false, id FROM categories WHERE code = 'Uborka' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Ta''mirdan keyin', 'Уборка после ремонта', 'Uborka_posle_remonta', 4, false, id FROM categories WHERE code = 'Uborka' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="018-bytovye-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Kalit yasash', 'Изготовление ключей', 'Bytovye_klyuchi', 1, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Tikuv ta''miri', 'Пошив и ремонт одежды', 'Bytovye_poshiv', 2, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Soat ta''miri', 'Ремонт часов', 'Bytovye_chasy', 3, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Kimyoviy tozalash', 'Химчистка, стирка', 'Bytovye_himchistka', 4, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Oziq-ovqat yetkazish', 'Доставка еды и продуктов', 'Bytovye_dostavka_edy', 5, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Foto video suratga olish', 'Фото- и видеосъёмка', 'Bytovye_foto_video', 6, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Enaga hamshira', 'Няни, сиделки', 'Bytovye_nyani', 7, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Hayvonlar parvarishi', 'Уход за животными', 'Bytovye_zhivotnye', 8, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (name_uz, name_ru, code, sort_order, show_on_home, parent_id)
+            SELECT 'Bytovye boshqa', 'Другое', 'Bytovye_drugoe', 9, false, id FROM categories WHERE code = 'Bytovye_uslugi' LIMIT 1;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
