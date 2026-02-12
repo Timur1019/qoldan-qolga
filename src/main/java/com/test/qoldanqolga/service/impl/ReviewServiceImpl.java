@@ -1,12 +1,15 @@
 package com.test.qoldanqolga.service.impl;
 
+import com.test.qoldanqolga.constant.RatingConstants;
 import com.test.qoldanqolga.dto.user.CreateReviewRequest;
 import com.test.qoldanqolga.dto.user.ReviewDto;
+import com.test.qoldanqolga.dto.user.ReviewStatisticsDto;
 import com.test.qoldanqolga.dto.user.UserReviewsSummaryDto;
 import com.test.qoldanqolga.exception.ConflictException;
 import com.test.qoldanqolga.exception.ResourceNotFoundException;
+import com.test.qoldanqolga.exception.SelfReviewException;
+import com.test.qoldanqolga.mapper.ReviewMapper;
 import com.test.qoldanqolga.model.Review;
-import com.test.qoldanqolga.model.User;
 import com.test.qoldanqolga.repository.ReviewRepository;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.ReviewService;
@@ -16,10 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,21 +29,20 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
+    private final ReviewMapper reviewMapper;
 
     @Override
     @Transactional
     public ReviewDto create(String targetUserId, CreateReviewRequest request, String authorId) {
         if (authorId.equals(targetUserId)) {
-            throw new IllegalArgumentException("Нельзя оставить отзыв самому себе");
+            throw new SelfReviewException(authorId);
         }
-        User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь", targetUserId));
+        if (!userRepository.existsById(targetUserId)) {
+            throw new ResourceNotFoundException("Пользователь", targetUserId);
+        }
 
-        Long adId = request.getAdId();
-        boolean alreadyReviewed = adId != null
-                ? reviewRepository.existsByAuthorIdAndTargetUserIdAndAdId(authorId, targetUserId, adId)
-                : reviewRepository.existsByAuthorIdAndTargetUserId(authorId, targetUserId);
-        if (alreadyReviewed) {
+        String adId = request.getAdId();
+        if (reviewRepository.existsByAuthorAndTarget(authorId, targetUserId, adId)) {
             throw new ConflictException("Вы уже оставили отзыв этому продавцу");
         }
 
@@ -50,66 +51,56 @@ public class ReviewServiceImpl implements ReviewService {
         review.setTargetUserId(targetUserId);
         review.setAdId(adId);
         review.setRating(request.getRating());
-        review.setText(request.getText() != null ? request.getText().trim() : null);
-
+        review.setText(request.getTextTrimmed());
         review = reviewRepository.save(review);
-        return toDto(review);
+
+        return reviewRepository.findByIdWithUsers(review.getId())
+                .map(reviewMapper::toDto)
+                .orElse(reviewMapper.toDto(review));
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserReviewsSummaryDto getReviewsSummary(String targetUserId, Pageable pageable) {
-        Page<Review> page = reviewRepository.findByTargetUserIdOrderByCreatedAtDesc(targetUserId, pageable);
-        List<Object[]> counts = reviewRepository.countByRatingForUser(targetUserId);
-
-        Map<Integer, Long> ratingCounts = new HashMap<>();
-        for (int i = 5; i >= 1; i--) {
-            ratingCounts.put(i, 0L);
-        }
-        long total = 0;
-        double sum = 0;
-        for (Object[] row : counts) {
-            Integer rating = (Integer) row[0];
-            Long count = (Long) row[1];
-            ratingCounts.put(rating, count);
-            total += count;
-            sum += rating * count;
+        ReviewStatisticsDto stats = reviewRepository.getStatistics(targetUserId);
+        if (stats == null) {
+            return new UserReviewsSummaryDto(0, 0, defaultRatingCounts(), List.of());
         }
 
-        double average = total > 0 ? sum / total : 0;
+        Map<Integer, Long> ratingCounts = new LinkedHashMap<>();
+        ratingCounts.put(5, stats.getRating5());
+        ratingCounts.put(4, stats.getRating4());
+        ratingCounts.put(3, stats.getRating3());
+        ratingCounts.put(2, stats.getRating2());
+        ratingCounts.put(1, stats.getRating1());
 
-        List<ReviewDto> reviews = page.getContent().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-
-        return new UserReviewsSummaryDto(average, total, ratingCounts, reviews);
+        Page<Review> page = reviewRepository.findByTargetUserIdWithUsers(targetUserId, pageable);
+        return new UserReviewsSummaryDto(
+                stats.getAverageRating(),
+                stats.getTotalCount(),
+                ratingCounts,
+                reviewMapper.toDtoList(page.getContent())
+        );
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<ReviewDto> getReviews(String targetUserId, Pageable pageable) {
-        return reviewRepository.findByTargetUserIdOrderByCreatedAtDesc(targetUserId, pageable)
-                .map(this::toDto);
+        return reviewRepository.findByTargetUserIdWithUsers(targetUserId, pageable)
+                .map(reviewMapper::toDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<ReviewDto> getReviewsByAuthor(String authorId, Pageable pageable) {
-        return reviewRepository.findByAuthorIdOrderByCreatedAtDesc(authorId, pageable)
-                .map(this::toDto);
+        return reviewRepository.findByAuthorIdWithUsers(authorId, pageable)
+                .map(reviewMapper::toDto);
     }
 
-    private ReviewDto toDto(Review r) {
-        ReviewDto dto = new ReviewDto();
-        dto.setId(r.getId());
-        dto.setAuthorId(r.getAuthorId());
-        dto.setAuthorDisplayName(r.getAuthor() != null ? r.getAuthor().getDisplayName() : null);
-        dto.setTargetUserId(r.getTargetUserId());
-        dto.setTargetDisplayName(r.getTargetUser() != null ? r.getTargetUser().getDisplayName() : null);
-        dto.setAdId(r.getAdId());
-        dto.setRating(r.getRating());
-        dto.setText(r.getText());
-        dto.setCreatedAt(r.getCreatedAt());
-        return dto;
+    private static Map<Integer, Long> defaultRatingCounts() {
+        Map<Integer, Long> m = new LinkedHashMap<>();
+        for (int i = RatingConstants.MAX_RATING; i >= RatingConstants.MIN_RATING; i--) {
+            m.put(i, 0L);
+        }
+        return m;
     }
+
 }

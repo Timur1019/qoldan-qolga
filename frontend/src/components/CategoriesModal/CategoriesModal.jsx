@@ -57,6 +57,16 @@ function ArrowRight() {
   )
 }
 
+function ChevronDown() {
+  return (
+    <span className={styles.chevronDown} aria-hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </span>
+  )
+}
+
 function SearchIcon() {
   return (
     <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -72,6 +82,7 @@ export default function CategoriesModal({ onClose }) {
   const [childrenOfSelected, setChildrenOfSelected] = useState([])
   const [groupChildren, setGroupChildren] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
+  const [expandedGroups, setExpandedGroups] = useState({})
 
   useEffect(() => {
     referenceApi.getCategories().then((list) => {
@@ -85,11 +96,13 @@ export default function CategoriesModal({ onClose }) {
     if (!selected?.code) {
       setChildrenOfSelected([])
       setGroupChildren({})
+      setExpandedGroups({})
       return
     }
     referenceApi.getCategoryChildren(selected.code).then((list) => {
       setChildrenOfSelected(Array.isArray(list) ? list : [])
       setGroupChildren({})
+      setExpandedGroups({})
     }).catch(() => setChildrenOfSelected([]))
   }, [selected?.code])
 
@@ -97,7 +110,6 @@ export default function CategoriesModal({ onClose }) {
     const withChildren = childrenOfSelected.filter((c) => c.hasChildren)
     if (withChildren.length === 0) return
     let cancelled = false
-    const next = {}
     withChildren.forEach((child) => {
       referenceApi.getCategoryChildren(child.code).then((list) => {
         if (!cancelled) {
@@ -116,6 +128,11 @@ export default function CategoriesModal({ onClose }) {
   const searchPlaceholder = lang === 'ru' ? 'Найти объявление...' : "E'lon qidirish..."
   const hintLabel = lang === 'ru' ? 'Выберите категорию слева' : "Chapdan kategoriyani tanlang"
   const moreLabel = (n) => (lang === 'ru' ? `Ещё ${n}` : `Yana ${n}`)
+  const collapseLabel = lang === 'ru' ? 'Свернуть' : "Yig'ish"
+
+  const toggleGroupExpanded = (code) => {
+    setExpandedGroups((prev) => ({ ...prev, [code]: !prev[code] }))
+  }
 
   const filteredCategories = searchQuery.trim()
     ? categories.filter((c) => name(c).toLowerCase().includes(searchQuery.trim().toLowerCase()))
@@ -126,7 +143,15 @@ export default function CategoriesModal({ onClose }) {
       <div className={styles.panel}>
         <div className={styles.panelHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.titlePill}>{titleLabel}</span>
+            <button
+              type="button"
+              className={styles.modalTitleBtn}
+              onClick={() => categories.length > 0 && setSelected(categories[0])}
+              aria-label={titleLabel}
+            >
+              {titleLabel}
+              <ArrowRight />
+            </button>
             <button type="button" className={styles.closeBtn} onClick={onClose} aria-label={closeLabel}>
               ×
             </button>
@@ -182,23 +207,53 @@ export default function CategoriesModal({ onClose }) {
                             <ArrowRight />
                           </Link>
                           <ul className={styles.groupList}>
-                            {(groupChildren[child.code] || []).slice(0, MAX_ITEMS_PER_GROUP).map((sub) => (
-                              <li key={sub.code}>
-                                <Link to={adsCategoryPath(sub.code)} className={styles.groupItem} onClick={onClose}>
-                                  {name(sub)}
-                                </Link>
-                              </li>
-                            ))}
+                            {(() => {
+                              const list = groupChildren[child.code] || []
+                              const isExpanded = expandedGroups[child.code]
+                              const visible = isExpanded ? list : list.slice(0, MAX_ITEMS_PER_GROUP)
+                              return visible.map((sub) => (
+                                <li key={sub.code}>
+                                  <Link to={adsCategoryPath(sub.code)} className={styles.groupItem} onClick={onClose}>
+                                    {name(sub)}
+                                  </Link>
+                                </li>
+                              ))
+                            })()}
                           </ul>
-                          {(groupChildren[child.code]?.length || 0) > MAX_ITEMS_PER_GROUP && (
-                            <Link
-                              to={categoryPath(child.code)}
-                              className={styles.moreLink}
-                              onClick={onClose}
-                            >
-                              {moreLabel((groupChildren[child.code].length - MAX_ITEMS_PER_GROUP))}
-                            </Link>
-                          )}
+                          {(() => {
+                            const list = groupChildren[child.code] || []
+                            const isExpanded = expandedGroups[child.code]
+                            const hiddenCount = list.length - MAX_ITEMS_PER_GROUP
+                            if (list.length <= MAX_ITEMS_PER_GROUP) return null
+                            if (isExpanded) {
+                              return (
+                                <button
+                                  type="button"
+                                  className={styles.moreLink}
+                                  onClick={() => toggleGroupExpanded(child.code)}
+                                  aria-expanded="true"
+                                >
+                                  {collapseLabel}
+                                  <span className={styles.chevronUp} aria-hidden>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <path d="M18 15l-6-6-6 6" />
+                                    </svg>
+                                  </span>
+                                </button>
+                              )
+                            }
+                            return (
+                              <button
+                                type="button"
+                                className={styles.moreLink}
+                                onClick={() => toggleGroupExpanded(child.code)}
+                                aria-expanded="false"
+                              >
+                                {moreLabel(hiddenCount)}
+                                <ChevronDown />
+                              </button>
+                            )
+                          })()}
                         </>
                       ) : (
                         <Link

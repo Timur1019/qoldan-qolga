@@ -28,3 +28,14 @@ export function formatSellerSince(iso) {
     year: 'numeric',
   })
 }
+
+/** Маска телефона: начало номера видно, остальное — X; при клике открывается звонок с полным номером */
+export function maskPhone(phone) {
+  if (!phone) return null
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length < 6) return `+${digits}`
+  const visibleCount = 5
+  const visible = digits.slice(0, visibleCount)
+  const hiddenLen = digits.length - visibleCount
+  return `+${visible}${'X'.repeat(hiddenLen)}`
+}

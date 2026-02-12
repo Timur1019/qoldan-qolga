@@ -70,7 +70,7 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -88,7 +88,15 @@
 }
 
 .heartFilled {
-  color: #e11d48;
+  stroke: #000;
+  fill: #e11d48;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
+}
+
+.heartOutline {
+  stroke: #000;
+  fill: none;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
 }
 
 .cardBody {
@@ -108,7 +116,7 @@
 .cardPrice {
   margin: 0 0 0.25rem;
   font-weight: 600;
-  color: var(--color-primary, #333);
+  color: #111827;
 }
 
 .cardMeta {

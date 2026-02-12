@@ -1,0 +1,19 @@
+# Промо-услуги (переопределяет дефолты из PromoProperties)
+promo:
+  services:
+    maxi:
+      code: maxi
+      name-ru: "Макси карточка"
+      name-uz: "Maksi kartochka"
+      price: 13900
+      duration: 7
+      description-ru: "Объявление выше в поиске, крупная фотография, бейдж «Premium», фото-галерея."
+      description-uz: "E'lon qidiruvda yuqorida, yirik foto, \"Premium\" belgisi, foto-galereya."
+    up:
+      code: up
+      name-ru: "Вверх"
+      name-uz: "Yuqoriga"
+      price: 4000
+      duration: 28
+      description-ru: "Автоподнятие 5 раз — сейчас, затем на 7, 14, 21 и 28 день. Объявление поднимается вверх в ленте."
+      description-uz: "Avtoko'tarish 5 marta — hozir, keyin 7, 14, 21 va 28 kunda. E'lon lentada yuqoriga ko'tariladi."

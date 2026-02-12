@@ -2,6 +2,7 @@ export const translations = {
   uz: {
     nav: {
       home: 'Bosh sahifa',
+      services: 'Xizmatlar',
       login: 'Kirish',
       register: "Ro'yxatdan o'tish",
       cabinet: 'Shaxsiy kabinet',
@@ -41,6 +42,30 @@ export const translations = {
     ads: {
       listTitle: 'E\'lonlar',
       noAds: 'E\'lonlar topilmadi',
+      adsInUzbekistan: "O'zbekistondagi e'lonlar",
+      showAll: 'Barchasini ko\'rsatish',
+      showLess: 'Yig\'ish',
+      reset: 'Tozalash',
+      apply: 'Qo\'llash',
+      sellAndEarn: 'Sotiring va daromad oling',
+      sellerType: 'Sotuvchi',
+      sellerPrivate: 'Shaxsiy',
+      sellerBusiness: 'Do\'kon / biznes',
+      hasLicense: 'Litsenziya yoki sertifikat bormi?',
+      worksByContract: 'Shartnoma bo\'yicha ishlaymiz',
+      currency: 'Valyuta',
+      currencyFromAd: 'E\'londan',
+      currencyUzs: 'So\'mda',
+      currencyCu: 'Valyuta birligida',
+      price: 'Narx',
+      priceFrom: 'Dan',
+      priceTo: 'Gacha',
+      additionally: 'Qo\'shimcha',
+      urgentBargain: 'Shoshilinch. Savdo.',
+      courierDelivery: 'Kuryer yetkazib berish',
+      giveAway: 'Bepul beraman',
+      any: 'Muhim emas',
+      postAd: 'E\'lon joylashtirish',
       pagination: 'Sahifalash',
       prevPage: 'Oldingi',
       nextPage: 'Keyingi',
@@ -53,6 +78,7 @@ export const translations = {
       negotiable: 'Kelishiladi',
       contact: 'Aloqa',
       phone: 'Telefon',
+      showPhone: 'Telefonni ko\'rsatish',
       email: 'Email',
       description: 'Tavsif',
       expiresAt: 'Amal qilish muddati',
@@ -85,7 +111,6 @@ export const translations = {
       dealConditions: 'Bitim shartlari',
       giveAway: 'Bepul beraman',
       pricePlaceholder: 'Narxni kiriting',
-      negotiable: 'Savdolashish mumkin',
       urgentBargain: 'Shoshilinch. Savdo.',
       descriptionExample: 'Masalan: Qora Nike krossovkalar, 42 o\'lcham. A\'lo holat — bir necha marta kiyilgan.',
       descriptionPlaceholder: 'Mahsulot yoki xizmat haqida yozing',
@@ -101,9 +126,20 @@ export const translations = {
       contactMethodsHint: 'Kamida bitta aloqa usulini tanlashingiz kerak',
       chatDefault: 'Sukut bo\'yicha yoqilgan',
       phoneCalls: 'Telefon orqali qo\'ng\'iroqlar',
+      call: 'Qo\'ng\'iroq qilish',
+      phoneLoginRequired: 'Telefon raqamini ko\'rish uchun tizimga kiring yoki ro\'yxatdan o\'ting.',
       telegramChat: 'Telegram orqali chat',
       confirmDeleteAd: 'E\'lonni o\'chirishni xohlaysizmi?',
       buyAdvertising: 'Reklama sotib olish',
+      promoModalTitle: 'E\'lonni ko\'proq ko\'rinadigan qiling',
+      promoPayBtn: 'Reklamani to\'lash',
+      promoSelectServiceWarning: 'Xizmatni tanlang',
+      promoServiceMaxi: 'Maksi kartochka',
+      promoServiceMaxiPrice: '13 900 so\'m • 7 kun',
+      promoServiceUp: 'Yuqoriga',
+      promoServiceUpPrice: '4 000 so\'m • 28 kun',
+      promoServiceUpDesc: 'Avtoko\'tarish 5 marta — hozir, keyin 7, 14, 21 va 28 kunda.',
+      statusPending: 'Tekshiruvda',
       adStatistics: 'E\'lon statistikasi',
       closeAd: 'E\'lonni yopish',
       confirmCloseAd: 'E\'lonni yopish? U arxivga ko\'chiriladi.',
@@ -147,6 +183,7 @@ export const translations = {
       enlarge: 'Kattalashtirish',
       prevImage: 'Oldingi foto',
       nextImage: 'Keyingi foto',
+      imageCount: 'Rasmlar',
     },
     reviews: {
       title: 'Foydalanuvchi sharhlari',
@@ -233,6 +270,7 @@ export const translations = {
   ru: {
     nav: {
       home: 'Главная',
+      services: 'Услуги',
       login: 'Вход',
       register: 'Регистрация',
       cabinet: 'Личный кабинет',
@@ -309,6 +347,30 @@ export const translations = {
     ads: {
       listTitle: 'Объявления',
       noAds: 'Объявления не найдены',
+      adsInUzbekistan: 'Объявления в Узбекистане',
+      showAll: 'Показать все',
+      showLess: 'Свернуть',
+      reset: 'Сбросить',
+      apply: 'Применить',
+      sellAndEarn: 'Продавайте и зарабатывайте',
+      sellerType: 'Продавец',
+      sellerPrivate: 'Частный',
+      sellerBusiness: 'Магазин / бизнес',
+      hasLicense: 'Есть лицензия или сертификат',
+      worksByContract: 'Работаем по договору',
+      currency: 'Валюта',
+      currencyFromAd: 'Из объявления',
+      currencyUzs: 'В сумах',
+      currencyCu: 'В у.е.',
+      price: 'Цена',
+      priceFrom: 'От',
+      priceTo: 'До',
+      additionally: 'Дополнительно',
+      urgentBargain: 'Срочно. Торг.',
+      courierDelivery: 'Доставка курьером',
+      giveAway: 'Отдам даром',
+      any: 'Любой',
+      postAd: 'Подать объявление',
       pagination: 'Пагинация',
       prevPage: 'Назад',
       nextPage: 'Вперёд',
@@ -321,6 +383,7 @@ export const translations = {
       negotiable: 'Договорная',
       contact: 'Контакты',
       phone: 'Телефон',
+      showPhone: 'Показать телефон',
       email: 'Email',
       description: 'Описание',
       expiresAt: 'Действует до',
@@ -353,7 +416,6 @@ export const translations = {
       dealConditions: 'Условия сделки',
       giveAway: 'Отдам даром',
       pricePlaceholder: 'Укажите цену',
-      negotiable: 'Возможен торг',
       urgentBargain: 'Срочно. Торг.',
       descriptionExample: 'Например: «Чёрные кроссовки Nike, размер 42. Состояние отличное — носились всего пару раз.»',
       descriptionPlaceholder: 'Расскажите о товаре или услуге',
@@ -369,9 +431,20 @@ export const translations = {
       contactMethodsHint: 'Необходимо выбрать хотя бы один способ связи',
       chatDefault: 'Включен по умолчанию',
       phoneCalls: 'Звонки по телефону',
+      call: 'Позвонить',
+      phoneLoginRequired: 'Чтобы увидеть номер телефона, войдите или зарегистрируйтесь.',
       telegramChat: 'Чат в телеграм',
       confirmDeleteAd: 'Удалить объявление?',
       buyAdvertising: 'Купить рекламу',
+      promoModalTitle: 'Сделайте объявление заметнее',
+      promoPayBtn: 'Оплатить рекламу',
+      promoSelectServiceWarning: 'Выберите услугу',
+      promoServiceMaxi: 'Макси карточка',
+      promoServiceMaxiPrice: '13 900 сум • 7 дней',
+      promoServiceUp: 'Вверх',
+      promoServiceUpPrice: '4 000 сум • 28 дней',
+      promoServiceUpDesc: 'Автоподнятие 5 раз — сейчас, затем на 7, 14, 21 и 28 день.',
+      statusPending: 'На проверке',
       adStatistics: 'Статистика объявления',
       closeAd: 'Закрыть объявление',
       confirmCloseAd: 'Закрыть объявление? Оно переместится в архив.',
@@ -415,6 +488,7 @@ export const translations = {
       enlarge: 'Увеличить',
       prevImage: 'Предыдущее фото',
       nextImage: 'Следующее фото',
+      imageCount: 'Фото',
     },
     reviews: {
       title: 'Отзывы о пользователе',
@@ -469,12 +543,16 @@ export function getStoredLang() {
   try {
     const stored = localStorage.getItem(LANG_KEY)
     if (stored === 'ru' || stored === 'uz') return stored
-  } catch (_) {}
+  } catch {
+    // ignore
+  }
   return 'uz'
 }
 
 export function setStoredLang(lang) {
   try {
     localStorage.setItem(LANG_KEY, lang)
-  } catch (_) {}
+  } catch {
+    // ignore
+  }
 }

@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDto {
-    private Long id;
+    private String id;
     private String nameUz;
     private String nameRu;
     private String code;
     private Boolean showOnHome;
-    private Long parentId;
+    private String parentId;
     private Boolean hasChildren;
 }

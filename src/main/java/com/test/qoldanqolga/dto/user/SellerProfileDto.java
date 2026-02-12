@@ -18,5 +18,5 @@ public class SellerProfileDto {
     private Instant createdAt;
     private long adsCount;
     private long subscribersCount;
-    private Boolean subscribed; // null if not authenticated, true/false otherwise
+    private boolean subscribed; // false для своего профиля или неаутентифицированного
 }

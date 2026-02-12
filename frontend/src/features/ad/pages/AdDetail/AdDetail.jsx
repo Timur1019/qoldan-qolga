@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../../../../context/AuthContext'
 import { useLang } from '../../../../context/LangContext'
-import { adsPath, adsCategoryPath, sellerPath } from '../../../../constants/routes'
+import { adsCategoryPath, sellerPath } from '../../../../constants/routes'
 import { useAdDetail } from '../../hooks/useAdDetail'
 import { useAdActions } from '../../hooks/useAdActions'
 import { usersApi, imageUrl } from '../../services/adApi'
@@ -12,7 +12,7 @@ import AdDescription from '../../components/AdDescription'
 import AdLocation from '../../components/AdLocation'
 import SellerInfo from '../../components/SellerInfo'
 import SellerAds from '../../components/SellerAds'
-import { formatDate } from '../../utils/adFormatters'
+import { formatDate, maskPhone } from '../../utils/adFormatters'
 import { REPORT_REASONS } from '../../utils/constants'
 import styles from './AdDetail.module.css'
 
@@ -27,6 +27,7 @@ export default function AdDetail() {
   const [reportSubmitting, setReportSubmitting] = useState(false)
   const [askText, setAskText] = useState('')
   const [sellerSubscribed, setSellerSubscribed] = useState(null)
+  const [phoneRevealed, setPhoneRevealed] = useState(false)
 
   const {
     ad,
@@ -67,6 +68,14 @@ export default function AdDetail() {
 
   const handleSubscribeWithState = () => {
     actions.handleSubscribe(setSellerSubscribed)
+  }
+
+  const handlePhoneClick = () => {
+    if (!isAuthenticated) {
+      actions.openAuthModal?.()
+      return
+    }
+    setPhoneRevealed(true)
   }
 
   if (loading) {
@@ -156,9 +165,23 @@ export default function AdDetail() {
                       >
                         {actions.chatGoing ? t('common.loading') : t('ads.chatWith')}
                       </button>
-                      <a href={`tel:${(ad.phone || '').replace(/\D/g, '')}`} className={styles.lightboxFooterBtnPhone} onClick={(e) => e.stopPropagation()}>
-                        {t('ads.phone')}
-                      </a>
+                      {phoneRevealed && ad.phone ? (
+                        <span className={styles.lightboxFooterPhoneRevealed}>
+                          <span className={styles.lightboxFooterPhoneNumber}>+{(ad.phone || '').replace(/\D/g, '')}</span>
+                          <a href={`tel:${(ad.phone || '').replace(/\D/g, '')}`} className={styles.lightboxFooterBtnPhone} onClick={(e) => e.stopPropagation()}>
+                            {t('ads.call')}
+                          </a>
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          className={styles.lightboxFooterBtnPhone}
+                          onClick={(e) => { e.stopPropagation(); handlePhoneClick() }}
+                          title={!isAuthenticated ? t('ads.phoneLoginRequired') : t('ads.phone')}
+                        >
+                          {ad.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
+                        </button>
+                      )}
                       <a
                         href={`https://t.me/${(ad.phone || '').replace(/\D/g, '').slice(-9)}`}
                         target="_blank"
@@ -182,7 +205,10 @@ export default function AdDetail() {
                 isOwner={ad.userId === user?.id}
                 askText={askText}
                 onAskChange={setAskText}
-                onAskSend={actions.handleWriteSeller}
+                onAskSend={(text) => {
+                  actions.handleSendFromAsk?.(text)
+                  setAskText('')
+                }}
                 chatGoing={actions.chatGoing}
               />
               <AdLocation
@@ -221,6 +247,9 @@ export default function AdDetail() {
                 onChat={actions.handleWriteSeller}
                 chatGoing={actions.chatGoing}
                 isOwner={ad.userId === user?.id}
+                isAuthenticated={isAuthenticated}
+                phoneRevealed={phoneRevealed}
+                onPhoneClick={handlePhoneClick}
               />
               {ad.userId && (
                 <SellerInfo

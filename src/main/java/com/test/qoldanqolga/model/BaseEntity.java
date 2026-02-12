@@ -66,6 +66,6 @@ public abstract class BaseEntity implements Serializable, Comparable<BaseEntity>
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : super.hashCode();
+        return getClass().hashCode();
     }
 }

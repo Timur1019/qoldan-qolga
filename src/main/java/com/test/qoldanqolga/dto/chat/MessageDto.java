@@ -13,7 +13,7 @@ import java.time.Instant;
 @Builder
 public class MessageDto {
 
-    private Long id;
+    private String id;
     private String conversationId;
     private String senderId;
     private String senderName;

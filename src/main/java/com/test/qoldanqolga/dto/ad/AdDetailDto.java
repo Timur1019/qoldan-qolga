@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdDetailDto {
-    private Long id;
+    private String id;
     private String title;
     private String description;
     private BigDecimal price;
@@ -27,6 +27,11 @@ public class AdDetailDto {
     private String status;
     private Boolean isNegotiable;
     private Boolean canDeliver;
+    private String sellerType;
+    private Boolean hasLicense;
+    private Boolean worksByContract;
+    private Boolean urgentBargain;
+    private Boolean giveAway;
     private String userId;
     private String userDisplayName;
     private Integer views;

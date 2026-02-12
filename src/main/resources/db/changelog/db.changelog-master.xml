@@ -22,4 +22,12 @@
     <include file="changes/015-add-users-avatar.xml" relativeToChangelogFile="true"/>
     <include file="changes/016-add-ad-can-deliver.xml" relativeToChangelogFile="true"/>
     <include file="changes/017-extend-users-avatar-length.xml" relativeToChangelogFile="true"/>
+    <include file="changes/018-insert-services-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/019-add-ad-filter-fields.xml" relativeToChangelogFile="true"/>
+    <include file="changes/020-add-user-subscriptions-indexes.xml" relativeToChangelogFile="true"/>
+    <include file="changes/021-add-advertisements-indexes.xml" relativeToChangelogFile="true"/>
+    <include file="changes/022-add-conversations-indexes.xml" relativeToChangelogFile="true"/>
+    <include file="changes/023-convert-ids-to-varchar.xml" relativeToChangelogFile="true"/>
+    <include file="changes/024-fix-uuid-schema.xml" relativeToChangelogFile="true"/>
+    <include file="changes/025-add-deleted-at-advertisements.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

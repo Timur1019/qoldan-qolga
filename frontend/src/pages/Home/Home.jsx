@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { referenceApi, adsApi, imageUrl } from '../../api/client'
+import { referenceApi, adsApi } from '../../api/client'
 import { useFavoriteClick } from '../../hooks'
 import { formatPrice, formatAdDate } from '../../utils/formatters'
 import { ROUTES, adsPath, categoryPath, adsCategoryPath } from '../../constants/routes'
 import HeartIcon from '../../components/ui/HeartIcon'
+import CardGallery from '../../features/ad/components/CardGallery'
 import styles from './Home.module.css'
 
 const CATEGORY_ICONS = {
@@ -95,7 +96,7 @@ export default function Home() {
         {categories.map((cat) => (
           <Link
             key={cat.code}
-            to={cat.hasChildren ? categoryPath(cat.code) : adsCategoryPath(cat.code)}
+            to={cat.code === 'Xizmatlar' ? adsCategoryPath(cat.code) : (cat.hasChildren ? categoryPath(cat.code) : adsCategoryPath(cat.code))}
             className={styles.card}
           >
             <span className={styles.cardTitle}>{categoryName(cat)}</span>
@@ -125,25 +126,23 @@ export default function Home() {
               <li key={ad.id} className={styles.adCard}>
                 <Link to={adsPath(ad.id)} className={styles.adCardLink}>
                   <span className={styles.adCardImageWrap}>
-                    {ad.mainImageUrl ? (
-                      <img src={imageUrl(ad.mainImageUrl)} alt="" className={styles.adCardImage} />
-                    ) : (
-                      <div className={styles.adCardImagePlaceholder} />
-                    )}
-                    <button
-                      type="button"
-                      className={styles.favoriteBtn}
-                      onClick={(e) => handleFavoriteClick(e, ad)}
-                      aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
-                    >
-                      <HeartIcon filled={!!ad.favorite} className={ad.favorite ? styles.heartFilled : ''} size={20} />
-                    </button>
+                    <CardGallery
+                      imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+                    />
                   </span>
                   <div className={styles.adCardBody}>
                     <p className={styles.adCardPrice}>
                       {formatPrice(ad.price, ad.currency)}
                       {ad.isNegotiable && ` (${t('ads.negotiable')})`}
                     </p>
+                    <button
+                      type="button"
+                      className={styles.favoriteBtn}
+                      onClick={(e) => handleFavoriteClick(e, ad)}
+                      aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
+                    >
+                      <HeartIcon filled={!!ad.favorite} className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`} size={18} />
+                    </button>
                     <h3 className={styles.adCardTitle}>{ad.title}</h3>
                     {ad.region && <p className={styles.adCardMeta}>{ad.region}</p>}
                     {ad.createdAt && <p className={styles.adCardDate}>{formatAdDate(ad.createdAt)}</p>}

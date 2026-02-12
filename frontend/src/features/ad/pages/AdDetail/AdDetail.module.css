@@ -30,7 +30,7 @@
   padding: 0.5rem 1rem;
   font-size: var(--font-size-small, 1rem);
   font-family: inherit;
-  background: #f3f4f6;
+  background: transparent;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
   cursor: pointer;
@@ -54,7 +54,7 @@
 
 .breadcrumb a:hover {
   text-decoration: none;
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -159,24 +159,26 @@
 }
 
 .reportBtn {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 0.85rem 2rem;
-  font-size: var(--font-size-buttons, 1rem);
-  font-weight: 400;
+  max-width: 620px;
+  margin: 0.75rem auto 0;
+  padding: 0.75rem 1.5rem;
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
   font-family: inherit;
-  color: #111;
-  background: #e9e9e9;
-  border: none;
+  color: var(--color-dark);
+  background: #f3f4f6;
+  border: 1px solid var(--color-border);
   border-radius: 999px;
   cursor: pointer;
 }
 
 .reportBtn:hover {
-  background: #dcdcdc;
-  color: #111;
+  background: #e5e7eb;
+  color: var(--color-dark-hover);
 }
 
 .error {
@@ -260,14 +262,14 @@
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: var(--color-primary, #2563eb);
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .reportSubmitBtn:hover:not(:disabled) {
-  background: var(--color-primary-hover, #1d4ed8);
+  background: var(--color-primary-hover);
 }
 
 .reportSubmitBtn:disabled {
@@ -367,11 +369,11 @@
 
 .lightboxFooterBtnChat {
   color: #fff;
-  background: #22c55e;
+  background: #965eeb;
 }
 
 .lightboxFooterBtnChat:hover:not(:disabled) {
-  background: #16a34a;
+  background: #7c3aed;
 }
 
 .lightboxFooterBtnChat:disabled {
@@ -380,21 +382,39 @@
 }
 
 .lightboxFooterBtnPhone {
-  color: #fff;
-  background: #c026d3;
+  color: #fff !important;
+  background: #04d15c;
 }
 
 .lightboxFooterBtnPhone:hover {
-  background: #a21caf;
+  background: #04b84a;
+  color: #fff !important;
+}
+
+.lightboxFooterPhoneRevealed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lightboxFooterPhoneNumber {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
 }
 
 .lightboxFooterBtnTelegram {
-  color: #fff;
-  background: #0ea5e9;
+  color: #fff !important;
+  background: var(--color-primary);
+}
+
+.lightboxFooterBtnTelegram:visited {
+  color: #fff !important;
 }
 
 .lightboxFooterBtnTelegram:hover {
-  background: #0284c7;
+  background: var(--color-primary-hover);
+  color: #fff !important;
 }
 
 .lightboxFooterBtnTelegramIcon {

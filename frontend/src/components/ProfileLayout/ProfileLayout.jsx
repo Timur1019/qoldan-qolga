@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { useChatUnreadCount } from '../../hooks'
+import { useChatUnreadCount, useFavoritesCount } from '../../hooks'
 import { ROUTES, sellerPath } from '../../constants/routes'
 import { imageUrl } from '../../api/client'
 import styles from './ProfileLayout.module.css'
@@ -59,7 +59,7 @@ const NavIcons = {
 }
 
 export default function ProfileLayout({ children }) {
-  const { user, logout, isAuthenticated } = useAuth()
+  const { user, logout } = useAuth()
   const { t } = useLang()
   const location = useLocation()
   const path = location.pathname
@@ -68,6 +68,7 @@ export default function ProfileLayout({ children }) {
   const isMyReviews = path === '/dashboard/reviews' || path.startsWith('/dashboard/reviews')
   const isChat = path === '/dashboard/chat' || path.startsWith('/dashboard/chat')
   const chatUnreadCount = useChatUnreadCount()
+  const favoritesCount = useFavoritesCount()
 
   return (
     <div className={styles.wrap}>
@@ -102,6 +103,11 @@ export default function ProfileLayout({ children }) {
           <Link to={ROUTES.FAVORITES} className={isFavorites ? styles.navItemActive : styles.navItem}>
             <span className={styles.navIcon}>{NavIcons.heart}</span>
             <span>{t('nav.favorites')}</span>
+            {favoritesCount > 0 && (
+              <span className={styles.navBadge} aria-label={t('nav.favorites')}>
+                {favoritesCount > 99 ? '99+' : favoritesCount}
+              </span>
+            )}
             <span className={styles.navArrow}>›</span>
           </Link>
           <Link to={ROUTES.REVIEWS_MY} className={isMyReviews ? styles.navItemActive : styles.navItem}>

@@ -27,6 +27,7 @@ export function useFavoriteClick(onUpdate) {
         .toggleFavorite(ad.id)
         .then((nowFavorite) => {
           onUpdate(ad.id, nowFavorite)
+          window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
         })
         .catch((err) => {
           if (isAuthError(err)) openAuthModal()

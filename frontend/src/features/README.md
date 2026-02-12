@@ -17,7 +17,7 @@ src/
 └── features/
     ├── ad/        # Объявления
     │   ├── pages/     AdDetail, AdsList, CategoryView, CreateAd, Favorites
-    │   ├── hooks/     useAdDetail, useFavoriteClick
+    │   ├── hooks/     useAdDetail, useAdActions (useFavoriteClick — в src/hooks, реэкспорт в index)
     │   ├── services/  adApi (реэкспорт adsApi, favoritesApi, referenceApi, …)
     │   └── index.js   Public API фичи
     └── auth/      # Авторизация

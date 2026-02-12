@@ -77,6 +77,12 @@ export const authApi = {
 
 export const adminApi = {
   dashboard: () => apiRequest('/admin/dashboard'),
+  getCategories: () => apiRequest('/admin/categories'),
+  createCategory: (body) =>
+    apiRequest('/admin/categories', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
 }
 
 /** Регионы, категории — с бэкенда (редактируемые справочники) */
@@ -140,6 +146,12 @@ export const adsApi = {
   },
   report: (adId, body) =>
     apiRequest(`/ads/${adId}/report`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  getPromoServices: () => apiRequest('/ads/promo-services'),
+  createPromoOrder: (adId, body) =>
+    apiRequest(`/ads/${adId}/promo/order`, {
       method: 'POST',
       body: JSON.stringify(body),
     }),

@@ -5,9 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AdReportRepository extends JpaRepository<AdReport, Long> {
+public interface AdReportRepository extends JpaRepository<AdReport, String> {
 
-    boolean existsByAdIdAndReporterId(Long adId, String reporterId);
+    boolean existsByAdIdAndReporterId(String adId, String reporterId);
 
-    List<AdReport> findByAdId(Long adId);
+    List<AdReport> findByAdId(String adId);
 }

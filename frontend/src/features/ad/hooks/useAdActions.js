@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
+import { useAuthModal } from '../../../hooks'
 import { adsApi, chatApi, usersApi } from '../services/adApi'
 import { ROUTES } from '../../../constants/routes'
 
@@ -10,16 +11,8 @@ import { ROUTES } from '../../../constants/routes'
 export function useAdActions(ad, user, { setAd, setError }) {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const openAuthModal = useAuthModal()
   const [chatGoing, setChatGoing] = useState(false)
-
-  const openAuthModal = useCallback(() => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set('auth', 'login')
-      return next
-    }, { replace: true })
-  }, [setSearchParams])
 
   const handleWriteSeller = useCallback((initialText) => {
     if (!isAuthenticated) return openAuthModal()
@@ -32,6 +25,19 @@ export function useAdActions(ad, user, { setAd, setError }) {
       })
       .catch(() => setChatGoing(false))
   }, [ad, user?.id, isAuthenticated, openAuthModal, navigate])
+
+  /** Отправить сообщение продавцу со страницы объявления без перехода в чат */
+  const handleSendFromAsk = useCallback((text) => {
+    const trimmed = (text || '').trim()
+    if (!trimmed) return
+    if (!isAuthenticated) return openAuthModal()
+    if (!ad || ad.userId === user?.id) return
+    setChatGoing(true)
+    chatApi
+      .getOrCreateConversation(ad.id)
+      .then((conv) => chatApi.sendMessage(conv.id, trimmed))
+      .finally(() => setChatGoing(false))
+  }, [ad, user?.id, isAuthenticated, openAuthModal])
 
   const handleSubscribe = useCallback((onSubscribed) => {
     if (!isAuthenticated) return openAuthModal()
@@ -56,6 +62,7 @@ export function useAdActions(ad, user, { setAd, setError }) {
     adsApi.toggleFavorite(ad.id)
       .then((nowFavorite) => {
         setAd?.((prev) => (prev ? { ...prev, favorite: nowFavorite } : null))
+        window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
       })
       .catch((err) => {
         const msg = err.message || ''
@@ -71,6 +78,7 @@ export function useAdActions(ad, user, { setAd, setError }) {
 
   return {
     handleWriteSeller,
+    handleSendFromAsk,
     handleSubscribe,
     handleReport,
     handleFavorite,

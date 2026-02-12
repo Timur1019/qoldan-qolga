@@ -79,7 +79,7 @@ function AdDescription({
                 key={key}
                 type="button"
                 className={i === 0 ? `${styles.quickChip} ${styles.quickChipPrimary}` : styles.quickChip}
-                onClick={() => onAskSend?.(t(key))}
+                onClick={() => onAskChange?.(t(key))}
                 disabled={chatGoing}
               >
                 {t(key)}

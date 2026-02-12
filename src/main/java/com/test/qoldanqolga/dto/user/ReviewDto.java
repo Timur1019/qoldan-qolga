@@ -17,7 +17,7 @@ public class ReviewDto {
     private String authorDisplayName;
     private String targetUserId;
     private String targetDisplayName;
-    private Long adId;
+    private String adId;
     private Integer rating;
     private String text;
     private Instant createdAt;

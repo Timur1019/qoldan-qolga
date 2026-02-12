@@ -1,6 +1,11 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,11 +16,7 @@ import java.util.List;
 @Table(name = "regions")
 @Getter
 @Setter
-public class Region {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Region extends BaseEntity {
 
     @Column(name = "name_uz", nullable = false, length = 100)
     private String nameUz;

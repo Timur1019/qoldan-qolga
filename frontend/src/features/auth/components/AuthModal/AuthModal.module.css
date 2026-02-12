@@ -89,18 +89,18 @@
 }
 
 .input {
-  padding: 0.65rem 0.9rem;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 10px;
-  font-size: 1rem;
-  background: #fff;
+  padding: var(--input-padding-y) var(--input-padding-x);
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  font-size: var(--input-font-size);
+  background: #ffffff;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--color-primary, #2563eb);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: var(--input-focus-border);
+  box-shadow: var(--input-focus-shadow);
 }
 
 .rememberRow {
@@ -135,7 +135,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: var(--color-primary, #2563eb);
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -143,7 +143,7 @@
 }
 
 .submit:hover:not(:disabled) {
-  background: var(--color-primary-hover, #1d4ed8);
+  background: var(--color-primary-hover);
 }
 
 .submit:active:not(:disabled) {

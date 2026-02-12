@@ -25,26 +25,45 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--color-border, #e5e7eb);
-  background: var(--color-bg-subtle, #f9fafb);
+  background: #fff;
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
-.titlePill {
+.modalTitleBtn {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #111827;
-  background: #fce7f3;
-  border-radius: 10px;
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.modalTitleBtn:hover {
+  color: var(--color-primary, #2563eb);
+}
+
+.modalTitleBtn .arrow {
+  width: 20px;
+  height: 20px;
+  color: #374151;
+}
+
+.modalTitleBtn:hover .arrow {
+  color: var(--color-primary, #2563eb);
 }
 
 .searchWrap {
@@ -72,7 +91,7 @@
 }
 
 .searchInput:focus {
-  border-color: var(--color-primary, #2563eb);
+  border-color: var(--color-primary);
 }
 
 .searchIcon {
@@ -150,7 +169,7 @@
 
 .catItemActive {
   background: rgba(37, 99, 235, 0.08);
-  border-left-color: var(--color-primary, #2563eb);
+  border-left-color: var(--color-primary);
   color: #111827;
   font-weight: 500;
 }
@@ -196,7 +215,7 @@
 }
 
 .rightCol {
-  padding: 1.5rem 2rem;
+  padding: 1.5rem 2rem 2rem;
   overflow-y: auto;
   background: #fff;
 }
@@ -207,27 +226,27 @@
   gap: 0.5rem;
   margin-bottom: 1.25rem;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #111827;
 }
 
 .rightTitle .arrow {
   width: 20px;
   height: 20px;
-  color: #9ca3af;
+  color: #374151;
 }
 
 .groups {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem 2.5rem;
+  margin-bottom: 0;
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .groupTitle {
@@ -235,26 +254,26 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #111827;
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .groupTitle:hover {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
 }
 
 .groupTitle .arrow {
   width: 16px;
   height: 16px;
+  color: #374151;
 }
 
 .groupList {
   list-style: none;
   margin: 0;
-  padding: 0 0 0 0.5rem;
-  border-left: 2px solid var(--color-border, #e5e7eb);
+  padding: 0;
 }
 
 .groupList li {
@@ -263,33 +282,72 @@
 
 .groupItem {
   display: block;
-  padding: 0.35rem 0;
-  font-size: 0.9rem;
-  color: #4b5563;
+  padding: 0.25rem 0;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #374151;
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .groupItem:hover {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
 }
 
 .moreLink {
-  font-size: 0.9rem;
-  color: var(--color-primary, #2563eb);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #2563eb;
   text-decoration: none;
-  padding-left: 0.5rem;
+  margin-top: 0.15rem;
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .moreLink:hover {
-  text-decoration: none;
-  font-weight: 600;
+  text-decoration: underline;
+}
+
+.chevronDown {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: #2563eb;
+}
+
+.chevronDown svg {
+  width: 100%;
+  height: 100%;
+}
+
+.chevronUp {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: #2563eb;
+}
+
+.chevronUp svg {
+  width: 100%;
+  height: 100%;
 }
 
 .hint {
   margin: 0;
   font-size: 0.95rem;
   color: #6b7280;
+}
+
+@media (max-width: 900px) {
+  .groups {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -300,5 +358,10 @@
   .leftCol {
     border-right: none;
     border-bottom: 1px solid var(--color-border);
+  }
+
+  .groups {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }

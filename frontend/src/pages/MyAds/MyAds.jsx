@@ -27,6 +27,9 @@ export default function MyAds() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [openMenuId, setOpenMenuId] = useState(null)
+  const [promoModalAd, setPromoModalAd] = useState(null)
+  const [selectedPromoService, setSelectedPromoService] = useState(null)
+  const [promoWarning, setPromoWarning] = useState('')
   const menuRef = useRef(null)
 
   useEffect(() => {
@@ -88,6 +91,36 @@ export default function MyAds() {
       .catch((e) => setError(e.message))
   }
 
+  const openPromoModal = (ad) => {
+    setOpenMenuId(null)
+    setPromoModalAd(ad)
+    setSelectedPromoService(null)
+    setPromoWarning('')
+  }
+
+  const closePromoModal = () => {
+    setPromoModalAd(null)
+    setSelectedPromoService(null)
+    setPromoWarning('')
+  }
+
+  const handlePromoPay = () => {
+    if (!selectedPromoService) {
+      setPromoWarning(t('ads.promoSelectServiceWarning'))
+      return
+    }
+    if (!promoModalAd) return
+    setPromoWarning('')
+    adsApi
+      .createPromoOrder(promoModalAd.id, { serviceCode: selectedPromoService })
+      .then(() => {
+        closePromoModal()
+      })
+      .catch((e) => {
+        setPromoWarning(e.message || t('common.error'))
+      })
+  }
+
   if (loading) {
     return (
       <div className={styles.page}>
@@ -107,10 +140,14 @@ export default function MyAds() {
   const allAds = data.content || []
   const activeAds = allAds.filter((a) => a.status === STATUS_ACTIVE)
   const archiveAds = allAds.filter((a) => a.status === STATUS_ARCHIVED)
+  const pendingAds = allAds.filter((a) => a.status === 'PENDING')
   const draftsCount = allAds.filter((a) => a.status === 'DRAFT').length
-  const pendingCount = allAds.filter((a) => a.status === 'PENDING').length
+  const pendingCount = pendingAds.length
   const adsForTab =
-    activeTab === 'active' ? activeAds : activeTab === 'archive' ? archiveAds : []
+    activeTab === 'active' ? activeAds
+    : activeTab === 'archive' ? archiveAds
+    : activeTab === 'pending' ? pendingAds
+    : []
 
   return (
     <div className={styles.page}>
@@ -181,7 +218,7 @@ export default function MyAds() {
           </div>
         )}
 
-        {(activeTab === 'drafts' || activeTab === 'pending') && (
+        {activeTab === 'drafts' && (
           <div className={styles.empty}>
             <div className={styles.emptyIcon} aria-hidden>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
@@ -193,45 +230,70 @@ export default function MyAds() {
           </div>
         )}
 
-        {(activeTab === 'active' || activeTab === 'archive') && adsForTab.length > 0 && (
-          <>
-            <ul className={styles.grid}>
-              {adsForTab.map((ad) => (
+        {activeTab === 'pending' && pendingAds.length === 0 && (
+          <div className={styles.empty}>
+            <div className={styles.emptyIcon} aria-hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+              </svg>
+            </div>
+            <p className={styles.emptyText}>{t('profile.myAdsEmpty')}</p>
+          </div>
+        )}
+
+        {(activeTab === 'active' || activeTab === 'archive' || activeTab === 'pending') && adsForTab.length > 0 && (
+          <ul className={styles.list}>
+            {adsForTab.map((ad) => {
+              const mainUrl = (ad.imageUrls && ad.imageUrls[0]) || ad.mainImageUrl
+              return (
                 <li
                   key={ad.id}
-                  className={ad.status === STATUS_ARCHIVED ? `${styles.card} ${styles.cardArchived}` : styles.card}
+                  className={ad.status === STATUS_ARCHIVED ? `${styles.row} ${styles.rowArchived}` : styles.row}
                 >
-                  <div className={styles.cardHeader} ref={openMenuId === ad.id ? menuRef : null}>
-                    <Link to={`/ads/${ad.id}`} className={styles.cardLink}>
-                      {ad.mainImageUrl ? (
-                        <img src={imageUrl(ad.mainImageUrl)} alt="" className={styles.cardImage} />
-                      ) : (
-                        <div className={styles.cardImagePlaceholder} />
-                      )}
-                      <div className={styles.cardBody}>
-                        <h2 className={styles.cardTitle}>{ad.title}</h2>
-                        <p className={styles.cardPrice}>
+                  <div className={styles.rowInner} ref={openMenuId === ad.id ? menuRef : null}>
+                    <Link to={`/ads/${ad.id}`} className={styles.rowLink}>
+                      <span className={styles.rowImageWrap}>
+                        {mainUrl ? (
+                          <img src={imageUrl(mainUrl)} alt="" className={styles.rowImage} />
+                        ) : (
+                          <div className={styles.rowImagePlaceholder} />
+                        )}
+                      </span>
+                      <div className={styles.rowBody}>
+                        <h2 className={styles.rowTitle}>{ad.title}</h2>
+                        <p className={styles.rowPrice}>
                           {formatPrice(ad.price, ad.currency)}
                           {ad.isNegotiable && ` (${t('ads.negotiable')})`}
                         </p>
+                        {ad.status === 'PENDING' && (
+                          <p className={styles.rowStatusPending}>{t('ads.statusPending')}</p>
+                        )}
+                        <button
+                          type="button"
+                          className={styles.rowBuyPromo}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); openPromoModal(ad) }}
+                        >
+                          {t('ads.buyAdvertising')}
+                        </button>
                       </div>
                     </Link>
                     <button
                       type="button"
-                      className={styles.cardMenuBtn}
+                      className={styles.rowMenuBtn}
                       onClick={(e) => { e.preventDefault(); setOpenMenuId((id) => (id === ad.id ? null : ad.id)) }}
                       aria-expanded={openMenuId === ad.id}
                       aria-haspopup="true"
                       aria-label={t('ads.adMenu')}
                     >
-                      <span className={styles.cardMenuDots}>⋯</span>
+                      <span className={styles.rowMenuDots}>⋯</span>
                     </button>
                     {openMenuId === ad.id && (
-                      <div className={styles.cardDropdown} onClick={(e) => e.stopPropagation()}>
+                      <div className={styles.rowDropdown} onClick={(e) => e.stopPropagation()}>
                         <button
                           type="button"
                           className={styles.cardDropdownItem}
-                          onClick={() => { setOpenMenuId(null) }}
+                          onClick={() => openPromoModal(ad)}
                         >
                           {t('ads.buyAdvertising')}
                         </button>
@@ -245,7 +307,7 @@ export default function MyAds() {
                         <button
                           type="button"
                           className={styles.cardDropdownItem}
-                          onClick={() => { setOpenMenuId(null) }}
+                          onClick={() => setOpenMenuId(null)}
                         >
                           {t('ads.adStatistics')}
                         </button>
@@ -278,16 +340,70 @@ export default function MyAds() {
                     )}
                   </div>
                 </li>
-              ))}
-            </ul>
-            <div className={styles.placeAdWrap}>
-              <Link to={ROUTES.ADS_CREATE} className={styles.placeAdBtn}>
-                {t('profile.placeAd')}
-              </Link>
-            </div>
-          </>
+              )
+            })}
+          </ul>
         )}
       </section>
+
+      {promoModalAd && (
+        <div className={styles.promoOverlay} onClick={closePromoModal} role="dialog" aria-modal="true" aria-labelledby="promo-modal-title">
+          <div className={styles.promoModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.promoModalHeader}>
+              <h2 id="promo-modal-title" className={styles.promoModalTitle}>{t('ads.promoModalTitle')}</h2>
+              <button
+                type="button"
+                className={styles.promoModalClose}
+                onClick={closePromoModal}
+                aria-label={t('common.cancel')}
+              >
+                ✕
+              </button>
+            </div>
+            <div className={styles.promoModalBody}>
+              <div className={styles.promoOption}>
+                <label className={styles.promoOptionLabel}>
+                  <input
+                    type="radio"
+                    name="promoService"
+                    checked={selectedPromoService === 'maxi'}
+                    onChange={() => { setSelectedPromoService('maxi'); setPromoWarning('') }}
+                    className={styles.promoRadio}
+                  />
+                  <span className={styles.promoOptionTitle}>{t('ads.promoServiceMaxi')}</span>
+                </label>
+                <p className={styles.promoOptionPrice}>{t('ads.promoServiceMaxiPrice')}</p>
+              </div>
+              <div className={styles.promoOption}>
+                <label className={styles.promoOptionLabel}>
+                  <input
+                    type="radio"
+                    name="promoService"
+                    checked={selectedPromoService === 'up'}
+                    onChange={() => { setSelectedPromoService('up'); setPromoWarning('') }}
+                    className={styles.promoRadio}
+                  />
+                  <span className={styles.promoOptionTitle}>{t('ads.promoServiceUp')}</span>
+                </label>
+                <p className={styles.promoOptionPrice}>{t('ads.promoServiceUpPrice')}</p>
+                <p className={styles.promoOptionDesc}>{t('ads.promoServiceUpDesc')}</p>
+              </div>
+              {promoWarning && (
+                <p className={styles.promoWarning} role="alert">{promoWarning}</p>
+              )}
+            </div>
+            <div className={styles.promoModalFooter}>
+              <button
+                type="button"
+                className={styles.promoPayBtn}
+                onClick={handlePromoPay}
+              >
+                {t('ads.promoPayBtn')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

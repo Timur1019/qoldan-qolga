@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { useAuthModal, useChatUnreadCount } from '../../hooks'
+import { useAuthModal, useChatUnreadCount, useFavoritesCount } from '../../hooks'
 import { referenceApi, imageUrl } from '../../api/client'
 import { PARAMS, ROUTES } from '../../constants/routes'
 import { AuthModal } from '../../features/auth'
@@ -128,11 +128,15 @@ export default function Layout() {
   const [regionOpen, setRegionOpen] = useState(false)
   const openAuthModal = useAuthModal()
   const chatUnreadCount = useChatUnreadCount()
+  const favoritesCount = useFavoritesCount()
 
   const authParam = searchParams.get(PARAMS.AUTH)
   const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
   const authInitialMode = authParam === PARAMS.AUTH_REGISTER ? 'register' : 'login'
   const selectedRegionCode = location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.REGION) || '') : ''
+  const [searchValue, setSearchValue] = useState(() =>
+    location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.QUERY) || '') : ''
+  )
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
@@ -148,6 +152,29 @@ export default function Layout() {
       }, { replace: true })
     }
   }, [searchParams])
+
+  // Синхронизировать поле поиска с URL на странице объявлений
+  useEffect(() => {
+    if (location.pathname === ROUTES.ADS) {
+      setSearchValue(searchParams.get(PARAMS.QUERY) || '')
+    }
+  }, [location.pathname, searchParams])
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault()
+    const q = (typeof searchValue === 'string' ? searchValue : '').trim()
+    if (location.pathname === ROUTES.ADS) {
+      const next = new URLSearchParams(searchParams)
+      next.delete(PARAMS.PAGE)
+      if (q) next.set(PARAMS.QUERY, q)
+      else next.delete(PARAMS.QUERY)
+      setSearchParams(next)
+    } else {
+      const params = new URLSearchParams()
+      if (q) params.set(PARAMS.QUERY, q)
+      navigate(params.toString() ? `${ROUTES.ADS}?${params}` : ROUTES.ADS)
+    }
+  }
 
   const selectedRegion = regions.find((r) => r.code === selectedRegionCode)
   const regionLabel = selectedRegion
@@ -255,20 +282,22 @@ export default function Layout() {
               <span className={styles.categoriesIcon} aria-hidden>{categoriesOpen ? '✕' : '☰'}</span>
               {lang === 'ru' ? 'Категории' : 'Kategoriyalar'}
             </button>
-            <div className={styles.searchWrap}>
+            <form className={styles.searchWrap} onSubmit={handleSearchSubmit} role="search">
               <input
                 type="search"
                 className={styles.searchInput}
                 placeholder={lang === 'ru' ? 'Найти объявление…' : 'E\'lon qidirish…'}
                 aria-label={t('common.search')}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
-              <button type="button" className={styles.searchBtn} aria-label={t('common.search')}>
+              <button type="submit" className={styles.searchBtn} aria-label={t('common.search')}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 20, height: 20 }} aria-hidden>
                   <circle cx="11" cy="11" r="8" />
                   <path d="M21 21l-4.35-4.35" />
                 </svg>
               </button>
-            </div>
+            </form>
             <nav className={styles.nav}>
               <Link to="/ads" className={styles.navLink}>
                 <span className={styles.navIcon}>{NavIcons.ads}</span>
@@ -276,8 +305,15 @@ export default function Layout() {
               </Link>
               {isAuthenticated ? (
                 <>
-                  <Link to="/favorites" className={styles.navLink}>
-                    <span className={styles.navIcon}>{NavIcons.heart}</span>
+                  <Link to={ROUTES.FAVORITES} className={styles.navLink}>
+                    <span className={styles.navLinkWrap}>
+                      <span className={styles.navIcon}>{NavIcons.heart}</span>
+                      {favoritesCount > 0 && (
+                        <span className={styles.navBadge} aria-label={t('nav.favorites')}>
+                          {favoritesCount > 99 ? '99+' : favoritesCount}
+                        </span>
+                      )}
+                    </span>
                     <span className={styles.navLabel}>{t('nav.favorites')}</span>
                   </Link>
                   <Link to={ROUTES.CHAT} className={styles.navLink}>
@@ -342,7 +378,7 @@ export default function Layout() {
                               <span className={styles.profileDropdownTitle}>{t('nav.profile')}</span>
                             </Link>
                             <Link
-                              to="/ads/create"
+                              to={ROUTES.ADS_CREATE}
                               className={styles.profileSellBtn}
                               onClick={() => setProfileOpen(false)}
                             >
@@ -351,11 +387,16 @@ export default function Layout() {
                             </Link>
                           </div>
                           <nav className={styles.profileMenu}>
-                            <Link to="/favorites" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
+                            <Link to={ROUTES.FAVORITES} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.heart}</span>
                               <span>{t('nav.favorites')}</span>
+                              {favoritesCount > 0 && (
+                                <span className={styles.profileMenuBadge} aria-label={t('nav.favorites')}>
+                                  {favoritesCount > 99 ? '99+' : favoritesCount}
+                                </span>
+                              )}
                             </Link>
-                            <Link to="/ads/my" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
+                            <Link to={ROUTES.ADS_MY} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
                               <span className={styles.profileMenuIcon}>{NavIcons.megaphone}</span>
                               <span>{t('nav.myAds')}</span>
                             </Link>
@@ -404,7 +445,7 @@ export default function Layout() {
                       </>
                     )}
                   </div>
-                  <Link to="/ads/create" className={styles.sellBtn}>
+                  <Link to={ROUTES.ADS_CREATE} className={styles.sellBtn}>
                     <span className={styles.sellBtnText}>{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
                     <span className={styles.sellBtnPlus}>{NavIcons.plus}</span>
                   </Link>
@@ -415,7 +456,7 @@ export default function Layout() {
                     <span className={styles.navIcon}>{NavIcons.user}</span>
                     <span className={styles.navLabel}>{t('nav.login')}</span>
                   </button>
-                  <Link to="/ads/create" className={styles.sellBtn}>
+                  <Link to={ROUTES.ADS_CREATE} className={styles.sellBtn}>
                     <span className={styles.sellBtnText}>{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
                     <span className={styles.sellBtnPlus}>{NavIcons.plus}</span>
                   </Link>

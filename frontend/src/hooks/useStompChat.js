@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 import { getWsBaseUrl } from '../api/client'
@@ -13,11 +13,19 @@ export function useStompChat(conversationId, onMessage) {
   const clientRef = useRef(null)
   const subscriptionRef = useRef(null)
   const onMessageRef = useRef(onMessage)
-  onMessageRef.current = onMessage
+  const [connected, setConnected] = useState(false)
 
   useEffect(() => {
-    if (!conversationId || typeof onMessage !== 'function') return
+    onMessageRef.current = onMessage
+  }, [onMessage])
 
+  useEffect(() => {
+    if (!conversationId || typeof onMessage !== 'function') {
+      setConnected(false)
+      return
+    }
+
+    setConnected(false)
     const wsUrl = getWsBaseUrl()
     const client = new Client({
       webSocketFactory: () => new SockJS(wsUrl),
@@ -25,20 +33,26 @@ export function useStompChat(conversationId, onMessage) {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
+        setConnected(true)
         const sub = client.subscribe(`/topic/chat/${conversationId}`, (frame) => {
           try {
             const body = JSON.parse(frame.body)
             onMessageRef.current?.(body)
-          } catch (_) {}
+          } catch {
+            // ignore parse error
+          }
         })
         subscriptionRef.current = sub
       },
-      onStompError: () => {},
+      onStompError: () => {
+        setConnected(false)
+      },
     })
     clientRef.current = client
     client.activate()
 
     return () => {
+      setConnected(false)
       subscriptionRef.current?.unsubscribe?.()
       subscriptionRef.current = null
       client.deactivate?.()
@@ -46,5 +60,5 @@ export function useStompChat(conversationId, onMessage) {
     }
   }, [conversationId])
 
-  return { connected: !!clientRef.current?.connected }
+  return { connected }
 }

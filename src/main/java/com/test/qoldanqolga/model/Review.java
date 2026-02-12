@@ -1,6 +1,11 @@
 package com.test.qoldanqolga.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,8 +29,8 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "target_user_id", insertable = false, updatable = false)
     private User targetUser;
 
-    @Column(name = "ad_id")
-    private Long adId;
+    @Column(name = "ad_id", length = 36)
+    private String adId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ad_id", insertable = false, updatable = false)

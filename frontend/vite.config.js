@@ -16,7 +16,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         configure: (proxy) => {
-          proxy.on('error', (err, req, res) => {
+          proxy.on('error', (err) => {
             console.warn('Proxy error (возможно, бэкенд не запущен на :8080):', err.message)
           })
         },

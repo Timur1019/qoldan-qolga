@@ -43,6 +43,10 @@ export default function CreateAd({ edit: editMode }) {
     contactByPhone: true,
     contactByTelegram: false,
     expiresAt: '',
+    sellerType: '',
+    hasLicense: false,
+    worksByContract: false,
+    urgentBargain: false,
   })
 
   useEffect(() => {
@@ -69,10 +73,14 @@ export default function CreateAd({ edit: editMode }) {
         region: ad.region || '',
         district: ad.district || '',
         isNegotiable: !!ad.isNegotiable,
-        giveAway: ad.price === 0,
+        giveAway: !!ad.giveAway || ad.price === 0,
         address: '',
         landmark: '',
-        canDeliver: false,
+        canDeliver: !!ad.canDeliver,
+        sellerType: ad.sellerType || '',
+        hasLicense: !!ad.hasLicense,
+        worksByContract: !!ad.worksByContract,
+        urgentBargain: !!ad.urgentBargain,
         contactByPhone: true,
         contactByTelegram: false,
         expiresAt,
@@ -148,7 +156,7 @@ export default function CreateAd({ edit: editMode }) {
       if (form.address?.trim() || form.landmark?.trim()) {
         const parts = []
         if (form.address?.trim()) parts.push(lang === 'ru' ? `Адрес: ${form.address.trim()}` : `Manzil: ${form.address.trim()}`)
-        if (form.landmark?.trim()) parts.push(lang === 'ru' ? `Ориентир: ${form.landmark.trim()}` : `Yo\'nalish: ${form.landmark.trim()}`)
+        if (form.landmark?.trim()) parts.push(lang === 'ru' ? `Ориентир: ${form.landmark.trim()}` : `Yo'nalish: ${form.landmark.trim()}`)
         description = description ? `${description}\n\n${parts.join('\n')}` : parts.join('\n')
       }
       const price = form.giveAway ? 0 : (parseFloat(form.price) || 0)
@@ -167,6 +175,11 @@ export default function CreateAd({ edit: editMode }) {
         district: form.district.trim() || undefined,
         isNegotiable: form.isNegotiable,
         canDeliver: form.canDeliver,
+        sellerType: form.sellerType || undefined,
+        hasLicense: form.hasLicense,
+        worksByContract: form.worksByContract,
+        urgentBargain: form.urgentBargain,
+        giveAway: form.giveAway,
         expiresAt,
         imageUrls: uploadedUrls,
       }
@@ -328,8 +341,104 @@ export default function CreateAd({ edit: editMode }) {
               checked={form.isNegotiable}
               onChange={handleChange}
             />
-            <span>{t('ads.negotiable')}</span>
+            <span>{t('ads.formNegotiable')}</span>
           </label>
+        </section>
+
+        <section className={styles.card}>
+          <h2 className={styles.cardTitle}>{t('ads.sellerType')}</h2>
+          <div className={styles.filterOptions}>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="sellerType"
+                value=""
+                checked={form.sellerType === ''}
+                onChange={handleChange}
+              />
+              <span>{t('ads.any')}</span>
+            </label>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="sellerType"
+                value="PRIVATE"
+                checked={form.sellerType === 'PRIVATE'}
+                onChange={handleChange}
+              />
+              <span>{t('ads.sellerPrivate')}</span>
+            </label>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="sellerType"
+                value="BUSINESS"
+                checked={form.sellerType === 'BUSINESS'}
+                onChange={handleChange}
+              />
+              <span>{t('ads.sellerBusiness')}</span>
+            </label>
+          </div>
+
+          <h2 className={styles.cardTitle} style={{ marginTop: '1rem' }}>{t('ads.hasLicense')}</h2>
+          <div className={styles.filterOptions}>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="hasLicense"
+                checked={!form.hasLicense}
+                onChange={() => setForm((p) => ({ ...p, hasLicense: false }))}
+              />
+              <span>{lang === 'ru' ? 'Нет' : 'Yo\'q'}</span>
+            </label>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="hasLicense"
+                checked={form.hasLicense}
+                onChange={() => setForm((p) => ({ ...p, hasLicense: true }))}
+              />
+              <span>{lang === 'ru' ? 'Да' : 'Ha'}</span>
+            </label>
+          </div>
+
+          <h2 className={styles.cardTitle} style={{ marginTop: '1rem' }}>{t('ads.worksByContract')}</h2>
+          <div className={styles.filterOptions}>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="worksByContract"
+                checked={!form.worksByContract}
+                onChange={() => setForm((p) => ({ ...p, worksByContract: false }))}
+              />
+              <span>{lang === 'ru' ? 'Нет' : 'Yo\'q'}</span>
+            </label>
+            <label className={styles.filterRadio}>
+              <input
+                type="radio"
+                name="worksByContract"
+                checked={form.worksByContract}
+                onChange={() => setForm((p) => ({ ...p, worksByContract: true }))}
+              />
+              <span>{lang === 'ru' ? 'Да' : 'Ha'}</span>
+            </label>
+          </div>
+
+          <div className={styles.giveAwayRow} style={{ marginTop: '1rem' }}>
+            <div className={styles.giveAwayLeft}>
+              <span className={styles.giveAwayIcon} aria-hidden>⚡</span>
+              <span className={styles.giveAwayLabel}>{t('ads.urgentBargain')}</span>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={form.urgentBargain}
+              className={`${styles.toggle} ${form.urgentBargain ? styles.on : ''}`}
+              onClick={() => setForm((p) => ({ ...p, urgentBargain: !p.urgentBargain }))}
+            >
+              <span className={styles.toggleKnob} />
+            </button>
+          </div>
         </section>
 
         <section className={styles.card}>

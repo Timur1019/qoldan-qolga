@@ -18,7 +18,7 @@
 }
 
 .error {
-  color: var(--color-error, #dc2626);
+  color: var(--color-error);
 }
 
 .empty {
@@ -35,7 +35,7 @@
 }
 
 .emptyLink {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .targetLink:hover {
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 600;
 }

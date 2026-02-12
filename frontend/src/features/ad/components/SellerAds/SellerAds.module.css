@@ -96,7 +96,7 @@
 }
 
 .card:hover {
-  border-color: var(--color-primary, #2563eb);
+  border-color: var(--color-primary);
 }
 
 .img,
@@ -123,6 +123,7 @@
 .price {
   font-weight: 600;
   font-size: var(--font-size-body, 1.0625rem);
+  color: #111827;
 }
 
 .cardTitle {
