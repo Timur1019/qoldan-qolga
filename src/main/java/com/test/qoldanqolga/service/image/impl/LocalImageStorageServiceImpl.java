@@ -5,8 +5,8 @@ import com.test.qoldanqolga.exception.InvalidImageException;
 import com.test.qoldanqolga.service.image.ImageStorageService;
 import com.test.qoldanqolga.service.image.ImageValidator;
 import com.test.qoldanqolga.service.image.StorageProperties;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LocalImageStorageServiceImpl implements ImageStorageService {
@@ -46,10 +45,10 @@ public class LocalImageStorageServiceImpl implements ImageStorageService {
                 throw e;
             }
             String url = properties.getUrlPrefix() + filename;
-            log.debug("Saved image: {}", url);
+            LogUtil.debug(LocalImageStorageServiceImpl.class, "Saved image: {}", url);
             return url;
         } catch (IOException e) {
-            log.error("Failed to save upload", e);
+            LogUtil.error(LocalImageStorageServiceImpl.class, "Failed to save upload", e);
             throw new ImageStorageException("Не удалось сохранить файл", e);
         }
     }

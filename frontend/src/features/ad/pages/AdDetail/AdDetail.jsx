@@ -36,6 +36,7 @@ export default function AdDetail() {
     setError,
     sellerProfile,
     sellerAds,
+    similar,
     reviewsSummary,
     setAd,
   } = useAdDetail(id)
@@ -80,17 +81,19 @@ export default function AdDetail() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <p>{t('common.loading')}</p>
+      <div className="page-container app-page">
+        <p className="text-muted">{t('common.loading')}</p>
       </div>
     )
   }
 
   if (error || !ad) {
     return (
-      <div className={styles.page}>
-        <p className={styles.error}>{error || t('ads.noAds')}</p>
-        <Link to="/ads">{t('common.back')}</Link>
+      <div className="page-container app-page">
+        <div className="alert alert-danger" role="alert">
+          <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error || t('ads.noAds')}
+        </div>
+        <Link to="/" className="btn btn-outline-primary btn-sm">{t('common.back')}</Link>
       </div>
     )
   }
@@ -105,23 +108,23 @@ export default function AdDetail() {
     : t('reviews.noReviews')
 
   return (
-    <div className={styles.page}>
-      <div className={styles.topBar}>
-        <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-          <Link to="/">{t('nav.home')}</Link>
-          <span className={styles.breadcrumbSep}>›</span>
-          <Link to={adsCategoryPath(ad.category)}>{categoryLabel}</Link>
-          <span className={styles.breadcrumbSep}>›</span>
-          <span className={styles.breadcrumbCurrent}>{ad.title.length > 50 ? ad.title.slice(0, 50) + '…' : ad.title}</span>
+    <div className="page-container app-page">
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb mb-0">
+            <li className="breadcrumb-item"><Link to="/">{t('nav.home')}</Link></li>
+            <li className="breadcrumb-item"><Link to={adsCategoryPath(ad.category)}>{categoryLabel}</Link></li>
+            <li className="breadcrumb-item active text-truncate" style={{ maxWidth: '200px' }} aria-current="page">{ad.title.length > 50 ? ad.title.slice(0, 50) + '…' : ad.title}</li>
+          </ol>
         </nav>
         <button
           type="button"
-          className={styles.favoriteBtnTop}
+          className="btn btn-outline-danger btn-sm"
           onClick={actions.handleFavorite}
           aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
         >
-          <span className={styles.favoriteHeart} aria-hidden>{ad.favorite ? '♥' : '♡'}</span>
-          <span>{ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}</span>
+          <i className={`bi ${ad.favorite ? 'bi-heart-fill' : 'bi-heart'} me-1`} aria-hidden />
+          {ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
         </button>
       </div>
 
@@ -156,41 +159,40 @@ export default function AdDetail() {
                         )}
                       </div>
                     </div>
-                    <div className={styles.lightboxFooterBtns}>
+                    <div className="d-flex flex-wrap gap-2 align-items-center">
                       <button
                         type="button"
-                        className={styles.lightboxFooterBtnChat}
+                        className="btn btn-primary btn-sm"
                         onClick={(e) => { e.stopPropagation(); actions.handleWriteSeller() }}
                         disabled={actions.chatGoing || ad.userId === user?.id}
                       >
-                        {actions.chatGoing ? t('common.loading') : t('ads.chatWith')}
+                        <i className="bi bi-chat-dots me-1" aria-hidden /> {actions.chatGoing ? t('common.loading') : t('ads.chatWith')}
                       </button>
                       {phoneRevealed && ad.phone ? (
-                        <span className={styles.lightboxFooterPhoneRevealed}>
-                          <span className={styles.lightboxFooterPhoneNumber}>+{(ad.phone || '').replace(/\D/g, '')}</span>
-                          <a href={`tel:${(ad.phone || '').replace(/\D/g, '')}`} className={styles.lightboxFooterBtnPhone} onClick={(e) => e.stopPropagation()}>
-                            {t('ads.call')}
+                        <span className="d-flex align-items-center gap-2">
+                          <span className="small">+{(ad.phone || '').replace(/\D/g, '')}</span>
+                          <a href={`tel:${(ad.phone || '').replace(/\D/g, '')}`} className="btn btn-outline-success btn-sm" onClick={(e) => e.stopPropagation()}>
+                            <i className="bi bi-telephone me-1" aria-hidden /> {t('ads.call')}
                           </a>
                         </span>
                       ) : (
                         <button
                           type="button"
-                          className={styles.lightboxFooterBtnPhone}
+                          className="btn btn-outline-secondary btn-sm"
                           onClick={(e) => { e.stopPropagation(); handlePhoneClick() }}
                           title={!isAuthenticated ? t('ads.phoneLoginRequired') : t('ads.phone')}
                         >
-                          {ad.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
+                          <i className="bi bi-telephone me-1" aria-hidden /> {ad.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
                         </button>
                       )}
                       <a
                         href={`https://t.me/${(ad.phone || '').replace(/\D/g, '').slice(-9)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={styles.lightboxFooterBtnTelegram}
+                        className="btn btn-outline-primary btn-sm"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <span className={styles.lightboxFooterBtnTelegramIcon} aria-hidden>✈</span>
-                        Telegram
+                        <i className="bi bi-send me-1" aria-hidden /> Telegram
                       </a>
                     </div>
                   </div>
@@ -230,10 +232,10 @@ export default function AdDetail() {
                   <span className={styles.adMetaValue}>{formatDate(ad.createdAt)}</span>
                 </div>
               </div>
-              <div className={styles.actionBtns}>
+              <div className="mt-2">
                 {ad.userId !== user?.id && (
-                  <button type="button" className={styles.reportBtn} onClick={handleReportClick}>
-                    {t('ads.report')}
+                  <button type="button" className="btn btn-outline-danger btn-sm" onClick={handleReportClick}>
+                    <i className="bi bi-flag me-1" aria-hidden /> {t('ads.report')}
                   </button>
                 )}
               </div>
@@ -256,6 +258,7 @@ export default function AdDetail() {
                   sellerId={ad.userId}
                   sellerDisplayName={sellerDisplayName}
                   sellerAvatar={sellerAvatar}
+                  sellerIsStore={ad.sellerIsStore}
                   adsCount={sellerProfile?.adsCount ?? 0}
                   sinceIso={sellerProfile?.createdAt}
                   ratingText={ratingText}
@@ -268,41 +271,44 @@ export default function AdDetail() {
           </div>
         </div>
 
-        <SellerAds ads={sellerAds.content} />
+        <SellerAds ads={sellerAds.content} titleKey="ads.sellerAdsTitle" />
+        <SellerAds ads={similar.content} titleKey="ads.similar" />
       </div>
 
       {reportModalOpen && (
         <div className={styles.modalOverlay} onClick={() => setReportModalOpen(false)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()} role="dialog" aria-labelledby="report-modal-title">
-            <div className={styles.modalHeader}>
-              <h2 id="report-modal-title" className={styles.modalTitle}>{t('ads.reportModalTitle')}</h2>
+          <div className="app-card border-0 shadow p-0 overflow-hidden" style={{ maxWidth: '400px', width: '100%' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-labelledby="report-modal-title">
+            <div className="d-flex align-items-center justify-content-between p-3 border-bottom">
+              <h2 id="report-modal-title" className="h6 mb-0">{t('ads.reportModalTitle')}</h2>
               <button
                 type="button"
-                className={styles.modalClose}
+                className="btn btn-link p-0 text-secondary text-decoration-none"
                 onClick={() => setReportModalOpen(false)}
                 aria-label={t('common.cancel')}
               >
-                ×
+                <i className="bi bi-x-lg" aria-hidden />
               </button>
             </div>
-            <div className={styles.modalBody}>
+            <div className="p-3">
               {REPORT_REASONS.map((r) => (
-                <label key={r.value} className={styles.reportReasonLabel}>
+                <div key={r.value} className="form-check mb-2">
                   <input
                     type="radio"
                     name="reportReason"
+                    id={`report-${r.value}`}
                     value={r.value}
                     checked={reportReason === r.value}
                     onChange={(e) => setReportReason(e.target.value)}
+                    className="form-check-input"
                   />
-                  <span>{t(r.labelKey)}</span>
-                </label>
+                  <label className="form-check-label" htmlFor={`report-${r.value}`}>{t(r.labelKey)}</label>
+                </div>
               ))}
             </div>
-            <div className={styles.modalFooter}>
+            <div className="p-3 border-top">
               <button
                 type="button"
-                className={styles.reportSubmitBtn}
+                className="btn btn-primary w-100"
                 onClick={handleReportSubmit}
                 disabled={!reportReason || reportSubmitting}
               >

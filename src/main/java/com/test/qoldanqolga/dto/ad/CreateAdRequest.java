@@ -64,6 +64,11 @@ public class CreateAdRequest {
 
     private Boolean giveAway = false;
 
+    /** Геолокация места сделки (опционально). */
+    private BigDecimal locationLat;
+
+    private BigDecimal locationLng;
+
     @NotNull
     private Instant expiresAt;
 

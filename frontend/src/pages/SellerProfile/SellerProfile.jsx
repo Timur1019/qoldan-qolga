@@ -71,14 +71,13 @@ export default function SellerProfile() {
     if (!id) return
     setLoading(true)
     setError('')
-    Promise.all([
-      usersApi.getProfile(id),
-      usersApi.getAds(id, { size: 50 }),
-      usersApi.getReviews(id, { size: 10 }).catch(() => null),
-    ])
+    const profilePromise = usersApi.getProfile(id)
+    const adsPromise = usersApi.getAds(id, { size: 50 }).catch(() => ({ content: [], totalElements: 0 }))
+    const reviewsPromise = usersApi.getReviews(id, { size: 10 }).catch(() => null)
+    Promise.all([profilePromise, adsPromise, reviewsPromise])
       .then(([profileData, adsResult, reviewsResult]) => {
         setProfile(profileData)
-        setAdsData(adsResult ?? { content: [], totalElements: 0 })
+        setAdsData(adsResult && Array.isArray(adsResult.content) ? adsResult : { content: adsResult?.content ?? [], totalElements: adsResult?.totalElements ?? 0 })
         setReviewsData(reviewsResult ?? null)
       })
       .catch((e) => setError(e?.message || 'Ошибка загрузки'))
@@ -123,17 +122,20 @@ export default function SellerProfile() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <p>{t('common.loading')}</p>
+      <div className="page-container app-page">
+        <p className="text-muted">{t('common.loading')}</p>
       </div>
     )
   }
 
   if (error || !profile) {
     return (
-      <div className={styles.page}>
-        <p className={styles.error}>{error || t('ads.noAds')}</p>
-        <Link to="/">{t('common.back')}</Link>
+      <div className="page-container app-page">
+        <div className="alert alert-danger" role="alert">
+          <i className="bi bi-exclamation-circle me-2" aria-hidden />
+          {error || t('ads.noAds')}
+        </div>
+        <Link to="/" className="btn btn-outline-primary btn-sm">{t('common.back')}</Link>
       </div>
     )
   }
@@ -149,7 +151,7 @@ export default function SellerProfile() {
   const showCTA = isOwner && totalReviews < 3
 
   return (
-    <div className={styles.page}>
+    <div className="page-container app-page">
       <div className={styles.layout}>
         <SellerProfileSidebar
           profile={profile}
@@ -159,7 +161,7 @@ export default function SellerProfile() {
           canLeaveReview={canLeaveReview}
           avgRating={avgRating}
           totalReviews={totalReviews}
-          idVerified={false}
+          idVerified={!!profile?.profileVerified}
           onSubscribe={handleSubscribe}
           onLeaveReview={handleLeaveReviewClick}
         />

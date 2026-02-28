@@ -2,8 +2,8 @@ package com.test.qoldanqolga.service.image;
 
 import com.test.qoldanqolga.repository.AdImageRepository;
 import com.test.qoldanqolga.repository.UserRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,6 @@ import java.util.stream.Stream;
  * Очистка неиспользуемых изображений из папки uploads.
  * Запускается каждый день в 3:00.
  */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OrphanImageCleaner {
@@ -47,18 +46,18 @@ public class OrphanImageCleaner {
                     try {
                         Files.delete(path);
                         deleted++;
-                        log.info("Deleted orphaned image: {}", filename);
+                        LogUtil.info(OrphanImageCleaner.class, "Deleted orphaned image: {}", filename);
                     } catch (IOException e) {
-                        log.error("Failed to delete orphaned image: {}", filename, e);
+                        LogUtil.error(OrphanImageCleaner.class, "Failed to delete orphaned image: " + filename, e);
                     }
                 }
             }
         } catch (IOException e) {
-            log.error("Failed to list upload directory", e);
+            LogUtil.error(OrphanImageCleaner.class, "Failed to list upload directory", e);
         }
 
         if (deleted > 0) {
-            log.info("Orphan image cleanup completed: {} files deleted", deleted);
+            LogUtil.info(OrphanImageCleaner.class, "Orphan image cleanup completed: {} files deleted", deleted);
         }
     }
 

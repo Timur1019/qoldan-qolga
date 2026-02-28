@@ -12,6 +12,8 @@ public interface UserMapper extends BaseMapper<User, UserInfo> {
 
     @Override
     @Mapping(target = "role", source = "role", resultType = String.class)
+    @Mapping(target = "avatarPhotos", expression = "java(com.test.qoldanqolga.util.JsonUtil.parseStringList(user.getAvatarPhotos()))")
+    @Mapping(target = "profileVerified", source = "profileVerified")
     UserInfo toDto(User user);
 
     @Mapping(target = "token", source = "token")
@@ -19,6 +21,7 @@ public interface UserMapper extends BaseMapper<User, UserInfo> {
     @Mapping(target = "displayName", source = "user.displayName")
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "role", source = "user.role", resultType = String.class)
+    @Mapping(target = "avatar", source = "user.avatar")
     AuthResponse toAuthResponse(User user, String token);
 
     @Mapping(target = "id", ignore = true)

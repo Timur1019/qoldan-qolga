@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import com.test.qoldanqolga.util.LogUtil;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -40,7 +41,11 @@ public class JwtUtil {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        } catch (ExpiredJwtException | SignatureException e) {
+        } catch (ExpiredJwtException e) {
+            LogUtil.debug(JwtUtil.class, "Token expired");
+            return null;
+        } catch (SignatureException e) {
+            LogUtil.warn(JwtUtil.class, "Invalid token signature");
             return null;
         }
     }

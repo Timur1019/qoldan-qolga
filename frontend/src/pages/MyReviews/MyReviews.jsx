@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
 import { authApi } from '../../api/client'
-import { sellerPath } from '../../constants/routes'
+import { ROUTES, sellerPath } from '../../constants/routes'
 import RatingStars from '../SellerProfile/RatingStars'
 import styles from './MyReviews.module.css'
 
@@ -47,14 +47,14 @@ export default function MyReviews() {
 
   if (!user) {
     return (
-      <div className={styles.page}>
+      <div className="page-container app-page">
         <p>{t('common.loading')}</p>
       </div>
     )
   }
 
   return (
-    <div className={styles.page}>
+    <div className="page-container app-page">
       <h1 className={styles.title}>{t('profile.myReviews')}</h1>
       <p className={styles.subtitle}>{t('profile.myReviewsSubtitle')}</p>
 
@@ -63,12 +63,14 @@ export default function MyReviews() {
       ) : error ? (
         <p className={styles.error}>{error}</p>
       ) : reviews.length === 0 ? (
-        <div className={styles.empty}>
+        <div className={`${styles.empty} app-card`}>
           <p className={styles.emptyText}>{t('profile.myReviewsEmpty')}</p>
-          <Link to="/ads" className={styles.emptyLink}>{t('ads.listTitle')}</Link>
+          <Link to={ROUTES.ADS_MY} className={`${styles.emptyLink} btn btn-outline-primary btn-sm`}>
+            {t('ads.listTitle')}
+          </Link>
         </div>
       ) : (
-        <div className={styles.reviewsWrap}>
+        <div className={`${styles.reviewsWrap} app-card`}>
           <p className={styles.stats}>
             {totalElements} {totalElements === 1 ? t('reviews.count') : t('reviews.countPlural')}
           </p>
@@ -77,7 +79,7 @@ export default function MyReviews() {
               <li key={r.id} className={styles.item}>
                 <div className={styles.itemHeader}>
                   <Link to={sellerPath(r.targetUserId)} className={styles.targetLink}>
-                    {r.targetDisplayName || '—'} →
+                    {r.targetDisplayName || '—'} <i className="bi bi-arrow-right-short" aria-hidden="true" />
                   </Link>
                   <span className={styles.itemDate}>{formatDate(r.createdAt)}</span>
                 </div>

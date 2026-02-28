@@ -1,6 +1,7 @@
 package com.test.qoldanqolga.service.reference.cache;
 
 import com.test.qoldanqolga.repository.CategoryRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,9 @@ public class CategoryParentCache {
 
     @Cacheable(value = "categoryParents", unless = "#result.isEmpty()")
     public Set<String> getParentIdsWithChildren() {
-        return categoryRepository.findDistinctParentIds().stream()
+        Set<String> ids = categoryRepository.findDistinctParentIds().stream()
                 .collect(Collectors.toSet());
+        LogUtil.debug(CategoryParentCache.class, "Category parents loaded: count={}", ids.size());
+        return ids;
     }
 }

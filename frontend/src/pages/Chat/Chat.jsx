@@ -5,9 +5,22 @@ import { useLang } from '../../context/LangContext'
 import { chatApi } from '../../api/client'
 import { useStompChat } from '../../hooks/useStompChat'
 import { ROUTES, adsPath } from '../../constants/routes'
+import { imageUrl } from '../../api/client'
 import styles from './Chat.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
+
+function isAvatarPhoto(avatar) {
+  return avatar && typeof avatar === 'string' && (avatar.startsWith('/') || avatar.startsWith('http'))
+}
+
+function renderAvatar(avatar, initials) {
+  if (isAvatarPhoto(avatar)) {
+    return <img src={imageUrl(avatar)} alt="" className={styles.avatarImg} />
+  }
+  const emoji = avatar && AVATAR_EMOJI[avatar]
+  return emoji ?? initials
+}
 
 function formatTime(iso) {
   if (!iso) return ''
@@ -231,7 +244,7 @@ export default function Chat() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
+      <div className="page-container app-page">
         <p>{t('common.loading')}</p>
       </div>
     )
@@ -239,40 +252,45 @@ export default function Chat() {
 
   if (error) {
     return (
-      <div className={styles.page}>
-        <p className={styles.error}>{error}</p>
+      <div className="page-container app-page">
+        <div className="alert alert-danger mb-0" role="alert">
+          <i className="bi bi-exclamation-triangle me-2" aria-hidden /> {error}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.title}>{t('profile.chat')}</h1>
-      <div className={styles.layout}>
+    <div className="page-container app-page">
+      <h1 className="h2 mb-3">{t('profile.chat')}</h1>
+      <div className={`${styles.layout} app-card border-0 shadow-sm overflow-hidden`}>
         <aside className={styles.sidebar}>
           {conversations.length === 0 ? (
-            <p className={styles.noChats}>{t('chat.noConversations')}</p>
+            <div className="p-4 text-center text-muted small">
+              <i className="bi bi-chat-left-dots d-block fs-2 mb-2 opacity-50" aria-hidden />
+              <p className="mb-0">{t('chat.noConversations')}</p>
+            </div>
           ) : (
-            <ul className={styles.convList}>
+            <ul className="list-group list-group-flush rounded-0">
               {conversations.map((c) => {
                 const unread = c.unreadCount ?? c.unread_count ?? 0
                 const name = c.otherPartyName || '—'
-                const otherAvatar = c.otherPartyAvatar && AVATAR_EMOJI[c.otherPartyAvatar] ? AVATAR_EMOJI[c.otherPartyAvatar] : null
                 const initials = getInitials(name, false)
+                const isActive = selectedId === c.id
                 return (
-                  <li key={c.id}>
+                  <li key={c.id} className="list-group-item list-group-item-action border-0 border-bottom p-0">
                     <button
                       type="button"
-                      className={selectedId === c.id ? styles.convBtnActive : styles.convBtn}
+                      className={`d-flex align-items-center gap-2 w-100 text-start p-3 border-0 ${isActive ? styles.convBtnActive : styles.convBtn}`}
                       onClick={() => selectConversation(c.id)}
                     >
-                      <span className={styles.convAvatar} title={name}>{otherAvatar ?? initials}</span>
-                      <span className={styles.convInfo}>
-                        <span className={styles.convTitle}>{c.adTitle || t('chat.conversation')}</span>
-                        <span className={styles.convParty}>{name}</span>
+                      <span className={`${styles.convAvatar} flex-shrink-0`} title={name}>{renderAvatar(c.otherPartyAvatar, initials)}</span>
+                      <span className="flex-grow-1 min-w-0">
+                        <span className="d-block fw-semibold text-truncate small">{c.adTitle || t('chat.conversation')}</span>
+                        <span className="d-block text-muted text-truncate" style={{ fontSize: '0.8rem' }}>{name}</span>
                       </span>
                       {unread > 0 && (
-                        <span className={styles.convBadge}>{unread > 99 ? '99+' : unread}</span>
+                        <span className="badge rounded-pill bg-primary flex-shrink-0">{unread > 99 ? '99+' : unread}</span>
                       )}
                     </button>
                   </li>
@@ -283,146 +301,152 @@ export default function Chat() {
         </aside>
         <section className={styles.thread}>
           {!selectedId ? (
-            <p className={styles.hint}>{t('chat.selectConversation')}</p>
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 text-muted py-5">
+              <i className="bi bi-chat-square-text display-4 mb-3 opacity-25" aria-hidden />
+              <p className="mb-0 small">{t('chat.selectConversation')}</p>
+            </div>
           ) : (
-            <div key={selectedId} className={styles.threadContent}>
-              <div className={styles.threadHead}>
-                <div className={styles.threadHeadTop}>
-                  <span className={styles.threadTitle}>{selected?.adTitle || ''}</span>
-                  <span className={styles.threadCount}>
-                    {messages.length} {t('chat.messagesCount')}
+            <div key={selectedId} className={`d-flex flex-column flex-grow-1 min-h-0 ${styles.threadContent}`}>
+              <div className="border-bottom bg-light bg-opacity-50 px-3 py-2">
+                <div className="d-flex align-items-center gap-2 flex-wrap">
+                  <span className={styles.threadAvatar} title={selected?.otherPartyName || ''}>
+                    {renderAvatar(selected?.otherPartyAvatar, getInitials(selected?.otherPartyName || '—', false))}
+                  </span>
+                  <div className="flex-grow-1 min-w-0">
+                    <span className="fw-semibold d-block text-truncate">{selected?.otherPartyName || '—'}</span>
+                    {selected?.adTitle && (
+                      <span className="small text-muted d-block text-truncate">{selected.adTitle}</span>
+                    )}
+                  </div>
+                  <span className="badge bg-secondary text-white rounded-pill">
+                    <i className="bi bi-chat-dots me-1" aria-hidden /> {messages.length}
                   </span>
                   <button
                     type="button"
-                    className={styles.threadDeleteBtn}
+                    className="btn btn-outline-danger btn-sm"
                     onClick={handleDeleteChat}
                     title={t('chat.deleteChat')}
                     aria-label={t('chat.deleteChat')}
                   >
-                    <span className={styles.threadDeleteIcon} aria-hidden>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={18} height={18}>
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                    </span>
+                    <i className="bi bi-trash" aria-hidden />
                   </button>
                 </div>
-                <span className={styles.threadParty}>{selected?.otherPartyName || '—'}</span>
                 {selected?.adId && (
-                  <Link to={adsPath(selected.adId)} className={styles.threadAdLink} target="_blank" rel="noopener noreferrer">
-                    {t('chat.viewAd')} →
+                  <Link to={adsPath(selected.adId)} className="small text-primary text-decoration-none mt-1 d-inline-block" target="_blank" rel="noopener noreferrer">
+                    <i className="bi bi-box-arrow-up-right me-1" aria-hidden /> {t('chat.viewAd')}
                   </Link>
                 )}
               </div>
-              <div className={styles.messages} ref={messagesContainerRef}>
+              <div className={`flex-grow-1 overflow-auto p-3 ${styles.messages}`} ref={messagesContainerRef}>
                 {messagesLoading ? (
-                  <p>{t('common.loading')}</p>
+                  <div className="text-center text-muted py-4">
+                    <div className="spinner-border spinner-border-sm me-2" role="status" aria-hidden />
+                    {t('common.loading')}
+                  </div>
                 ) : (
                   groupMessagesByDate(messages).map((item, idx) => {
                     if (item.type === 'date') {
                       return (
-                        <div key={`date-${idx}`} className={styles.dateHeader}>
-                          {formatDateHeader(item.createdAt || '', t)}
+                        <div key={`date-${idx}`} className="text-center my-2">
+                          <span className="badge bg-light text-muted rounded-pill px-3 py-2 fw-normal">
+                            {formatDateHeader(item.createdAt || '', t)}
+                          </span>
                         </div>
                       )
                     }
                     const m = item.msg
                     const isOwn = m.senderId === user?.id
                     const displayName = isOwn ? t('chat.you') : (m.senderName || '—')
-                    const ownAvatar = isOwn && user?.avatar && AVATAR_EMOJI[user.avatar] ? AVATAR_EMOJI[user.avatar] : null
-                    const otherAvatar = !isOwn && m.senderAvatar && AVATAR_EMOJI[m.senderAvatar] ? AVATAR_EMOJI[m.senderAvatar] : null
+                    const avatar = isOwn ? user?.avatar : m.senderAvatar
                     const initials = getInitials(isOwn ? (user?.displayName || '') : m.senderName, isOwn)
                     const isEditing = editingMessageId === m.id
                     const menuOpen = messageMenuId === m.id
                     return (
                       <div
                         key={m.id}
-                        className={`${styles.msgRow} ${isOwn ? styles.msgRowOwn : ''}`}
+                        className={`d-flex align-items-end gap-2 mb-2 ${isOwn ? 'flex-row-reverse' : ''}`}
                       >
-                        {!isOwn && <span className={styles.msgAvatar} title={displayName}>{otherAvatar ?? initials}</span>}
-                        <div className={styles.msgBubbleWrap}>
+                        {!isOwn && <span className={styles.msgAvatar} title={displayName}>{renderAvatar(avatar, initials)}</span>}
+                        <div className={isOwn ? 'd-flex flex-row-reverse' : ''} style={{ maxWidth: '75%' }}>
                           {isEditing ? (
-                            <div className={`${styles.msgBubble} ${styles.msgBubbleOwn}`}>
+                            <div className={`rounded-3 p-2 ${styles.bubbleOwn}`}>
                               <input
                                 type="text"
-                                className={styles.msgEditInput}
+                                className="form-control form-control-sm mb-2"
                                 value={editingText}
                                 onChange={(e) => setEditingText(e.target.value)}
                                 maxLength={2000}
                                 autoFocus
                               />
-                              <div className={styles.msgActions}>
-                                <button type="button" className={styles.msgActionBtn} onClick={handleSaveEdit}>
+                              <div className="d-flex gap-1">
+                                <button type="button" className="btn btn-primary btn-sm" onClick={handleSaveEdit}>
                                   {t('common.save')}
                                 </button>
-                                <button type="button" className={styles.msgActionBtn} onClick={handleCancelEdit}>
+                                <button type="button" className="btn btn-outline-secondary btn-sm" onClick={handleCancelEdit}>
                                   {t('common.cancel')}
                                 </button>
                               </div>
                             </div>
                           ) : (
                             <div
-                              className={`${styles.msgBubble} ${isOwn ? styles.msgBubbleOwn : ''} ${isOwn ? styles.msgBubbleClickable : ''}`}
+                              className={`rounded-3 px-3 py-2 position-relative ${isOwn ? styles.bubbleOwn : styles.bubbleOther}`}
                               onClick={() => isOwn && setMessageMenuId((prev) => (prev === m.id ? null : m.id))}
                               role={isOwn ? 'button' : undefined}
                               tabIndex={isOwn ? 0 : undefined}
                               onKeyDown={(e) => isOwn && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setMessageMenuId((prev) => (prev === m.id ? null : m.id)))}
                             >
-                              <span className={styles.msgSender}>{displayName}</span>
-                              <p className={styles.msgText}>{m.text}</p>
-                              <span className={styles.msgTime}>{formatTime(m.createdAt)}</span>
+                              <span className="d-block small fw-semibold text-body-secondary mb-1">{displayName}</span>
+                              {!isOwn && m.senderIsStore != null && (
+                                <span className={`badge me-1 ${m.senderIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.65rem' }}>
+                                  {m.senderIsStore ? 'Магазин' : 'Частный'}
+                                </span>
+                              )}
+                              <p className="mb-1 small text-break" style={{ whiteSpace: 'pre-wrap' }}>{m.text}</p>
+                              <span className="small text-muted opacity-75">{formatTime(m.createdAt)}</span>
                               {isOwn && menuOpen && (
-                                <div className={styles.msgMenu} onClick={(e) => e.stopPropagation()}>
+                                <div className="position-absolute top-0 end-0 d-flex gap-1 m-1" onClick={(e) => e.stopPropagation()}>
                                   <button
                                     type="button"
-                                    className={styles.msgMenuBtn}
+                                    className="btn btn-light btn-sm p-1"
                                     onClick={() => handleStartEdit(m)}
                                     title={t('chat.edit')}
                                     aria-label={t('chat.edit')}
                                   >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={14} height={14}>
-                                      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                                      <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                    </svg>
+                                    <i className="bi bi-pencil" aria-hidden />
                                   </button>
                                   <button
                                     type="button"
-                                    className={styles.msgMenuBtn}
+                                    className="btn btn-outline-danger btn-sm p-1"
                                     onClick={() => handleDeleteMessage(m.id)}
                                     title={t('chat.delete')}
                                     aria-label={t('chat.delete')}
                                   >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={14} height={14}>
-                                      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                      <line x1="10" y1="11" x2="10" y2="17" />
-                                      <line x1="14" y1="11" x2="14" y2="17" />
-                                    </svg>
+                                    <i className="bi bi-trash" aria-hidden />
                                   </button>
                                 </div>
                               )}
                             </div>
                           )}
                         </div>
-                        {isOwn && !isEditing && <span className={styles.msgAvatarOwn} title={displayName}>{ownAvatar ?? initials}</span>}
+                        {isOwn && !isEditing && <span className={styles.msgAvatarOwn} title={displayName}>{renderAvatar(avatar, initials)}</span>}
                       </div>
                     )
                   })
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <form className={styles.sendForm} onSubmit={handleSend}>
+              <form className="d-flex gap-2 p-3 border-top bg-light bg-opacity-50" onSubmit={handleSend}>
                 <input
                   type="text"
-                  className={styles.sendInput}
+                  className="form-control"
                   placeholder={t('chat.placeholder')}
                   value={sendText}
                   onChange={(e) => setSendText(e.target.value)}
                   maxLength={2000}
                   disabled={sending}
                 />
-                <button type="submit" className={styles.sendBtn} disabled={sending || !sendText.trim()}>
-                  {t('chat.send')}
+                <button type="submit" className="btn btn-primary flex-shrink-0" disabled={sending || !sendText.trim()}>
+                  <i className="bi bi-send-fill" aria-hidden /> <span className="d-none d-sm-inline">{t('chat.send')}</span>
                 </button>
               </form>
             </div>

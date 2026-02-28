@@ -9,6 +9,7 @@ import com.test.qoldanqolga.repository.UserSubscriptionRepository;
 import com.test.qoldanqolga.service.AdvertisementService;
 import com.test.qoldanqolga.service.SellerProfileService;
 import com.test.qoldanqolga.service.UserSubscriptionService;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,11 +52,14 @@ public class SellerProfileServiceImpl implements SellerProfileService {
         dto.setAdsCount(adsCount);
         dto.setSubscribersCount(subscribersCount);
         dto.setSubscribed(subscribed);
+        dto.setProfileVerified(Boolean.TRUE.equals(user.getProfileVerified()));
+        LogUtil.debug(SellerProfileServiceImpl.class, "Seller profile viewed: sellerId={} currentUserId={}", sellerId, currentUserId);
         return dto;
     }
 
     @Override
     public Page<AdListItemDto> getSellerAds(String sellerId, Pageable pageable, String currentUserId) {
+        LogUtil.debug(SellerProfileServiceImpl.class, "Get seller ads: sellerId={} page={}", sellerId, pageable.getPageNumber());
         return advertisementService.listByUser(sellerId, pageable, currentUserId);
     }
 }

@@ -16,4 +16,5 @@ public class AuthResponse {
     private String displayName;
     private String userId;
     private String role;
+    private String avatar;
 }

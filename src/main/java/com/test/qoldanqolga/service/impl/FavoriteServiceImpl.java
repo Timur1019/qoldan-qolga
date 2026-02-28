@@ -54,12 +54,14 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Transactional
     public void remove(String userId, String advertisementId) {
         favoriteRepository.deleteByUserIdAndAdvertisementId(userId, advertisementId);
+        LogUtil.debug(FavoriteServiceImpl.class, "Favorite removed: userId={} adId={}", userId, advertisementId);
     }
 
     @Override
     @Transactional
     public void removeAllByAdvertisementId(String advertisementId) {
         favoriteRepository.deleteByAdvertisementId(advertisementId);
+        LogUtil.info(FavoriteServiceImpl.class, "Favorites cleared for deleted ad: adId={}", advertisementId);
     }
 
     @Override
@@ -68,9 +70,11 @@ public class FavoriteServiceImpl implements FavoriteService {
         Optional<Favorite> opt = favoriteRepository.findByUserIdAndAdvertisementId(userId, advertisementId);
         if (opt.isPresent()) {
             favoriteRepository.delete(opt.get());
+            LogUtil.debug(FavoriteServiceImpl.class, "Favorite toggled off: userId={} adId={}", userId, advertisementId);
             return false;
         }
         add(userId, advertisementId);
+        LogUtil.debug(FavoriteServiceImpl.class, "Favorite toggled on: userId={} adId={}", userId, advertisementId);
         return true;
     }
 
@@ -85,6 +89,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     public Set<String> getFavoriteAdIds(String userId) {
         if (userId == null) return Set.of();
         List<String> list = favoriteRepository.findAdvertisementIdsByUserId(userId);
+        LogUtil.debug(FavoriteServiceImpl.class, "Get favorite ids: userId={} count={}", userId, list.size());
         return new HashSet<>(list);
     }
 
@@ -98,6 +103,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         if (adIds.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
         }
+        LogUtil.debug(FavoriteServiceImpl.class, "Get favorite ads: userId={} count={}", userId, adIds.size());
         List<Advertisement> ads = advertisementRepository.findByIdInWithImages(adIds);
         Map<String, Advertisement> adMap = ads.stream().collect(Collectors.toMap(Advertisement::getId, a -> a));
         List<AdListItemDto> dtos = adIds.stream()

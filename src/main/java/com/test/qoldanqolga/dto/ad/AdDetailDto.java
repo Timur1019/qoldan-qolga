@@ -34,10 +34,13 @@ public class AdDetailDto {
     private Boolean giveAway;
     private String userId;
     private String userDisplayName;
+    private Boolean sellerIsStore;
     private Integer views;
     private Instant createdAt;
     private Instant updatedAt;
     private Instant expiresAt;
+    private BigDecimal locationLat;
+    private BigDecimal locationLng;
     private List<AdImageDto> images;
     private Boolean favorite;
 }

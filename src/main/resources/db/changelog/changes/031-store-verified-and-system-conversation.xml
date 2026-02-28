@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="031-add-store-verified" author="app">
+        <addColumn tableName="users">
+            <column name="store_verified" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Системный пользователь для отправки уведомлений в чат (подтверждение «Магазин»). -->
+    <changeSet id="031-insert-system-user" author="app">
+        <insert tableName="users">
+            <column name="id" value="00000000-0000-0000-0000-000000000001"/>
+            <column name="created_at" valueComputed="NOW()"/>
+            <column name="updated_at" valueComputed="NOW()"/>
+            <column name="email" value="system@qoldan-qolga.local"/>
+            <column name="password_hash" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"/>
+            <column name="display_name" value="Qoldan Qolga"/>
+            <column name="role" value="USER"/>
+            <column name="profile_verified" valueBoolean="false"/>
+            <column name="store_verified" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+    <!-- Системное объявление для диалога «Уведомления» с пользователем. -->
+    <changeSet id="031-insert-system-ad" author="app">
+        <insert tableName="advertisements">
+            <column name="id" value="00000000-0000-0000-0000-000000000002"/>
+            <column name="created_at" valueComputed="NOW()"/>
+            <column name="updated_at" valueComputed="NOW()"/>
+            <column name="title" value="Уведомления"/>
+            <column name="description" value=""/>
+            <column name="price" valueNumeric="0"/>
+            <column name="currency" value="UZS"/>
+            <column name="category" value="Xizmatlar"/>
+            <column name="phone" value="0"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="00000000-0000-0000-0000-000000000001"/>
+            <column name="views" valueNumeric="0"/>
+            <column name="expires_at" valueComputed="'2125-01-01'::timestamptz"/>
+            <column name="is_negotiable" valueBoolean="false"/>
+            <column name="can_deliver" valueBoolean="false"/>
+            <column name="has_license" valueBoolean="false"/>
+            <column name="works_by_contract" valueBoolean="false"/>
+            <column name="urgent_bargain" valueBoolean="false"/>
+            <column name="give_away" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

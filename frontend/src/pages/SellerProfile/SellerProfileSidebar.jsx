@@ -63,7 +63,7 @@ export default function SellerProfileSidebar({
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.profileCard}>
+      <div className={`app-card ${styles.profileCard}`}>
         <div className={styles.profileHeader}>
           <div className={styles.avatar} aria-hidden>
             {avatarSrc ? (
@@ -90,32 +90,32 @@ export default function SellerProfileSidebar({
           {idVerified ? t('profile.idVerified') : t('profile.idNotVerified')}
         </div>
 
-        {isOwner ? (
-          <>
-            <Link to={ROUTES.PROFILE_EDIT} className={styles.editBtn}>
+        <div className={styles.profileCardActions}>
+          {isOwner ? (
+            <Link to={ROUTES.PROFILE_EDIT} className="btn btn-primary btn-sm text-white text-decoration-none">
               {t('chat.edit')}
             </Link>
-          </>
-        ) : (
-          canSubscribe && (
-            <button
-              type="button"
-              className={profile.subscribed ? styles.subscribeBtnActive : styles.subscribeBtn}
-              onClick={onSubscribe}
-            >
-              {profile.subscribed ? t('ads.youAreSubscribed') : t('ads.subscribe')}
-            </button>
-          )
-        )}
+          ) : (
+            canSubscribe && (
+              <button
+                type="button"
+                className={profile.subscribed ? styles.subscribeBtnActive : styles.subscribeBtn}
+                onClick={onSubscribe}
+              >
+                {profile.subscribed ? t('ads.youAreSubscribed') : t('ads.subscribe')}
+              </button>
+            )
+          )}
+        </div>
       </div>
 
       {isOwner ? (
-        <div className={styles.ownerPanelCard}>
+        <div className={`app-card ${styles.ownerPanelCard}`}>
           <h3 className={styles.ownerPanelTitle}>{t('profile.myReviews')}</h3>
           <Link to={ROUTES.REVIEWS_MY} className={styles.ownerPanelLink}>
             {t('profile.myReviews')} →
           </Link>
-          <button type="button" className={styles.shareProfileBtn} onClick={handleShare}>
+          <button type="button" className="btn btn-outline-primary btn-sm w-100" onClick={handleShare}>
             {linkCopied ? t('reviews.linkCopied') : t('profile.shareProfile')}
           </button>
         </div>

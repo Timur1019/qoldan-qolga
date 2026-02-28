@@ -1,3 +1,12 @@
+# Swagger / OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
 # Промо-услуги (переопределяет дефолты из PromoProperties)
 promo:
   services:
@@ -17,3 +26,9 @@ promo:
       duration: 28
       description-ru: "Автоподнятие 5 раз — сейчас, затем на 7, 14, 21 и 28 день. Объявление поднимается вверх в ленте."
       description-uz: "Avtoko'tarish 5 marta — hozir, keyin 7, 14, 21 va 28 kunda. E'lon lentada yuqoriga ko'tariladi."
+
+# Системный диалог для уведомлений (подтверждение «Магазин»)
+app:
+  system:
+    user-id: "00000000-0000-0000-0000-000000000001"
+    ad-id: "00000000-0000-0000-0000-000000000002"

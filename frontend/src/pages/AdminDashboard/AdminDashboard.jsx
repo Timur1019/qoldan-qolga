@@ -19,6 +19,16 @@ export default function AdminDashboard() {
     showOnHome: false,
   })
   const [subcategoryParent, setSubcategoryParent] = useState(null)
+  const [expandedIds, setExpandedIds] = useState(new Set())
+
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     adminApi
@@ -78,9 +88,60 @@ export default function AdminDashboard() {
   const rootCategories = categories.filter((c) => c.parentId == null)
   const getChildren = (id) => categories.filter((c) => c.parentId === id)
 
+  const renderCategoryNode = (item, depth = 0) => {
+    const children = getChildren(item.id)
+    const hasChildren = children.length > 0
+    const isExpanded = expandedIds.has(item.id)
+    return (
+      <li key={item.id} className={depth === 0 ? styles.treeItem : styles.treeSubitem}>
+        <div className={styles.treeItemHead}>
+          <div className={styles.treeRow}>
+            {hasChildren ? (
+              <button
+                type="button"
+                className={styles.toggleBtn}
+                onClick={() => toggleExpand(item.id)}
+                title={isExpanded ? 'Свернуть' : 'Развернуть'}
+                aria-expanded={isExpanded}
+              >
+                <span className={styles.chevron} data-expanded={isExpanded}>▼</span>
+              </button>
+            ) : (
+              <span className={styles.togglePlaceholder} />
+            )}
+            <span className={styles.treeName}>{item.nameRu}</span>
+            <code className={styles.code}>{item.code}</code>
+          </div>
+          <button
+            type="button"
+            className={styles.subBtn}
+            onClick={() => setSubcategoryParent(item)}
+            title="Добавить подкатегорию"
+          >
+            + подкатегория
+          </button>
+        </div>
+        {hasChildren && isExpanded && (
+          <ul className={depth === 0 ? styles.treeSublist : styles.treeSublistNested}>
+            {children.map((child) => renderCategoryNode(child, depth + 1))}
+          </ul>
+        )}
+      </li>
+    )
+  }
+
+  useEffect(() => {
+    if (!categoriesLoading && categories.length > 0) {
+      const idsWithChildren = categories
+        .filter((c) => categories.some((child) => child.parentId === c.id))
+        .map((c) => c.id)
+      setExpandedIds((prev) => (prev.size === 0 ? new Set(idsWithChildren) : prev))
+    }
+  }, [categoriesLoading, categories])
+
   if (loading) {
     return (
-      <div className={styles.page}>
+      <div className="page-container app-page">
         <p>Загрузка…</p>
       </div>
     )
@@ -88,27 +149,47 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <div className={styles.page}>
+      <div className="page-container app-page">
         <p className={styles.error}>{error}</p>
       </div>
     )
   }
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.title}>Панель администратора</h1>
-      <p className={styles.message}>{data?.message ?? 'Добро пожаловать в админ-панель.'} </p>
+    <div className="page-container app-page">
+      <p className={styles.message}>{data?.message ?? 'Добро пожаловать в админ-панель.'}</p>
+
+      {(data?.totalUsers != null || data?.verifiedUsers != null) && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Сводка по пользователям</h2>
+          <div className={styles.statsRow}>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>{data?.totalUsers ?? 0}</span>
+              <span className={styles.statLabel}>Всего пользователей</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>{data?.verifiedUsers ?? 0}</span>
+              <span className={styles.statLabel}>Подтверждённых</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>{data?.pendingVerification ?? 0}</span>
+              <span className={styles.statLabel}>Ожидают проверки</span>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Категории</h2>
 
+        <div className={`${styles.formCard} app-card`}>
         <form className={styles.form} onSubmit={handleCategorySubmit}>
           <div className={styles.formRow}>
-            <label className={styles.label}>
+              <label className={styles.label}>
               Название (UZ)
               <input
                 type="text"
-                className={styles.input}
+                className="form-control"
                 value={form.nameUz}
                 onChange={(e) => setForm((f) => ({ ...f, nameUz: e.target.value }))}
                 maxLength={100}
@@ -119,7 +200,7 @@ export default function AdminDashboard() {
               Название (RU)
               <input
                 type="text"
-                className={styles.input}
+                className="form-control"
                 value={form.nameRu}
                 onChange={(e) => setForm((f) => ({ ...f, nameRu: e.target.value }))}
                 maxLength={100}
@@ -132,7 +213,7 @@ export default function AdminDashboard() {
               Код (латиница, уникальный)
               <input
                 type="text"
-                className={styles.input}
+                className="form-control"
                 value={form.code}
                 onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
                 maxLength={50}
@@ -142,7 +223,7 @@ export default function AdminDashboard() {
             <label className={styles.label}>
               Родительская категория (для подкатегории)
               <select
-                className={styles.select}
+                className="form-select"
                 value={form.parentId}
                 onChange={(e) => setForm((f) => ({ ...f, parentId: e.target.value }))}
               >
@@ -165,7 +246,7 @@ export default function AdminDashboard() {
               Порядок сортировки
               <input
                 type="number"
-                className={styles.inputNum}
+                className="form-control"
                 value={form.sortOrder}
                 onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value === '' ? 0 : Number(e.target.value) }))}
               />
@@ -181,54 +262,22 @@ export default function AdminDashboard() {
           </div>
           {categoryError && <p className={styles.error}>{categoryError}</p>}
           {categorySuccess && <p className={styles.success}>{categorySuccess}</p>}
-          <button type="submit" className={styles.submitBtn}>
+          <button type="submit" className="btn btn-primary">
             Добавить категорию
           </button>
         </form>
+        </div>
 
         {categoriesLoading ? (
           <p className={styles.muted}>Загрузка категорий…</p>
         ) : (
-          <div className={styles.categoryTree}>
-            <p className={styles.treeTitle}>Список категорий</p>
+          <div className={`${styles.categoryTree} app-card`}>
+            <h3 className={styles.treeTitle}>Список категорий</h3>
             {rootCategories.length === 0 ? (
               <p className={styles.muted}>Нет категорий</p>
             ) : (
               <ul className={styles.treeList}>
-                {rootCategories.map((root) => (
-                  <li key={root.id} className={styles.treeItem}>
-                    <span className={styles.treeName}>
-                      {root.nameRu} <code className={styles.code}>{root.code}</code>
-                    </span>
-                    <button
-                      type="button"
-                      className={styles.subBtn}
-                      onClick={() => setSubcategoryParent(root)}
-                      title="Добавить подкатегорию"
-                    >
-                      + подкатегория
-                    </button>
-                    {getChildren(root.id).length > 0 && (
-                      <ul className={styles.treeSublist}>
-                        {getChildren(root.id).map((sub) => (
-                          <li key={sub.id} className={styles.treeSubitem}>
-                            <span className={styles.treeName}>
-                              {sub.nameRu} <code className={styles.code}>{sub.code}</code>
-                            </span>
-                            <button
-                              type="button"
-                              className={styles.subBtn}
-                              onClick={() => setSubcategoryParent(sub)}
-                              title="Добавить подкатегорию"
-                            >
-                              + подкатегория
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
+                {rootCategories.map((root) => renderCategoryNode(root))}
               </ul>
             )}
           </div>

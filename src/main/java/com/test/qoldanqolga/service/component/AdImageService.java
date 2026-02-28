@@ -5,6 +5,7 @@ import com.test.qoldanqolga.mapper.AdvertisementMapper;
 import com.test.qoldanqolga.model.AdImage;
 import com.test.qoldanqolga.model.Advertisement;
 import com.test.qoldanqolga.repository.AdImageRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class AdImageService {
         if (!images.isEmpty()) {
             adImageRepository.saveAll(images);
             ad.getImages().addAll(images);
+            LogUtil.debug(AdImageService.class, "Saved {} images for ad {}", images.size(), ad.getId());
         }
     }
 
@@ -38,5 +40,6 @@ public class AdImageService {
         ad.getImages().clear();
         List<AdImage> images = advertisementMapper.toImageList(request, ad.getId(), ad);
         ad.getImages().addAll(images);
+        LogUtil.debug(AdImageService.class, "Replaced images for ad {}, count={}", ad.getId(), images.size());
     }
 }

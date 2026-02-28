@@ -17,6 +17,7 @@ import com.test.qoldanqolga.service.component.AdDetailDtoBuilder;
 import com.test.qoldanqolga.service.component.CategoryResolver;
 import com.test.qoldanqolga.service.base.AbstractAdService;
 import com.test.qoldanqolga.service.component.CursorPaginationProcessor;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
         int limit = PaginationUtils.normalizeLimit(request.getLimit());
         var pageable = PaginationUtils.createCursorPageable(limit);
         List<Advertisement> content = advertisementRepository.findByCursor(s, request.getCursor(), pageable);
+        LogUtil.debug(AdvertisementQueryServiceImpl.class, "List by cursor: status={} count={} cursor={}", s, content.size(), request.getCursor());
         return cursorPaginationProcessor.process(
                 content,
                 limit,
@@ -82,6 +84,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
         );
         Page<Advertisement> page = advertisementRepository.findAll(spec, pageable);
         List<Advertisement> content = page.getContent();
+        LogUtil.debug(AdvertisementQueryServiceImpl.class, "List ads: status={} total={} page={}", s, page.getTotalElements(), pageable.getPageNumber());
         if (content.isEmpty()) {
             return new PageImpl<>(List.of(), page.getPageable(), page.getTotalElements());
         }
@@ -94,6 +97,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
     public Page<AdListItemDto> listByUser(String userId, Pageable pageable, String currentUserId) {
         Page<Advertisement> page = advertisementRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
         List<Advertisement> content = page.getContent();
+        LogUtil.debug(AdvertisementQueryServiceImpl.class, "List by user: userId={} count={}", userId, content.size());
         if (content.isEmpty()) {
             return new PageImpl<>(List.of(), page.getPageable(), page.getTotalElements());
         }
@@ -111,6 +115,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
     public AdDetailDto getById(String id, String currentUserId) {
         Advertisement ad = advertisementRepository.findByIdWithUserAndImages(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Объявление", id));
+        LogUtil.debug(AdvertisementQueryServiceImpl.class, "Ad detail fetched: adId={}", id);
         return adDetailDtoBuilder.build(ad, currentUserId);
     }
 
@@ -119,6 +124,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
     public void recordView(String id) {
         if (advertisementRepository.existsById(id)) {
             advertisementRepository.incrementViews(id);
+            LogUtil.debug(AdvertisementQueryServiceImpl.class, "View recorded: adId={}", id);
         }
     }
 }

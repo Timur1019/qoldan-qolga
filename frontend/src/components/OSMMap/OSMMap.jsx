@@ -49,7 +49,9 @@ export default function OSMMap({ center, position, onPositionChange, className }
   if (!mapReady) {
     return (
       <div className={`${styles.wrap} ${className || ''}`}>
-        <div className={styles.placeholder}>Карта загружается…</div>
+        <div className={`d-flex align-items-center justify-content-center h-100 text-muted small ${styles.placeholder}`}>
+          Карта загружается…
+        </div>
       </div>
     )
   }
@@ -74,7 +76,7 @@ export default function OSMMap({ center, position, onPositionChange, className }
         href="https://www.openstreetmap.org/copyright"
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.attribution}
+        className={`position-absolute bottom-0 end-0 small text-dark text-decoration-none bg-white px-1 rounded ${styles.attribution}`}
       >
         © OpenStreetMap
       </a>

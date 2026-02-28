@@ -13,6 +13,7 @@ import com.test.qoldanqolga.model.Review;
 import com.test.qoldanqolga.repository.ReviewRepository;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.ReviewService;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRating(request.getRating());
         review.setText(request.getTextTrimmed());
         review = reviewRepository.save(review);
+        LogUtil.info(ReviewServiceImpl.class, "Review created: id={} target={} author={}", review.getId(), targetUserId, authorId);
 
         return reviewRepository.findByIdWithUsers(review.getId())
                 .map(reviewMapper::toDto)
@@ -63,6 +65,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(readOnly = true)
     public UserReviewsSummaryDto getReviewsSummary(String targetUserId, Pageable pageable) {
         ReviewStatisticsDto stats = reviewRepository.getStatistics(targetUserId);
+        LogUtil.debug(ReviewServiceImpl.class, "Reviews summary: targetUserId={} total={}", targetUserId, stats != null ? stats.getTotalCount() : 0);
         if (stats == null) {
             return new UserReviewsSummaryDto(0, 0, defaultRatingCounts(), List.of());
         }
@@ -85,14 +88,18 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Page<ReviewDto> getReviews(String targetUserId, Pageable pageable) {
-        return reviewRepository.findByTargetUserIdWithUsers(targetUserId, pageable)
+        Page<ReviewDto> page = reviewRepository.findByTargetUserIdWithUsers(targetUserId, pageable)
                 .map(reviewMapper::toDto);
+        LogUtil.debug(ReviewServiceImpl.class, "Get reviews: targetUserId={} total={}", targetUserId, page.getTotalElements());
+        return page;
     }
 
     @Override
     public Page<ReviewDto> getReviewsByAuthor(String authorId, Pageable pageable) {
-        return reviewRepository.findByAuthorIdWithUsers(authorId, pageable)
+        Page<ReviewDto> page = reviewRepository.findByAuthorIdWithUsers(authorId, pageable)
                 .map(reviewMapper::toDto);
+        LogUtil.debug(ReviewServiceImpl.class, "Get reviews by author: authorId={} total={}", authorId, page.getTotalElements());
+        return page;
     }
 
     private static Map<Integer, Long> defaultRatingCounts() {

@@ -1,20 +1,14 @@
-.page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
 .title {
   margin: 0 0 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #111827;
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
 }
 
 .subtitle {
   margin: 0 0 1.25rem;
-  font-size: 0.95rem;
-  color: var(--color-muted, #6b7280);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary);
 }
 
 .error {
@@ -22,32 +16,20 @@
 }
 
 .empty {
-  background: #fff;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 16px;
   padding: 2rem;
   text-align: center;
 }
 
 .emptyText {
   margin: 0 0 1rem;
-  color: var(--color-muted, #6b7280);
+  color: var(--color-text-secondary);
 }
 
 .emptyLink {
-  color: var(--color-primary);
   text-decoration: none;
-}
-
-.emptyLink:hover {
-  text-decoration: none;
-  font-weight: 600;
 }
 
 .reviewsWrap {
-  background: #fff;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 16px;
   padding: 1.5rem;
 }
 

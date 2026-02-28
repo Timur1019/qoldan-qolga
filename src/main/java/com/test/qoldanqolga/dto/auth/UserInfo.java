@@ -15,5 +15,7 @@ public class UserInfo {
     private String email;
     private String displayName;
     private String avatar;
+    private java.util.List<String> avatarPhotos;
     private String role;
+    private Boolean profileVerified;
 }

@@ -8,7 +8,7 @@ import styles from './Login.module.css'
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { setAuth } = useAuth()
+  const { setAuth, refreshUser } = useAuth()
   const { t } = useLang()
   const from = location.state?.from?.pathname ?? '/dashboard'
   const [email, setEmail] = useState('')
@@ -27,7 +27,9 @@ export default function Login() {
         email: res.email,
         displayName: res.displayName,
         role: res.role || 'USER',
+        avatar: res.avatar,
       })
+      await refreshUser()
       navigate(from, { replace: true })
     } catch (err) {
       setError(err.message || 'Ошибка входа')
@@ -37,39 +39,43 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>{t('auth.loginTitle')}</h1>
+    <div className="page-container app-page">
+      <div className={`app-card ${styles.card}`}>
+        <h1 className="h2 mb-4">{t('auth.loginTitle')}</h1>
         <form onSubmit={handleSubmit} className={styles.form}>
-          {error && <p className={styles.error}>{error}</p>}
-          <label className={styles.label}>
-            {t('auth.email')}
+          {error && (
+            <div className="alert alert-danger py-2" role="alert">
+              <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
+            </div>
+          )}
+          <div className="mb-3">
+            <label className="form-label">{t('auth.email')}</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className={styles.input}
+              className="form-control"
             />
-          </label>
-          <label className={styles.label}>
-            {t('auth.password')}
+          </div>
+          <div className="mb-3">
+            <label className="form-label">{t('auth.password')}</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className={styles.input}
+              className="form-control"
             />
-          </label>
-          <button type="submit" disabled={submitting} className={styles.submit}>
+          </div>
+          <button type="submit" disabled={submitting} className="btn btn-primary w-100">
             {submitting ? t('common.loading') : t('nav.login')}
           </button>
         </form>
-        <p className={styles.footer}>
-          {t('auth.noAccount')} <Link to="/register">{t('nav.register')}</Link>
+        <p className="mt-4 mb-0 text-muted small text-center">
+          {t('auth.noAccount')} <Link to="/register" className="text-primary text-decoration-none">{t('nav.register')}</Link>
         </p>
       </div>
     </div>

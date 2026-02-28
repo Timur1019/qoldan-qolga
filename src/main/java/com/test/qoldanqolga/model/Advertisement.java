@@ -81,6 +81,12 @@ public class Advertisement extends BaseEntity {
     @Column(name = "give_away", nullable = false)
     private Boolean giveAway = false;
 
+    @Column(name = "location_lat", precision = 10, scale = 7)
+    private BigDecimal locationLat;
+
+    @Column(name = "location_lng", precision = 10, scale = 7)
+    private BigDecimal locationLng;
+
     @Column(name = "user_id", nullable = false, length = 36)
     private String userId;
 

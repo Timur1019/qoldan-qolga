@@ -13,6 +13,7 @@ import com.test.qoldanqolga.service.chat.ChatAccessService;
 import com.test.qoldanqolga.service.chat.ConversationCommandService;
 import com.test.qoldanqolga.service.chat.ConversationStatistics;
 import com.test.qoldanqolga.service.chat.ConversationStatisticsService;
+import com.test.qoldanqolga.config.SystemConversationProperties;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,23 @@ public class ConversationCommandServiceImpl implements ConversationCommandServic
     private final ConversationMapper conversationMapper;
     private final ChatAccessService chatAccessService;
     private final ConversationStatisticsService statisticsService;
+    private final SystemConversationProperties systemConversationProperties;
+
+    @Override
+    @Transactional
+    public String getOrCreateSystemConversation(String userId) {
+        String systemAdId = systemConversationProperties.getAdId();
+        Optional<Conversation> existing = conversationRepository.findByAdIdAndBuyerId(systemAdId, userId);
+        if (existing.isPresent()) {
+            return existing.get().getId();
+        }
+        LogUtil.info(ConversationCommandServiceImpl.class, "Creating system conversation for user={}", userId);
+        Conversation c = new Conversation();
+        c.setAdId(systemAdId);
+        c.setBuyerId(userId);
+        c = conversationRepository.save(c);
+        return c.getId();
+    }
 
     @Override
     @Transactional
@@ -43,6 +61,7 @@ public class ConversationCommandServiceImpl implements ConversationCommandServic
         }
         Optional<Conversation> existing = conversationRepository.findByAdIdAndBuyerId(adId, currentUserId);
         if (existing.isPresent()) {
+            LogUtil.debug(ConversationCommandServiceImpl.class, "Existing conversation found: adId={} buyerId={}", adId, currentUserId);
             return toDto(existing.get(), currentUserId);
         }
         LogUtil.info(ConversationCommandServiceImpl.class, "Creating conversation for ad={} buyer={}", adId, currentUserId);

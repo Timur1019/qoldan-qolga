@@ -1,4 +1,11 @@
-# React + Vite
+# Frontend — Qoldan Qolga
+
+React + Vite. Для локальной разработки **сначала запустите бэкенд** на порту 8080 (`./gradlew bootRun` в корне проекта). Запросы к `/api` и `/ws` проксируются на `http://127.0.0.1:8080`.
+
+- `npm install` — зависимости
+- `npm run dev` — dev-сервер на порту 3000
+
+---
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

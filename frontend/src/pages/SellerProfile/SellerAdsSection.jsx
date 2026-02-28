@@ -1,13 +1,13 @@
 /**
  * SellerAdsSection — секция объявлений продавца.
- * Табы «Активные»/«Архив» под заголовком; карточки: цена, название, город • дата.
+ * Табы «Активные»/«Архив»; карточки в той же сетке и стиле, что на главной и в списке объявлений.
  */
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { imageUrl } from '../../api/client'
 import { formatPrice, formatAdCardDate } from '../../utils/formatters'
 import { adsPath } from '../../constants/routes'
 import HeartIcon from '../../components/ui/HeartIcon'
+import CardGallery from '../../features/ad/components/CardGallery'
 import ProfileTabs from './ProfileTabs'
 import styles from './SellerProfile.module.css'
 
@@ -47,33 +47,36 @@ export default function SellerAdsSection({
           {filtered.map((ad) => (
             <li key={ad.id} className={styles.adCard}>
               <Link to={adsPath(ad.id)} className={styles.adLink}>
-                {ad.mainImageUrl ? (
-                  <img src={imageUrl(ad.mainImageUrl)} alt="" className={styles.adImg} />
-                ) : (
-                  <div className={styles.adImgPlaceholder} />
-                )}
-                <div className={styles.adBody}>
-                  <span className={styles.adPrice}>{formatPrice(ad.price, ad.currency)}</span>
-                  <span className={styles.adTitle}>{ad.title}</span>
-                  <span className={styles.adMeta}>
-                    {[ad.region, formatAdCardDate(ad.createdAt, { today: t('profile.today'), yesterday: t('profile.yesterday') })].filter(Boolean).join(' • ')}
+                <span className={styles.adImgWrap}>
+                  <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
+                    {ad.sellerIsStore ? 'Магазин' : 'Частный'}
                   </span>
+                  <CardGallery
+                    imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+                  />
+                </span>
+                <div className={styles.adBody}>
+                  {showFavorite && (
+                    <button
+                      type="button"
+                      className={styles.favBtn}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavoriteClick(ad) }}
+                      aria-label={getFavoriteAriaLabel(ad)}
+                    >
+                      <HeartIcon
+                        filled={!!ad.favorite}
+                        className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
+                        size={18}
+                      />
+                    </button>
+                  )}
+                  <h2 className={styles.adTitle}>{ad.title}</h2>
+                  <p className={styles.adPrice}>{formatPrice(ad.price, ad.currency)}</p>
+                  <p className={styles.adMeta}>
+                    {[ad.region, formatAdCardDate(ad.createdAt, { today: t('profile.today'), yesterday: t('profile.yesterday') })].filter(Boolean).join(' · ')}
+                  </p>
                 </div>
               </Link>
-              {showFavorite && (
-                <button
-                  type="button"
-                  className={styles.favBtn}
-                  onClick={(e) => { e.preventDefault(); onFavoriteClick(ad) }}
-                  aria-label={getFavoriteAriaLabel(ad)}
-                >
-                  <HeartIcon
-                  filled={!!ad.favorite}
-                  className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
-                  size={20}
-                />
-                </button>
-              )}
             </li>
           ))}
         </ul>

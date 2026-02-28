@@ -3,6 +3,7 @@ package com.test.qoldanqolga.service.chat;
 import com.test.qoldanqolga.model.ConversationRead;
 import com.test.qoldanqolga.repository.ChatMessageRepository;
 import com.test.qoldanqolga.repository.ConversationReadRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class ConversationStatisticsService {
         if (conversationIds == null || conversationIds.isEmpty()) {
             return Map.of();
         }
+        LogUtil.debug(ConversationStatisticsService.class, "Statistics batch: conversationCount={}", conversationIds.size());
 
         Map<String, Long> totalCounts = toMap(messageRepository.countByConversationIdIn(conversationIds));
         Map<String, Long> incomingCounts = toMap(messageRepository.countByConversationIdInAndSenderIdNot(conversationIds, currentUserId));

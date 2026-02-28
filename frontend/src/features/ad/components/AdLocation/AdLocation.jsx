@@ -4,43 +4,6 @@ import OSMMap from '../../../../components/OSMMap/OSMMap'
 import { TASHKENT } from '../../utils/constants'
 import styles from './AdLocation.module.css'
 
-function LocationIcon() {
-  return (
-    <svg className={styles.iconSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  )
-}
-
-function BuildingIcon() {
-  return (
-    <svg className={styles.iconSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M3 21h18" />
-      <path d="M9 8h1" />
-      <path d="M9 12h1" />
-      <path d="M9 16h1" />
-      <path d="M14 8h1" />
-      <path d="M14 12h1" />
-      <path d="M14 16h1" />
-      <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
-    </svg>
-  )
-}
-
-function DeliveryIcon() {
-  return (
-    <svg className={styles.deliveryIconSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <circle cx="5.5" cy="18.5" r="2.5" />
-      <circle cx="18.5" cy="18.5" r="2.5" />
-      <path d="M15 18h-7" />
-      <path d="M2 14h5" />
-      <path d="M15 4h4l3 3v6h-7v-6" />
-      <path d="M2 8h8v6H2" />
-    </svg>
-  )
-}
-
 function AdLocation({ region, district, address, landmark, canDeliver }) {
   const { t } = useLang()
 
@@ -49,11 +12,11 @@ function AdLocation({ region, district, address, landmark, canDeliver }) {
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.sectionTitle}>{t('ads.locationTitle')}</h2>
+      <h2 className="h6 mb-2">{t('ads.locationTitle')}</h2>
 
       {canDeliver === true && (
-        <div className={styles.deliveryPanel}>
-          <DeliveryIcon />
+        <div className="d-flex align-items-center gap-2 text-muted small mb-2">
+          <i className="bi bi-truck" aria-hidden />
           <span>{t('ads.possibleDelivery')}</span>
         </div>
       )}
@@ -63,28 +26,22 @@ function AdLocation({ region, district, address, landmark, canDeliver }) {
       </div>
 
       {hasLocation && (
-        <div className={styles.locationDetails}>
+        <div className="mt-2">
           {addressText && (
-            <div className={styles.addressRow}>
-              <span className={styles.addressIcon} aria-hidden>
-                <LocationIcon />
-              </span>
+            <div className="d-flex gap-2 align-items-start mb-2">
+              <i className="bi bi-geo-alt text-primary mt-1" aria-hidden />
               <div>
-                <div className={styles.addressText}>{addressText}</div>
-                {district && (
-                  <div className={styles.addressSecondary}>{district}</div>
-                )}
+                <div className="small fw-medium">{addressText}</div>
+                {district && <div className="small text-muted">{district}</div>}
               </div>
             </div>
           )}
           {landmark && (
-            <div className={styles.landmarkRow}>
-              <span className={styles.landmarkIconWrap} aria-hidden>
-                <BuildingIcon />
-              </span>
+            <div className="d-flex gap-2 align-items-start">
+              <i className="bi bi-building text-primary mt-1" aria-hidden />
               <div>
-                <div className={styles.landmarkText}>{landmark}</div>
-                <div className={styles.landmarkLabel}>{t('ads.landmark')}</div>
+                <div className="small fw-medium">{landmark}</div>
+                <div className="small text-muted">{t('ads.landmark')}</div>
               </div>
             </div>
           )}

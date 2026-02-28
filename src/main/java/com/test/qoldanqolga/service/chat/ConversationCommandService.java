@@ -9,5 +9,11 @@ public interface ConversationCommandService {
 
     ConversationDto getOrCreateConversation(String adId, String currentUserId);
 
+    /**
+     * Возвращает или создаёт системный диалог с пользователем (для уведомлений).
+     * @return id диалога
+     */
+    String getOrCreateSystemConversation(String userId);
+
     void deleteConversation(String conversationId, String userId);
 }

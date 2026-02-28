@@ -1,10 +1,16 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { Layout, ProfileLayout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { IdVerificationProvider } from './context/IdVerificationContext'
 import { AdDetail, AdsList, CategoryView, CreateAd, Favorites } from './features/ad'
 import {
   Home,
   Dashboard,
+  BusinessSignup,
   AdminDashboard,
+  AdminUsers,
+  AdminReports,
+  AdminBanners,
+  AdminBusinessApplications,
   MyAds,
   MyReviews,
   EditProfile,
@@ -14,6 +20,7 @@ import {
 
 export default function App() {
   return (
+    <IdVerificationProvider>
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
@@ -41,6 +48,7 @@ export default function App() {
         />
         <Route path="ads/:id" element={<AdDetail />} />
         <Route path="users/:id" element={<SellerProfile />} />
+        <Route path="business" element={<BusinessSignup />} />
         <Route
           path="dashboard"
           element={
@@ -68,7 +76,12 @@ export default function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="business-applications" element={<AdminBusinessApplications />} />
+        <Route path="banners" element={<AdminBanners />} />
       </Route>
     </Routes>
+    </IdVerificationProvider>
   )
 }

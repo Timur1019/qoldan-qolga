@@ -5,74 +5,12 @@ import { referenceApi } from '../../api/client'
 import { categoryPath, adsCategoryPath } from '../../constants/routes'
 import styles from './CategoriesModal.module.css'
 
-const CATEGORY_ICONS = { Xizmatlar: 'clipboard', Ish: 'briefcase', Transport: 'car' }
+const CATEGORY_ICONS = { Xizmatlar: 'clipboard', Ish: 'briefcase', Transport: 'car-front' }
 const MAX_ITEMS_PER_GROUP = 4
 
 function CategoryIcon({ code }) {
   const name = CATEGORY_ICONS[code] || 'folder'
-  const svgProps = { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5' }
-  if (name === 'clipboard') {
-    return (
-      <span className={styles.catIcon} aria-hidden>
-        <svg {...svgProps}>
-          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-      </span>
-    )
-  }
-  if (name === 'briefcase') {
-    return (
-      <span className={styles.catIcon} aria-hidden>
-        <svg {...svgProps}>
-          <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      </span>
-    )
-  }
-  if (name === 'car') {
-    return (
-      <span className={styles.catIcon} aria-hidden>
-        <svg {...svgProps}>
-          <path d="M8 7h8m-8 4h8m4 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m12 0V9a2 2 0 00-2-2h-2m-4 0H6a2 2 0 00-2 2v6" />
-        </svg>
-      </span>
-    )
-  }
-  return (
-    <span className={styles.catIcon} aria-hidden>
-      <svg {...svgProps}>
-        <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-      </svg>
-    </span>
-  )
-}
-
-function ArrowRight() {
-  return (
-    <span className={styles.arrow} aria-hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M9 18l6-6-6-6" />
-      </svg>
-    </span>
-  )
-}
-
-function ChevronDown() {
-  return (
-    <span className={styles.chevronDown} aria-hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M6 9l6 6 6-6" />
-      </svg>
-    </span>
-  )
-}
-
-function SearchIcon() {
-  return (
-    <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-  )
+  return <i className={`bi bi-${name} text-secondary ${styles.catIcon}`} aria-hidden />
 }
 
 export default function CategoriesModal({ onClose }) {
@@ -141,31 +79,31 @@ export default function CategoriesModal({ onClose }) {
   return (
     <div className={styles.dropdown} role="dialog" aria-modal="true" aria-label={titleLabel}>
       <div className={styles.panel}>
-        <div className={styles.panelHeader}>
-          <div className={styles.headerLeft}>
+        <div className={`d-flex align-items-center justify-content-between gap-2 flex-wrap p-3 border-bottom ${styles.panelHeader}`}>
+          <div className="d-flex align-items-center gap-2">
             <button
               type="button"
-              className={styles.modalTitleBtn}
+              className="btn btn-link p-0 fw-bold text-dark text-decoration-none"
               onClick={() => categories.length > 0 && setSelected(categories[0])}
               aria-label={titleLabel}
             >
               {titleLabel}
-              <ArrowRight />
+              <i className="bi bi-chevron-right ms-1" aria-hidden />
             </button>
-            <button type="button" className={styles.closeBtn} onClick={onClose} aria-label={closeLabel}>
-              ×
+            <button type="button" className="btn btn-link p-0 text-secondary" onClick={onClose} aria-label={closeLabel}>
+              <i className="bi bi-x-lg" aria-hidden />
             </button>
           </div>
-          <div className={styles.searchWrap}>
+          <div className="input-group flex-grow-1" style={{ maxWidth: 360 }}>
             <input
               type="search"
-              className={styles.searchInput}
+              className="form-control form-control-sm"
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label={searchPlaceholder}
             />
-            <SearchIcon />
+            <span className="input-group-text bg-white"><i className="bi bi-search text-muted" aria-hidden /></span>
           </div>
         </div>
         <div className={styles.columns}>
@@ -175,12 +113,12 @@ export default function CategoriesModal({ onClose }) {
                 <li key={cat.code}>
                   <button
                     type="button"
-                    className={selected?.code === cat.code ? styles.catItemActive : styles.catItem}
+                    className={`btn w-100 d-flex align-items-center gap-2 text-start border-0 rounded-0 py-2 px-3 ${selected?.code === cat.code ? styles.catItemActive : styles.catItem}`}
                     onClick={() => setSelected(cat)}
                   >
                     <CategoryIcon code={cat.code} />
-                    <span className={styles.catName}>{name(cat)}</span>
-                    <ArrowRight />
+                    <span className="flex-grow-1">{name(cat)}</span>
+                    <i className="bi bi-chevron-right text-muted small" aria-hidden />
                   </button>
                 </li>
               ))}
@@ -189,10 +127,14 @@ export default function CategoriesModal({ onClose }) {
           <div className={styles.rightCol}>
             {selected ? (
               <>
-                <div className={styles.rightTitle}>
+                <Link
+                  to={adsCategoryPath(selected.code)}
+                  className="fw-bold text-dark text-decoration-none d-flex align-items-center gap-1 mb-3"
+                  onClick={onClose}
+                >
                   <span>{name(selected)}</span>
-                  <ArrowRight />
-                </div>
+                  <i className="bi bi-chevron-right" aria-hidden />
+                </Link>
                 <div className={styles.groups}>
                   {childrenOfSelected.map((child) => (
                     <div key={child.code} className={styles.group}>
@@ -200,11 +142,11 @@ export default function CategoriesModal({ onClose }) {
                         <>
                           <Link
                             to={categoryPath(child.code)}
-                            className={styles.groupTitle}
+                            className="fw-bold text-dark text-decoration-none d-inline-flex align-items-center gap-1"
                             onClick={onClose}
                           >
                             {name(child)}
-                            <ArrowRight />
+                            <i className="bi bi-chevron-right small" aria-hidden />
                           </Link>
                           <ul className={styles.groupList}>
                             {(() => {
@@ -213,7 +155,7 @@ export default function CategoriesModal({ onClose }) {
                               const visible = isExpanded ? list : list.slice(0, MAX_ITEMS_PER_GROUP)
                               return visible.map((sub) => (
                                 <li key={sub.code}>
-                                  <Link to={adsCategoryPath(sub.code)} className={styles.groupItem} onClick={onClose}>
+                                  <Link to={adsCategoryPath(sub.code)} className="text-dark text-decoration-none small" onClick={onClose}>
                                     {name(sub)}
                                   </Link>
                                 </li>
@@ -229,28 +171,24 @@ export default function CategoriesModal({ onClose }) {
                               return (
                                 <button
                                   type="button"
-                                  className={styles.moreLink}
+                                  className="btn btn-link p-0 small text-primary text-decoration-none"
                                   onClick={() => toggleGroupExpanded(child.code)}
                                   aria-expanded="true"
                                 >
                                   {collapseLabel}
-                                  <span className={styles.chevronUp} aria-hidden>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                      <path d="M18 15l-6-6-6 6" />
-                                    </svg>
-                                  </span>
+                                  <i className="bi bi-chevron-up ms-1" aria-hidden />
                                 </button>
                               )
                             }
                             return (
                               <button
                                 type="button"
-                                className={styles.moreLink}
+                                className="btn btn-link p-0 small text-primary text-decoration-none"
                                 onClick={() => toggleGroupExpanded(child.code)}
                                 aria-expanded="false"
                               >
                                 {moreLabel(hiddenCount)}
-                                <ChevronDown />
+                                <i className="bi bi-chevron-down ms-1" aria-hidden />
                               </button>
                             )
                           })()}
@@ -258,11 +196,11 @@ export default function CategoriesModal({ onClose }) {
                       ) : (
                         <Link
                           to={adsCategoryPath(child.code)}
-                          className={styles.groupTitle}
+                          className="fw-bold text-dark text-decoration-none d-inline-flex align-items-center gap-1"
                           onClick={onClose}
                         >
                           {name(child)}
-                          <ArrowRight />
+                          <i className="bi bi-chevron-right small" aria-hidden />
                         </Link>
                       )}
                     </div>
@@ -270,7 +208,7 @@ export default function CategoriesModal({ onClose }) {
                 </div>
               </>
             ) : (
-              <p className={styles.hint}>{hintLabel}</p>
+              <p className="text-muted small mb-0">{hintLabel}</p>
             )}
           </div>
         </div>

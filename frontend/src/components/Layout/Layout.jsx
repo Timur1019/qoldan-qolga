@@ -2,118 +2,34 @@ import { useState, useEffect } from 'react'
 import { Outlet, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { useAuthModal, useChatUnreadCount, useFavoritesCount } from '../../hooks'
+import { useAuthModal, useChatUnreadCount, useFavoritesCount, useIdVerificationModal } from '../../hooks'
 import { referenceApi, imageUrl } from '../../api/client'
 import { PARAMS, ROUTES } from '../../constants/routes'
+import { BusinessModalProvider } from '../../context/BusinessModalContext'
 import { AuthModal } from '../../features/auth'
 import CategoriesModal from '../CategoriesModal/CategoriesModal'
+import BusinessModal from '../BusinessModal/BusinessModal'
 import styles from './Layout.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
-const locationIcon = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 18, height: 18, flexShrink: 0 }} aria-hidden>
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-)
-
-const iconSize = 18
-const iconStyle = { width: iconSize, height: iconSize, flexShrink: 0 }
-
 const NavIcons = {
-  home: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-      <path d="M9 22V12h6v10" />
-    </svg>
-  ),
-  ads: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
-    </svg>
-  ),
-  heart: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-    </svg>
-  ),
-  myAds: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-    </svg>
-  ),
-  plus: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  ),
-  user: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  ),
-  logout: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-      <path d="M16 17l5-5-5-5M21 12H9" />
-    </svg>
-  ),
-  admin: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-    </svg>
-  ),
-  megaphone: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M12 2v4M12 18v4M4 9v6h16V9M6 13h12" strokeLinecap="round" />
-      <path d="M9 22h6" strokeLinecap="round" />
-    </svg>
-  ),
-  star: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-  ),
-  message: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-    </svg>
-  ),
-  idCheck: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20v-2a4 4 0 014-4h8a4 4 0 014 4v2" />
-      <path d="M12 12v4M11 16h2" strokeLinecap="round" />
-    </svg>
-  ),
-  building: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" />
-    </svg>
-  ),
-  support: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-    </svg>
-  ),
-  settings: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-1.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h1.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v1.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-1.09a1.65 1.65 0 00-1.51 1z" />
-    </svg>
-  ),
-  exit: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={iconStyle} aria-hidden>
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-      <path d="M16 17l5-5-5-5M21 12H9" />
-    </svg>
-  ),
+  home: <i className="bi bi-house" aria-hidden />,
+  ads: <i className="bi bi-grid-3x3-gap" aria-hidden />,
+  heart: <i className="bi bi-heart" aria-hidden />,
+  myAds: <i className="bi bi-file-earmark-text" aria-hidden />,
+  plus: <i className="bi bi-plus-lg" aria-hidden />,
+  user: <i className="bi bi-person" aria-hidden />,
+  logout: <i className="bi bi-box-arrow-right" aria-hidden />,
+  admin: <i className="bi bi-shield-lock" aria-hidden />,
+  megaphone: <i className="bi bi-megaphone" aria-hidden />,
+  star: <i className="bi bi-star" aria-hidden />,
+  message: <i className="bi bi-chat-dots" aria-hidden />,
+  idCheck: <i className="bi bi-person-badge" aria-hidden />,
+  building: <i className="bi bi-building" aria-hidden />,
+  support: <i className="bi bi-envelope" aria-hidden />,
+  settings: <i className="bi bi-gear" aria-hidden />,
+  exit: <i className="bi bi-box-arrow-right" aria-hidden />,
 }
 
 export default function Layout() {
@@ -126,7 +42,9 @@ export default function Layout() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [regions, setRegions] = useState([])
   const [regionOpen, setRegionOpen] = useState(false)
+  const [businessModalOpen, setBusinessModalOpen] = useState(false)
   const openAuthModal = useAuthModal()
+  const openIdVerificationModal = useIdVerificationModal()
   const chatUnreadCount = useChatUnreadCount()
   const favoritesCount = useFavoritesCount()
 
@@ -172,7 +90,7 @@ export default function Layout() {
     } else {
       const params = new URLSearchParams()
       if (q) params.set(PARAMS.QUERY, q)
-      navigate(params.toString() ? `${ROUTES.ADS}?${params}` : ROUTES.ADS)
+      navigate('/')
     }
   }
 
@@ -191,12 +109,14 @@ export default function Layout() {
         return next
       })
     } else {
-      navigate(code ? `${ROUTES.ADS}?${PARAMS.REGION}=${encodeURIComponent(code)}` : ROUTES.ADS)
+      navigate('/')
     }
   }
 
   return (
     <div className={styles.layout}>
+      <BusinessModalProvider openModal={() => setBusinessModalOpen(true)}>
+        <>
       <header className={styles.header}>
         {/* Верхняя полоса: фон касается краёв экрана, контент по центру */}
         <div className={styles.headerTop}>
@@ -208,15 +128,15 @@ export default function Layout() {
               <div className={styles.regionWrap}>
                 <button
                   type="button"
-                  className={styles.regionBtn}
+                  className={`btn btn-sm btn-outline-light border ${styles.regionBtn}`}
                   onClick={() => setRegionOpen(!regionOpen)}
                   aria-haspopup="listbox"
                   aria-expanded={regionOpen}
                   aria-label={lang === 'ru' ? 'Выбрать регион' : 'Hududni tanlash'}
                 >
-                  {locationIcon}
+                  <i className="bi bi-geo-alt me-1" aria-hidden />
                   <span className={styles.regionLabel}>{regionLabel}</span>
-                  <span className={styles.regionChevron} aria-hidden>{regionOpen ? '▲' : '▼'}</span>
+                  <i className={`bi ms-1 ${regionOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden />
                 </button>
                 {regionOpen && (
                   <>
@@ -226,10 +146,10 @@ export default function Layout() {
                       onClick={() => setRegionOpen(false)}
                       aria-hidden
                     />
-                    <div className={styles.regionDropdown} role="listbox">
+                    <div className={`dropdown-menu show ${styles.regionDropdown}`} role="listbox">
                       <button
                         type="button"
-                        className={!selectedRegionCode ? styles.regionItemActive : styles.regionItem}
+                        className={`dropdown-item ${!selectedRegionCode ? 'active' : ''}`}
                         onClick={() => handleSelectRegion('')}
                         role="option"
                         aria-selected={!selectedRegionCode}
@@ -240,7 +160,7 @@ export default function Layout() {
                         <button
                           key={r.code}
                           type="button"
-                          className={selectedRegionCode === r.code ? styles.regionItemActive : styles.regionItem}
+                          className={`dropdown-item ${selectedRegionCode === r.code ? 'active' : ''}`}
                           onClick={() => handleSelectRegion(r.code)}
                           role="option"
                           aria-selected={selectedRegionCode === r.code}
@@ -252,22 +172,22 @@ export default function Layout() {
                   </>
                 )}
               </div>
-              <span className={styles.langSwitcher}>
+              <div className="btn-group btn-group-sm">
                 <button
                   type="button"
-                  className={lang === 'uz' ? styles.langActive : undefined}
+                  className={`btn ${lang === 'uz' ? 'btn-primary' : 'btn-outline-light'}`}
                   onClick={() => setLang('uz')}
                 >
                   OʻZB
                 </button>
                 <button
                   type="button"
-                  className={lang === 'ru' ? styles.langActive : undefined}
+                  className={`btn ${lang === 'ru' ? 'btn-primary' : 'btn-outline-light'}`}
                   onClick={() => setLang('ru')}
                 >
                   РУС
                 </button>
-              </span>
+              </div>
             </div>
           </div>
         </div>
@@ -276,32 +196,29 @@ export default function Layout() {
           <div className={styles.headerInner}>
             <button
               type="button"
-              className={categoriesOpen ? styles.categoriesBtnActive : styles.categoriesBtn}
+              className={`btn ${categoriesOpen ? 'btn-primary' : 'btn-outline-primary'} ${styles.categoriesBtn}`}
               onClick={() => setCategoriesOpen(!categoriesOpen)}
             >
-              <span className={styles.categoriesIcon} aria-hidden>{categoriesOpen ? '✕' : '☰'}</span>
+              <i className={`bi me-1 ${categoriesOpen ? 'bi-x-lg' : 'bi-list'}`} aria-hidden />
               {lang === 'ru' ? 'Категории' : 'Kategoriyalar'}
             </button>
-            <form className={styles.searchWrap} onSubmit={handleSearchSubmit} role="search">
+            <form className={`input-group ${styles.searchWrap}`} onSubmit={handleSearchSubmit} role="search">
               <input
                 type="search"
-                className={styles.searchInput}
+                className="form-control"
                 placeholder={lang === 'ru' ? 'Найти объявление…' : 'E\'lon qidirish…'}
                 aria-label={t('common.search')}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
               />
-              <button type="submit" className={styles.searchBtn} aria-label={t('common.search')}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 20, height: 20 }} aria-hidden>
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="M21 21l-4.35-4.35" />
-                </svg>
+              <button type="submit" className="btn btn-primary" aria-label={t('common.search')}>
+                <i className="bi bi-search" aria-hidden />
               </button>
             </form>
             <nav className={styles.nav}>
-              <Link to="/ads" className={styles.navLink}>
+              <Link to={ROUTES.ADS_MY} className={styles.navLink}>
                 <span className={styles.navIcon}>{NavIcons.ads}</span>
-                <span className={styles.navLabel}>{t('nav.ads')}</span>
+                <span className={styles.navLabel}>{t('nav.myAds')}</span>
               </Link>
               {isAuthenticated ? (
                 <>
@@ -327,19 +244,19 @@ export default function Layout() {
                     </span>
                     <span className={styles.navLabel}>{t('profile.chat')}</span>
                   </Link>
-                  <div className={styles.profileWrap}>
+                  <div className={`${styles.profileWrap} flex-shrink-0`}>
                     <button
                       type="button"
-                      className={styles.navLinkButton + (profileOpen ? ' ' + styles.navLinkButtonActive : '')}
+                      className={`btn btn-link p-0 text-dark text-decoration-none d-flex flex-column align-items-center gap-1 ${profileOpen ? 'text-primary' : ''}`}
                       onClick={() => setProfileOpen(!profileOpen)}
                       aria-haspopup="true"
                       aria-expanded={profileOpen}
                       aria-label={t('nav.profile')}
                     >
-                      <span className={styles.profileAvatar}>
+                      <span className={`rounded-circle ${styles.profileAvatar}`}>
                         <span className={styles.profileAvatarIcon}>
                           {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
-                            <img src={imageUrl(user.avatar)} alt="" className={styles.profileAvatarImg} />
+                            <img src={imageUrl(user.avatar)} alt="" className={`rounded-circle ${styles.profileAvatarImg}`} />
                           ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
                             AVATAR_EMOJI[user.avatar]
                           ) : (
@@ -347,7 +264,7 @@ export default function Layout() {
                           )}
                         </span>
                       </span>
-                      <span className={styles.navLabel}>{t('nav.profile')}</span>
+                      <span className={`${styles.navLabel} text-nowrap`}>{t('nav.profile')}</span>
                     </button>
                     {profileOpen && (
                       <>
@@ -357,108 +274,76 @@ export default function Layout() {
                           onClick={() => setProfileOpen(false)}
                           aria-hidden
                         />
-                        <div className={styles.profileDropdown} role="menu">
-                          <div className={styles.profileDropdownHeader}>
-                            <Link
-                              to={ROUTES.PROFILE_EDIT}
-                              className={styles.profileDropdownProfileLink}
-                              onClick={() => setProfileOpen(false)}
-                            >
-                              <span className={styles.profileDropdownAvatar}>
-                                <span className={styles.profileDropdownAvatarIcon}>
-                                  {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
-                                    <img src={imageUrl(user.avatar)} alt="" className={styles.profileDropdownAvatarImg} />
-                                  ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
-                                    AVATAR_EMOJI[user.avatar]
-                                  ) : (
-                                    NavIcons.user
-                                  )}
-                                </span>
-                              </span>
-                              <span className={styles.profileDropdownTitle}>{t('nav.profile')}</span>
-                            </Link>
-                            <Link
-                              to={ROUTES.ADS_CREATE}
-                              className={styles.profileSellBtn}
-                              onClick={() => setProfileOpen(false)}
-                            >
-                              <span>{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
-                              <span className={styles.profileSellBtnPlus}>{NavIcons.plus}</span>
-                            </Link>
-                          </div>
-                          <nav className={styles.profileMenu}>
-                            <Link to={ROUTES.FAVORITES} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.heart}</span>
-                              <span>{t('nav.favorites')}</span>
+                        <div className={`bg-white shadow rounded ${styles.profileDropdown}`} role="menu">
+                          <nav className={'list-group list-group-flush ' + styles.profileMenu}>
+                            <Link to={ROUTES.FAVORITES} className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={() => setProfileOpen(false)}>
+                              <i className="bi bi-heart text-secondary" aria-hidden />
+                              <span className="flex-grow-1">{t('nav.favorites')}</span>
                               {favoritesCount > 0 && (
-                                <span className={styles.profileMenuBadge} aria-label={t('nav.favorites')}>
-                                  {favoritesCount > 99 ? '99+' : favoritesCount}
-                                </span>
+                                <span className="badge bg-danger rounded-pill" aria-label={t('nav.favorites')}>{favoritesCount > 99 ? '99+' : favoritesCount}</span>
                               )}
                             </Link>
-                            <Link to={ROUTES.ADS_MY} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.megaphone}</span>
+                            <Link to={ROUTES.ADS_MY} className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={() => setProfileOpen(false)}>
+                              <i className="bi bi-megaphone text-secondary" aria-hidden />
                               <span>{t('nav.myAds')}</span>
                             </Link>
-                            <Link to={ROUTES.REVIEWS_MY} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.star}</span>
+                            <Link to={ROUTES.REVIEWS_MY} className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={() => setProfileOpen(false)}>
+                              <i className="bi bi-star text-secondary" aria-hidden />
                               <span>{lang === 'ru' ? 'Мои отзывы' : 'Mening sharhlarim'}</span>
                             </Link>
-                            <Link to={ROUTES.CHAT} className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.message}</span>
-                              <span>{t('profile.chat')}</span>
+                            <Link to={ROUTES.CHAT} className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={() => setProfileOpen(false)}>
+                              <i className="bi bi-chat-dots text-secondary" aria-hidden />
+                              <span className="flex-grow-1">{t('profile.chat')}</span>
                               {chatUnreadCount > 0 && (
-                                <span className={styles.profileMenuBadge} aria-label={t('chat.messagesCount')}>
-                                  {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
-                                </span>
+                                <span className="badge bg-danger rounded-pill" aria-label={t('chat.messagesCount')}>{chatUnreadCount > 99 ? '99+' : chatUnreadCount}</span>
                               )}
                             </Link>
-                            <div className={styles.profileMenuDivider} />
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon + ' ' + styles.profileMenuIconPink}>{NavIcons.idCheck}</span>
+                            <div className="list-group-item bg-white border-0 border-bottom py-1" />
+                            <button type="button" className="list-group-item list-group-item-action d-flex align-items-center gap-2 border-0 border-bottom bg-white text-start" onClick={() => { setProfileOpen(false); openIdVerificationModal(); }}>
+                              <i className="bi bi-person-badge text-primary" aria-hidden />
                               <span>{lang === 'ru' ? 'Пройдите проверку ID' : 'ID tekshiruvini o\'tkazing'}</span>
-                            </Link>
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.building}</span>
+                            </button>
+                            <button type="button" className="list-group-item list-group-item-action d-flex align-items-center gap-2 border-0 border-bottom bg-white text-start" onClick={() => { setProfileOpen(false); setBusinessModalOpen(true); }}>
+                              <i className="bi bi-building text-secondary" aria-hidden />
                               <span>{lang === 'ru' ? 'Qoldan Qolga для бизнеса' : 'Qoldan Qolga biznes uchun'}</span>
-                            </Link>
-                            <a href="mailto:support@example.com" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.support}</span>
+                            </button>
+                            <a href="mailto:support@example.com" className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={() => setProfileOpen(false)}>
+                              <i className="bi bi-envelope text-secondary" aria-hidden />
                               <span>{lang === 'ru' ? 'Служба поддержки' : 'Qo\'llab-quvvatlash'}</span>
                             </a>
-                            <Link to="/dashboard" className={styles.profileMenuItem} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.settings}</span>
+                            <Link to={ROUTES.PROFILE_EDIT} className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white" onClick={() => setProfileOpen(false)}>
+                              <i className="bi bi-gear text-secondary" aria-hidden />
                               <span>{lang === 'ru' ? 'Настройки' : 'Sozlamalar'}</span>
                             </Link>
-                            <button type="button" className={styles.profileMenuItem} onClick={() => { setProfileOpen(false); logout(); }}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.exit}</span>
+                            <button type="button" className="list-group-item list-group-item-action d-flex align-items-center gap-2 border-0 bg-white text-start" onClick={() => { setProfileOpen(false); logout(); }}>
+                              <i className="bi bi-box-arrow-right text-secondary" aria-hidden />
                               <span>{t('nav.logout')}</span>
                             </button>
+                            {isAdmin && (
+                              <Link to="/admin" className="list-group-item list-group-item-action d-flex align-items-center gap-2 border-0 border-top bg-white" onClick={() => setProfileOpen(false)}>
+                                <i className="bi bi-shield-lock text-primary" aria-hidden />
+                                <span>{t('nav.admin')}</span>
+                              </Link>
+                            )}
                           </nav>
-                          {isAdmin && (
-                            <Link to="/admin" className={styles.profileMenuItem + ' ' + styles.profileMenuAdmin} onClick={() => setProfileOpen(false)}>
-                              <span className={styles.profileMenuIcon}>{NavIcons.admin}</span>
-                              <span>{t('nav.admin')}</span>
-                            </Link>
-                          )}
                         </div>
                       </>
                     )}
                   </div>
-                  <Link to={ROUTES.ADS_CREATE} className={styles.sellBtn}>
-                    <span className={styles.sellBtnText}>{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
-                    <span className={styles.sellBtnPlus}>{NavIcons.plus}</span>
+                  <Link to={ROUTES.ADS_CREATE} className="btn btn-primary btn-sm ms-2 flex-shrink-0 text-white">
+                    <span className="me-1">{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
+                    <i className="bi bi-plus-lg text-white" aria-hidden />
                   </Link>
                 </>
               ) : (
                 <>
-                  <button type="button" className={styles.loginBtn} onClick={openAuthModal}>
-                    <span className={styles.navIcon}>{NavIcons.user}</span>
-                    <span className={styles.navLabel}>{t('nav.login')}</span>
+                  <button type="button" className="btn btn-outline-primary btn-sm" onClick={openAuthModal}>
+                    <i className="bi bi-person me-1" aria-hidden />
+                    <span>{t('nav.login')}</span>
                   </button>
-                  <Link to={ROUTES.ADS_CREATE} className={styles.sellBtn}>
-                    <span className={styles.sellBtnText}>{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
-                    <span className={styles.sellBtnPlus}>{NavIcons.plus}</span>
+                  <Link to={ROUTES.ADS_CREATE} className="btn btn-primary btn-sm ms-2 flex-shrink-0 text-white">
+                    <span className="me-1">{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
+                    <i className="bi bi-plus-lg text-white" aria-hidden />
                   </Link>
                 </>
               )}
@@ -496,6 +381,16 @@ export default function Layout() {
         onClose={() => {}}
         initialMode={authInitialMode}
       />
+      <BusinessModal
+        open={businessModalOpen}
+        onClose={() => setBusinessModalOpen(false)}
+        onProceed={() => {
+          setBusinessModalOpen(false)
+          navigate(ROUTES.BUSINESS)
+        }}
+      />
+        </>
+      </BusinessModalProvider>
     </div>
   )
 }

@@ -73,6 +73,12 @@ export const authApi = {
     apiRequest('/auth/me', { method: 'PATCH', body: JSON.stringify(body) }),
   /** Отзывы, которые я оставил другим пользователям (приватная страница «Мои отзывы»). */
   getMyReviews: (params) => apiRequest(`/auth/me/reviews${buildQueryString(params)}`),
+  /** Запуск проверки ID (MyID): возвращает redirectUrl или embedUrl. */
+  startVerification: (body) =>
+    apiRequest('/auth/verification/start', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
 }
 
 export const adminApi = {
@@ -83,15 +89,68 @@ export const adminApi = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  getUsers: (params) => apiRequest(`/admin/users${buildQueryString(params)}`),
+  updateUser: (userId, body) =>
+    apiRequest(`/admin/users/${encodeURIComponent(userId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
+  getReports: (params) => apiRequest(`/admin/reports${buildQueryString(params)}`),
+  notifySeller: (reportId) =>
+    apiRequest(`/admin/reports/${encodeURIComponent(reportId)}/notify-seller`, {
+      method: 'POST',
+    }),
+  getHomePromoBanners: () => apiRequest('/admin/home-promo-banners'),
+  createHomePromoBanner: (body) =>
+    apiRequest('/admin/home-promo-banners', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  updateHomePromoBanner: (id, body) =>
+    apiRequest(`/admin/home-promo-banners/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  deleteHomePromoBanner: (id) =>
+    apiRequest(`/admin/home-promo-banners/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
+  getBusinessApplications: (params) =>
+    apiRequest(`/admin/business-applications${buildQueryString(params)}`),
+  getBusinessApplication: (id) =>
+    apiRequest(`/admin/business-applications/${encodeURIComponent(id)}`),
+  approveBusinessApplication: (id) =>
+    apiRequest(`/admin/business-applications/${encodeURIComponent(id)}/approve`, {
+      method: 'POST',
+    }),
+  rejectBusinessApplication: (id) =>
+    apiRequest(`/admin/business-applications/${encodeURIComponent(id)}/reject`, {
+      method: 'POST',
+    }),
 }
 
-/** Регионы, категории — с бэкенда (редактируемые справочники) */
+/** Регионы, категории, баннеры главной — с бэкенда */
 export const referenceApi = {
   getRegions: () => apiRequest('/regions'),
   getCategories: () => apiRequest('/categories'),
   getCategory: (code) => apiRequest(`/categories/${encodeURIComponent(code)}`),
   getCategoryChildren: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/children`),
   getCategoriesForHome: () => apiRequest('/categories/home'),
+  getHomePromoBanners: () => apiRequest('/home-promo-banners'),
+}
+
+/** Заявки «Qoldan Qolga для бизнеса» (можно без авторизации) */
+export const businessApplicationsApi = {
+  submit: async (formData) => {
+    const url = `${API_BASE}/business-applications`
+    const token = getToken()
+    const headers = {}
+    if (token) headers.Authorization = `Bearer ${token}`
+    const res = await fetch(url, { method: 'POST', body: formData, headers })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(data.message || res.statusText || 'Ошибка отправки заявки')
+    return data
+  },
 }
 
 const AD_VIEWED_KEY = 'ad-viewed'
@@ -216,6 +275,8 @@ export const usersApi = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  /** Список профилей, на которые подписан текущий пользователь (для «Избранное → Профили») */
+  getMySubscriptions: () => apiRequest('/users/me/subscriptions'),
   subscribe: (id) => apiRequest(`/users/${id}/subscribe`, { method: 'POST' }),
   unsubscribe: (id) => apiRequest(`/users/${id}/subscribe`, { method: 'DELETE' }),
   toggleSubscribe: async (id) => {

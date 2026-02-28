@@ -159,21 +159,22 @@
 .placeAdBtn {
   display: inline-block;
   margin-top: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 12px 24px;
+  font-size: var(--font-size-buttons, 16px);
+  font-weight: var(--font-weight-bold);
   color: #fff;
-  background: #111827;
-  border-radius: 10px;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  border-radius: var(--radius-pill, 40px);
   text-decoration: none;
   border: none;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .placeAdBtn:hover {
-  background: #374151;
-  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 170, 255, 0.4);
 }
 
 .error {
@@ -328,9 +329,9 @@
 
 .rowDropdown {
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   right: 0.5rem;
-  margin-top: 0.25rem;
+  margin-bottom: 0.35rem;
   min-width: 200px;
   padding: 0.25rem 0;
   background: #fff;
@@ -428,8 +429,9 @@
 
 .cardDropdown {
   position: absolute;
-  top: 2.75rem;
+  top: 100%;
   right: 0.5rem;
+  margin-top: 0.25rem;
   min-width: 200px;
   padding: 0.25rem 0;
   background: #fff;
@@ -501,7 +503,7 @@
   padding: 0.4rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-primary, #7c3aed);
+  color: var(--color-primary);
   background: rgba(124, 58, 237, 0.1);
   border: 1px solid rgba(124, 58, 237, 0.35);
   border-radius: 8px;
@@ -511,7 +513,7 @@
 
 .cardBuyPromoBtn:hover {
   background: rgba(124, 58, 237, 0.18);
-  border-color: var(--color-primary, #7c3aed);
+  border-color: var(--color-primary);
 }
 
 .cardActions {
@@ -636,7 +638,7 @@
 .promoRadio {
   width: 20px;
   height: 20px;
-  accent-color: var(--color-primary, #7c3aed);
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 
@@ -649,7 +651,7 @@
 .promoOptionPrice {
   margin: 0.35rem 0 0 2rem;
   font-size: 0.9rem;
-  color: var(--color-primary, #7c3aed);
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -681,7 +683,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
-  background: var(--color-primary, #7c3aed);
+  background: var(--color-primary);
   border: none;
   border-radius: 10px;
   cursor: pointer;

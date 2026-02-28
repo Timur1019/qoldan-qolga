@@ -18,6 +18,8 @@ export const ROUTES = {
   /** Редактирование профиля */
   PROFILE_EDIT: '/dashboard/profile/edit',
   DASHBOARD: '/dashboard',
+  /** Qoldan Qolga для бизнеса — форма заявки на статус «Магазин» */
+  BUSINESS: '/business',
   ADMIN: '/admin',
 }
 
@@ -54,14 +56,20 @@ export function adsEditPath(id) {
 }
 
 export function adsCategoryPath(code) {
-  return `${ROUTES.ADS}?${PARAMS.CATEGORY}=${encodeURIComponent(code)}`
+  const params = new URLSearchParams()
+  if (code) {
+    params.set(PARAMS.CATEGORY, code)
+  }
+  const qs = params.toString()
+  return qs ? `${ROUTES.ADS}?${qs}` : ROUTES.ADS
 }
 
-/** Ссылка на объявления категории с текущими параметрами фильтров */
 export function adsCategoryPathWithParams(categoryCode, searchParams) {
-  const params = new URLSearchParams(searchParams)
-  params.set(PARAMS.CATEGORY, categoryCode)
-  return `${ROUTES.ADS}?${params.toString()}`
+  const params = new URLSearchParams(searchParams || '')
+  if (categoryCode) params.set(PARAMS.CATEGORY, categoryCode)
+  else params.delete(PARAMS.CATEGORY)
+  const qs = params.toString()
+  return qs ? `${ROUTES.ADS}?${qs}` : ROUTES.ADS
 }
 
 export function categoryPath(code) {

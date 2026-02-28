@@ -3,6 +3,7 @@ package com.test.qoldanqolga.repository;
 import com.test.qoldanqolga.model.Advertisement;
 import org.springframework.data.jpa.domain.Specification;
 
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,7 +51,17 @@ public final class AdvertisementSpecs {
             }
 
             if (sellerType != null && !sellerType.isBlank()) {
-                predicates.add(cb.equal(root.get("sellerType"), sellerType));
+                var userJoin = root.join("user", JoinType.LEFT);
+                if ("BUSINESS".equalsIgnoreCase(sellerType)) {
+                    predicates.add(cb.equal(userJoin.get("storeVerified"), true));
+                } else if ("PRIVATE".equalsIgnoreCase(sellerType)) {
+                    predicates.add(cb.or(
+                            cb.isNull(userJoin.get("storeVerified")),
+                            cb.equal(userJoin.get("storeVerified"), false)
+                    ));
+                } else {
+                    predicates.add(cb.equal(root.get("sellerType"), sellerType));
+                }
             }
 
             if (hasLicense != null) {

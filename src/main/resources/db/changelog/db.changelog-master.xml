@@ -30,4 +30,10 @@
     <include file="changes/023-convert-ids-to-varchar.xml" relativeToChangelogFile="true"/>
     <include file="changes/024-fix-uuid-schema.xml" relativeToChangelogFile="true"/>
     <include file="changes/025-add-deleted-at-advertisements.xml" relativeToChangelogFile="true"/>
+    <include file="changes/026-add-users-avatar-photos.xml" relativeToChangelogFile="true"/>
+    <include file="changes/027-admin-users-reports.xml" relativeToChangelogFile="true"/>
+    <include file="changes/028-add-verification-requested-at.xml" relativeToChangelogFile="true"/>
+    <include file="changes/029-home-promo-banners.xml" relativeToChangelogFile="true"/>
+    <include file="changes/030-business-applications.xml" relativeToChangelogFile="true"/>
+    <include file="changes/031-store-verified-and-system-conversation.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

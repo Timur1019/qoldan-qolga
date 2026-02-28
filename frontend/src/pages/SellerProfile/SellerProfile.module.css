@@ -14,9 +14,9 @@
 
 .profileTab {
   padding: 0.75rem 1.25rem;
-  font-size: 1rem;
+  font-size: var(--font-size-body);
   font-weight: 500;
-  color: var(--color-muted, #666);
+  color: var(--color-text-secondary, #6b7280);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -25,18 +25,13 @@
 }
 
 .profileTab:hover {
-  color: #111;
+  color: var(--color-text, #1a1a1a);
 }
 
 .profileTabActive {
   color: var(--color-primary);
   font-weight: 600;
   border-bottom-color: var(--color-primary);
-}
-
-.tabDot {
-  color: var(--color-primary);
-  font-size: 0.7em;
 }
 
 .layout {
@@ -65,11 +60,19 @@
 }
 
 .profileCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
   background: #fff;
   border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
+}
+
+.profileCardActions {
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 .profileHeader {
@@ -104,23 +107,23 @@
 }
 
 .avatarInitials {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
   color: #fff;
   letter-spacing: 0.02em;
 }
 
 .sellerName {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-semibold);
 }
 
 .profileStats {
   display: flex;
   gap: 1rem;
-  font-size: 0.9rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary, #6b7280);
   margin-bottom: 0.5rem;
 }
 
@@ -128,8 +131,8 @@
   list-style: none;
   margin: 0 0 1rem;
   padding: 0;
-  font-size: 0.9rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .profileStatsList li {
@@ -139,9 +142,9 @@
 .verificationBadge {
   display: inline-block;
   padding: 0.35rem 0.75rem;
-  font-size: 0.85rem;
+  font-size: var(--font-size-small);
   border-radius: 6px;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .verificationBadgeOk {
@@ -154,59 +157,42 @@
   color: #991b1b;
 }
 
-.editBtn {
-  display: inline-block;
-  padding: 0.6rem 1.25rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  background: #111;
-  border-radius: 10px;
-  text-decoration: none;
-  margin-bottom: 0.5rem;
-}
-
-.editBtn:hover {
-  background: #333;
-  color: #fff;
-}
+/* Редактировать — через Bootstrap .btn.btn-primary в JSX */
 
 .profileSince {
   margin: 0 0 1rem;
-  font-size: 0.9rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.subscribeBtn,
+.subscribeBtnActive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.8rem;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill, 40px);
+  cursor: pointer;
+  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .subscribeBtn {
-  display: inline-block;
-  padding: 0.6rem 1.5rem;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--color-primary);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.subscribeBtn:hover {
-  background: var(--color-primary-hover);
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
 }
 
 .subscribeBtnActive {
-  display: inline-block;
-  padding: 0.6rem 1.5rem;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  background: #059669;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+  background: linear-gradient(180deg, #059669 0%, #047857 100%);
 }
 
+.subscribeBtn:hover,
 .subscribeBtnActive:hover {
-  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* Панель владельца: «Мои отзывы» (только при просмотре своего профиля) */
@@ -219,14 +205,14 @@
 
 .ownerPanelTitle {
   margin: 0 0 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
 }
 
 .ownerPanelLink {
   display: inline-block;
   margin-bottom: 0.75rem;
-  font-size: 0.95rem;
+  font-size: var(--font-size-body);
   color: var(--color-primary);
   text-decoration: none;
 }
@@ -236,21 +222,7 @@
   font-weight: 600;
 }
 
-.ownerPanelCard .shareProfileBtn {
-  width: 100%;
-  padding: 0.6rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  background: #111;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.ownerPanelCard .shareProfileBtn:hover {
-  background: #333;
-}
+/* Поделиться — через Bootstrap .btn.btn-outline-primary в JSX */
 
 .leaveReviewCard {
   background: #fff;
@@ -261,112 +233,167 @@
 
 .leaveReviewHint {
   margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .leaveReviewBtn {
   width: 100%;
-  padding: 0.6rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: #fff;
-  background: #111;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-pill, 40px);
   cursor: pointer;
+  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .leaveReviewBtn:hover {
-  background: #333;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 170, 255, 0.4);
 }
 
 .adsSection {
   background: #fff;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border, #e5e7eb);
 }
 
 .adsTitle {
   margin: 0 0 1rem;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
 }
 
 .empty {
   margin: 0;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary, #6b7280);
 }
 
+/* Сетка объявлений — компактный размер, как на главной и в избранном */
 .adsGrid {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
 }
 
+@media (min-width: 640px) {
+  .adsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .adsGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .adsGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* Карточка объявления — единый стиль с главной и списком */
 .adCard {
+  width: 100%;
   position: relative;
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: 12px;
+  border: none;
+  border-radius: var(--radius-card, 16px);
   overflow: hidden;
+  background: var(--color-bg-card, #fff);
+  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
+  transition: box-shadow 0.2s;
+}
+
+.adCard:hover {
+  box-shadow: var(--shadow-card-hover, 0 8px 24px rgba(0, 0, 0, 0.1));
 }
 
 .adLink {
   display: block;
   text-decoration: none;
   color: inherit;
+  cursor: pointer;
 }
 
-.adImg,
-.adImgPlaceholder {
-  width: 100%;
-  aspect-ratio: 4/3;
+.adImgWrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-image, 12px) var(--radius-image, 12px) 0 0;
 }
 
-.adImg {
-  object-fit: cover;
+.adImgWrap .sellerBadgeStore,
+.adImgWrap .sellerBadgePrivate {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-.adImgPlaceholder {
-  background: #e5e7eb;
+.adImgWrap .sellerBadgeStore {
+  background: #059669;
+  color: #fff;
+}
+
+.adImgWrap .sellerBadgePrivate {
+  background: #64748b;
+  color: #fff;
 }
 
 .adBody {
-  padding: 0.5rem 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.adPrice {
-  font-weight: 600;
-  font-size: 0.95rem;
+  padding: 0.6rem 0.75rem 0.75rem;
+  padding-right: 2.25rem;
+  position: relative;
 }
 
 .adTitle {
-  font-size: 0.85rem;
-  color: var(--color-muted, #666);
+  margin: 0 0 0.25rem;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.3;
+  color: var(--color-text, #1a1a1a);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+.adPrice {
+  margin: 0 0 0.25rem;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text, #1a1a1a);
+}
+
 .adMeta {
-  font-size: 0.8rem;
-  color: var(--color-muted, #999);
+  margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .favBtn {
   position: absolute;
-  top: 0.5rem;
+  top: 0.25rem;
   right: 0.5rem;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   background: transparent;
   border: none;
@@ -375,6 +402,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #6b7280;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.favBtn:hover {
+  color: #e11d48;
+  transform: scale(1.08);
 }
 
 .heartIcon {
@@ -418,8 +452,8 @@
 
 .reviewsTitle {
   margin: 0 0 1rem;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
 }
 
 .reviewsSummary {
@@ -433,8 +467,8 @@
 .rateLink {
   margin-left: auto;
   padding: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
   background: none;
   border: none;
@@ -454,23 +488,26 @@
 
 .reviewsEmptyText {
   margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .reviewsEmptyBtn {
-  padding: 0.6rem 1.25rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: #fff;
-  background: #111;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-pill, 40px);
   cursor: pointer;
+  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .reviewsEmptyBtn:hover {
-  background: #333;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 170, 255, 0.4);
 }
 
 .shareProfileRow {
@@ -482,8 +519,8 @@
 .shareProfileBtn {
   display: inline-block;
   padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
   background: none;
   border: 1px solid var(--color-primary);
@@ -496,13 +533,13 @@
 }
 
 .avgRating {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
 }
 
 .reviewsCount {
-  font-size: 0.9rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .starBreakdown {
@@ -520,7 +557,7 @@
 
 .starEmpty,
 .starFilled {
-  font-size: 0.9rem;
+  font-size: var(--font-size-description);
 }
 
 .starEmpty {
@@ -532,8 +569,8 @@
 }
 
 .starCount {
-  font-size: 0.85rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary, #6b7280);
   min-width: 1.5rem;
 }
 
@@ -562,13 +599,13 @@
 }
 
 .reviewAuthor {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-body);
 }
 
 .reviewDate {
-  font-size: 0.85rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .reviewStars {
@@ -577,9 +614,9 @@
 
 .reviewText {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--font-size-description);
   line-height: 1.4;
-  color: #374151;
+  color: var(--color-text, #1a1a1a);
 }
 
 /* Review modal */
@@ -611,8 +648,8 @@
 
 .modalTitle {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
 }
 
 .modalClose {
@@ -628,7 +665,7 @@
 }
 
 .modalClose:hover {
-  color: #111;
+  color: var(--color-text, #1a1a1a);
 }
 
 .modalBody {
@@ -638,7 +675,7 @@
 .modalLabel {
   display: block;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: var(--font-size-body);
   font-weight: 500;
 }
 
@@ -656,7 +693,7 @@
   width: 40px;
   height: 40px;
   padding: 0;
-  font-size: 1.25rem;
+  font-size: var(--font-size-h3);
   color: #d1d5db;
   background: #f3f4f6;
   border: none;
@@ -677,7 +714,7 @@
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.6rem 0.75rem;
-  font-size: 1rem;
+  font-size: var(--font-size-body);
   font-family: inherit;
   border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 8px;
@@ -686,7 +723,7 @@
 
 .reviewError {
   margin: 0.5rem 0 0;
-  font-size: 0.9rem;
+  font-size: var(--font-size-description);
   color: var(--color-error, #c00);
 }
 
@@ -697,18 +734,21 @@
 
 .submitBtn {
   width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 0.75rem 1.2rem;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
   color: #fff;
-  background: #111;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-pill, 40px);
   cursor: pointer;
+  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #333;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 170, 255, 0.4);
 }
 
 .submitBtn:disabled {
@@ -728,12 +768,12 @@
 
 .ctaTitle {
   margin: 0 0 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
 }
 
 .ctaHint {
   margin: 0;
-  font-size: 0.9rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-description);
+  color: var(--color-text-secondary, #6b7280);
 }

@@ -17,9 +17,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "Пользователи", description = "Профили продавцов, подписки, отзывы")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -27,6 +33,8 @@ public class UserController {
     private final UserSubscriptionService subscriptionService;
     private final ReviewService reviewService;
 
+    @Operation(summary = "Профиль продавца")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/{id}")
     public ResponseEntity<SellerProfileDto> getSellerProfile(
             @PathVariable String id,
@@ -36,6 +44,8 @@ public class UserController {
         return ResponseEntity.ok(sellerProfileService.getSellerProfile(id, currentUserId));
     }
 
+    @Operation(summary = "Объявления продавца")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/{id}/ads")
     public ResponseEntity<Page<AdListItemDto>> getSellerAds(
             @PathVariable String id,
@@ -46,6 +56,8 @@ public class UserController {
         return ResponseEntity.ok(sellerProfileService.getSellerAds(id, pageable, currentUserId));
     }
 
+    @Operation(summary = "Подписаться", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{id}/subscribe")
     public ResponseEntity<Void> subscribe(
             @PathVariable String id,
@@ -58,6 +70,8 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Отписаться", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @DeleteMapping("/{id}/subscribe")
     public ResponseEntity<Void> unsubscribe(
             @PathVariable String id,
@@ -70,6 +84,8 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Переключить подписку", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{id}/subscribe/toggle")
     public ResponseEntity<Boolean> toggleSubscribe(
             @PathVariable String id,
@@ -82,6 +98,8 @@ public class UserController {
         return ResponseEntity.ok(subscribed);
     }
 
+    @Operation(summary = "Отзывы пользователя")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/{id}/reviews")
     public ResponseEntity<UserReviewsSummaryDto> getReviews(
             @PathVariable String id,
@@ -90,6 +108,8 @@ public class UserController {
         return ResponseEntity.ok(reviewService.getReviewsSummary(id, pageable));
     }
 
+    @Operation(summary = "Оставить отзыв", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{id}/reviews")
     public ResponseEntity<ReviewDto> createReview(
             @PathVariable String id,

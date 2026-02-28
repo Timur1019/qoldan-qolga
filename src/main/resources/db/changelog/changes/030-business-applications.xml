@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="030-create-business-applications" author="app">
+        <createTable tableName="business_applications">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="pk_business_applications"/>
+            </column>
+            <column name="user_id" type="VARCHAR(36)">
+                <constraints nullable="true" references="users(id)" foreignKeyName="fk_business_app_user"/>
+            </column>
+            <column name="full_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shop_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="business_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="passport_url" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registration_certificate_url" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shop_url" type="VARCHAR(500)"/>
+            <column name="phone" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="agreement_accepted" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

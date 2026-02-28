@@ -2,6 +2,7 @@ package com.test.qoldanqolga.security;
 
 import com.test.qoldanqolga.model.User;
 import com.test.qoldanqolga.repository.UserRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,12 +38,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         String token = authHeader.substring(7);
         String userId = jwtUtil.getUserIdFromToken(token);
-        if (userId == null || SecurityContextHolder.getContext().getAuthentication() != null) {
+        if (userId == null) {
+            LogUtil.debug(JwtAuthFilter.class, "Invalid or expired token");
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
             filterChain.doFilter(request, response);
             return;
         }
         Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isEmpty() || userOpt.get().isDeleted()) {
+        if (userOpt.isEmpty() || userOpt.get().isDeleted() || userOpt.get().isCurrentlyBanned()) {
+            LogUtil.debug(JwtAuthFilter.class, "User not found, deleted or banned: userId={}", userId);
             filterChain.doFilter(request, response);
             return;
         }
@@ -51,6 +58,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (request.getRequestURI().startsWith("/api/admin")) {
+            LogUtil.info(JwtAuthFilter.class, "Admin request: userId={} role={}", userId, userOpt.get().getRole());
+        }
         filterChain.doFilter(request, response);
     }
 }

@@ -15,9 +15,19 @@ export default defineConfig({
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
         secure: false,
+        timeout: 15000,
         configure: (proxy) => {
-          proxy.on('error', (err) => {
-            console.warn('Proxy error (возможно, бэкенд не запущен на :8080):', err.message)
+          proxy.on('error', (err, req, res) => {
+            console.error('[Vite proxy] /api -> 8080: бэкенд недоступен. Запустите: ./gradlew bootRun')
+            if (res && !res.headersSent) {
+              res.writeHead(502, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ message: 'Backend unreachable. Start: ./gradlew bootRun' }))
+            }
+          })
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            if (proxyRes.statusCode === 404) {
+              console.warn('[Vite proxy] 404 от бэкенда:', req.method, req.url)
+            }
           })
         },
       },
