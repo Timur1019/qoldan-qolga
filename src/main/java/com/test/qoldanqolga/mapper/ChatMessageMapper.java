@@ -16,6 +16,7 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessage, MessageDto> {
     @Mapping(target = "createdAt", source = "message.createdAt")
     @Mapping(target = "senderName", expression = "java(sender != null ? sender.getDisplayName() : \"\")")
     @Mapping(target = "senderAvatar", source = "sender.avatar")
+    @Mapping(target = "senderIsStore", expression = "java(sender != null && Boolean.TRUE.equals(sender.getStoreVerified()))")
     MessageDto toDto(ChatMessage message, User sender);
 
     @Override

@@ -9,14 +9,16 @@
 - Spring Security + JWT
 - MapStruct для маппинга
 
-Запуск: `./gradlew bootRun`
+Запуск: `./gradlew bootRun` (порт 8080)
 
 ## Frontend
 
 - React, Vite
 - Роутинг, AuthContext, защищённые маршруты
 
-Запуск: `cd frontend && npm install && npm run dev`
+**Локальная разработка:** сначала запустите бэкенд на 8080, затем фронт. Vite проксирует запросы с `/api` и `/ws` на `http://127.0.0.1:8080`. Если бэкенд не запущен — запросы к API дадут 502.
+
+Запуск: `cd frontend && npm install && npm run dev` (порт 3000)
 
 ## Админ-панель
 

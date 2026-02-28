@@ -48,12 +48,13 @@ public class MessageCommandServiceImpl implements MessageCommandService {
                             conversationReadRepository.save(r);
                         }
                 );
+        LogUtil.debug(MessageCommandServiceImpl.class, "Conversation marked as read: conversationId={} userId={}", conversationId, userId);
     }
 
     @Override
     @Transactional
     public MessageDto sendMessage(String conversationId, String senderId, String text) {
-        Conversation c = conversationRepository.findById(conversationId)
+        Conversation c = conversationRepository.findByIdWithAd(conversationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Диалог", conversationId));
         chatAccessService.ensureParticipant(c, senderId);
         ChatMessage msg = new ChatMessage();
@@ -85,6 +86,7 @@ public class MessageCommandServiceImpl implements MessageCommandService {
         msg = messageRepository.save(msg);
         MessageDto dto = chatMessageMapper.toDto(msg);
         chatWebSocketService.sendToConversation(conversationId, dto);
+        LogUtil.debug(MessageCommandServiceImpl.class, "Message updated: conversation={} messageId={}", conversationId, messageId);
         return dto;
     }
 
@@ -105,5 +107,6 @@ public class MessageCommandServiceImpl implements MessageCommandService {
             throw new IllegalArgumentException("Можно удалять только свои сообщения");
         }
         messageRepository.delete(msg);
+        LogUtil.debug(MessageCommandServiceImpl.class, "Message deleted: conversation={} messageId={}", conversationId, messageId);
     }
 }

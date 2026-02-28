@@ -19,4 +19,5 @@ public class SellerProfileDto {
     private long adsCount;
     private long subscribersCount;
     private boolean subscribed; // false для своего профиля или неаутентифицированного
+    private Boolean profileVerified;
 }

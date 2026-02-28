@@ -3,22 +3,6 @@ import { useLang } from '../../../../context/LangContext'
 import { formatPrice, formatDate, maskPhone } from '../../utils/adFormatters'
 import styles from './PricePanel.module.css'
 
-function LightningIcon() {
-  return (
-    <svg className={styles.lightningIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-    </svg>
-  )
-}
-
-function PaperPlaneIcon() {
-  return (
-    <svg className={styles.telegramIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <path d="M22 2L11 13" />
-      <path d="M22 2L15 22L11 13L2 9L22 2Z" />
-    </svg>
-  )
-}
 
 function PricePanel({
   ad,
@@ -30,7 +14,8 @@ function PricePanel({
   onPhoneClick,
 }) {
   const { t } = useLang()
-  const fullNumber = ad?.phone ? `+${(ad.phone || '').replace(/\D/g, '')}` : ''
+  const rawDigits = (ad?.phone || '').replace(/\D/g, '')
+  const fullNumber = rawDigits ? `+${rawDigits}` : ''
   const handlePhoneAction = () => {
     if (onPhoneClick) onPhoneClick()
   }
@@ -41,55 +26,48 @@ function PricePanel({
         <span className={styles.price}>{formatPrice(ad?.price, ad?.currency)}</span>
       </div>
       {ad?.isNegotiable && (
-        <span className={styles.urgentPill}>
-          <LightningIcon />
-          {t('ads.urgentBargain')}
+        <span className="badge bg-warning text-dark mb-2">
+          <i className="bi bi-lightning-charge me-1" aria-hidden /> {t('ads.urgentBargain')}
         </span>
       )}
-      <h1 className={styles.title}>{ad?.title}</h1>
-      <a href="#track" className={styles.trackPriceLink}>{t('ads.trackPrice')} ›</a>
+      <h1 className="h5 mb-2">{ad?.title}</h1>
+      <a href="#track" className="small text-primary text-decoration-none">{t('ads.trackPrice')} <i className="bi bi-chevron-right" aria-hidden /></a>
       {ad?.canDeliver && (
-        <div className={styles.deliveryLine}>🚚 {t('ads.delivery')}</div>
+        <div className="small text-muted mt-1"><i className="bi bi-truck me-1" aria-hidden /> {t('ads.delivery')}</div>
       )}
-      <div className={styles.contactBtns}>
+      <div className="d-flex flex-wrap gap-2 mt-3">
         <button
           type="button"
-          className={styles.contactBtnChat}
+          className="btn btn-primary btn-sm"
           onClick={() => onChat?.()}
           disabled={chatGoing || isOwner}
         >
-          {chatGoing ? t('common.loading') : t('ads.chatWith')}
+          <i className="bi bi-chat-dots me-1" aria-hidden /> {chatGoing ? t('common.loading') : t('ads.chatWith')}
         </button>
         {phoneRevealed && fullNumber ? (
-          <span className={styles.contactPhoneRevealed}>
-            <span className={styles.contactPhoneNumber}>{fullNumber}</span>
-            <a href={`tel:${(ad?.phone || '').replace(/\D/g, '')}`} className={styles.contactBtnCall}>
-              {t('ads.call')}
-            </a>
-          </span>
+          <span className="btn btn-outline-secondary btn-sm disabled">{fullNumber}</span>
         ) : (
           <button
             type="button"
-            className={styles.contactBtnPhone}
+            className="btn btn-outline-secondary btn-sm"
             onClick={handlePhoneAction}
             title={!isAuthenticated ? t('ads.phoneLoginRequired') : t('ads.phone')}
           >
-            {ad?.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
+            <i className="bi bi-telephone me-1" aria-hidden /> {ad?.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
           </button>
         )}
         <a
           href={`https://t.me/${(ad?.phone || '').replace(/\D/g, '').slice(-9)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className={styles.contactBtnTelegram}
+          className="btn btn-outline-primary btn-sm"
         >
-          <PaperPlaneIcon />
-          Telegram
+          <i className="bi bi-send me-1" aria-hidden /> Telegram
         </a>
       </div>
-      <div className={styles.centerMeta}>
-        <span className={styles.centerMetaLine}>{t('ads.postedAt')}: {formatDate(ad?.createdAt)}</span>
-        <span className={styles.centerMetaLine}>{t('ads.views')}: {ad?.views ?? 0}</span>
+      <div className="small text-muted mt-2 d-flex flex-wrap gap-2">
+        <span>{t('ads.postedAt')}: {formatDate(ad?.createdAt)}</span>
+        <span>{t('ads.views')}: {ad?.views ?? 0}</span>
       </div>
     </>
   )

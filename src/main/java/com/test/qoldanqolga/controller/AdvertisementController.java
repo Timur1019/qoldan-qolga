@@ -25,9 +25,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/ads")
+@Tag(name = "Объявления", description = "CRUD объявлений, избранное, промо")
 @RequiredArgsConstructor
 public class AdvertisementController {
 
@@ -36,7 +42,8 @@ public class AdvertisementController {
     private final AdReportService adReportService;
     private final PromoService promoService;
 
-    /** Курсорная пагинация: GET /api/ads/cursor?cursor=&limit=20&status=ACTIVE */
+    @Operation(summary = "Список (cursor)", description = "Курсорная пагинация")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/cursor")
     public ResponseEntity<CursorPageResponse<AdListItemDto>> listByCursor(
             @RequestParam(required = false) String cursor,
@@ -49,6 +56,8 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.listByCursor(request, status, userId));
     }
 
+    @Operation(summary = "Список объявлений", description = "С фильтрами и страничной пагинацией")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping
     public ResponseEntity<Page<AdListItemDto>> list(
             @RequestParam(required = false) String status,
@@ -86,6 +95,8 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.list(params, userId, pageable));
     }
 
+    @Operation(summary = "Мои объявления", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @GetMapping("/my")
     public ResponseEntity<Page<AdListItemDto>> myAds(
             @AuthenticationPrincipal UserDetails user,
@@ -97,6 +108,8 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.listByUser(user.getUsername(), pageable));
     }
 
+    @Operation(summary = "Детали объявления", description = "По ID")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/{id}")
     public ResponseEntity<AdDetailDto> getById(
             @PathVariable String id,
@@ -106,12 +119,16 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.getById(id, userId));
     }
 
+    @Operation(summary = "Учесть просмотр")
+    @ApiResponses(@ApiResponse(responseCode = "204", description = "OK"))
     @PostMapping("/{id}/view")
     public ResponseEntity<Void> recordView(@PathVariable String id) {
         advertisementService.recordView(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Пожаловаться", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{id}/report")
     public ResponseEntity<Void> report(
             @PathVariable String id,
@@ -125,6 +142,8 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Создать объявление", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping
     public ResponseEntity<AdDetailDto> create(
             @Valid @RequestBody CreateAdRequest request,
@@ -136,6 +155,8 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.create(request, user.getUsername()));
     }
 
+    @Operation(summary = "Обновить объявление", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PutMapping("/{id}")
     public ResponseEntity<AdDetailDto> update(
             @PathVariable String id,
@@ -148,6 +169,8 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.update(id, request, user.getUsername()));
     }
 
+    @Operation(summary = "Удалить объявление", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable String id,
@@ -160,6 +183,8 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Архивировать объявление", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/archive/{id}")
     public ResponseEntity<Void> archive(
             @PathVariable String id,
@@ -172,6 +197,8 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Восстановить из архива", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/restore/{id}")
     public ResponseEntity<Void> restore(
             @PathVariable String id,
@@ -184,6 +211,8 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Добавить в избранное", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{id}/favorite")
     public ResponseEntity<Void> addFavorite(
             @PathVariable String id,
@@ -196,6 +225,8 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Убрать из избранного", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @DeleteMapping("/{id}/favorite")
     public ResponseEntity<Void> removeFavorite(
             @PathVariable String id,
@@ -208,6 +239,8 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Переключить избранное", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{id}/favorite/toggle")
     public ResponseEntity<Boolean> toggleFavorite(
             @PathVariable String id,
@@ -220,11 +253,15 @@ public class AdvertisementController {
         return ResponseEntity.ok(nowFavorite);
     }
 
+    @Operation(summary = "Список промо-услуг")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/promo-services")
     public ResponseEntity<List<PromoServiceDto>> getPromoServices() {
         return ResponseEntity.ok(promoService.getServices());
     }
 
+    @Operation(summary = "Заказать промо", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
     @PostMapping("/{adId}/promo/order")
     public ResponseEntity<Void> createPromoOrder(
             @PathVariable String adId,

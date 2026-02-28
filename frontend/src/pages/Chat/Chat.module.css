@@ -1,135 +1,93 @@
-.page {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.title {
-  margin: 0 0 1rem;
-  font-size: var(--font-size-title-lg);
-  font-weight: var(--font-weight-semibold);
-  color: #111827;
-}
-
-.error {
-  color: var(--color-error, #c00);
-}
-
+/* Layout: карточка чата — два столбца */
 .layout {
   display: flex;
-  gap: 1rem;
-  min-height: 400px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid var(--color-border, #e5e7eb);
+  gap: 0;
+  min-height: 420px;
   overflow: hidden;
 }
 
 .sidebar {
-  width: 260px;
+  width: 280px;
   flex-shrink: 0;
-  border-right: 1px solid var(--color-border, #e5e7eb);
+  border-right: 1px solid var(--color-border);
   overflow-y: auto;
 }
 
-.noChats {
-  padding: 1.5rem;
-  margin: 0;
-  color: var(--color-muted, #6b7280);
-  font-size: 0.95rem;
-}
-
-.convList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.convList li {
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.convBtn,
-.convBtnActive {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.85rem 1rem;
-  text-align: left;
-  border: none;
-  background: none;
+/* Кнопки списка диалогов */
+.convBtn {
+  background: transparent;
   cursor: pointer;
-  font: inherit;
+  transition: background 0.15s ease;
 }
 
-.convAvatar {
+.convBtn:hover {
+  background: var(--color-bg-subtle);
+}
+
+.convBtnActive {
+  background: rgba(4, 73, 45, 0.08);
+  border-left: 3px solid var(--color-primary);
+  cursor: default;
+}
+
+/* Аватарки в списке и в треде */
+.convAvatar,
+.threadAvatar,
+.msgAvatar,
+.msgAvatarOwn {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #e5e7eb;
-  color: #4b5563;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.convInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.convBtn:hover {
-  background: #f9fafb;
-}
-
-.convBtnActive {
-  background: rgba(2, 153, 247, 0.08);
-  border-left: 3px solid var(--color-primary);
-}
-
-.convTitle {
-  display: block;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #111827;
-  margin-bottom: 0.2rem;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.convParty {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--color-muted, #6b7280);
-}
-
-.convBtn,
-.convBtnActive {
   position: relative;
 }
 
-.convBadge {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.75rem;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 0.35rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1.25rem;
-  color: #fff;
-  background: var(--color-primary);
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.threadAvatar {
+  width: 44px;
+  height: 44px;
 }
 
+.msgAvatar,
+.msgAvatarOwn {
+  width: 36px;
+  height: 36px;
+  font-size: 0.8rem;
+}
+
+.msgAvatarOwn {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.threadAvatar .avatarImg,
+.msgAvatar .avatarImg,
+.msgAvatarOwn .avatarImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Область сообщений */
 .thread {
   flex: 1;
   display: flex;
@@ -138,313 +96,47 @@
 }
 
 .threadContent {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
   min-height: 0;
 }
 
-.hint {
-  padding: 2rem;
-  margin: 0;
-  color: var(--color-muted, #6b7280);
-  text-align: center;
-}
-
-.threadHead {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-border, #e5e7eb);
-  background: #f9fafb;
-}
-
-.threadHeadTop {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.threadDeleteBtn {
-  margin-left: auto;
-  padding: 0.35rem;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: #6b7280;
-  cursor: pointer;
-}
-
-.threadDeleteBtn:hover {
-  background: var(--color-bg-subtle);
-  color: var(--color-dark);
-}
-
-.threadDeleteIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.threadTitle {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.threadCount {
-  font-size: 0.8rem;
-  color: var(--color-muted, #6b7280);
-  background: #e5e7eb;
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-}
-
-.threadParty {
-  font-size: 0.85rem;
-  color: var(--color-muted, #6b7280);
-}
-
-.threadAdLink {
-  display: inline-block;
-  margin-top: 0.25rem;
-  font-size: 0.85rem;
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.threadAdLink:hover {
-  text-decoration: none;
-  font-weight: 600;
-}
-
 .messages {
-  flex: 1;
   min-height: 280px;
   max-height: 480px;
-  overflow-y: auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 
-.dateHeader {
-  align-self: center;
-  padding: 0.35rem 0.75rem;
-  margin: 0.5rem 0;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #6b7280;
-  background: #f3f4f6;
-  border-radius: 999px;
-}
-
-.msgRow {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-  justify-content: flex-start;
-}
-
-.msgRowOwn {
-  flex-direction: row-reverse;
-}
-
-.msgAvatar,
-.msgAvatarOwn {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #e5e7eb;
-  color: #4b5563;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.msgAvatarOwn {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.msgBubble {
-  max-width: 75%;
-  padding: 0.6rem 0.9rem;
-  background: #f3f4f6;
-  border-radius: 12px;
+/* Пузыри сообщений */
+.bubbleOther {
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-card);
   border-top-left-radius: 4px;
 }
 
-.msgBubbleOwn {
-  background: #dbeafe;
-  border: 1px solid #93c5fd;
-  border-top-left-radius: 12px;
+.bubbleOwn {
+  background: rgba(4, 73, 45, 0.12);
+  border: 1px solid rgba(4, 73, 45, 0.2);
+  border-radius: var(--radius-card);
   border-top-right-radius: 4px;
-}
-
-.msgSender {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.2rem;
-}
-
-.msgText {
-  margin: 0 0 0.25rem;
-  font-size: 0.95rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.msgTime {
-  font-size: 0.7rem;
-  color: var(--color-muted, #9ca3af);
-}
-
-.msgBubbleWrap {
-  position: relative;
-  max-width: 75%;
-}
-
-.msgBubbleClickable {
   cursor: pointer;
 }
 
-.msgBubbleClickable:hover {
-  filter: brightness(0.98);
+.bubbleOwn:hover {
+  background: rgba(4, 73, 45, 0.16);
 }
 
-.msgMenu {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
-}
-
-.msgMenuBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: none;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.06);
-  color: #374151;
-  cursor: pointer;
-}
-
-.msgMenuBtn:hover {
-  background: rgba(0, 0, 0, 0.12);
-  color: #111;
-}
-
-.msgEditInput {
-  width: 100%;
-  padding: var(--input-padding-y) var(--input-padding-x);
-  margin-bottom: 0.5rem;
-  border: var(--input-border);
-  border-radius: var(--input-radius);
-  font-size: var(--input-font-size);
-  background: #ffffff;
-}
-
-.msgEditInput:focus {
-  outline: none;
-  border-color: var(--input-focus-border);
-  box-shadow: var(--input-focus-shadow);
-}
-
-.msgActions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.msgActionBtn {
-  padding: 0.35rem 0.75rem;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.msgActionBtn:first-of-type {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.msgActionBtn:first-of-type:hover {
-  background: var(--color-primary-hover);
-}
-
-.msgActionBtn:last-of-type {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.msgActionBtn:last-of-type:hover {
-  background: #d1d5db;
-}
-
-.sendForm {
-  display: flex;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-top: 1px solid var(--color-border, #e5e7eb);
-}
-
-.sendInput {
-  flex: 1;
-  padding: var(--input-padding-y) var(--input-padding-x);
-  border: var(--input-border);
-  border-radius: var(--input-radius);
-  font-size: var(--input-font-size);
-  background: #ffffff;
-}
-
-.sendInput:focus {
-  outline: none;
-  border-color: var(--input-focus-border);
-  box-shadow: var(--input-focus-shadow);
-}
-
-.sendBtn {
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #fff;
-  background: var(--color-primary);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.sendBtn:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-}
-
-.sendBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .layout {
     flex-direction: column;
+    min-height: 70vh;
   }
 
   .sidebar {
     width: 100%;
-    max-height: 200px;
+    max-height: 220px;
     border-right: none;
-    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .messages {
+    max-height: 360px;
   }
 }

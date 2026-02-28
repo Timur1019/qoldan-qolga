@@ -28,25 +28,21 @@ export function ToastProvider({ children }) {
       {children}
       {message != null && (
         <div
-          className="toast-notification"
+          className="toast-notification position-fixed bottom-0 end-0 m-3 p-3 rounded shadow app-card d-flex align-items-center gap-2"
           role="status"
           aria-live="polite"
           style={{
-            position: 'fixed',
-            bottom: '1.5rem',
-            right: '1.5rem',
-            padding: '0.75rem 1.25rem',
-            background: '#111',
-            color: '#fff',
-            borderRadius: '10px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-            fontSize: '1rem',
-            fontWeight: 500,
             zIndex: 10000,
             maxWidth: '90vw',
+            backgroundColor: 'var(--color-bg-card, #ffffff)',
+            border: '1px solid var(--color-border, #e5e7eb)',
+            fontSize: 'var(--font-size-body, 15px)',
+            fontWeight: 500,
+            color: 'var(--color-text, #111827)',
           }}
         >
-          {message}
+          <i className="bi bi-check-circle-fill text-success" aria-hidden />
+          <span>{message}</span>
         </div>
       )}
     </ToastContext.Provider>

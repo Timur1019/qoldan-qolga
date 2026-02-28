@@ -2,6 +2,7 @@ package com.test.qoldanqolga.service.validation;
 
 import com.test.qoldanqolga.dto.ad.CreateAdRequest;
 import com.test.qoldanqolga.exception.ValidationException;
+import com.test.qoldanqolga.util.LogUtil;
 import com.test.qoldanqolga.validator.CreateAdValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class AdValidationService {
     public void validateCreateOrUpdate(CreateAdRequest request) {
         List<String> errors = createAdValidator.validate(request);
         if (!errors.isEmpty()) {
+            LogUtil.debug(AdValidationService.class, "Validation failed: {} errors", errors.size());
             throw new ValidationException(errors);
         }
     }

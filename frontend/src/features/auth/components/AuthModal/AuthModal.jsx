@@ -9,7 +9,7 @@ import styles from './AuthModal.module.css'
 export default function AuthModal({ open, onClose, initialMode = 'login' }) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { setAuth } = useAuth()
+  const { setAuth, refreshUser } = useAuth()
   const { t } = useLang()
 
   const [mode, setMode] = useState(initialMode)
@@ -55,7 +55,9 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
         email: res.email,
         displayName: res.displayName,
         role: res.role || 'USER',
+        avatar: res.avatar,
       }, rememberMe)
+      await refreshUser()
       handleClose()
       navigate(redirectTo, { replace: true })
     } catch (err) {
@@ -76,7 +78,9 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
         email: res.email,
         displayName: res.displayName,
         role: res.role || 'USER',
+        avatar: res.avatar,
       })
+      await refreshUser()
       handleClose()
       navigate(redirectTo, { replace: true })
     } catch (err) {
@@ -106,90 +110,100 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
       aria-modal="true"
       aria-labelledby="auth-modal-title"
     >
-      <div className={styles.modal}>
+      <div className={`app-card ${styles.modal}`}>
         <button
           type="button"
-          className={styles.closeBtn}
+          className="btn btn-link position-absolute top-0 end-0 p-2 text-secondary text-decoration-none"
+          style={{ top: '0.5rem', right: '0.5rem' }}
           onClick={handleClose}
           aria-label={t('common.cancel')}
         >
-          ×
+          <i className="bi bi-x-lg" aria-hidden />
         </button>
-        <h2 id="auth-modal-title" className={styles.title}>
+        <h2 id="auth-modal-title" className="h4 mb-4">
           {mode === 'login' ? t('auth.loginTitle') : t('auth.registerTitle')}
         </h2>
 
         {mode === 'login' ? (
           <form onSubmit={handleLogin} className={styles.form}>
-            {error && <p className={styles.error}>{error}</p>}
-            <label className={styles.label}>
-              {t('auth.email')}
+            {error && (
+              <div className="alert alert-danger py-2 mb-3" role="alert">
+                <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
+              </div>
+            )}
+            <div className="mb-3">
+              <label className="form-label">{t('auth.email')}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className={styles.input}
+                className="form-control"
               />
-            </label>
-            <label className={styles.label}>
-              {t('auth.password')}
+            </div>
+            <div className="mb-3">
+              <label className="form-label">{t('auth.password')}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
-                className={styles.input}
+                className="form-control"
               />
-            </label>
-            <label className={styles.rememberRow}>
+            </div>
+            <div className="mb-3 form-check">
               <input
                 type="checkbox"
+                id="auth-remember"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className={styles.checkbox}
+                className="form-check-input"
               />
-              <span>{t('auth.rememberMe')}</span>
-            </label>
-            <button type="submit" disabled={submitting} className={styles.submit}>
+              <label className="form-check-label" htmlFor="auth-remember">{t('auth.rememberMe')}</label>
+            </div>
+            <button type="submit" disabled={submitting} className="btn btn-primary w-100">
               {submitting ? t('common.loading') : t('nav.login')}
             </button>
-            <p className={styles.footer}>
+            <p className="mt-3 mb-0 text-muted small text-center">
               {t('auth.noAccount')}{' '}
-              <button type="button" className={styles.linkBtn} onClick={() => switchMode('register')}>
+              <button type="button" className="btn btn-link p-0 align-baseline text-primary text-decoration-none" onClick={() => switchMode('register')}>
                 {t('nav.register')}
               </button>
             </p>
           </form>
         ) : (
           <form onSubmit={handleRegister} className={styles.form}>
-            {error && <p className={styles.error}>{error}</p>}
-            <label className={styles.label}>
-              {t('auth.displayName')}
+            {error && (
+              <div className="alert alert-danger py-2 mb-3" role="alert">
+                <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
+              </div>
+            )}
+            <div className="mb-3">
+              <label className="form-label">{t('auth.displayName')}</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
                 autoComplete="name"
-                className={styles.input}
+                className="form-control"
               />
-            </label>
-            <label className={styles.label}>
-              {t('auth.email')}
+            </div>
+            <div className="mb-3">
+              <label className="form-label">{t('auth.email')}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className={styles.input}
+                className="form-control"
               />
-            </label>
-            <label className={styles.label}>
-              {t('auth.password')} (6+)
+            </div>
+            <div className="mb-3">
+              <label className="form-label">{t('auth.password')} (6+)</label>
               <input
                 type="password"
                 value={password}
@@ -197,15 +211,15 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
                 required
                 minLength={6}
                 autoComplete="new-password"
-                className={styles.input}
+                className="form-control"
               />
-            </label>
-            <button type="submit" disabled={submitting} className={styles.submit}>
+            </div>
+            <button type="submit" disabled={submitting} className="btn btn-primary w-100">
               {submitting ? t('common.loading') : t('nav.register')}
             </button>
-            <p className={styles.footer}>
+            <p className="mt-3 mb-0 text-muted small text-center">
               {t('auth.hasAccount')}{' '}
-              <button type="button" className={styles.linkBtn} onClick={() => switchMode('login')}>
+              <button type="button" className="btn btn-link p-0 align-baseline text-primary text-decoration-none" onClick={() => switchMode('login')}>
                 {t('nav.login')}
               </button>
             </p>

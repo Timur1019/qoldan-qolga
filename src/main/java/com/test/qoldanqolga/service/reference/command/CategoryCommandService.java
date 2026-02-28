@@ -5,6 +5,7 @@ import com.test.qoldanqolga.exception.ConflictException;
 import com.test.qoldanqolga.exception.ResourceNotFoundException;
 import com.test.qoldanqolga.model.Category;
 import com.test.qoldanqolga.repository.CategoryRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,9 @@ public class CategoryCommandService {
         category.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : DEFAULT_SORT_ORDER);
         category.setShowOnHome(Boolean.TRUE.equals(request.getShowOnHome()));
 
-        return categoryRepository.save(category);
+        Category saved = categoryRepository.save(category);
+        LogUtil.info(CategoryCommandService.class, "Category created: id={} code={}", saved.getId(), saved.getCode());
+        return saved;
     }
 
     private void validateUniqueCode(String code) {

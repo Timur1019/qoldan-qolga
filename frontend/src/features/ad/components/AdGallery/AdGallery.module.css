@@ -31,8 +31,8 @@
 }
 
 .thumbBtnActive {
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 1px #7c3aed;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .mainImageWrap {

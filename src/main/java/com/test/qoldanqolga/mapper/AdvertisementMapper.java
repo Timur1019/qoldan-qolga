@@ -29,6 +29,7 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "averageRating", ignore = true)
     @Mapping(target = "totalReviews", ignore = true)
+    @Mapping(target = "sellerIsStore", ignore = true)
     AdListItemDto toDto(Advertisement ad);
 
     /** Альias для toDto — сохраняет обратную совместимость. */

@@ -51,10 +51,10 @@ function AdDescription({
       {isAuthenticated && !isOwner && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>{t('ads.askSeller')}</h2>
-          <div className={styles.askRow}>
+          <div className="d-flex gap-2">
             <input
               type="text"
-              className={styles.askInput}
+              className="form-control form-control-sm"
               placeholder={t('ads.askPlaceholder')}
               value={askText}
               onChange={(e) => onAskChange?.(e.target.value)}
@@ -62,23 +62,20 @@ function AdDescription({
             />
             <button
               type="button"
-              className={styles.askSend}
+              className="btn btn-primary btn-sm flex-shrink-0"
               onClick={() => onAskSend?.(askText || t('ads.askPlaceholder'))}
               disabled={chatGoing}
               aria-label={t('chat.send')}
             >
-              <svg className={styles.sendIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                <path d="M22 2L11 13" />
-                <path d="M22 2L15 22L11 13L2 9L22 2Z" />
-              </svg>
+              <i className="bi bi-send" aria-hidden />
             </button>
           </div>
-          <div className={styles.quickChips}>
+          <div className="d-flex flex-wrap gap-1 mt-2">
             {QUICK_QUESTIONS.map((key, i) => (
               <button
                 key={key}
                 type="button"
-                className={i === 0 ? `${styles.quickChip} ${styles.quickChipPrimary}` : styles.quickChip}
+                className={`btn btn-sm ${i === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
                 onClick={() => onAskChange?.(t(key))}
                 disabled={chatGoing}
               >

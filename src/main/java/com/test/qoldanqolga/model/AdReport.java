@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "ad_reports")
 @Getter
@@ -30,4 +32,7 @@ public class AdReport extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String comment;
+
+    @Column(name = "seller_notified_at")
+    private Instant sellerNotifiedAt;
 }

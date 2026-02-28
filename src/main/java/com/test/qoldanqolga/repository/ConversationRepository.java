@@ -13,6 +13,9 @@ public interface ConversationRepository extends JpaRepository<Conversation, Stri
     @Query("SELECT c FROM Conversation c LEFT JOIN FETCH c.ad LEFT JOIN FETCH c.buyer WHERE c.adId = :adId AND c.buyerId = :buyerId")
     Optional<Conversation> findByAdIdAndBuyerIdWithAdAndBuyer(@Param("adId") String adId, @Param("buyerId") String buyerId);
 
+    @Query("SELECT c FROM Conversation c LEFT JOIN FETCH c.ad WHERE c.id = :id")
+    Optional<Conversation> findByIdWithAd(@Param("id") String id);
+
     default Optional<Conversation> findByAdIdAndBuyerId(String adId, String buyerId) {
         return findByAdIdAndBuyerIdWithAdAndBuyer(adId, buyerId);
     }

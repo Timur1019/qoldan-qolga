@@ -7,12 +7,11 @@ import com.test.qoldanqolga.model.UserSubscription;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.repository.UserSubscriptionRepository;
 import com.test.qoldanqolga.service.UserSubscriptionService;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserSubscriptionServiceImpl implements UserSubscriptionService {
@@ -35,18 +34,19 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
             throw new ResourceNotFoundException("Продавец", subscribedToId);
         }
         if (subscriptionRepository.existsBySubscriberIdAndSubscribedToId(subscriberId, subscribedToId)) {
+            LogUtil.debug(UserSubscriptionServiceImpl.class, "Already subscribed: subscriber={} subscribedTo={}", subscriberId, subscribedToId);
             return;
         }
         UserSubscription sub = new UserSubscription(subscriberId, subscribedToId);
         subscriptionRepository.save(sub);
-        log.info("User {} subscribed to user {}", subscriberId, subscribedToId);
+        LogUtil.info(UserSubscriptionServiceImpl.class, "User {} subscribed to user {}", subscriberId, subscribedToId);
     }
 
     @Override
     @Transactional
     public void unsubscribe(String subscriberId, String subscribedToId) {
         subscriptionRepository.deleteBySubscriberIdAndSubscribedToId(subscriberId, subscribedToId);
-        log.info("User {} unsubscribed from user {}", subscriberId, subscribedToId);
+        LogUtil.info(UserSubscriptionServiceImpl.class, "User {} unsubscribed from user {}", subscriberId, subscribedToId);
     }
 
     @Override
@@ -58,9 +58,11 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
         boolean exists = subscriptionRepository.existsBySubscriberIdAndSubscribedToId(subscriberId, subscribedToId);
         if (exists) {
             unsubscribe(subscriberId, subscribedToId);
+            LogUtil.debug(UserSubscriptionServiceImpl.class, "Subscribe toggled off: subscriber={} subscribedTo={}", subscriberId, subscribedToId);
             return false;
         }
         subscribe(subscriberId, subscribedToId);
+        LogUtil.debug(UserSubscriptionServiceImpl.class, "Subscribe toggled on: subscriber={} subscribedTo={}", subscriberId, subscribedToId);
         return true;
     }
 

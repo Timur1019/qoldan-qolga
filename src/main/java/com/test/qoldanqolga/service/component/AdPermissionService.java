@@ -2,6 +2,7 @@ package com.test.qoldanqolga.service.component;
 
 import com.test.qoldanqolga.exception.AdAccessDeniedException;
 import com.test.qoldanqolga.model.Advertisement;
+import com.test.qoldanqolga.util.LogUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,7 @@ public class AdPermissionService {
     public void validateOwnership(Advertisement ad, String userId) {
         if (ad == null || userId == null) return;
         if (!ad.getUserId().equals(userId)) {
+            LogUtil.warn(AdPermissionService.class, "Access denied: adId={} userId={}", ad.getId(), userId);
             throw new AdAccessDeniedException(ad.getId(), userId);
         }
     }

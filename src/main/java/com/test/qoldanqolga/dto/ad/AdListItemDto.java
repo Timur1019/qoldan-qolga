@@ -35,4 +35,6 @@ public class AdListItemDto {
     private String phone;
     private Double averageRating;
     private Long totalReviews;
+    /** Продавец подтверждён как магазин. */
+    private Boolean sellerIsStore;
 }

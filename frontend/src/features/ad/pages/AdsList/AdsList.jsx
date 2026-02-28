@@ -56,7 +56,9 @@ export default function AdsList() {
   const giveAway = searchParams.get(PARAMS.GIVE_AWAY)
   const [regions, setRegions] = useState([])
   const [categories, setCategories] = useState([])
-  const [serviceSubcats, setServiceSubcats] = useState([])
+  const [sidebarCategories, setSidebarCategories] = useState([])
+  const [currentCategoryInfo, setCurrentCategoryInfo] = useState(null)
+  const [categoryBreadcrumb, setCategoryBreadcrumb] = useState([]) /* путь от корня до текущей категории */
   const [data, setData] = useState({ content: [], totalPages: 0, number: 0, totalElements: 0 })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -110,20 +112,74 @@ export default function AdsList() {
   }, [isAuthenticated, openAuthModal])
 
   useEffect(() => {
-    referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
-  }, [])
-
-  useEffect(() => {
-    if (!hasCategory) return
-    referenceApi.getCategories().then((list) => setCategories(Array.isArray(list) ? list : [])).catch(() => setCategories([]))
+    const regionsPromise = referenceApi.getRegions().then((r) => r || []).catch(() => [])
+    const categoriesPromise = hasCategory
+      ? referenceApi.getCategories().then((list) => (Array.isArray(list) ? list : [])).catch(() => [])
+      : Promise.resolve([])
+    Promise.all([regionsPromise, categoriesPromise]).then(([r, list]) => {
+      setRegions(r)
+      setCategories(list)
+    })
   }, [hasCategory])
 
+  /* Подкатегории для сайдбара (дети родителя, чтобы текущая была в списке) и хлебные крошки */
   useEffect(() => {
-    if (!hasCategory) return
-    const servicesRoot = categories.find((c) => c.code === 'Xizmatlar')
-    if (!servicesRoot?.code) return
-    referenceApi.getCategoryChildren(servicesRoot.code).then((list) => setServiceSubcats(Array.isArray(list) ? list : [])).catch(() => setServiceSubcats([]))
-  }, [hasCategory, categories])
+    if (!hasCategory || !category) {
+      setSidebarCategories([])
+      setCurrentCategoryInfo(null)
+      setCategoryBreadcrumb([])
+      return
+    }
+    referenceApi.getCategory(category).then(async (info) => {
+      setCurrentCategoryInfo(info || null)
+      if (!info) {
+        setCategoryBreadcrumb([])
+        setSidebarCategories([])
+        return
+      }
+      const path = [{ code: info.code, nameRu: info.nameRu, nameUz: info.nameUz }]
+      let parentCode = info.parentCode ?? info.parent?.code
+      let parentId = info.parentId ?? info.parent?.id
+      while (parentCode || parentId) {
+        try {
+          if (parentCode) {
+            const parent = await referenceApi.getCategory(parentCode)
+            if (!parent) break
+            path.unshift({ code: parent.code, nameRu: parent.nameRu, nameUz: parent.nameUz })
+            parentCode = parent.parentCode ?? parent.parent?.code
+            parentId = parent.parentId ?? parent.parent?.id
+          } else if (parentId != null) {
+            const all = await referenceApi.getCategories().catch(() => [])
+            const flatten = (list) => (Array.isArray(list) ? list.flatMap((c) => [c, ...flatten(c.children || [])]) : [])
+            const flat = Array.isArray(all) ? (all.some((c) => (c.children || []).length > 0) ? flatten(all) : all) : []
+            const parent = flat.find((c) => c.id === parentId || c.id === Number(parentId))
+            if (!parent || !parent.code) break
+            path.unshift({ code: parent.code, nameRu: parent.nameRu, nameUz: parent.nameUz })
+            parentCode = parent.parentCode ?? parent.parent?.code
+            parentId = parent.parentId ?? parent.parent?.id
+          } else break
+        } catch {
+          break
+        }
+      }
+      setCategoryBreadcrumb(path)
+      /* В сайдбаре — подкатегории текущей категории (по клику переход) */
+      referenceApi.getCategoryChildren(category).then((list) => {
+        const listArr = Array.isArray(list) ? list : []
+        setSidebarCategories(listArr.length > 0 ? listArr : [info])
+      }).catch(() => setSidebarCategories([info]))
+    }).catch(() => {
+      setCurrentCategoryInfo(null)
+      setCategoryBreadcrumb([])
+      referenceApi.getCategory(category).then((info) => {
+        setCurrentCategoryInfo(info || null)
+        referenceApi.getCategoryChildren(category).then((list) => {
+          const listArr = Array.isArray(list) ? list : []
+          setSidebarCategories(listArr.length > 0 ? listArr : (info ? [info] : []))
+        }).catch(() => setSidebarCategories(info ? [info] : []))
+      }).catch(() => setSidebarCategories([]))
+    })
+  }, [hasCategory, category])
 
   useEffect(() => {
     const params = { page, size: PAGE_SIZE }
@@ -156,18 +212,10 @@ export default function AdsList() {
     setSearchParams(next)
   }
 
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <p>{t('common.loading')}</p>
-      </div>
-    )
-  }
-
   if (error) {
     return (
-      <div className={styles.page}>
-        <p className={styles.error}>{error}</p>
+      <div className="page-container app-page">
+        <div className="alert alert-danger" role="alert"><i className="bi bi-exclamation-circle me-2" aria-hidden />{error}</div>
       </div>
     )
   }
@@ -188,13 +236,18 @@ export default function AdsList() {
       if (v != null && v !== '') next.set(k, String(v))
       else next.delete(k)
     })
+    setSearchParams(next, { replace: true })
+  }
+
+  const resetFilters = () => {
+    const next = new URLSearchParams()
+    if (category) next.set(PARAMS.CATEGORY, category)
+    if (query) next.set(PARAMS.QUERY, query)
     setSearchParams(next)
   }
 
-  const resetFilters = () => setSearchParams({})
-
   const categoryName = (c) => (c ? (lang === 'ru' ? c.nameRu : c.nameUz) : '')
-  const currentCategory = [...categories, ...serviceSubcats].find((c) => c.code === category)
+  const currentCategory = currentCategoryInfo || [...categories, ...sidebarCategories].find((c) => c.code === category)
 
   const formatPhone = (phone) => {
     if (!phone) return ''
@@ -215,6 +268,9 @@ export default function AdsList() {
       <li className={styles.adRow}>
         <Link to={adsPath(ad.id)} className={styles.adRowLink}>
           <span className={styles.adRowImageWrap}>
+            <span className={`badge position-absolute top-0 start-0 m-2 ${ad.sellerIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.7rem' }}>
+              {ad.sellerIsStore ? 'Магазин' : 'Частный'}
+            </span>
             <CardGallery
               imageUrls={urls}
               className={styles.adRowGalleryWrap}
@@ -285,7 +341,7 @@ export default function AdsList() {
               ) : (
                 <button
                   type="button"
-                  className={styles.adRowShowPhoneBtn}
+                  className="btn btn-outline-primary btn-sm"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShowPhone(ad.id) }}
                   title={!isAuthenticated ? t('ads.phoneLoginRequired') : undefined}
                 >
@@ -296,10 +352,10 @@ export default function AdsList() {
             {ad.userId && String(ad.userId) !== String(user?.id) && (
               <button
                 type="button"
-                className={styles.adRowWriteBtn}
+                className="btn btn-primary btn-sm"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleWriteSeller(ad) }}
               >
-                {t('ads.chatWith')}
+                <i className="bi bi-chat-dots me-1" aria-hidden /> {t('ads.chatWith')}
               </button>
             )}
           </div>
@@ -309,9 +365,12 @@ export default function AdsList() {
   }
 
   const AdCard = ({ ad }) => (
-    <li key={ad.id} className={styles.card}>
+    <li key={ad.id} className={`${styles.card} app-card app-card-hover`}>
       <Link to={adsPath(ad.id)} className={styles.cardLink}>
         <span className={styles.cardImageWrap}>
+          <span className={`badge position-absolute top-0 start-0 m-2 ${ad.sellerIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.7rem' }}>
+            {ad.sellerIsStore ? 'Магазин' : 'Частный'}
+          </span>
           <CardGallery
             imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
           />
@@ -343,10 +402,10 @@ export default function AdsList() {
           {ad.userId && String(ad.userId) !== String(user?.id) && (
             <button
               type="button"
-              className={styles.cardWriteBtn}
+              className="btn btn-primary btn-sm mt-1"
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleWriteSeller(ad) }}
             >
-              {t('ads.chatWith')}
+              <i className="bi bi-chat-dots me-1" aria-hidden /> {t('ads.chatWith')}
             </button>
           )}
         </div>
@@ -355,19 +414,38 @@ export default function AdsList() {
   )
 
   return (
-    <div className={styles.page}>
+    <div className="page-container app-page">
       {hasCategory && (
-        <nav className={styles.breadcrumb}>
-          <Link to={ROUTES.HOME}>{t('nav.home')}</Link>
-          <span className={styles.breadcrumbSep}>/</span>
-          <span className={styles.breadcrumbCurrent}>{currentCategory ? categoryName(currentCategory) : t('nav.services')}</span>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb mb-2 mb-md-3">
+            <li className="breadcrumb-item">
+              <Link to={ROUTES.HOME}>{t('nav.home')}</Link>
+            </li>
+            {categoryBreadcrumb.length > 0 ? (
+              categoryBreadcrumb.map((crumb, i) => {
+                const isLast = i === categoryBreadcrumb.length - 1
+                return (
+                  <li key={crumb.code} className={`breadcrumb-item ${isLast ? 'active' : ''}`} aria-current={isLast ? 'page' : undefined}>
+                    {isLast ? (
+                      categoryName(crumb)
+                    ) : (
+                      <Link to={adsCategoryPathWithParams(crumb.code, searchParams)}>{categoryName(crumb)}</Link>
+                    )}
+                  </li>
+                )
+              })
+            ) : (
+              <li className="breadcrumb-item active" aria-current="page">{currentCategory ? categoryName(currentCategory) : t('nav.services')}</li>
+            )}
+          </ol>
         </nav>
       )}
       <div className={hasCategory ? styles.layoutWithSidebar : styles.layoutSimple}>
         {hasCategory && (
           <AdsFiltersSidebar
             regions={regions}
-            sidebarCategories={serviceSubcats}
+            sidebarCategories={sidebarCategories}
+            currentCategoryCode={category}
             filterDraft={filterDraft}
             setFilterDraft={setFilterDraft}
             region={region}
@@ -395,72 +473,94 @@ export default function AdsList() {
         )}
         <main className={hasCategory ? styles.mainContent : ''}>
           {!hasCategory && (
-            <div className={styles.filters}>
-              <label className={styles.filterLabel}>
-                {t('ads.region')}
-                <select
-                  value={region}
-                  onChange={(e) => setRegion(e.target.value)}
-                  className={styles.filterSelect}
-                >
-                  <option value="">— {t('ads.allRegions')}</option>
-                  {regions.map((r) => (
-                    <option key={r.code} value={r.code}>
-                      {lang === 'ru' ? r.nameRu : r.nameUz}
-                    </option>
-                  ))}
-                </select>
-              </label>
+            <div className="mb-3">
+              <label className="form-label small">{t('ads.region')}</label>
+              <select
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+                className="form-select form-select-sm"
+                style={{ maxWidth: '200px' }}
+              >
+                <option value="">— {t('ads.allRegions')}</option>
+                {regions.map((r) => (
+                  <option key={r.code} value={r.code}>
+                    {lang === 'ru' ? r.nameRu : r.nameUz}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
           {hasCategory && (
-            <div className={styles.banner}>
-              <p className={styles.bannerText}>{t('ads.sellAndEarn')}</p>
-              <Link to="/ads/create" className={styles.bannerBtn}>{t('ads.postAd')}</Link>
+            <div className="app-card d-flex align-items-center justify-content-between gap-3 p-3 mb-3">
+              <p className="mb-0 fw-semibold">{t('ads.sellAndEarn')}</p>
+              <Link to="/ads/create" className="btn btn-primary">{t('ads.postAd')}</Link>
             </div>
           )}
-          <h1 className={styles.title}>
+          <h1 className="h2 mb-3">
             {hasCategory ? (currentCategory ? categoryName(currentCategory) : t('nav.services')) : t('ads.listTitle')}
           </h1>
-          {ads.length === 0 ? (
+          {loading && ads.length === 0 ? (
+            <div className={styles.listLoading} aria-busy="true">
+              <span className={styles.listLoadingSpinner} aria-hidden />
+              <p>{t('common.loading')}</p>
+            </div>
+          ) : ads.length === 0 ? (
             <p className={styles.noAds}>{t('ads.noAds')}</p>
-          ) : hasCategory ? (
-            <ul className={styles.adRowList}>
-              {ads.map((ad) => (
-                <AdRow key={ad.id} ad={ad} />
-              ))}
-            </ul>
           ) : (
-            <ul className={styles.grid}>
-              {ads.map((ad) => (
-                <AdCard key={ad.id} ad={ad} />
-              ))}
-            </ul>
+            <div className={styles.listWrap}>
+              {hasCategory ? (
+                <ul className={styles.adRowList}>
+                  {ads.map((ad) => (
+                    <AdRow key={ad.id} ad={ad} />
+                  ))}
+                </ul>
+              ) : (
+                <ul className={styles.grid}>
+                  {ads.map((ad) => (
+                    <AdCard key={ad.id} ad={ad} />
+                  ))}
+                </ul>
+              )}
+              {loading && (
+                <div className={styles.listLoadingOverlay} aria-busy="true">
+                  <span className={styles.listLoadingSpinner} aria-hidden />
+                  <span className={styles.listLoadingOverlayText}>{t('common.loading')}</span>
+                </div>
+              )}
+            </div>
           )}
           {data.totalPages > 1 && (
-            <nav className={styles.pagination} aria-label={t('ads.pagination')}>
-              <button
-                type="button"
-                className={styles.paginationBtn}
-                onClick={() => setPage(page - 1)}
-                disabled={data.first ?? page <= 0}
-                aria-label={t('ads.prevPage')}
-              >
-                ←
-              </button>
-              <span className={styles.paginationInfo}>
-                {page + 1} / {data.totalPages}
-                {data.totalElements != null && ` (${data.totalElements})`}
-              </span>
-              <button
-                type="button"
-                className={styles.paginationBtn}
-                onClick={() => setPage(page + 1)}
-                disabled={data.last ?? page >= data.totalPages - 1}
-                aria-label={t('ads.nextPage')}
-              >
-                →
-              </button>
+            <nav className="mt-3" aria-label={t('ads.pagination')}>
+              <ul className="pagination pagination-sm mb-0">
+                <li className="page-item" style={{ minWidth: '2.5rem', textAlign: 'center' }}>
+                  <span className="page-link border-0 bg-transparent small">
+                    {page + 1} / {data.totalPages}
+                    {data.totalElements != null && ` (${data.totalElements})`}
+                  </span>
+                </li>
+                <li className="page-item">
+                  <button
+                    type="button"
+                    className="page-link"
+                    onClick={() => setPage(page - 1)}
+                    disabled={data.first ?? page <= 0}
+                    aria-label={t('ads.prevPage')}
+                  >
+                    <i className="bi bi-chevron-left" aria-hidden />
+                  </button>
+                </li>
+                <li className="page-item">
+                  <button
+                    type="button"
+                    className="page-link"
+                    onClick={() => setPage(page + 1)}
+                    disabled={data.last ?? page >= data.totalPages - 1}
+                    aria-label={t('ads.nextPage')}
+                  >
+                    <i className="bi bi-chevron-right" aria-hidden />
+                  </button>
+                </li>
+              </ul>
             </nav>
           )}
         </main>

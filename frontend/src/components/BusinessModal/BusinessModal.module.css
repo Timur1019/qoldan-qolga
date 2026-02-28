@@ -1,0 +1,31 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1200;
+}
+
+.modal {
+  max-width: 520px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.illustrationWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2rem;
+}
+
+.illustration {
+  width: 160px;
+  height: 120px;
+  border-radius: var(--radius-card);
+  background: linear-gradient(135deg, var(--color-primary), #0a5c36);
+  box-shadow: var(--shadow-card);
+}

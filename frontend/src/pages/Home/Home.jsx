@@ -1,55 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { referenceApi, adsApi } from '../../api/client'
+import { referenceApi, adsApi, imageUrl } from '../../api/client'
 import { useFavoriteClick } from '../../hooks'
 import { formatPrice, formatAdDate } from '../../utils/formatters'
 import { ROUTES, adsPath, categoryPath, adsCategoryPath } from '../../constants/routes'
 import HeartIcon from '../../components/ui/HeartIcon'
 import CardGallery from '../../features/ad/components/CardGallery'
+import bannerBg from '../../img/baner/baner.png'
 import styles from './Home.module.css'
 
-const CATEGORY_ICONS = {
-  Xizmatlar: 'clipboard',
-  Ish: 'briefcase',
-  Transport: 'car',
-}
-
 function CategoryCardIcon({ code }) {
-  const name = CATEGORY_ICONS[code] || 'folder'
-  const svgProps = { className: styles.cardIcon, viewBox: '0 0 48 48', fill: 'none', 'aria-hidden': true }
-  if (name === 'clipboard') {
-    return (
-      <svg {...svgProps}>
-        <path d="M14 8v4h20V8h2v32H12V8h2z" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <rect x="10" y="16" width="24" height="20" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M14 22h20M14 26h16M14 30h12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-      </svg>
-    )
-  }
-  if (name === 'briefcase') {
-    return (
-      <svg {...svgProps}>
-        <path d="M8 8v4h8V8h4v4h8V8h2v14H6V8h2z" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M6 22h12v8H6z" stroke="currentColor" strokeWidth="1.5" fill="none" />
-      </svg>
-    )
-  }
-  if (name === 'car') {
-    return (
-      <svg {...svgProps}>
-        <path d="M6 18l2-6h8l2 6M6 18h12v4H6z" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <circle cx="8" cy="22" r="1.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <circle cx="16" cy="22" r="1.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
-      </svg>
-    )
-  }
-  return (
-    <svg {...svgProps}>
-      <path d="M12 8l-4 4 4 4M8 12h16" stroke="currentColor" strokeWidth="1.5" fill="none" />
-      <rect x="6" y="18" width="12" height="8" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    </svg>
-  )
+  const iconClass = `bi ${
+    code === 'Xizmatlar' ? 'bi-clipboard-check' : code === 'Ish' ? 'bi-briefcase' : code === 'Transport' ? 'bi-truck' : 'bi-folder2-open'
+  }`
+  return <i className={`${iconClass} ${styles.cardIcon}`} aria-hidden="true" />
 }
 
 export default function Home() {
@@ -57,6 +22,9 @@ export default function Home() {
   const [categories, setCategories] = useState([])
   const [adsData, setAdsData] = useState({ content: [] })
   const [adsLoading, setAdsLoading] = useState(true)
+  const [promoBanners, setPromoBanners] = useState([])
+  const [promoPage, setPromoPage] = useState(0)
+  const PROMO_PER_PAGE = 4
 
   const updateAdFavorite = useCallback((adId, favorite) => {
     setAdsData((prev) => ({
@@ -67,20 +35,23 @@ export default function Home() {
   const handleFavoriteClick = useFavoriteClick(updateAdFavorite)
 
   useEffect(() => {
-    referenceApi.getCategoriesForHome()
+    const categoriesPromise = referenceApi.getCategoriesForHome()
       .then((list) => {
         const arr = Array.isArray(list) ? list : []
-        if (arr.length > 0) return setCategories(arr)
-        return referenceApi.getCategories().then((root) => setCategories(Array.isArray(root) ? root : []))
+        if (arr.length > 0) return arr
+        return referenceApi.getCategories().then((root) => (Array.isArray(root) ? root : []))
       })
-      .catch(() => referenceApi.getCategories().then((root) => setCategories(Array.isArray(root) ? root : [])).catch(() => setCategories([])))
-  }, [])
+      .catch(() => referenceApi.getCategories().then((root) => (Array.isArray(root) ? root : [])).catch(() => []))
+    const adsPromise = adsApi.list({ size: 24 }).then((data) => data || { content: [] }).catch(() => ({ content: [] }))
+    const promoPromise = referenceApi.getHomePromoBanners().then((list) => (Array.isArray(list) ? list : [])).catch(() => [])
 
-  useEffect(() => {
     setAdsLoading(true)
-    adsApi.list({ size: 24 })
-      .then((data) => setAdsData(data || { content: [] }))
-      .catch(() => setAdsData({ content: [] }))
+    Promise.all([categoriesPromise, adsPromise, promoPromise])
+      .then(([cats, ads, promo]) => {
+        setCategories(cats)
+        setAdsData(ads)
+        setPromoBanners(promo)
+      })
       .finally(() => setAdsLoading(false))
   }, [])
 
@@ -88,10 +59,10 @@ export default function Home() {
   const ads = adsData.content || []
 
   return (
-    <div className={styles.home}>
+    <div className="page-container app-page">
       <h1 className={styles.title}>{t('home.title')}</h1>
-      <p className={styles.lead}>{t('home.subtitle')}</p>
-      <p className={styles.welcome}>{t('home.welcome')}</p>
+      {/*<p className={styles.lead}>{t('home.subtitle')}</p>*/}
+      {/*<p className={styles.welcome}>{t('home.welcome')}</p>*/}
       <div className={styles.cardsGrid}>
         {categories.map((cat) => (
           <Link
@@ -105,14 +76,102 @@ export default function Home() {
             </span>
           </Link>
         ))}
-        <Link to={ROUTES.CATEGORIES_OPEN} className={styles.card + ' ' + styles.cardAll}>
+        <Link to={ROUTES.CATEGORIES_OPEN} className={`${styles.card} ${styles.cardAll}`}>
           <span className={styles.cardTitle}>{t('home.allCategories')}</span>
           <span className={styles.cardArrow} aria-hidden>→</span>
         </Link>
       </div>
-      <Link to={ROUTES.ADS} className={styles.cta}>
-        {t('home.viewAds')}
-      </Link>
+      <div className={`${styles.sellBanner} app-card`}>
+        <div className={styles.sellBannerText}>
+          <p className={styles.sellBannerTitle}>{t('ads.sellAndEarn')}</p>
+          <p className={styles.sellBannerSubtitle}>{t('profile.ctaReviewsHint')}</p>
+        </div>
+        <div className={styles.sellBannerImgWrap}>
+          <img src={bannerBg} alt="" className={styles.sellBannerImg} />
+        </div>
+        <div className={styles.sellBannerActions}>
+          <Link to={ROUTES.ADS_CREATE} className="btn btn-primary btn-lg text-white">
+            {t('ads.postAd')}
+          </Link>
+        </div>
+      </div>
+
+      {promoBanners.length > 0 && (() => {
+        const sortedBanners = [...promoBanners].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+        const totalPages = Math.ceil(sortedBanners.length / PROMO_PER_PAGE)
+        const pageBanners = sortedBanners.slice(promoPage * PROMO_PER_PAGE, promoPage * PROMO_PER_PAGE + PROMO_PER_PAGE)
+        const canPrev = promoPage > 0
+        const canNext = promoPage < totalPages - 1
+        return (
+          <section className={styles.promoSection}>
+            <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+              <h2 className={`${styles.promoTitle} mb-0`}>Выгодно и полезно</h2>
+              {totalPages > 1 && (
+                <div className="btn-group" role="group" aria-label="Навигация по баннерам">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={() => setPromoPage((p) => Math.max(0, p - 1))}
+                    disabled={!canPrev}
+                    aria-label="Предыдущие"
+                  >
+                    <i className="bi bi-chevron-left" aria-hidden />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={() => setPromoPage((p) => Math.min(totalPages - 1, p + 1))}
+                    disabled={!canNext}
+                    aria-label="Следующие"
+                  >
+                    <i className="bi bi-chevron-right" aria-hidden />
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className={styles.promoRow}>
+              {pageBanners.map((banner) => {
+                const href = banner.link?.trim()
+                const isExternal = href?.startsWith('http')
+                const cardStyle = banner.imageUrl
+                  ? {
+                      backgroundImage: `url(${imageUrl(banner.imageUrl)})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }
+                  : { background: 'var(--color-bg-card)' }
+                const content = (
+                  <>
+                    <div className={styles.promoCardOverlay} aria-hidden />
+                    <div className={styles.promoContent}>
+                      {banner.badge && <span className={styles.promoBadge}>{banner.badge}</span>}
+                      <p className={styles.promoCardTitle}>{banner.title}</p>
+                      <p className={styles.promoCardSubtitle}>{banner.subtitle}</p>
+                    </div>
+                  </>
+                )
+                const cardClasses = `${styles.promoCard} ${styles.promoCardLink}`
+                return isExternal ? (
+                  <a key={banner.id} href={href} className={cardClasses} style={cardStyle}>
+                    {content}
+                  </a>
+                ) : (
+                  <Link key={banner.id} to={href || '#'} className={cardClasses} style={cardStyle}>
+                    {content}
+                  </Link>
+                )
+              })}
+            </div>
+            {totalPages > 1 && (
+              <div className="d-flex justify-content-center mt-2">
+                <span className="small text-muted">
+                  {promoPage + 1} / {totalPages}
+                </span>
+              </div>
+            )}
+          </section>
+        )
+      })()}
 
       <section className={styles.adsSection}>
         <h2 className={styles.adsSectionTitle}>{t('ads.listTitle')}</h2>
@@ -123,9 +182,12 @@ export default function Home() {
         ) : (
           <ul className={styles.adsGrid}>
             {ads.map((ad) => (
-              <li key={ad.id} className={styles.adCard}>
+              <li key={ad.id} className={`${styles.adCard} app-card app-card-hover`}>
                 <Link to={adsPath(ad.id)} className={styles.adCardLink}>
                   <span className={styles.adCardImageWrap}>
+                    <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
+                      {ad.sellerIsStore ? 'Магазин' : 'Частный'}
+                    </span>
                     <CardGallery
                       imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
                     />
@@ -153,7 +215,7 @@ export default function Home() {
           </ul>
         )}
         {!adsLoading && ads.length > 0 && (
-          <Link to={ROUTES.ADS} className={styles.adsMoreLink}>
+          <Link to={ROUTES.ADS_MY} className={`${styles.adsMoreLink} btn btn-outline-primary btn-sm`}>
             {t('home.allAds')}
           </Link>
         )}

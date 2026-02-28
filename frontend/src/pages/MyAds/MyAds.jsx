@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { adsApi, imageUrl } from '../../api/client'
+import { adsApi } from '../../api/client'
+import CardGallery from '../../features/ad/components/CardGallery'
 import { ROUTES, adsEditPath } from '../../constants/routes'
 import styles from './MyAds.module.css'
 
@@ -245,7 +246,6 @@ export default function MyAds() {
         {(activeTab === 'active' || activeTab === 'archive' || activeTab === 'pending') && adsForTab.length > 0 && (
           <ul className={styles.list}>
             {adsForTab.map((ad) => {
-              const mainUrl = (ad.imageUrls && ad.imageUrls[0]) || ad.mainImageUrl
               return (
                 <li
                   key={ad.id}
@@ -254,11 +254,10 @@ export default function MyAds() {
                   <div className={styles.rowInner} ref={openMenuId === ad.id ? menuRef : null}>
                     <Link to={`/ads/${ad.id}`} className={styles.rowLink}>
                       <span className={styles.rowImageWrap}>
-                        {mainUrl ? (
-                          <img src={imageUrl(mainUrl)} alt="" className={styles.rowImage} />
-                        ) : (
-                          <div className={styles.rowImagePlaceholder} />
-                        )}
+                        <CardGallery
+                          imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+                          imageWrapClassName={styles.rowImage}
+                        />
                       </span>
                       <div className={styles.rowBody}>
                         <h2 className={styles.rowTitle}>{ad.title}</h2>

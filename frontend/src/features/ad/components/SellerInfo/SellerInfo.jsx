@@ -11,6 +11,7 @@ function SellerInfo({
   sellerId,
   sellerDisplayName,
   sellerAvatar,
+  sellerIsStore,
   adsCount,
   sinceIso,
   ratingText,
@@ -30,6 +31,11 @@ function SellerInfo({
           <Link to={sellerId ? sellerPath(sellerId) : '#'} className={styles.sellerCardName}>
             {sellerDisplayName} ›
           </Link>
+          {sellerIsStore != null && (
+            <span className={`badge ms-1 ${sellerIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.7rem' }}>
+              {sellerIsStore ? 'Магазин' : 'Частный'}
+            </span>
+          )}
           <div className={styles.sellerCardStat}>{adsCount} {t('ads.sellerAds')}</div>
           {sinceIso && (
             <div className={styles.sellerCardSince}>
@@ -53,7 +59,7 @@ function SellerInfo({
       {!isOwner && (
         <button
           type="button"
-          className={subscribed ? styles.subscribeBtnActive : styles.subscribeBtn}
+          className={`btn btn-sm w-100 mt-2 ${subscribed ? 'btn-success' : 'btn-outline-primary'}`}
           onClick={onSubscribe}
         >
           {subscribed ? t('ads.youAreSubscribed') : t('ads.subscribe')}

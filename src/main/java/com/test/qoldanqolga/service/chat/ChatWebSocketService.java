@@ -1,6 +1,7 @@
 package com.test.qoldanqolga.service.chat;
 
 import com.test.qoldanqolga.dto.chat.MessageDto;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,5 +21,6 @@ public class ChatWebSocketService {
 
     public void sendToConversation(String conversationId, MessageDto message) {
         messagingTemplate.convertAndSend(wsTopicPrefix + conversationId, message);
+        LogUtil.debug(ChatWebSocketService.class, "Message sent via WS: conversationId={} messageId={}", conversationId, message != null ? message.getId() : null);
     }
 }

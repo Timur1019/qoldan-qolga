@@ -11,7 +11,10 @@ import com.test.qoldanqolga.service.reference.cache.CategoryParentCache;
 import com.test.qoldanqolga.service.reference.command.CategoryCommandService;
 import com.test.qoldanqolga.mapper.CategoryMapper;
 import com.test.qoldanqolga.mapper.RegionMapper;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,53 +38,69 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     private final CategoryCommandService categoryCommandService;
 
     @Override
+    @Cacheable("regions")
     public List<RegionDto> getAllRegions() {
-        return regionMapper.toDtoList(regionRepository.findAllWithDistrictsByOrderBySortOrderAscNameUzAsc());
+        List<RegionDto> regions = regionMapper.toDtoList(regionRepository.findAllWithDistrictsByOrderBySortOrderAscNameUzAsc());
+        LogUtil.debug(ReferenceDataServiceImpl.class, "Regions loaded: count={}", regions.size());
+        return regions;
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("categories")
     public List<CategoryDto> getAllCategories() {
         Set<String> parentIds = categoryParentCache.getParentIdsWithChildren();
-        return categoryMapper.toDtoList(categoryRepository.findAllByOrderBySortOrderAscNameUzAsc(), parentIds);
+        List<CategoryDto> list = categoryMapper.toDtoList(categoryRepository.findAllByOrderBySortOrderAscNameUzAsc(), parentIds);
+        LogUtil.debug(ReferenceDataServiceImpl.class, "All categories loaded: count={}", list.size());
+        return list;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getRootCategories() {
         Set<String> parentIds = categoryParentCache.getParentIdsWithChildren();
-        return categoryMapper.toDtoList(categoryRepository.findByParentIdIsNullOrderBySortOrderAscNameUzAsc(), parentIds);
+        List<CategoryDto> list = categoryMapper.toDtoList(categoryRepository.findByParentIdIsNullOrderBySortOrderAscNameUzAsc(), parentIds);
+        LogUtil.debug(ReferenceDataServiceImpl.class, "Root categories loaded: count={}", list.size());
+        return list;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<CategoryDto> getCategoryByCode(String code) {
         Set<String> parentIds = categoryParentCache.getParentIdsWithChildren();
-        return categoryRepository.findByCode(code)
+        Optional<CategoryDto> result = categoryRepository.findByCode(code)
                 .map(c -> categoryMapper.toDto(c, parentIds));
+        LogUtil.debug(ReferenceDataServiceImpl.class, "Category by code: code={} found={}", code, result.isPresent());
+        return result;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getChildCategories(String parentCode) {
         Set<String> parentIds = categoryParentCache.getParentIdsWithChildren();
-        return categoryRepository.findByCode(parentCode)
+        List<CategoryDto> list = categoryRepository.findByCode(parentCode)
                 .map(parent -> categoryMapper.toDtoList(
                         categoryRepository.findByParentIdOrderBySortOrderAscNameUzAsc(parent.getId()), parentIds))
                 .orElse(List.of());
+        LogUtil.debug(ReferenceDataServiceImpl.class, "Child categories: parentCode={} count={}", parentCode, list.size());
+        return list;
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("categoriesHome")
     public List<CategoryDto> getCategoriesForHome() {
         Set<String> parentIds = categoryParentCache.getParentIdsWithChildren();
-        return categoryMapper.toDtoList(categoryRepository.findByShowOnHomeTrueOrderBySortOrderAscNameUzAsc(), parentIds);
+        List<CategoryDto> list = categoryMapper.toDtoList(categoryRepository.findByShowOnHomeTrueOrderBySortOrderAscNameUzAsc(), parentIds);
+        LogUtil.debug(ReferenceDataServiceImpl.class, "Categories for home: count={}", list.size());
+        return list;
     }
 
     @Override
+    @CacheEvict(value = {"categories", "categoriesHome"}, allEntries = true)
     public CategoryDto createCategory(CreateCategoryRequest request) {
+        LogUtil.info(ReferenceDataServiceImpl.class, "Creating category: code={}", request.getCode());
         Category category = categoryCommandService.createCategory(request);
-        Set<String> parentIds = categoryParentCache.getParentIdsWithChildren();
         return categoryMapper.toDto(category, false);
     }
 }

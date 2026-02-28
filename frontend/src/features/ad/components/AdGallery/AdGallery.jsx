@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import { imageUrl } from '../../services/adApi'
 import styles from './AdGallery.module.css'
@@ -7,8 +7,6 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
   const { t } = useLang()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
-  const lastSideRef = useRef(null)
-  const lastSideLightboxRef = useRef(null)
 
   const images = rawImages?.length
     ? [...rawImages].sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0))
@@ -61,19 +59,9 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
               if (images.length <= 1) return
               const rect = e.currentTarget.getBoundingClientRect()
               const x = e.clientX - rect.left
-              const side = x < rect.width / 2 ? 'left' : 'right'
-              if (lastSideRef.current === null) {
-                lastSideRef.current = side
-                return
-              }
-              if (lastSideRef.current !== side) {
-                lastSideRef.current = side
-                if (side === 'left') goPrev()
-                else goNext()
-              }
-            }}
-            onMouseLeave={() => {
-              lastSideRef.current = null
+              const ratio = x / rect.width
+              const idx = Math.min(images.length - 1, Math.max(0, Math.floor(ratio * images.length)))
+              setSelectedIndex(idx)
             }}
             role="button"
             tabIndex={0}
@@ -135,19 +123,9 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
               if (images.length <= 1) return
               const rect = e.currentTarget.getBoundingClientRect()
               const x = e.clientX - rect.left
-              const side = x < rect.width / 2 ? 'left' : 'right'
-              if (lastSideLightboxRef.current === null) {
-                lastSideLightboxRef.current = side
-                return
-              }
-              if (lastSideLightboxRef.current !== side) {
-                lastSideLightboxRef.current = side
-                if (side === 'left') goPrev()
-                else goNext()
-              }
-            }}
-            onMouseLeave={() => {
-              lastSideLightboxRef.current = null
+              const ratio = x / rect.width
+              const idx = Math.min(images.length - 1, Math.max(0, Math.floor(ratio * images.length)))
+              setSelectedIndex(idx)
             }}
           >
             <div className={styles.lightboxContent}>

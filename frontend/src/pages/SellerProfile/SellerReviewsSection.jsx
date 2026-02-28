@@ -98,7 +98,7 @@ export default function SellerReviewsSection({ reviewsData, canLeaveReview, onLe
       )}
       {isOwner && (
         <div className={styles.shareProfileRow}>
-          <button type="button" className={styles.shareProfileBtn} onClick={handleShare}>
+          <button type="button" className="btn btn-outline-primary btn-sm" onClick={handleShare}>
             {linkCopied ? t('reviews.linkCopied') : t('profile.shareProfile')}
           </button>
         </div>

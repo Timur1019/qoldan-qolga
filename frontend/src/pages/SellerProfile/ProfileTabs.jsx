@@ -1,5 +1,5 @@
 /**
- * ProfileTabs — шапка с табами (Активные / Архив) для переключения списка объявлений.
+ * ProfileTabs — табы «Активные» / «Архив» для переключения списка объявлений.
  */
 import { useLang } from '../../context/LangContext'
 import styles from './SellerProfile.module.css'
@@ -13,7 +13,7 @@ export default function ProfileTabs({ activeTab, onTabChange, activeCount, archi
         className={`${styles.profileTab} ${activeTab === 'active' ? styles.profileTabActive : ''}`}
         onClick={() => onTabChange('active')}
       >
-        {t('profile.tabActive')}{activeTab === 'active' ? ` ● ${activeCount}` : ` ${activeCount}`}
+        {t('profile.tabActive')} {activeCount}
       </button>
       <button
         type="button"

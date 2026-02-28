@@ -18,6 +18,8 @@ public class MessageDto {
     private String senderId;
     private String senderName;
     private String senderAvatar;
+    /** Отправитель подтверждён как магазин. */
+    private Boolean senderIsStore;
     private String text;
     private Instant createdAt;
 }

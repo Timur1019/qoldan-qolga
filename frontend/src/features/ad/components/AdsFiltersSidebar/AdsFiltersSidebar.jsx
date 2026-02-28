@@ -5,6 +5,7 @@ import styles from './AdsFiltersSidebar.module.css'
 export default function AdsFiltersSidebar({
   regions = [],
   sidebarCategories = [],
+  currentCategoryCode = '',
   filterDraft,
   setFilterDraft,
   region,
@@ -24,27 +25,32 @@ export default function AdsFiltersSidebar({
     : sidebarCategories
 
   return (
-    <aside className={styles.sidebar}>
-      <h2 className={styles.sidebarTitle}>{t('nav.services')}</h2>
+    <aside className={`app-card ${styles.sidebar}`}>
+      <h2 className="h6 mb-3">{t('nav.services')}</h2>
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.adsInUzbekistan')}</p>
-        <ul className={styles.sidebarCatList}>
-          {displayCategories.map((c) => (
-            <li key={c.code}>
-              <Link
-                to={c.hasChildren ? buildCategoryLink(c.code) : buildAdsLink(c.code)}
-                className={styles.sidebarCatItem}
-              >
-                {categoryName(c)}
-                <span aria-hidden>→</span>
-              </Link>
-            </li>
-          ))}
+        <p className="small fw-semibold text-secondary mb-2">{t('ads.adsInUzbekistan')}</p>
+        <ul className="list-unstyled mb-0">
+          {displayCategories.map((c) => {
+            const code = c.code ?? c.id
+            if (!code) return null
+            const isActive = String(code) === String(currentCategoryCode)
+            return (
+              <li key={code}>
+                <Link
+                  to={buildAdsLink(code)}
+                  className={`${styles.sidebarCatItem} ${isActive ? styles.sidebarCatItemActive : ''}`}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {categoryName(c)} <i className="bi bi-chevron-right small" aria-hidden />
+                </Link>
+              </li>
+            )
+          })}
           {hasMore && (
             <li>
               <button
                 type="button"
-                className={styles.sidebarCatMore}
+                className="btn btn-link p-0 small text-primary text-decoration-none"
                 onClick={() => setExpanded((e) => !e)}
                 aria-expanded={expanded}
               >
@@ -55,11 +61,11 @@ export default function AdsFiltersSidebar({
         </ul>
       </div>
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.region')}</p>
+        <label className="form-label small fw-semibold text-secondary">{t('ads.region')}</label>
         <select
           value={region}
           onChange={(e) => setRegion(e.target.value)}
-          className={styles.sidebarSelect}
+          className="form-select form-select-sm"
         >
           <option value="">— {t('ads.allRegions')}</option>
           {regions.map((r) => (
@@ -71,152 +77,119 @@ export default function AdsFiltersSidebar({
       </div>
 
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.sellerType')}</p>
-        <div className={styles.filterRadioGroup}>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="sellerType"
-              checked={filterDraft.sellerType === ''}
-              onChange={() => setFilterDraft((d) => ({ ...d, sellerType: '' }))}
-            />
-            <span>{t('ads.any')}</span>
-          </label>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="sellerType"
-              checked={filterDraft.sellerType === 'PRIVATE'}
-              onChange={() => setFilterDraft((d) => ({ ...d, sellerType: 'PRIVATE' }))}
-            />
-            <span>{t('ads.sellerPrivate')}</span>
-          </label>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="sellerType"
-              checked={filterDraft.sellerType === 'BUSINESS'}
-              onChange={() => setFilterDraft((d) => ({ ...d, sellerType: 'BUSINESS' }))}
-            />
-            <span>{t('ads.sellerBusiness')}</span>
-          </label>
+        <p className="small fw-semibold text-secondary mb-2">{t('ads.sellerType')}</p>
+        <div className="d-flex flex-column gap-1">
+          {[
+            { value: '', label: t('ads.any') },
+            { value: 'PRIVATE', label: t('ads.sellerPrivate') },
+            { value: 'BUSINESS', label: t('ads.sellerBusiness') },
+          ].map(({ value, label }) => (
+            <div key={value || 'any'} className="form-check">
+              <input
+                type="radio"
+                name="sellerType"
+                id={`sellerType-${value || 'any'}`}
+                checked={filterDraft.sellerType === value}
+                onChange={() => setFilterDraft((d) => ({ ...d, sellerType: value }))}
+                className="form-check-input"
+              />
+              <label className="form-check-label small" htmlFor={`sellerType-${value || 'any'}`}>{label}</label>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.hasLicense')}</p>
-        <div className={styles.filterRadioGroup}>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="hasLicense"
-              checked={filterDraft.hasLicense === ''}
-              onChange={() => setFilterDraft((d) => ({ ...d, hasLicense: '' }))}
-            />
-            <span>{t('ads.any')}</span>
-          </label>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="hasLicense"
-              checked={filterDraft.hasLicense === 'false'}
-              onChange={() => setFilterDraft((d) => ({ ...d, hasLicense: 'false' }))}
-            />
-            <span>{lang === 'ru' ? 'Нет' : 'Yo\'q'}</span>
-          </label>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="hasLicense"
-              checked={filterDraft.hasLicense === 'true'}
-              onChange={() => setFilterDraft((d) => ({ ...d, hasLicense: 'true' }))}
-            />
-            <span>{lang === 'ru' ? 'Да' : 'Ha'}</span>
-          </label>
+        <p className="small fw-semibold text-secondary mb-2">{t('ads.hasLicense')}</p>
+        <div className="d-flex flex-column gap-1">
+          {[
+            { value: '', label: t('ads.any') },
+            { value: 'false', label: lang === 'ru' ? 'Нет' : 'Yo\'q' },
+            { value: 'true', label: lang === 'ru' ? 'Да' : 'Ha' },
+          ].map(({ value, label }) => (
+            <div key={value || 'any'} className="form-check">
+              <input
+                type="radio"
+                name="hasLicense"
+                id={`hasLicense-${value || 'any'}`}
+                checked={filterDraft.hasLicense === value}
+                onChange={() => setFilterDraft((d) => ({ ...d, hasLicense: value }))}
+                className="form-check-input"
+              />
+              <label className="form-check-label small" htmlFor={`hasLicense-${value || 'any'}`}>{label}</label>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.worksByContract')}</p>
-        <div className={styles.filterRadioGroup}>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="worksByContract"
-              checked={filterDraft.worksByContract === ''}
-              onChange={() => setFilterDraft((d) => ({ ...d, worksByContract: '' }))}
-            />
-            <span>{t('ads.any')}</span>
-          </label>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="worksByContract"
-              checked={filterDraft.worksByContract === 'false'}
-              onChange={() => setFilterDraft((d) => ({ ...d, worksByContract: 'false' }))}
-            />
-            <span>{lang === 'ru' ? 'Нет' : 'Yo\'q'}</span>
-          </label>
-          <label className={styles.filterRadio}>
-            <input
-              type="radio"
-              name="worksByContract"
-              checked={filterDraft.worksByContract === 'true'}
-              onChange={() => setFilterDraft((d) => ({ ...d, worksByContract: 'true' }))}
-            />
-            <span>{lang === 'ru' ? 'Да' : 'Ha'}</span>
-          </label>
+        <p className="small fw-semibold text-secondary mb-2">{t('ads.worksByContract')}</p>
+        <div className="d-flex flex-column gap-1">
+          {[
+            { value: '', label: t('ads.any') },
+            { value: 'false', label: lang === 'ru' ? 'Нет' : 'Yo\'q' },
+            { value: 'true', label: lang === 'ru' ? 'Да' : 'Ha' },
+          ].map(({ value, label }) => (
+            <div key={value || 'any'} className="form-check">
+              <input
+                type="radio"
+                name="worksByContract"
+                id={`worksByContract-${value || 'any'}`}
+                checked={filterDraft.worksByContract === value}
+                onChange={() => setFilterDraft((d) => ({ ...d, worksByContract: value }))}
+                className="form-check-input"
+              />
+              <label className="form-check-label small" htmlFor={`worksByContract-${value || 'any'}`}>{label}</label>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.currency')}</p>
-        <div className={styles.filterCurrencyBtns}>
-          <button
-            type="button"
-            className={`${styles.filterCurrencyBtn} ${filterDraft.currency === 'FROM_AD' || !filterDraft.currency ? styles.filterCurrencyBtnActive : ''}`}
-            onClick={() => setFilterDraft((d) => ({ ...d, currency: 'FROM_AD' }))}
-          >
-            {t('ads.currencyFromAd')}
-          </button>
-          <button
-            type="button"
-            className={`${styles.filterCurrencyBtn} ${filterDraft.currency === 'UZS' ? styles.filterCurrencyBtnActive : ''}`}
-            onClick={() => setFilterDraft((d) => ({ ...d, currency: 'UZS' }))}
-          >
-            {t('ads.currencyUzs')}
-          </button>
-          <button
-            type="button"
-            className={`${styles.filterCurrencyBtn} ${filterDraft.currency === 'USD' ? styles.filterCurrencyBtnActive : ''}`}
-            onClick={() => setFilterDraft((d) => ({ ...d, currency: 'USD' }))}
-          >
-            {t('ads.currencyCu')}
-          </button>
+        <p className="small fw-semibold text-secondary mb-2">{t('ads.currency')}</p>
+        <div className="btn-group btn-group-sm w-100" role="group">
+          {[
+            { value: 'FROM_AD', label: t('ads.currencyFromAd') },
+            { value: 'UZS', label: t('ads.currencyUzs') },
+            { value: 'USD', label: t('ads.currencyCu') },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              className={`btn ${filterDraft.currency === value || (value === 'FROM_AD' && (!filterDraft.currency || filterDraft.currency === 'FROM_AD')) ? 'btn-primary' : 'btn-outline-secondary'}`}
+              onClick={() => setFilterDraft((d) => ({ ...d, currency: value }))}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
       <div className={styles.sidebarBlock}>
-        <p className={styles.sidebarBlockTitle}>{t('ads.price')}</p>
-        <div className={styles.filterPriceRow}>
-          <input
-            type="number"
-            min="0"
-            step="1"
-            value={filterDraft.priceFrom}
-            onChange={(e) => setFilterDraft((d) => ({ ...d, priceFrom: e.target.value }))}
-            className={styles.filterPriceInput}
-            placeholder={t('ads.priceFrom')}
-          />
-          <input
-            type="number"
-            min="0"
-            step="1"
-            value={filterDraft.priceTo}
-            onChange={(e) => setFilterDraft((d) => ({ ...d, priceTo: e.target.value }))}
-            className={styles.filterPriceInput}
-            placeholder={t('ads.priceTo')}
-          />
+        <p className="small fw-semibold text-secondary mb-2">{t('ads.price')}</p>
+        <div className="row g-2">
+          <div className="col-6">
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={filterDraft.priceFrom}
+              onChange={(e) => setFilterDraft((d) => ({ ...d, priceFrom: e.target.value }))}
+              className="form-control form-control-sm"
+              placeholder={t('ads.priceFrom')}
+            />
+          </div>
+          <div className="col-6">
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={filterDraft.priceTo}
+              onChange={(e) => setFilterDraft((d) => ({ ...d, priceTo: e.target.value }))}
+              className="form-control form-control-sm"
+              placeholder={t('ads.priceTo')}
+            />
+          </div>
         </div>
       </div>
 
@@ -262,11 +235,11 @@ export default function AdsFiltersSidebar({
         </div>
       </div>
 
-      <div className={styles.sidebarActions}>
-        <button type="button" className={styles.sidebarBtnReset} onClick={onReset}>
+      <div className="d-flex gap-2 mt-3">
+        <button type="button" className="btn btn-outline-secondary btn-sm flex-grow-1" onClick={onReset}>
           {t('ads.reset')}
         </button>
-        <button type="button" className={styles.sidebarBtnApply} onClick={onApply}>
+        <button type="button" className="btn btn-primary btn-sm flex-grow-1" onClick={onApply}>
           {t('ads.apply')}
         </button>
       </div>

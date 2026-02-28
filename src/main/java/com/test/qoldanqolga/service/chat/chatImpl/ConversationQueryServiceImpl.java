@@ -13,6 +13,7 @@ import com.test.qoldanqolga.service.chat.ChatAccessService;
 import com.test.qoldanqolga.service.chat.ConversationQueryService;
 import com.test.qoldanqolga.service.chat.ConversationStatistics;
 import com.test.qoldanqolga.service.chat.ConversationStatisticsService;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     @Transactional(readOnly = true)
     public List<ConversationDto> getConversationsForUser(String userId) {
         List<Conversation> conversations = conversationRepository.findAllByParticipant(userId);
+        LogUtil.debug(ConversationQueryServiceImpl.class, "Conversations loaded: userId={} count={}", userId, conversations.size());
         if (conversations.isEmpty()) {
             return List.of();
         }
@@ -58,8 +60,10 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         Conversation c = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Диалог", conversationId));
         chatAccessService.ensureParticipant(c, userId);
-        return messageRepository.findByConversationIdWithSender(conversationId).stream()
+        List<MessageDto> messages = messageRepository.findByConversationIdWithSender(conversationId).stream()
                 .map(chatMessageMapper::toDto)
                 .collect(Collectors.toList());
+        LogUtil.debug(ConversationQueryServiceImpl.class, "Messages loaded: conversationId={} count={}", conversationId, messages.size());
+        return messages;
     }
 }

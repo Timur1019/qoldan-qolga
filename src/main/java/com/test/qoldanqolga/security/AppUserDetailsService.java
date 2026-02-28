@@ -25,6 +25,9 @@ public class AppUserDetailsService implements UserDetailsService {
         if (user.isDeleted()) {
             throw new UsernameNotFoundException("User deleted: " + username);
         }
+        if (user.isCurrentlyBanned()) {
+            throw new UsernameNotFoundException("User banned: " + username);
+        }
         return new UserPrincipal(user);
     }
 }

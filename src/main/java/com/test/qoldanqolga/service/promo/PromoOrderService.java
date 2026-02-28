@@ -7,8 +7,8 @@ import com.test.qoldanqolga.exception.ResourceNotFoundException;
 import com.test.qoldanqolga.exception.UnsupportedPromoServiceException;
 import com.test.qoldanqolga.model.Advertisement;
 import com.test.qoldanqolga.repository.AdvertisementRepository;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Создание заказов на промо-услуги. Отдельная ответственность.
  * TODO: PAY-XXX — интеграция с платёжным шлюзом, сохранение заказа в БД
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PromoOrderService {
@@ -33,7 +32,7 @@ public class PromoOrderService {
         validateAdvertisementActive(ad);
         validateServiceCode(serviceCode);
 
-        log.debug("Promo order requested: adId={} service={} userId={}", adId, serviceCode, userId);
+        LogUtil.debug(PromoOrderService.class, "Promo order requested: adId={} service={} userId={}", adId, serviceCode, userId);
         // TODO: PAY-XXX — сохранить заказ в БД, вызов платёжного провайдера
     }
 

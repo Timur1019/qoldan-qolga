@@ -144,7 +144,7 @@
 }
 
 .sidebarBtnApply {
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
 }
 
 .sidebarBtnApply:hover {
@@ -173,7 +173,7 @@
 }
 
 .filterRadio input {
-  accent-color: var(--color-primary, #7c3aed);
+  accent-color: var(--color-primary);
 }
 
 /* Currency filter buttons */
@@ -263,7 +263,7 @@
 }
 
 .filterToggleOn {
-  background: var(--color-primary, #7c3aed);
+  background: var(--color-primary);
 }
 
 .filterToggleOn:hover {
@@ -290,8 +290,8 @@
   gap: 1rem;
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%);
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  border-radius: var(--radius-card, 16px);
   color: #fff;
 }
 
@@ -307,15 +307,15 @@
   font-size: 0.95rem;
   font-weight: 600;
   background: #fff;
-  color: #7c3aed;
+  color: var(--color-primary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
 }
 
 .bannerBtn:hover {
-  background: #f5f3ff;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .mainContent {
@@ -368,6 +368,30 @@
   min-height: 230px;
   overflow: hidden;
   border-radius: 8px;
+}
+
+.sellerBadgeStore,
+.sellerBadgePrivate {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.sellerBadgeStore {
+  background: #059669;
+  color: #fff;
+}
+
+.sellerBadgePrivate {
+  background: #64748b;
+  color: #fff;
 }
 
 .adRowGalleryWrap {
@@ -587,7 +611,9 @@
 
 .title {
   margin: 0 0 1rem;
-  font-size: 1.5rem;
+  font-size: var(--font-size-title-page, 32px);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text, #1a1a1a);
 }
 
 .filters {
@@ -619,20 +645,105 @@
   color: var(--color-muted, #666);
 }
 
+.listWrap {
+  position: relative;
+  min-height: 120px;
+}
+
+.listLoadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 8px;
+  color: var(--color-muted, #666);
+  animation: listOverlayFade 0.15s ease-out;
+}
+
+@keyframes listOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.listLoadingOverlayText {
+  font-size: 0.9rem;
+}
+
+.listLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: var(--color-muted, #666);
+}
+
+.listLoadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border, #e5e7eb);
+  border-top-color: var(--color-primary, #2563eb);
+  border-radius: 50%;
+  animation: adsListSpin 0.8s linear infinite;
+}
+
+@keyframes adsListSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Сетка: десктоп 4 колонки, планшет 2–3, мобильный 1, отступ 20px */
 .grid {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 20px;
 }
 
+@media (min-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+  }
+}
+
+/* Карточка объявления: тень, radius 16px, отступы 16px */
 .card {
-  border: 1px solid var(--color-border, #e5e5e5);
-  border-radius: 8px;
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-card, 16px);
   overflow: hidden;
-  background: #fff;
+  background: var(--color-bg-card, #fff);
+  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover, 0 8px 24px rgba(0, 0, 0, 0.1));
 }
 
 .cardLink {
@@ -644,18 +755,43 @@
 .cardImageWrap {
   position: relative;
   display: block;
+  overflow: hidden;
+  border-radius: var(--radius-image, 12px) var(--radius-image, 12px) 0 0;
+}
+
+.cardImageWrap .sellerBadgeStore,
+.cardImageWrap .sellerBadgePrivate {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.cardImageWrap .sellerBadgeStore {
+  background: #059669;
+  color: #fff;
+}
+
+.cardImageWrap .sellerBadgePrivate {
+  background: #64748b;
+  color: #fff;
 }
 
 .cardImage {
   width: 100%;
-  aspect-ratio: 4/3.15;
+  height: 180px;
   object-fit: cover;
   display: block;
 }
 
 .cardBody {
-  padding: 0.75rem 1rem;
-  padding-right: 2.25rem;
+  padding: 16px;
+  padding-right: 2.5rem;
   position: relative;
 }
 
@@ -706,14 +842,15 @@
 
 .cardImagePlaceholder {
   width: 100%;
-  aspect-ratio: 4/3;
-  background: var(--color-bg-subtle, #f0f0f0);
+  height: 180px;
+  background: var(--color-bg-subtle, #f3f4f6);
 }
 
 .cardTitle {
   margin: 0 0 0.25rem;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--font-size-title-card, 16px);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text, #1a1a1a);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -722,14 +859,15 @@
 
 .cardPrice {
   margin: 0 0 0.25rem;
-  font-weight: 600;
-  color: #111827;
+  font-size: var(--font-size-price, 22px);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text, #1a1a1a);
 }
 
 .cardMeta {
   margin: 0;
-  font-size: 0.85rem;
-  color: var(--color-muted, #666);
+  font-size: var(--font-size-meta, 14px);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .cardWriteBtn {

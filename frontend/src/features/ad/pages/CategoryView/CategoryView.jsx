@@ -71,13 +71,12 @@ export default function CategoryView() {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
   }, [])
 
+  /* Всегда редирект на список объявлений по этой категории (объявления + подкатегории в сайдбаре) */
   useEffect(() => {
     if (loading || notFound) return
     if (!category) return
-    if (children.length === 0) {
-      navigate(adsCategoryPathWithParams(code, searchParams), { replace: true })
-    }
-  }, [loading, notFound, category, children.length, code, searchParams, navigate])
+    navigate(adsCategoryPathWithParams(code, searchParams), { replace: true })
+  }, [loading, notFound, category, code, searchParams, navigate])
 
   const setRegion = (regionCode) => {
     const next = new URLSearchParams(searchParams)
@@ -119,27 +118,28 @@ export default function CategoryView() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <p className={styles.loading}>{t('common.loading')}</p>
+      <div className="page-container app-page">
+        <p className="text-muted">{t('common.loading')}</p>
       </div>
     )
   }
 
   if (notFound || !category) {
     return (
-      <div className={styles.page}>
-        <p className={styles.notFound}>{t('category.notFound')}</p>
-        <Link to={ROUTES.HOME} className={styles.backLink}>{t('category.backHome')}</Link>
+      <div className="page-container app-page">
+        <p className="text-muted mb-2">{t('category.notFound')}</p>
+        <Link to={ROUTES.HOME} className="btn btn-outline-primary btn-sm">{t('category.backHome')}</Link>
       </div>
     )
   }
 
   return (
-    <div className={styles.page}>
-      <nav className={styles.breadcrumb}>
-        <Link to={ROUTES.HOME}>{t('nav.home')}</Link>
-        <span className={styles.breadcrumbSep}>/</span>
-        <span className={styles.breadcrumbCurrent}>{name(category)}</span>
+    <div className="page-container app-page">
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb mb-2 mb-md-3">
+          <li className="breadcrumb-item"><Link to={ROUTES.HOME}>{t('nav.home')}</Link></li>
+          <li className="breadcrumb-item active" aria-current="page">{name(category)}</li>
+        </ol>
       </nav>
       <div className={styles.layoutWithSidebar}>
         <AdsFiltersSidebar
@@ -157,11 +157,11 @@ export default function CategoryView() {
           lang={lang}
         />
         <main className={styles.mainContent}>
-          <div className={styles.banner}>
-            <p className={styles.bannerText}>{t('ads.sellAndEarn')}</p>
-            <Link to="/ads/create" className={styles.bannerBtn}>{t('ads.postAd')}</Link>
+          <div className="app-card d-flex align-items-center justify-content-between gap-3 p-3 mb-3">
+            <p className="mb-0 fw-semibold">{t('ads.sellAndEarn')}</p>
+            <Link to="/ads/create" className="btn btn-primary">{t('ads.postAd')}</Link>
           </div>
-          <h1 className={styles.title}>{name(category)}</h1>
+          <h1 className="h2 mb-3">{name(category)}</h1>
         </main>
       </div>
     </div>

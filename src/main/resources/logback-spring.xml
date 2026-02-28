@@ -21,6 +21,8 @@
     <logger name="org.hibernate.SQL" level="DEBUG"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
     <logger name="org.liquibase" level="INFO"/>
+    <!-- Периодическая статистика WebSocket в INFO засоряет консоль — оставляем только WARN и выше -->
+    <logger name="org.springframework.web.socket.config.WebSocketMessageBrokerStats" level="WARN"/>
 
     <!-- Профиль dev: консоль + файл -->
     <springProfile name="dev">

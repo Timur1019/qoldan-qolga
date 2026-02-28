@@ -1,6 +1,7 @@
 package com.test.qoldanqolga.service.component;
 
 import com.test.qoldanqolga.pagination.CursorPageResponse;
+import com.test.qoldanqolga.util.LogUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class CursorPaginationProcessor {
         }
 
         boolean hasNext = content.size() > limit;
+        LogUtil.debug(CursorPaginationProcessor.class, "Cursor pagination: contentSize={} limit={} hasNext={}", content.size(), limit, hasNext);
         List<T> pageContent = hasNext ? content.subList(0, limit) : content;
         String nextCursor = hasNext ? cursorExtractor.apply(pageContent.get(pageContent.size() - 1)) : null;
 

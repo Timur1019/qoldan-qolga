@@ -52,13 +52,16 @@ export function AuthProvider({ children }) {
 
   const refreshUser = useCallback(async () => {
     const token = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem(STORAGE_KEY)
-    if (!token) return
+    if (!token) return null
     try {
       const data = await authApi.me()
       setUser(data)
       return data
-    } catch {
-      setUser(null)
+    } catch (err) {
+      if (err?.message?.includes('401') || err?.message?.includes('авторизац')) {
+        setUser(null)
+      }
+      return null
     }
   }, [])
 

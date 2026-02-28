@@ -10,6 +10,7 @@ import com.test.qoldanqolga.repository.ReviewRepository;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.AdListQueryService;
 import com.test.qoldanqolga.service.FavoriteService;
+import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class AdListQueryServiceImpl implements AdListQueryService {
         if (ads == null || ads.isEmpty()) {
             return List.of();
         }
+        LogUtil.debug(AdListQueryServiceImpl.class, "Building list items: count={} withRatings={}", ads.size(), withUserRatings);
         List<String> adIds = ads.stream().map(Advertisement::getId).collect(Collectors.toList());
         List<AdImage> allImages = adImageRepository.findByAdIdInOrderByOrderNumAscIdAsc(adIds);
         Map<String, String> mainUrlByAdId = new HashMap<>();
@@ -52,19 +54,16 @@ public class AdListQueryServiceImpl implements AdListQueryService {
         }
         Set<String> favoriteIds = currentUserId != null ? favoriteService.getFavoriteAdIds(currentUserId) : Set.of();
 
-        Map<String, User> usersById = Map.of();
-        Map<String, double[]> ratingsByUser = Map.of();
-        if (withUserRatings) {
-            List<String> userIds = ads.stream().map(Advertisement::getUserId).distinct().collect(Collectors.toList());
-            if (!userIds.isEmpty()) {
-                usersById = userRepository.findAllById(userIds).stream().collect(Collectors.toMap(User::getId, u -> u));
-                ratingsByUser = new HashMap<>();
-                for (Object[] row : reviewRepository.findAverageAndCountByTargetUserIdIn(userIds)) {
-                    String uid = (String) row[0];
-                    double avg = row[1] != null ? ((Number) row[1]).doubleValue() : 0;
-                    long cnt = row[2] != null ? ((Number) row[2]).longValue() : 0;
-                    ratingsByUser.put(uid, new double[]{avg, cnt});
-                }
+        List<String> userIds = ads.stream().map(Advertisement::getUserId).distinct().collect(Collectors.toList());
+        Map<String, User> usersById = userIds.isEmpty() ? Map.of() : userRepository.findAllById(userIds).stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+        Map<String, double[]> ratingsByUser = new HashMap<>();
+        if (withUserRatings && !userIds.isEmpty()) {
+            for (Object[] row : reviewRepository.findAverageAndCountByTargetUserIdIn(userIds)) {
+                String uid = (String) row[0];
+                double avg = row[1] != null ? ((Number) row[1]).doubleValue() : 0;
+                long cnt = row[2] != null ? ((Number) row[2]).longValue() : 0;
+                ratingsByUser.put(uid, new double[]{avg, cnt});
             }
         }
 
@@ -81,6 +80,7 @@ public class AdListQueryServiceImpl implements AdListQueryService {
             if (u != null) {
                 dto.setUserDisplayName(u.getDisplayName());
                 dto.setUserAvatar(u.getAvatar());
+                dto.setSellerIsStore(Boolean.TRUE.equals(u.getStoreVerified()));
             }
             double[] r = finalRatingsByUser.get(ad.getUserId());
             if (r != null) {

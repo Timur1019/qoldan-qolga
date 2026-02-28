@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
 import { adsApi, imageUrl, referenceApi } from '../../services/adApi'
 import OSMMap from '../../../../components/OSMMap/OSMMap'
+import CategorySelectModal from '../../../../components/CategorySelectModal/CategorySelectModal'
 import styles from './CreateAd.module.css'
 
 const CURRENCIES = [
@@ -21,9 +22,11 @@ export default function CreateAd({ edit: editMode }) {
   const [uploadedUrls, setUploadedUrls] = useState([])
   const [regions, setRegions] = useState([])
   const [categories, setCategories] = useState([])
+  const [allCategories, setAllCategories] = useState([])
   const [mapPosition, setMapPosition] = useState(null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef(null)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -47,12 +50,55 @@ export default function CreateAd({ edit: editMode }) {
     hasLicense: false,
     worksByContract: false,
     urgentBargain: false,
+    locationLat: '',
+    locationLng: '',
   })
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
-    referenceApi.getCategories().then(setCategories).catch(() => setCategories([]))
+    referenceApi
+      .getCategories()
+      .then((list) => {
+        const roots = Array.isArray(list) ? list : []
+        setCategories(roots)
+        const base = [...roots]
+        const withChildren = roots.filter((c) => c.hasChildren)
+        if (withChildren.length === 0) {
+          setAllCategories(base)
+          return
+        }
+        Promise.all(
+          withChildren.map((c) =>
+            referenceApi.getCategoryChildren(c.code).catch(() => [])
+          )
+        )
+          .then((childrenLists) => {
+            childrenLists.forEach((children) => {
+              ;(Array.isArray(children) ? children : []).forEach((ch) => {
+                base.push(ch)
+              })
+            })
+            setAllCategories(base)
+          })
+          .catch(() => setAllCategories(base))
+      })
+      .catch(() => {
+        setCategories([])
+        setAllCategories([])
+      })
   }, [])
+
+  // При выборе точки на карте автоматически подставляем координаты в отдельные поля
+  useEffect(() => {
+    if (!mapPosition || !Array.isArray(mapPosition) || mapPosition.length < 2) return
+    const [lat, lng] = mapPosition
+    if (typeof lat !== 'number' || typeof lng !== 'number') return
+    setForm((prev) => ({
+      ...prev,
+      locationLat: lat.toFixed(5),
+      locationLng: lng.toFixed(5),
+    }))
+  }, [mapPosition])
 
   useEffect(() => {
     if (!editMode || !editId) return
@@ -95,6 +141,11 @@ export default function CreateAd({ edit: editMode }) {
   const districtOptions = useMemo(
     () => (selectedRegion?.districts || []),
     [selectedRegion]
+  )
+
+  const selectedCategoryObj = useMemo(
+    () => (allCategories.length ? allCategories : categories).find((c) => c.code === form.category),
+    [allCategories, categories, form.category]
   )
 
   const handleChange = (e) => {
@@ -180,6 +231,8 @@ export default function CreateAd({ edit: editMode }) {
         worksByContract: form.worksByContract,
         urgentBargain: form.urgentBargain,
         giveAway: form.giveAway,
+        locationLat: form.locationLat ? Number(form.locationLat) : null,
+        locationLng: form.locationLng ? Number(form.locationLng) : null,
         expiresAt,
         imageUrls: uploadedUrls,
       }
@@ -206,15 +259,46 @@ export default function CreateAd({ edit: editMode }) {
   const descLen = (form.description || '').length
   const descMax = 1000
 
-  return (
-    <div className={styles.page}>
-      <h1 className={styles.title}>{editMode && editId ? (lang === 'ru' ? 'Редактировать объявление' : 'E\'lonni tahrirlash') : t('ads.createTitle')}</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {error && <p className={styles.error}>{error}</p>}
+  const handleGeocodeAddress = async () => {
+    const query = (form.address || '').trim()
+    if (!query) return
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`
+      const res = await fetch(url, {
+        headers: {
+          'Accept-Language': lang === 'ru' ? 'ru' : 'uz',
+        },
+      })
+      const data = await res.json().catch(() => [])
+      if (!Array.isArray(data) || data.length === 0) return
+      const first = data[0]
+      const lat = parseFloat(first.lat)
+      const lon = parseFloat(first.lon)
+      if (Number.isNaN(lat) || Number.isNaN(lon)) return
+      setMapPosition([lat, lon])
+      setForm((prev) => ({
+        ...prev,
+        locationLat: lat.toFixed(5),
+        locationLng: lon.toFixed(5),
+      }))
+    } catch {
+      // игнорируем ошибки геокодинга, карта просто не обновится
+    }
+  }
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.photosSection')}</h2>
-          <p className={styles.cardHint}>{t('ads.photosHint')}</p>
+  return (
+    <div className="page-container app-page">
+      <h1 className="h2 mb-4">{editMode && editId ? (lang === 'ru' ? 'Редактировать объявление' : 'E\'lonni tahrirlash') : t('ads.createTitle')}</h1>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
+          </div>
+        )}
+
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-1">{t('ads.photosSection')}</h2>
+          <p className="text-muted small mb-2">{t('ads.photosHint')}</p>
           <div
             className={`${styles.uploadZone} ${dragOver ? styles.dragover : ''}`}
             onDrop={onDrop}
@@ -227,27 +311,27 @@ export default function CreateAd({ edit: editMode }) {
               accept="image/*"
               multiple
               onChange={handleFileSelect}
-              className={styles.fileInput}
+              className="d-none"
             />
             <button
               type="button"
-              className={styles.uploadBtn}
+              className="btn btn-primary"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading || uploadedUrls.length >= 6}
             >
-              {t('ads.selectFiles')}
+              <i className="bi bi-images me-2" aria-hidden /> {t('ads.selectFiles')}
             </button>
-            <p className={styles.uploadSub}>{t('ads.orDragHere')}</p>
-            <p className={styles.uploadSpecs}>{t('ads.photoSpecs')}</p>
+            <p className="text-muted small mt-2 mb-0">{t('ads.orDragHere')}</p>
+            <p className="text-muted small mb-0">{t('ads.photoSpecs')}</p>
           </div>
-          {uploading && <span className={styles.uploading}>{t('common.loading')}</span>}
+          {uploading && <span className="small text-muted">{t('common.loading')}</span>}
           {uploadedUrls.length > 0 && (
             <div className={styles.previews}>
               {uploadedUrls.map((url, index) => (
                 <div key={index} className={styles.previewWrap}>
                   <img src={imageUrl(url)} alt="" className={styles.preview} />
-                  <button type="button" onClick={() => removeImage(index)} className={styles.removeImg} aria-label={t('chat.delete')}>
-                    ×
+                  <button type="button" onClick={() => removeImage(index)} className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-0" style={{ width: '24px', height: '24px' }} aria-label={t('chat.delete')}>
+                    <i className="bi bi-x" aria-hidden />
                   </button>
                 </div>
               ))}
@@ -255,40 +339,38 @@ export default function CreateAd({ edit: editMode }) {
           )}
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{lang === 'ru' ? 'Название' : 'Sarlavha'}</h2>
-          <p className={styles.cardHint}>{t('ads.titleHint')}</p>
+        <section className={`app-card ${styles.card}`}>
+          <label className="form-label fw-semibold">{lang === 'ru' ? 'Название' : 'Sarlavha'}</label>
+          <p className="text-muted small mb-2">{t('ads.titleHint')}</p>
           <input
             name="title"
             value={form.title}
             onChange={handleChange}
             required
             maxLength={50}
-            className={styles.input}
+            className="form-control"
             placeholder={t('ads.titlePlaceholder')}
           />
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.formCategory')} *</h2>
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            className={styles.input}
-            required
+        <section className={`app-card ${styles.card}`}>
+          <label className="form-label fw-semibold">{t('ads.formCategory')} *</label>
+          <button
+            type="button"
+            className="form-select text-start d-flex align-items-center justify-content-between"
+            onClick={() => setCategoryModalOpen(true)}
           >
-            <option value="">{t('ads.selectCategory')}</option>
-            {categories.map((c) => (
-              <option key={c.code} value={c.code}>
-                {lang === 'ru' ? c.nameRu : c.nameUz}
-              </option>
-            ))}
-          </select>
+            <span className={!selectedCategoryObj ? 'text-muted' : ''}>
+              {selectedCategoryObj
+                ? (lang === 'ru' ? selectedCategoryObj.nameRu : selectedCategoryObj.nameUz)
+                : t('ads.selectCategory')}
+            </span>
+            <i className="bi bi-chevron-down" aria-hidden />
+          </button>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.dealConditions')}</h2>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.dealConditions')}</h2>
           <div className={styles.giveAwayRow}>
             <div className={styles.giveAwayLeft}>
               <span className={styles.giveAwayIcon} aria-hidden>🎈</span>
@@ -305,7 +387,7 @@ export default function CreateAd({ edit: editMode }) {
             </button>
           </div>
 
-          <h2 className={styles.cardTitle} style={{ marginTop: '1rem' }}>{t('ads.formPrice')} *</h2>
+          <h2 className="h6 mb-2 mt-3">{t('ads.formPrice')} *</h2>
           <div className={styles.priceRow}>
             <div className={styles.priceInputWrap}>
               <input
@@ -317,7 +399,7 @@ export default function CreateAd({ edit: editMode }) {
                 onChange={handleChange}
                 required
                 disabled={form.giveAway}
-                className={styles.input}
+                className="form-control"
                 placeholder={t('ads.pricePlaceholder')}
               />
             </div>
@@ -345,8 +427,8 @@ export default function CreateAd({ edit: editMode }) {
           </label>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.sellerType')}</h2>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.sellerType')}</h2>
           <div className={styles.filterOptions}>
             <label className={styles.filterRadio}>
               <input
@@ -380,7 +462,7 @@ export default function CreateAd({ edit: editMode }) {
             </label>
           </div>
 
-          <h2 className={styles.cardTitle} style={{ marginTop: '1rem' }}>{t('ads.hasLicense')}</h2>
+          <h2 className="h6 mb-2 mt-3">{t('ads.hasLicense')}</h2>
           <div className={styles.filterOptions}>
             <label className={styles.filterRadio}>
               <input
@@ -402,7 +484,7 @@ export default function CreateAd({ edit: editMode }) {
             </label>
           </div>
 
-          <h2 className={styles.cardTitle} style={{ marginTop: '1rem' }}>{t('ads.worksByContract')}</h2>
+          <h2 className="h6 mb-2 mt-3">{t('ads.worksByContract')}</h2>
           <div className={styles.filterOptions}>
             <label className={styles.filterRadio}>
               <input
@@ -441,9 +523,9 @@ export default function CreateAd({ edit: editMode }) {
           </div>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.formDescription')} *</h2>
-          <p className={styles.cardHint}>{t('ads.descriptionExample')}</p>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.formDescription')} *</h2>
+          <p className="text-muted small mb-2">{t('ads.descriptionExample')}</p>
           <div className={styles.descWrap}>
             <textarea
               name="description"
@@ -452,16 +534,16 @@ export default function CreateAd({ edit: editMode }) {
               required
               maxLength={descMax}
               rows={5}
-              className={`${styles.input} ${styles.textarea}`}
+              className="form-control"
               placeholder={t('ads.descriptionPlaceholder')}
             />
             <span className={styles.descCounter}>{descLen}/{descMax}</span>
           </div>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.locationTitle')}</h2>
-          <p className={styles.cardHint}>{t('ads.locationHint')}</p>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.locationTitle')}</h2>
+          <p className="text-muted small mb-2">{t('ads.locationHint')}</p>
           <div className={styles.locationActions}>
             <button type="button" className={styles.myLocationBtn} onClick={setMyLocation}>
               <span aria-hidden>✈</span> {t('ads.myLocation')}
@@ -474,11 +556,27 @@ export default function CreateAd({ edit: editMode }) {
               onPositionChange={setMapPosition}
             />
           </div>
+          <div className={styles.coordsRow}>
+            <input
+              name="locationLat"
+              value={form.locationLat}
+              readOnly
+              className="form-control form-control-sm"
+              placeholder="Широта"
+            />
+            <input
+              name="locationLng"
+              value={form.locationLng}
+              readOnly
+              className="form-control form-control-sm"
+              placeholder="Долгота"
+            />
+          </div>
           <input
             name="address"
             value={form.address}
             onChange={handleChange}
-            className={styles.input}
+            className="form-control"
             placeholder={t('ads.addressPlaceholder')}
             style={{ marginBottom: '0.5rem' }}
           />
@@ -486,7 +584,7 @@ export default function CreateAd({ edit: editMode }) {
             name="landmark"
             value={form.landmark}
             onChange={handleChange}
-            className={styles.input}
+            className="form-control"
             placeholder={t('ads.landmarkPlaceholder')}
             style={{ marginBottom: '0.5rem' }}
           />
@@ -501,45 +599,38 @@ export default function CreateAd({ edit: editMode }) {
           </label>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.contactsTitle')}</h2>
-          <label className={styles.cardHint} style={{ display: 'block', marginBottom: '0.5rem' }}>
-            {t('ads.formPhone')} *
-          </label>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.contactsTitle')}</h2>
+          <label className="form-label">{t('ads.formPhone')} *</label>
           <input
             name="phone"
             type="tel"
             value={form.phone}
             onChange={handleChange}
             required
-            className={styles.input}
-            style={{ marginBottom: '0.75rem' }}
+            className="form-control mb-3"
           />
-          <label className={styles.cardHint} style={{ display: 'block', marginBottom: '0.5rem' }}>
-            {t('auth.displayName')}
-          </label>
+          <label className="form-label">{t('auth.displayName')}</label>
           <input
             name="displayName"
             value={form.displayName}
             onChange={handleChange}
-            className={styles.input}
+            className="form-control mb-3"
             placeholder={t('ads.namePlaceholder')}
           />
-          <label className={styles.cardHint} style={{ display: 'block', marginTop: '0.75rem', marginBottom: '0.5rem' }}>
-            {t('ads.formEmail')}
-          </label>
+          <label className="form-label">{t('ads.formEmail')}</label>
           <input
             name="email"
             type="email"
             value={form.email}
             onChange={handleChange}
-            className={styles.input}
+            className="form-control"
           />
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.contactMethods')}</h2>
-          <p className={styles.cardHint}>{t('ads.contactMethodsHint')}</p>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.contactMethods')}</h2>
+          <p className="text-muted small mb-2">{t('ads.contactMethodsHint')}</p>
           <div className={styles.contactMethodsList}>
             <div className={styles.contactMethodRow}>
               <div className={styles.contactMethodLeft}>
@@ -586,13 +677,13 @@ export default function CreateAd({ edit: editMode }) {
           </div>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('ads.formRegion')}</h2>
+        <section className={`app-card ${styles.card}`}>
+          <h2 className="h6 mb-2">{t('ads.formRegion')}</h2>
           <select
             name="region"
             value={form.region}
             onChange={handleChange}
-            className={styles.input}
+            className="form-control"
             style={{ marginBottom: '0.75rem' }}
           >
             <option value="">—</option>
@@ -602,12 +693,12 @@ export default function CreateAd({ edit: editMode }) {
               </option>
             ))}
           </select>
-          <h2 className={styles.cardTitle}>{t('ads.formDistrict')}</h2>
+          <h2 className="h6 mb-2">{t('ads.formDistrict')}</h2>
           <select
             name="district"
             value={form.district}
             onChange={handleChange}
-            className={styles.input}
+            className="form-control"
             disabled={!form.region}
             style={{ marginBottom: '0.75rem' }}
           >
@@ -618,23 +709,44 @@ export default function CreateAd({ edit: editMode }) {
               </option>
             ))}
           </select>
-          <h2 className={styles.cardTitle}>{t('ads.formExpiresAt')} *</h2>
+          <h2 className="h6 mb-2">{t('ads.formExpiresAt')} *</h2>
           <input
             name="expiresAt"
             type="datetime-local"
             value={form.expiresAt || defaultExpires()}
             onChange={handleChange}
             required
-            className={styles.input}
+            className="form-control"
           />
         </section>
 
         <div className={styles.actions}>
-          <button type="submit" disabled={submitting} className={styles.submit}>
+          <button type="submit" disabled={submitting} className="btn btn-primary btn-lg w-100">
             {submitting ? t('common.loading') : t('common.save')}
           </button>
         </div>
       </form>
+      {categoryModalOpen && (
+        <CategorySelectModal
+          categories={categories}
+          value={form.category}
+          onSelect={(cat) => {
+            if (!cat?.code) {
+              setCategoryModalOpen(false)
+              return
+            }
+            setForm((prev) => ({ ...prev, category: cat.code }))
+            setAllCategories((prev) => {
+              if (!cat || !cat.code) return prev
+              const exists = prev.some((c) => c.code === cat.code)
+              if (exists) return prev
+              return [...prev, cat]
+            })
+            setCategoryModalOpen(false)
+          }}
+          onClose={() => setCategoryModalOpen(false)}
+        />
+      )}
     </div>
   )
 }
