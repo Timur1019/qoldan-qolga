@@ -60,7 +60,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "adsList", key = "#params.status + '-' + (#params.category != null ? #params.category : '') + '-' + (#params.region != null ? #params.region : '') + '-' + (#params.query != null ? #params.query : '') + '-' + #pageable.pageNumber + '-' + #pageable.pageSize", condition = "#currentUserId == null")
+    @Cacheable(value = "adsList", key = "#params.status + '-' + (#params.category != null ? #params.category : '') + '-' + (#params.region != null ? #params.region : '') + '-' + (#params.brandId != null ? #params.brandId : '') + '-' + (#params.itemCondition != null ? #params.itemCondition.toString() : '') + '-' + (#params.sellerType != null ? #params.sellerType.toString() : '') + '-' + (#params.handMadeOnly != null ? #params.handMadeOnly : '') + '-' + (#params.canRent != null ? #params.canRent : '') + '-' + (#params.query != null ? #params.query : '') + '-' + #pageable.pageNumber + '-' + #pageable.pageSize", condition = "#currentUserId == null")
     public Page<AdListItemDto> list(AdListParams params, String currentUserId, Pageable pageable) {
         String s = getEffectiveStatus(params != null ? params.getStatus() : null);
         String cat = params != null && params.getCategory() != null && !params.getCategory().isBlank()
@@ -80,7 +80,11 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
                 params != null ? params.getCurrency() : null,
                 params != null ? params.getUrgentBargain() : null,
                 params != null ? params.getCanDeliver() : null,
-                params != null ? params.getGiveAway() : null
+                params != null ? params.getGiveAway() : null,
+                params != null ? params.getBrandId() : null,
+                params != null ? params.getItemCondition() : null,
+                params != null ? params.getHandMadeOnly() : null,
+                params != null ? params.getCanRent() : null
         );
         Page<Advertisement> page = advertisementRepository.findAll(spec, pageable);
         List<Advertisement> content = page.getContent();

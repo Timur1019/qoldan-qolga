@@ -6,6 +6,7 @@ import styles from './AdDescription.module.css'
 function AdDescription({
   ad,
   categoryLabel,
+  regionLabel,
   isAuthenticated,
   isOwner,
   askText,
@@ -14,6 +15,7 @@ function AdDescription({
   chatGoing,
 }) {
   const { t } = useLang()
+  const regionDisplay = regionLabel ?? ad?.region
 
   return (
     <>
@@ -29,10 +31,34 @@ function AdDescription({
             <dt>{t('ads.category')}</dt>
             <dd>{categoryLabel}</dd>
           </div>
-          {ad?.region && (
+          {regionDisplay && (
             <div className={styles.charRow}>
               <dt>{t('ads.region')}</dt>
-              <dd>{ad.region}</dd>
+              <dd>{regionDisplay}</dd>
+            </div>
+          )}
+          {ad?.itemCondition && (
+            <div className={styles.charRow}>
+              <dt>{t('ads.conditionLabel')}</dt>
+              <dd>
+                {ad.itemCondition === 'NEW'
+                  ? t('ads.conditionNew')
+                  : ad.itemCondition === 'HANDMADE'
+                    ? t('ads.conditionHandmade')
+                    : ad.itemCondition === 'USED_LIKE_NEW'
+                      ? t('ads.conditionUsedLikeNew')
+                      : ad.itemCondition === 'USED_GOOD'
+                        ? t('ads.conditionUsedGood')
+                        : ad.itemCondition === 'USED_FAIR'
+                          ? t('ads.conditionUsedFair')
+                          : t('ads.conditionUsed')}
+              </dd>
+            </div>
+          )}
+          {ad?.canRent && (
+            <div className={styles.charRow}>
+              <dt>{t('ads.canRentLabel')}</dt>
+              <dd>{t('ads.canRentYes')}</dd>
             </div>
           )}
           {ad?.district && (

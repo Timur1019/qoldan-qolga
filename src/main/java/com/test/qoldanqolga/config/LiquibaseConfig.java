@@ -11,6 +11,12 @@ import javax.sql.DataSource;
 @Configuration
 public class LiquibaseConfig {
 
+    static {
+        // Allow Liquibase to resolve XSD from the network (db.changelog-latest.xsd).
+        // When secureParsing=true, remote lookups are disabled and startup fails.
+        System.setProperty("liquibase.secureParsing", "false");
+    }
+
     @Bean(name = "liquibase")
     @ConditionalOnMissingBean(name = "liquibase")
     @ConditionalOnProperty(name = "spring.liquibase.enabled", matchIfMissing = true)

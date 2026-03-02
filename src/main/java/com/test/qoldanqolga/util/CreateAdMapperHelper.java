@@ -30,4 +30,9 @@ public final class CreateAdMapperHelper {
     public static String nonBlankOrNull(String s) {
         return (s != null && !s.isBlank()) ? s : null;
     }
+
+    /** USED | NEW; по умолчанию USED */
+    public static String defaultItemCondition(String s) {
+        return (s != null && !s.isBlank()) ? s.trim() : "USED";
+    }
 }

@@ -1,5 +1,4 @@
 export { default as Home } from './Home/Home'
-export { default as Dashboard } from './Dashboard/Dashboard'
 export { default as AdminDashboard } from './AdminDashboard/AdminDashboard'
 export { default as AdminUsers } from './AdminUsers/AdminUsers'
 export { default as AdminReports } from './AdminReports/AdminReports'

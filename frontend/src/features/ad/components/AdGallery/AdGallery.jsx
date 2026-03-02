@@ -46,7 +46,7 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
                 className={`${styles.thumbBtn} ${selectedIndex === idx ? styles.thumbBtnActive : ''}`}
                 onClick={() => setSelectedIndex(idx)}
               >
-                <img src={imageUrl(img.url)} alt="" />
+                <img src={imageUrl(img.url)} alt="" loading="lazy" decoding="async" />
               </button>
             ))}
           </div>
@@ -74,7 +74,7 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
             aria-label={t('ads.enlarge')}
           >
             {mainImage ? (
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} />
+              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} decoding="async" />
             ) : (
               <div className={styles.mainImagePlaceholder} />
             )}
@@ -129,7 +129,7 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
             }}
           >
             <div className={styles.lightboxContent}>
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} />
+              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} decoding="async" />
             </div>
             {images.length > 1 && (
               <div className={styles.lightboxDots} role="tablist" aria-label={t('ads.imageCount')}>

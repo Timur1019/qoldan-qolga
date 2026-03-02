@@ -14,5 +14,6 @@ public class CategoryDto {
     private String code;
     private Boolean showOnHome;
     private String parentId;
+    private String parentCode;
     private Boolean hasChildren;
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Красота и здоровье — корневая категория -->
+    <changeSet id="044-insert-krasota-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Go''zallik va salomatlik', 'Красота и здоровье', 'Krasota_zdorovie', 8, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <!-- Приборы и аксессуары + дочерние -->
+    <changeSet id="044-insert-pribory-aksessuary" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Asboblar va aksessuarlar', 'Приборы и аксессуары', 'Pribory_aksessuary', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Krasota_zdorovie' LIMIT 1;</sql>
+    </changeSet>
+    <changeSet id="044-insert-pribory-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Soqol olish va trimmerlar', 'Бритвы и триммеры', 'Britvy_trimmary', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Soch yotqizish asboblari', 'Приборы для укладки', 'Pribory_ukladka', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Massajerlar', 'Массажеры', 'Massazhery', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Teri parvarishi asboblari', 'Приборы для ухода за кожей', 'Pribory_uhod_koja', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Epilyatorlar', 'Эпиляторы', 'Epilyatory', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektr tish cho''tkalari', 'Электрические зубные щетки', 'Elekt_zubnie_schetki', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ultratovush vannalar', 'Ультразвуковые ванны', 'Ultrazvukovye_vanny', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tarozi', 'Весы', 'Vesy', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Pribory_prochee', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Pribory_aksessuary' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Парфюмерия, средства гигиены, косметика, средства для волос -->
+    <changeSet id="044-insert-krasota-flat" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Parfyumeriya', 'Парфюмерия', 'Parfyumeriya', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Krasota_zdorovie' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Gigiena vositalari', 'Средства гигиены', 'Sredstva_gigieny', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Krasota_zdorovie' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kosmetika', 'Косметика', 'Kosmetika', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Krasota_zdorovie' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Soch uchun vositalar', 'Средства для волос', 'Sredstva_dlya_volos', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Krasota_zdorovie' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Медицинские изделия + дочерние -->
+    <changeSet id="044-insert-medizdeliya" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tibbiy buyumlar', 'Медицинские изделия', 'Medicinskie_izdeliya', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Krasota_zdorovie' LIMIT 1;</sql>
+    </changeSet>
+    <changeSet id="044-insert-medizdeliya-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kontakt linzalar', 'Контактные линзы', 'Kontaktnye_linzy', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Nogironlar uchun mahsulotlar', 'Товары для инвалидов', 'Tovary_dlya_invalidov', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Irrigatorlar', 'Ирригаторы', 'Irrigatory', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tonometerlar', 'Тонометры', 'Tonometry', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ingalyatorlar', 'Ингаляторы', 'Ingalyatory', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tibbiy asboblar', 'Медицинские приборы', 'Medicinskie_pribory', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Dezinfeksiya qurilmalari', 'Устройства для дезинфекции', 'Ustroystva_dezinfekciya', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektr cho''milish, cho''shalar', 'Электрогрелки, электропростыни, электроодеяла', 'Elektrogrelki_prostyni', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kislorod konsentratorlari', 'Концентраторы кислорода', 'Koncentratory_kisloroda', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Medicinskie_prochee', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Medicinskie_izdeliya' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

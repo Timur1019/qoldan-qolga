@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Привязка брендов бытовой техники ко всем подкатегориям Бытовая техника -->
+    <changeSet id="040-link-appliances-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b
+            CROSS JOIN categories c
+            WHERE c.code IN (
+                'Kuhnya_uchun', 'Uy_uchun', 'Klimat_oborudovaniye',
+                'Aerogril', 'Blenderlar', 'Kuler_su', 'Mikserlar', 'Gocht_maydalagich', 'Sokovizhimalka', 'Tosterlar', 'Elektr_gril', 'Vytyazhki', 'Mayda_kuhna_texnika', 'Elektr_choynak', 'Kofevarka_kofemolka', 'Kuhna_kombayn', 'Parovka_multivarka', 'Hlebopech', 'Mikroto''lqin', 'Plita_pech', 'Posudomoyka', 'Suv_filtr', 'Holodilnik_morozilka', 'Kuhnya_boshqa',
+                'Pylesos', 'Stiralnaya_mashina', 'Utug', 'Shveynaya_vyazalnaya', 'Uy_zapchasti', 'Uy_boshqa',
+                'Klimat_boshqa', 'Ventilyator', 'Konditsioner', 'Obogrevatel', 'Ochistitel_uvlazhnitel', 'Termometr_meteostansiya'
+            )
+            AND b.slug IN ('akvafor','aksion','atlant','barer','biryusa','vesta','vyatka','gazmash','geyzer','gefest','lada','ladomir','mechta','novovyatka','oka','omichka','saratov','smolensk','feya','zvi','idel','krona','aeg','ardo','ariston','candy','delonghi','electrolux','gorenje','indesit','miele','moulinex','redmond','rowenta','siemens','tefal','whirlpool','zanussi','braun','karcher','krups','philips','dyson','bork','liebherr','scarlett','vax','thomas','irobot','kitchenaid','nespresso','jura','saeco','smeg','hotpoint-ariston','beko','brandt','haier','midea','severin','zelmer','bosch','samsung','lg','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

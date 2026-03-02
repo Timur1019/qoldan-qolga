@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Мебель и интерьер — корневая категория -->
+    <changeSet id="042-insert-mebel-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Mebel va interyer', 'Мебель и интерьер', 'Mebel_i_interer', 6, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <!-- Подкатегории Мебель и интерьер -->
+    <changeSet id="042-insert-mebel-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mebel va interyer buyumlari', 'Мебель и предметы интерьера', 'Mebel_predmety', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Turli mebel', 'Разная мебель', 'Raznaya_mebel', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Krovatlar, divanlar va kreslolar', 'Кровати, диваны и кресла', 'Krovati_divany', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shkaflar, komodlar va stellajlar', 'Шкафы, комоды и стеллажи', 'Shkafy_komody', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'To''qimachilik va gilamlar', 'Текстиль и ковры', 'Tekstil_kovry', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yoritish', 'Освещение', 'Oveshchenie', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kompyuter stollari va kreslolar', 'Компьютерные столы и кресла', 'Komp_stoly_kresla', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Oshxona garniturlari', 'Кухонные гарнитуры', 'Kuhonnye_garnitury', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Stollar va stullar', 'Столы и стулья', 'Stoly_stulya', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Interyer buyumlari, san''at', 'Предметы интерьера, искусство', 'Predmety_iskusstvo', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Stendlar va shkafchalar', 'Подставки и тумбы', 'Podstavki_tumby', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Mebel_drugoe', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Gamaklar', 'Гамаки', 'Gamaki', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Jurnal stoliklari', 'Журнальные столики', 'Zhurnalnye_stoliki', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mehmonxona mebeli', 'Мебель для гостинной', 'Mebel_gostinaya', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar xonasi mebeli', 'Мебель для детской комнаты', 'Mebel_detskaya', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Oshxona mebeli', 'Мебель для кухни', 'Mebel_kuhnya', 17, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ofis mebeli', 'Мебель для офиса', 'Mebel_ofis', 18, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shezlonglar', 'Шезлонги', 'Shezlongi', 19, false, id, NOW(), NOW() FROM categories WHERE code = 'Mebel_i_interer' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

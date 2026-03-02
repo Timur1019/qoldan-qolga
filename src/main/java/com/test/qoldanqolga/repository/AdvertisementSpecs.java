@@ -17,7 +17,7 @@ public final class AdvertisementSpecs {
             List<String> categories,
             String region,
             String query,
-            String sellerType,
+            List<String> sellerType,
             Boolean hasLicense,
             Boolean worksByContract,
             BigDecimal priceFrom,
@@ -25,7 +25,11 @@ public final class AdvertisementSpecs {
             String currency,
             Boolean urgentBargain,
             Boolean canDeliver,
-            Boolean giveAway
+            Boolean giveAway,
+            String brandId,
+            List<String> itemCondition,
+            Boolean handMadeOnly,
+            Boolean canRent
     ) {
         return (root, q, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -50,17 +54,24 @@ public final class AdvertisementSpecs {
                 ));
             }
 
-            if (sellerType != null && !sellerType.isBlank()) {
+            if (sellerType != null && !sellerType.isEmpty()) {
                 var userJoin = root.join("user", JoinType.LEFT);
-                if ("BUSINESS".equalsIgnoreCase(sellerType)) {
-                    predicates.add(cb.equal(userJoin.get("storeVerified"), true));
-                } else if ("PRIVATE".equalsIgnoreCase(sellerType)) {
-                    predicates.add(cb.or(
-                            cb.isNull(userJoin.get("storeVerified")),
-                            cb.equal(userJoin.get("storeVerified"), false)
-                    ));
-                } else {
-                    predicates.add(cb.equal(root.get("sellerType"), sellerType));
+                List<Predicate> sellerPredicates = new ArrayList<>();
+                for (String st : sellerType) {
+                    if (st == null || st.isBlank()) continue;
+                    if ("BUSINESS".equalsIgnoreCase(st)) {
+                        sellerPredicates.add(cb.equal(userJoin.get("storeVerified"), true));
+                    } else if ("PRIVATE".equalsIgnoreCase(st)) {
+                        sellerPredicates.add(cb.or(
+                                cb.isNull(userJoin.get("storeVerified")),
+                                cb.equal(userJoin.get("storeVerified"), false)
+                        ));
+                    } else {
+                        sellerPredicates.add(cb.equal(root.get("sellerType"), st));
+                    }
+                }
+                if (!sellerPredicates.isEmpty()) {
+                    predicates.add(cb.or(sellerPredicates.toArray(new Predicate[0])));
                 }
             }
 
@@ -94,6 +105,24 @@ public final class AdvertisementSpecs {
 
             if (giveAway != null && giveAway) {
                 predicates.add(cb.equal(root.get("giveAway"), true));
+            }
+
+            if (brandId != null && !brandId.isBlank()) {
+                predicates.add(cb.equal(root.get("brandId"), brandId));
+            }
+
+            if (handMadeOnly != null) {
+                if (handMadeOnly) {
+                    predicates.add(cb.equal(root.get("itemCondition"), "HANDMADE"));
+                } else {
+                    predicates.add(cb.notEqual(root.get("itemCondition"), "HANDMADE"));
+                }
+            } else if (itemCondition != null && !itemCondition.isEmpty()) {
+                predicates.add(root.get("itemCondition").in(itemCondition));
+            }
+
+            if (canRent != null) {
+                predicates.add(cb.equal(root.get("canRent"), canRent));
             }
 
             q.orderBy(cb.desc(root.get("createdAt")));

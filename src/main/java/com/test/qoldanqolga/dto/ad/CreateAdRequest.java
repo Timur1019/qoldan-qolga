@@ -35,9 +35,24 @@ public class CreateAdRequest {
     @Size(max = 50)
     private String category = "Xizmatlar";
 
+    /** Опционально: бренд (для категорий типа Электроника). */
+    @Size(max = 36)
+    private String brandId;
+
+    /** USED | USED_LIKE_NEW | USED_GOOD | USED_FAIR | NEW | HANDMADE */
+    @Size(max = 25)
+    private String itemCondition = "USED";
+
+    /** Возможна аренда (для одежды/обуви) */
+    private Boolean canRent = false;
+
     @NotBlank
     @Size(max = 20)
     private String phone;
+
+    /** Telegram username (без @); при указании показывается кнопка «Написать в Telegram». */
+    @Size(max = 64)
+    private String telegramUsername;
 
     @Size(max = 100)
     private String email;

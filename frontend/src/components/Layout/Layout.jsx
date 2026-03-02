@@ -9,6 +9,7 @@ import { BusinessModalProvider } from '../../context/BusinessModalContext'
 import { AuthModal } from '../../features/auth'
 import CategoriesModal from '../CategoriesModal/CategoriesModal'
 import BusinessModal from '../BusinessModal/BusinessModal'
+import Footer from '../Footer/Footer'
 import styles from './Layout.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
@@ -51,7 +52,8 @@ export default function Layout() {
   const authParam = searchParams.get(PARAMS.AUTH)
   const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
   const authInitialMode = authParam === PARAMS.AUTH_REGISTER ? 'register' : 'login'
-  const selectedRegionCode = location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.REGION) || '') : ''
+  const isAdsOrHome = location.pathname === ROUTES.ADS || location.pathname === ROUTES.HOME
+  const selectedRegionCode = isAdsOrHome ? (searchParams.get(PARAMS.REGION) || '') : ''
   const [searchValue, setSearchValue] = useState(() =>
     location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.QUERY) || '') : ''
   )
@@ -75,6 +77,8 @@ export default function Layout() {
   useEffect(() => {
     if (location.pathname === ROUTES.ADS) {
       setSearchValue(searchParams.get(PARAMS.QUERY) || '')
+    } else if (location.pathname === ROUTES.HOME) {
+      setSearchValue('')
     }
   }, [location.pathname, searchParams])
 
@@ -101,7 +105,7 @@ export default function Layout() {
 
   const handleSelectRegion = (code) => {
     setRegionOpen(false)
-    if (location.pathname === ROUTES.ADS) {
+    if (location.pathname === ROUTES.ADS || location.pathname === ROUTES.HOME) {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
         if (code) next.set(PARAMS.REGION, code)
@@ -109,7 +113,7 @@ export default function Layout() {
         return next
       })
     } else {
-      navigate('/')
+      navigate(code ? `/?${PARAMS.REGION}=${encodeURIComponent(code)}` : '/')
     }
   }
 
@@ -376,6 +380,7 @@ export default function Layout() {
       <main className={styles.main}>
         <Outlet />
       </main>
+      <Footer />
       <AuthModal
         open={authOpen}
         onClose={() => {}}

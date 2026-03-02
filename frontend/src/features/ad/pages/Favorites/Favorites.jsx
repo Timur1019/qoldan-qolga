@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
 import { adsApi, favoritesApi, usersApi, imageUrl } from '../../services/adApi'
-import { formatPrice } from '../../../../utils/formatters'
+import { formatPrice, formatAdDate } from '../../../../utils/formatters'
 import { ROUTES, adsPath, sellerPath } from '../../../../constants/routes'
 import HeartIcon from '../../../../components/ui/HeartIcon'
 import CardGallery from '../../components/CardGallery'
@@ -23,7 +23,7 @@ export default function Favorites() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
 
-  const PAGE_SIZE = 20
+  const PAGE_SIZE = 80
 
   const load = () => {
     setLoading(true)
@@ -88,6 +88,16 @@ export default function Favorites() {
     }).catch(() => {})
   }
 
+  const handleAddFavorite = (e, ad) => {
+    e.preventDefault()
+    e.stopPropagation()
+    adsApi.addFavorite(ad.id).then(() => {
+      setItems((prev) => [...prev, { ...ad, favorite: true }])
+      setRecommended((prev) => ({ ...prev, content: (prev.content || []).filter((a) => a.id !== ad.id) }))
+      window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
+    }).catch(() => {})
+  }
+
   const handleUnsubscribe = (e, profileId) => {
     e.preventDefault()
     e.stopPropagation()
@@ -98,8 +108,9 @@ export default function Favorites() {
 
   if (loading) {
     return (
-      <div className="page-container app-page">
-        <p className="text-muted">{t('common.loading')}</p>
+      <div className={styles.globalLoading} aria-busy="true">
+        <span className={styles.globalLoadingSpinner} aria-hidden />
+        <p className={styles.globalLoadingText}>{t('common.loading')}</p>
       </div>
     )
   }
@@ -193,59 +204,60 @@ export default function Favorites() {
           <Link to={ROUTES.ADS_MY} className="btn btn-primary">{t('home.viewAds')}</Link>
         </div>
       ) : (
-        <>
+        <div className={styles.favoritesListBlock}>
           <ul className={styles.grid}>
             {ads.map((ad) => (
               <li key={ad.id} className={`${styles.card} app-card app-card-hover`}>
                 <Link to={adsPath(ad.id)} className={styles.cardLink}>
                   <span className={styles.cardImageWrap}>
-                    <span className={`badge position-absolute top-0 start-0 m-2 ${ad.sellerIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.7rem' }}>
+                    <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
                       {ad.sellerIsStore ? 'Магазин' : 'Частный'}
                     </span>
                     <CardGallery
                       imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
                     />
-                    <button
-                      type="button"
-                      className={`${styles.favoriteBtn} btn btn-light btn-sm position-absolute top-0 end-0 m-2 rounded-circle p-0`}
-                      onClick={(e) => handleRemoveFavorite(e, ad)}
-                      aria-label={t('common.removeFromFavorites')}
-                    >
-                      <HeartIcon filled className={`${styles.heartIcon} ${styles.heartFilled}`} size={20} />
-                    </button>
                   </span>
                   <div className={styles.cardBody}>
-                    <h2 className={styles.cardTitle}>{ad.title}</h2>
                     <p className={styles.cardPrice}>
                       {formatPrice(ad.price, ad.currency)}
                       {ad.isNegotiable && ` (${t('ads.negotiable')})`}
                     </p>
+                    <button
+                      type="button"
+                      className={styles.favoriteBtn}
+                      onClick={(e) => handleRemoveFavorite(e, ad)}
+                      aria-label={t('common.removeFromFavorites')}
+                    >
+                      <HeartIcon filled className={`${styles.heartIcon} ${styles.heartFilled}`} size={18} />
+                    </button>
+                    <h2 className={styles.cardTitle}>{ad.title}</h2>
                     {(ad.region || ad.category) && (
                       <p className={styles.cardMeta}>
                         {ad.category}
                         {ad.region && ` · ${ad.region}`}
                       </p>
                     )}
+                    {ad.createdAt && <p className={styles.cardDate}>{formatAdDate(ad.createdAt)}</p>}
                   </div>
                 </Link>
               </li>
             ))}
           </ul>
           {!lastPage && (
-            <div className="text-center mt-4">
+            <div className={styles.showMoreWrap}>
               <button
                 type="button"
-                className="btn btn-outline-secondary"
+                className={styles.showMoreBtn}
                 onClick={loadMore}
                 disabled={loadingMore}
               >
-                {loadingMore ? t('common.loading') : t('favorites.showMore')}
+                {loadingMore ? t('common.loading') : t('common.showMore')}
               </button>
             </div>
           )}
-        </>
+        </div>
       )}
-      {recAds.length > 0 && (
+      {ads.length === 0 && recAds.length > 0 && (
         <section className="mt-5">
           <h2 className="h5 mb-3">{t('favorites.mayLike')}</h2>
           <ul className={styles.recommendGrid}>
@@ -253,7 +265,7 @@ export default function Favorites() {
               <li key={ad.id} className={`${styles.recommendCard} app-card app-card-hover`}>
                 <Link to={adsPath(ad.id)} className={styles.cardLink}>
                   <span className={styles.cardImageWrap}>
-                    <span className={`badge position-absolute top-0 start-0 m-2 ${ad.sellerIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.7rem' }}>
+                    <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
                       {ad.sellerIsStore ? 'Магазин' : 'Частный'}
                     </span>
                     <CardGallery
@@ -265,6 +277,14 @@ export default function Favorites() {
                       {formatPrice(ad.price, ad.currency)}
                       {ad.isNegotiable && ` (${t('ads.negotiable')})`}
                     </p>
+                    <button
+                      type="button"
+                      className={styles.favoriteBtn}
+                      onClick={(e) => handleAddFavorite(e, ad)}
+                      aria-label={t('common.addToFavorites')}
+                    >
+                      <HeartIcon filled={false} className={`${styles.heartIcon} ${styles.heartOutline}`} size={18} />
+                    </button>
                     <h2 className={styles.cardTitle}>{ad.title}</h2>
                     {(ad.region || ad.category) && (
                       <p className={styles.cardMeta}>

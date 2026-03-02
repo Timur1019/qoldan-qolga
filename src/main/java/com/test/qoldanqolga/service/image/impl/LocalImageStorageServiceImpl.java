@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +54,26 @@ public class LocalImageStorageServiceImpl implements ImageStorageService {
             LogUtil.error(LocalImageStorageServiceImpl.class, "Failed to save upload", e);
             throw new ImageStorageException("Не удалось сохранить файл", e);
         }
+    }
+
+    @Override
+    public List<String> saveAll(List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+        List<CompletableFuture<String>> futures = files.stream()
+                .map(file -> CompletableFuture.supplyAsync(() -> save(file)))
+                .toList();
+        List<String> urls = new ArrayList<>(futures.size());
+        for (CompletableFuture<String> f : futures) {
+            try {
+                urls.add(f.join());
+            } catch (Exception e) {
+                LogUtil.warn(LocalImageStorageServiceImpl.class, "Batch upload partial failure: {}", e.getMessage());
+                throw new ImageStorageException("Ошибка загрузки одного из файлов", e);
+            }
+        }
+        return urls;
     }
 
     private static String getExtension(String filename) {

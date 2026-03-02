@@ -29,7 +29,7 @@ export default function Register() {
         avatar: res.avatar,
       })
       await refreshUser()
-      navigate('/dashboard', { replace: true })
+      navigate('/dashboard/profile/edit', { replace: true })
     } catch (err) {
       setError(err.message || 'Ошибка регистрации')
     } finally {

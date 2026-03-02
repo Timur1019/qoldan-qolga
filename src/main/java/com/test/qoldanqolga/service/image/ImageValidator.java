@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.imageio.spi.IIORegistry;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,14 @@ import java.io.InputStream;
 public class ImageValidator {
 
     private final StorageProperties properties;
+
+    static {
+        try {
+            IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
+        } catch (Exception e) {
+            LogUtil.warn(ImageValidator.class, "Could not load ImageIO plugins: {}", e.getMessage());
+        }
+    }
 
     private static final int MAX_IMAGE_DIMENSION = 5000;
 

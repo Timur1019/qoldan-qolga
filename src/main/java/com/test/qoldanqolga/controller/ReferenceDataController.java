@@ -1,5 +1,6 @@
 package com.test.qoldanqolga.controller;
 
+import com.test.qoldanqolga.dto.reference.BrandDto;
 import com.test.qoldanqolga.dto.reference.CategoryDto;
 import com.test.qoldanqolga.dto.reference.RegionDto;
 import com.test.qoldanqolga.service.ReferenceDataService;
@@ -47,6 +48,13 @@ public class ReferenceDataController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Путь категории (хлебные крошки: от корня до категории)")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/categories/{code}/breadcrumb")
+    public ResponseEntity<List<CategoryDto>> getCategoryBreadcrumb(@PathVariable String code) {
+        return ResponseEntity.ok(referenceDataService.getCategoryBreadcrumb(code));
+    }
+
     @Operation(summary = "Дочерние категории")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping("/categories/{code}/children")
@@ -59,5 +67,19 @@ public class ReferenceDataController {
     @GetMapping("/categories/home")
     public ResponseEntity<List<CategoryDto>> getCategoriesForHome() {
         return ResponseEntity.ok(referenceDataService.getCategoriesForHome());
+    }
+
+    @Operation(summary = "Список брендов (активные, по sort_order)")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/brands")
+    public ResponseEntity<List<BrandDto>> getBrands() {
+        return ResponseEntity.ok(referenceDataService.getAllBrands());
+    }
+
+    @Operation(summary = "Бренды по коду категории (например, Elektronika)")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/categories/{code}/brands")
+    public ResponseEntity<List<BrandDto>> getBrandsByCategory(@PathVariable String code) {
+        return ResponseEntity.ok(referenceDataService.getBrandsByCategoryCode(code));
     }
 }

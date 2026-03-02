@@ -88,6 +88,20 @@ public class ConversationCommandServiceImpl implements ConversationCommandServic
         conversationRepository.delete(c);
     }
 
+    @Override
+    @Transactional
+    public void deleteAllConversationsByAdId(String adId) {
+        List<Conversation> list = conversationRepository.findAllByAdId(adId);
+        for (Conversation c : list) {
+            conversationReadRepository.deleteAllByConversationId(c.getId());
+            messageRepository.deleteAllByConversationId(c.getId());
+            conversationRepository.delete(c);
+        }
+        if (!list.isEmpty()) {
+            LogUtil.info(ConversationCommandServiceImpl.class, "Deleted {} conversation(s) for adId={}", list.size(), adId);
+        }
+    }
+
     private ConversationDto toDto(Conversation c, String currentUserId) {
         var statsMap = statisticsService.getStatisticsBatch(List.of(c.getId()), currentUserId);
         var stats = statsMap.getOrDefault(c.getId(),

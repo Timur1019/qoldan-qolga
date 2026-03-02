@@ -48,6 +48,10 @@ public class Advertisement extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String phone;
 
+    /** Telegram username (без @) для перехода в чат: t.me/username */
+    @Column(name = "telegram_username", length = 64)
+    private String telegramUsername;
+
     @Column(length = 100)
     private String email;
 
@@ -90,9 +94,24 @@ public class Advertisement extends BaseEntity {
     @Column(name = "user_id", nullable = false, length = 36)
     private String userId;
 
+    @Column(name = "brand_id", length = 36)
+    private String brandId;
+
+    /** Состояние: USED, USED_LIKE_NEW, USED_GOOD, USED_FAIR, NEW, HANDMADE */
+    @Column(name = "item_condition", length = 25, nullable = false)
+    private String itemCondition = "USED";
+
+    /** Возможна аренда (для одежды, обуви) */
+    @Column(name = "can_rent", nullable = false)
+    private Boolean canRent = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id", insertable = false, updatable = false)
+    private Brand brand;
 
     @Column(nullable = false)
     private Integer views = 0;
