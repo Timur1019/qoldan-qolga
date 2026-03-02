@@ -10,7 +10,7 @@ export default function Login() {
   const location = useLocation()
   const { setAuth, refreshUser } = useAuth()
   const { t } = useLang()
-  const from = location.state?.from?.pathname ?? '/dashboard'
+  const from = location.state?.from?.pathname ?? '/dashboard/profile/edit'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
 import { referenceApi, adsApi, imageUrl } from '../../api/client'
 import { useFavoriteClick } from '../../hooks'
 import { formatPrice, formatAdDate } from '../../utils/formatters'
-import { ROUTES, adsPath, categoryPath, adsCategoryPath } from '../../constants/routes'
+import { ROUTES, PARAMS, adsPath, categoryPath, adsCategoryPath } from '../../constants/routes'
 import HeartIcon from '../../components/ui/HeartIcon'
 import CardGallery from '../../features/ad/components/CardGallery'
 import bannerBg from '../../img/baner/baner.png'
@@ -17,11 +17,18 @@ function CategoryCardIcon({ code }) {
   return <i className={`${iconClass} ${styles.cardIcon}`} aria-hidden="true" />
 }
 
+const HOME_ADS_PAGE_SIZE = 100
+
 export default function Home() {
   const { t, lang } = useLang()
+  const [searchParams] = useSearchParams()
+  const region = searchParams.get(PARAMS.REGION) || ''
   const [categories, setCategories] = useState([])
   const [adsData, setAdsData] = useState({ content: [] })
+  const [adsPage, setAdsPage] = useState(0)
+  const [adsLastPage, setAdsLastPage] = useState(false)
   const [adsLoading, setAdsLoading] = useState(true)
+  const [adsLoadingMore, setAdsLoadingMore] = useState(false)
   const [promoBanners, setPromoBanners] = useState([])
   const [promoPage, setPromoPage] = useState(0)
   const PROMO_PER_PAGE = 4
@@ -42,21 +49,57 @@ export default function Home() {
         return referenceApi.getCategories().then((root) => (Array.isArray(root) ? root : []))
       })
       .catch(() => referenceApi.getCategories().then((root) => (Array.isArray(root) ? root : [])).catch(() => []))
-    const adsPromise = adsApi.list({ size: 24 }).then((data) => data || { content: [] }).catch(() => ({ content: [] }))
+    const adsParams = { page: 0, size: HOME_ADS_PAGE_SIZE }
+    if (region) adsParams.region = region
+    const adsPromise = adsApi.list(adsParams).then((data) => data || { content: [] }).catch(() => ({ content: [] }))
     const promoPromise = referenceApi.getHomePromoBanners().then((list) => (Array.isArray(list) ? list : [])).catch(() => [])
 
     setAdsLoading(true)
+    setAdsPage(0)
     Promise.all([categoriesPromise, adsPromise, promoPromise])
       .then(([cats, ads, promo]) => {
         setCategories(cats)
         setAdsData(ads)
+        const totalPages = typeof ads.totalPages === 'number' ? ads.totalPages : 1
+        const isLast = typeof ads.last === 'boolean' ? ads.last : true
+        setAdsLastPage(isLast || 1 >= totalPages)
         setPromoBanners(promo)
       })
       .finally(() => setAdsLoading(false))
-  }, [])
+  }, [region])
+
+  const loadMoreAds = useCallback(() => {
+    if (adsLastPage || adsLoadingMore) return
+    const nextPage = adsPage + 1
+    setAdsLoadingMore(true)
+    const params = { page: nextPage, size: HOME_ADS_PAGE_SIZE }
+    if (region) params.region = region
+    adsApi
+      .list(params)
+      .then((res) => {
+        const data = res || { content: [] }
+        const newContent = data.content || []
+        setAdsData((prev) => ({ ...prev, content: [...(prev.content || []), ...newContent] }))
+        setAdsPage(nextPage)
+        const totalPages = typeof data.totalPages === 'number' ? data.totalPages : nextPage + 1
+        const isLast = typeof data.last === 'boolean' ? data.last : nextPage + 1 >= totalPages
+        setAdsLastPage(isLast)
+      })
+      .catch(() => {})
+      .finally(() => setAdsLoadingMore(false))
+  }, [adsPage, adsLastPage, adsLoadingMore, region])
 
   const categoryName = (c) => (c ? (lang === 'ru' ? c.nameRu : c.nameUz) : '')
   const ads = adsData.content || []
+
+  if (adsLoading && categories.length === 0 && ads.length === 0) {
+    return (
+      <div className={styles.globalLoading} aria-busy="true">
+        <span className={styles.globalLoadingSpinner} aria-hidden />
+        <p className={styles.globalLoadingText}>{t('common.loading')}</p>
+      </div>
+    )
+  }
 
   return (
     <div className="page-container app-page">
@@ -64,7 +107,7 @@ export default function Home() {
       {/*<p className={styles.lead}>{t('home.subtitle')}</p>*/}
       {/*<p className={styles.welcome}>{t('home.welcome')}</p>*/}
       <div className={styles.cardsGrid}>
-        {categories.map((cat) => (
+        {categories.slice(0, 11).map((cat) => (
           <Link
             key={cat.code}
             to={cat.code === 'Xizmatlar' ? adsCategoryPath(cat.code) : (cat.hasChildren ? categoryPath(cat.code) : adsCategoryPath(cat.code))}
@@ -215,9 +258,21 @@ export default function Home() {
           </ul>
         )}
         {!adsLoading && ads.length > 0 && (
-          <Link to={ROUTES.ADS_MY} className={`${styles.adsMoreLink} btn btn-outline-primary btn-sm`}>
-            {t('home.allAds')}
-          </Link>
+          <div className={styles.adsFooter}>
+            {!adsLastPage && (
+              <button
+                type="button"
+                className={styles.showMoreBtn}
+                onClick={loadMoreAds}
+                disabled={adsLoadingMore}
+              >
+                {adsLoadingMore ? t('common.loading') : t('common.showMore')}
+              </button>
+            )}
+            <Link to={ROUTES.ADS_MY} className={styles.adsMoreLink}>
+              {t('home.allAds')}
+            </Link>
+          </div>
         )}
       </section>
     </div>

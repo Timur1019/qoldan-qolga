@@ -279,6 +279,15 @@ export default function MyAds() {
                     </Link>
                     <button
                       type="button"
+                      className={styles.rowDeleteBtn}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(ad) }}
+                      title={t('ads.deleteAd')}
+                      aria-label={t('ads.deleteAd')}
+                    >
+                      <i className="bi bi-trash" aria-hidden />
+                    </button>
+                    <button
+                      type="button"
                       className={styles.rowMenuBtn}
                       onClick={(e) => { e.preventDefault(); setOpenMenuId((id) => (id === ad.id ? null : ad.id)) }}
                       aria-expanded={openMenuId === ad.id}

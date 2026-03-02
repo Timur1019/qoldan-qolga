@@ -4,7 +4,6 @@ import { IdVerificationProvider } from './context/IdVerificationContext'
 import { AdDetail, AdsList, CategoryView, CreateAd, Favorites } from './features/ad'
 import {
   Home,
-  Dashboard,
   BusinessSignup,
   AdminDashboard,
   AdminUsers,
@@ -59,7 +58,7 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
+          <Route index element={<Navigate to="/dashboard/profile/edit" replace />} />
           <Route path="profile/edit" element={<EditProfile />} />
           <Route path="ads" element={<MyAds />} />
           <Route path="favorites" element={<Favorites />} />

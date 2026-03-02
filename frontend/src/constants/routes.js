@@ -45,7 +45,17 @@ export const PARAMS = {
   URGENT_BARGAIN: 'urgentBargain',
   CAN_DELIVER: 'canDeliver',
   GIVE_AWAY: 'giveAway',
+  BRAND: 'brandId',
+  /** Состояние: USED (Б/у) | NEW (Новое) | HANDMADE (Ручная работа) */
+  ITEM_CONDITION: 'itemCondition',
+  /** Ручная работа: true = только ручная работа, false = исключить */
+  HAND_MADE_ONLY: 'handMadeOnly',
+  /** Возможна аренда (для одежды/обуви) */
+  CAN_RENT: 'canRent',
 }
+
+/** Код корневой категории «Одежда и обувь» — от него зависят фильтры (состояние, аренда). */
+export const CLOTHING_ROOT_CODE = 'Odezhda_obuv'
 
 export function adsPath(id) {
   return `${ROUTES.ADS}/${id}`

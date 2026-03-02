@@ -20,7 +20,10 @@ public class AdDetailDto {
     private BigDecimal price;
     private String currency;
     private String category;
+    private String brandId;
+    private String itemCondition;
     private String phone;
+    private String telegramUsername;
     private String email;
     private String region;
     private String district;
@@ -32,6 +35,7 @@ public class AdDetailDto {
     private Boolean worksByContract;
     private Boolean urgentBargain;
     private Boolean giveAway;
+    private Boolean canRent;
     private String userId;
     private String userDisplayName;
     private Boolean sellerIsStore;

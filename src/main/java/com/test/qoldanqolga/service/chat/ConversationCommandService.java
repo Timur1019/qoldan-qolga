@@ -16,4 +16,7 @@ public interface ConversationCommandService {
     String getOrCreateSystemConversation(String userId);
 
     void deleteConversation(String conversationId, String userId);
+
+    /** Удаляет все диалоги по объявлению (при удалении объявления). */
+    void deleteAllConversationsByAdId(String adId);
 }

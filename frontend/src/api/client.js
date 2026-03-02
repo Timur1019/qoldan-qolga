@@ -12,12 +12,16 @@ function getToken() {
   return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY)
 }
 
-/** Собрать query-строку из объекта (пустые значения не попадают в URL). */
+/** Собрать query-строку из объекта (пустые значения не попадают в URL). Массивы передаются как несколько значений одного параметра. */
 export function buildQueryString(params) {
   if (!params || typeof params !== 'object') return ''
   const search = new URLSearchParams()
   Object.entries(params).forEach(([k, v]) => {
-    if (v != null && v !== '') search.set(k, String(v))
+    if (Array.isArray(v)) {
+      v.filter((item) => item != null && item !== '').forEach((item) => search.append(k, String(item)))
+    } else if (v != null && v !== '') {
+      search.set(k, String(v))
+    }
   })
   const str = search.toString()
   return str ? `?${str}` : ''
@@ -129,13 +133,16 @@ export const adminApi = {
     }),
 }
 
-/** Регионы, категории, баннеры главной — с бэкенда */
+/** Регионы, категории, бренды, баннеры главной — с бэкенда */
 export const referenceApi = {
   getRegions: () => apiRequest('/regions'),
   getCategories: () => apiRequest('/categories'),
   getCategory: (code) => apiRequest(`/categories/${encodeURIComponent(code)}`),
+  getCategoryBreadcrumb: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/breadcrumb`),
   getCategoryChildren: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/children`),
   getCategoriesForHome: () => apiRequest('/categories/home'),
+  getBrands: () => apiRequest('/brands'),
+  getBrandsByCategory: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/brands`),
   getHomePromoBanners: () => apiRequest('/home-promo-banners'),
 }
 
@@ -221,6 +228,25 @@ export const adsApi = {
     const headers = {}
     if (token) headers.Authorization = `Bearer ${token}`
     const fullUrl = API_ORIGIN ? `${API_ORIGIN}/api/ads/upload` : '/api/ads/upload'
+    const res = await fetch(fullUrl, {
+      method: 'POST',
+      headers,
+      body: formData,
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(data.message || res.statusText || 'Upload failed')
+    return data
+  },
+  uploadBatch: async (files) => {
+    if (!files?.length) return { urls: [] }
+    const formData = new FormData()
+    for (const file of files) {
+      if (file?.type?.startsWith('image/')) formData.append('files', file)
+    }
+    const token = getToken()
+    const headers = {}
+    if (token) headers.Authorization = `Bearer ${token}`
+    const fullUrl = API_ORIGIN ? `${API_ORIGIN}/api/ads/upload/batch` : '/api/ads/upload/batch'
     const res = await fetch(fullUrl, {
       method: 'POST',
       headers,

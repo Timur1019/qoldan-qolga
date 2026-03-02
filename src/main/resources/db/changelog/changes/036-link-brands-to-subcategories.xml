@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Привязка брендов к подкатегориям: при выборе «Мобильные телефоны» — только телефонные бренды,
+         «Телевизоры» — TV-бренды, «Ноутбуки» — ноутбучные и т.д. Бренды могут быть в нескольких категориях. -->
+
+    <!-- Бренды телефонов → Mobil_telefonlar -->
+    <changeSet id="036-link-phone-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Mobil_telefonlar'
+            AND b.slug IN ('apple','samsung','xiaomi','huawei','nokia','honor','oneplus','poco','redmi','realme','oppo','vivo','meizu','lg','motorola','sony-ericsson','blackberry','htc','google','nothing','zte','infinix','tecno','artel','fly','explay','erisson','bbk','bravis','inoi','iru','philips','sony','panasonic','tcl','asus','lenovo','desten','general','assistant')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <!-- Бренды телевизоров → Televizorlar -->
+    <changeSet id="036-link-tv-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Televizorlar'
+            AND b.slug IN ('samsung','lg','sony','philips','panasonic','tcl','xiaomi','hisense','sharp','toshiba','vestel','rolsen','artel','gorizont','zenit','elektron','rubin','beko','haier')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <!-- Бренды ноутбуков → Noutbuklar -->
+    <changeSet id="036-link-laptop-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Noutbuklar'
+            AND b.slug IN ('apple','asus','acer','lenovo','hp','dell','msi','huawei','xiaomi','samsung','lg','gigabyte','razer','microsoft','honor','realme','roverbook','ibm-thinkpad','fujitsu','compaq')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <!-- Бренды наушников → Quloqchinlar -->
+    <changeSet id="036-link-headphones-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Quloqchinlar'
+            AND b.slug IN ('apple','samsung','sony','jbl','beats','jabra','philips','marshall','xiaomi','huawei','jvc','creative','edifier','logitech','hyperx','nothing','artel')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <!-- Бренды планшетов → Planchetlar -->
+    <changeSet id="036-link-tablet-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Planchetlar'
+            AND b.slug IN ('apple','samsung','huawei','xiaomi','lenovo','asus','microsoft','prestigio','dell')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

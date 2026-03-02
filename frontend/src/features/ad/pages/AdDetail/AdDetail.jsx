@@ -5,7 +5,7 @@ import { useLang } from '../../../../context/LangContext'
 import { adsCategoryPath, sellerPath } from '../../../../constants/routes'
 import { useAdDetail } from '../../hooks/useAdDetail'
 import { useAdActions } from '../../hooks/useAdActions'
-import { usersApi, imageUrl } from '../../services/adApi'
+import { usersApi, imageUrl, referenceApi } from '../../services/adApi'
 import AdGallery from '../../components/AdGallery/AdGallery'
 import PricePanel from '../../components/PricePanel'
 import AdDescription from '../../components/AdDescription'
@@ -20,7 +20,7 @@ const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆',
 
 export default function AdDetail() {
   const { id } = useParams()
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const { isAuthenticated, user } = useAuth()
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [reportReason, setReportReason] = useState('')
@@ -28,6 +28,8 @@ export default function AdDetail() {
   const [askText, setAskText] = useState('')
   const [sellerSubscribed, setSellerSubscribed] = useState(null)
   const [phoneRevealed, setPhoneRevealed] = useState(false)
+  const [categoryName, setCategoryName] = useState(null)
+  const [regionName, setRegionName] = useState(null)
 
   const {
     ad,
@@ -47,6 +49,32 @@ export default function AdDetail() {
     if (!ad?.userId || ad.userId === user?.id || !isAuthenticated) return
     usersApi.getProfile(ad.userId).then((p) => setSellerSubscribed(p.subscribed ?? false)).catch(() => setSellerSubscribed(false))
   }, [ad?.userId, user?.id, isAuthenticated])
+
+  useEffect(() => {
+    if (!ad) {
+      setCategoryName(null)
+      setRegionName(null)
+      return
+    }
+    if (ad.category) {
+      referenceApi.getCategory(ad.category).then((c) => {
+        if (c) setCategoryName(lang === 'ru' ? c.nameRu : c.nameUz)
+        else setCategoryName(ad.category)
+      }).catch(() => setCategoryName(ad.category))
+    } else {
+      setCategoryName(null)
+    }
+    if (ad.region) {
+      referenceApi.getRegions().then((regions) => {
+        const list = Array.isArray(regions) ? regions : []
+        const found = list.find((r) => String(r?.code) === String(ad.region))
+        if (found) setRegionName(lang === 'ru' ? found.nameRu : found.nameUz)
+        else setRegionName(ad.region)
+      }).catch(() => setRegionName(ad.region))
+    } else {
+      setRegionName(null)
+    }
+  }, [ad?.id, ad?.category, ad?.region, lang])
 
   const handleReportClick = () => {
     if (actions.handleReport() === true) {
@@ -98,7 +126,8 @@ export default function AdDetail() {
     )
   }
 
-  const categoryLabel = ad.category || '—'
+  const categoryLabel = categoryName ?? ad.category ?? '—'
+  const regionLabel = regionName ?? ad.region ?? null
   const sellerDisplayName = sellerProfile?.displayName ?? ad.userDisplayName ?? t('ads.seller')
   const sellerAvatar = sellerProfile?.avatar
   const avgRating = reviewsSummary?.averageRating ?? 0
@@ -185,15 +214,20 @@ export default function AdDetail() {
                           <i className="bi bi-telephone me-1" aria-hidden /> {ad.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
                         </button>
                       )}
-                      <a
-                        href={`https://t.me/${(ad.phone || '').replace(/\D/g, '').slice(-9)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <i className="bi bi-send me-1" aria-hidden /> Telegram
-                      </a>
+                      {(ad.telegramUsername?.trim() || ((ad.phone || '').replace(/\D/g, '').length >= 9)) && (
+                        <a
+                          href={ad.telegramUsername?.trim()
+                            ? `https://t.me/${String(ad.telegramUsername).replace(/^@/, '').trim()}`
+                            : `https://t.me/+${(ad.phone || '').replace(/\D/g, '').slice(-12)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-outline-primary btn-sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i className="bi bi-send me-1" aria-hidden />
+                          {lang === 'ru' ? 'Написать в Telegram' : 'Telegramda yozish'}
+                        </a>
+                      )}
                     </div>
                   </div>
                 ) : null}
@@ -203,6 +237,7 @@ export default function AdDetail() {
               <AdDescription
                 ad={ad}
                 categoryLabel={categoryLabel}
+                regionLabel={regionLabel}
                 isAuthenticated={isAuthenticated}
                 isOwner={ad.userId === user?.id}
                 askText={askText}
@@ -225,7 +260,9 @@ export default function AdDetail() {
               <div className={styles.adMeta}>
                 <div className={styles.adMetaRow}>
                   <span className={styles.adMetaLabel}>{t('ads.adId')}</span>
-                  <span className={styles.adMetaValue}>{ad.id}</span>
+                  <span className={styles.adMetaValue} title={ad.id}>
+                    {ad.id ? String(ad.id).replace(/-/g, '').slice(0, 8).toUpperCase() : '—'}
+                  </span>
                 </div>
                 <div className={styles.adMetaRow}>
                   <span className={styles.adMetaLabel}>{t('ads.postedAt')}</span>

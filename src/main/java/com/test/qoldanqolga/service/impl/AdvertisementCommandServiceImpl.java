@@ -8,6 +8,7 @@ import com.test.qoldanqolga.model.Advertisement;
 import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.service.AdvertisementCommandService;
 import com.test.qoldanqolga.service.FavoriteService;
+import com.test.qoldanqolga.service.chat.ConversationCommandService;
 import com.test.qoldanqolga.service.component.AdImageService;
 import com.test.qoldanqolga.service.component.AdPermissionService;
 import com.test.qoldanqolga.service.validation.AdValidationService;
@@ -27,6 +28,7 @@ public class AdvertisementCommandServiceImpl implements AdvertisementCommandServ
     private final AdPermissionService adPermissionService;
     private final AdValidationService adValidationService;
     private final FavoriteService favoriteService;
+    private final ConversationCommandService conversationCommandService;
 
     @Override
     @Transactional
@@ -63,6 +65,7 @@ public class AdvertisementCommandServiceImpl implements AdvertisementCommandServ
                 .orElseThrow(() -> new ResourceNotFoundException("Объявление", id));
         adPermissionService.validateOwnership(ad, userId);
         favoriteService.removeAllByAdvertisementId(id);
+        conversationCommandService.deleteAllConversationsByAdId(id);
         advertisementRepository.delete(ad);
         LogUtil.info(AdvertisementCommandServiceImpl.class, "Ad deleted: id={} userId={}", id, userId);
     }

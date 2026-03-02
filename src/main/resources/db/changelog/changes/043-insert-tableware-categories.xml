@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Посуда и товары для кухни — корневая категория -->
+    <changeSet id="043-insert-posuda-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Idishlar va oshxona buyumlari', 'Посуда и товары для кухни', 'Posuda_i_kuhnya', 7, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <!-- Подкатегории Посуда и товары для кухни -->
+    <changeSet id="043-insert-posuda-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Stol jihozlash', 'Сервировка стола', 'Servirovka_stola', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ovqat tayyorlash', 'Приготовление пищи', 'Prigotovlenie_pishi', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mahsulotlarni saqlash, qadoqlash', 'Хранение продуктов, упаковка', 'Hranenie_upakovka', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ichimliklar tayyorlash', 'Приготовление напитков', 'Prigotovlenie_napitkov', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uy-ro''zg''or buyumlari', 'Хозяйственные товары', 'Hozyaystvennye_tovary', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Oshxona aksessuarlari', 'Кухонные аксессуары', 'Kuhonnye_aksessuary', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Maishiy kimyoviy moddalar', 'Бытовая химия', 'Bytovaya_himiya', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Posuda_drugoe', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Posuda_i_kuhnya' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

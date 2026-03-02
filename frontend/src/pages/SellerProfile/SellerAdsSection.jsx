@@ -25,7 +25,7 @@ export default function SellerAdsSection({
   onFavoriteClick,
   getFavoriteAriaLabel,
 }) {
-  const showFavorite = isAuthenticated && sellerId !== currentUserId
+  const showFavorite = sellerId != null && String(sellerId) !== String(currentUserId)
   const { t } = useLang()
   const filtered = activeTab === 'active'
     ? ads.filter((a) => a.status === STATUS_ACTIVE)
@@ -45,7 +45,7 @@ export default function SellerAdsSection({
       ) : (
         <ul className={styles.adsGrid}>
           {filtered.map((ad) => (
-            <li key={ad.id} className={styles.adCard}>
+            <li key={ad.id} className={`${styles.adCard} app-card app-card-hover`}>
               <Link to={adsPath(ad.id)} className={styles.adLink}>
                 <span className={styles.adImgWrap}>
                   <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
@@ -56,11 +56,15 @@ export default function SellerAdsSection({
                   />
                 </span>
                 <div className={styles.adBody}>
+                  <p className={styles.adPrice}>
+                    {formatPrice(ad.price, ad.currency)}
+                    {ad.isNegotiable && ` (${t('ads.negotiable')})`}
+                  </p>
                   {showFavorite && (
                     <button
                       type="button"
                       className={styles.favBtn}
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavoriteClick(ad) }}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavoriteClick(e, ad) }}
                       aria-label={getFavoriteAriaLabel(ad)}
                     >
                       <HeartIcon
@@ -71,10 +75,12 @@ export default function SellerAdsSection({
                     </button>
                   )}
                   <h2 className={styles.adTitle}>{ad.title}</h2>
-                  <p className={styles.adPrice}>{formatPrice(ad.price, ad.currency)}</p>
-                  <p className={styles.adMeta}>
-                    {[ad.region, formatAdCardDate(ad.createdAt, { today: t('profile.today'), yesterday: t('profile.yesterday') })].filter(Boolean).join(' · ')}
-                  </p>
+                  {ad.region && <p className={styles.adMeta}>{ad.region}</p>}
+                  {ad.createdAt && (
+                    <p className={styles.adDate}>
+                      {formatAdCardDate(ad.createdAt, { today: t('profile.today'), yesterday: t('profile.yesterday') })}
+                    </p>
+                  )}
                 </div>
               </Link>
             </li>

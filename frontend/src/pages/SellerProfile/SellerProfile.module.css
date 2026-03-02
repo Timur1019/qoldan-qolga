@@ -157,43 +157,13 @@
   color: #991b1b;
 }
 
-/* Редактировать — через Bootstrap .btn.btn-primary в JSX */
-
 .profileSince {
   margin: 0 0 1rem;
   font-size: var(--font-size-description);
   color: var(--color-text-secondary, #6b7280);
 }
 
-.subscribeBtn,
-.subscribeBtnActive {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.65rem 1.8rem;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-pill, 40px);
-  cursor: pointer;
-  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-}
-
-.subscribeBtn {
-  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
-}
-
-.subscribeBtnActive {
-  background: linear-gradient(180deg, #059669 0%, #047857 100%);
-}
-
-.subscribeBtn:hover,
-.subscribeBtnActive:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
+/* Кнопки профиля — общий стиль через Bootstrap .btn.btn-primary / .btn-outline-primary в JSX */
 
 /* Панель владельца: «Мои отзывы» (только при просмотре своего профиля) */
 .ownerPanelCard {
@@ -235,25 +205,6 @@
   margin: 0 0 0.75rem;
   font-size: var(--font-size-description);
   color: var(--color-text-secondary, #6b7280);
-}
-
-.leaveReviewBtn {
-  width: 100%;
-  padding: 0.65rem 1.25rem;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
-  color: #fff;
-  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
-  border: none;
-  border-radius: var(--radius-pill, 40px);
-  cursor: pointer;
-  box-shadow: var(--shadow-cta, 0 4px 12px rgba(0, 170, 255, 0.3));
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.leaveReviewBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 170, 255, 0.4);
 }
 
 .adsSection {
@@ -365,9 +316,9 @@
 
 .adTitle {
   margin: 0 0 0.25rem;
-  font-size: var(--font-size-small);
+  font-size: 13px;
   font-weight: var(--font-weight-normal);
-  line-height: 1.3;
+  line-height: 1.35;
   color: var(--color-text, #1a1a1a);
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -377,14 +328,21 @@
 
 .adPrice {
   margin: 0 0 0.25rem;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
   color: var(--color-text, #1a1a1a);
+  line-height: 1.3;
 }
 
 .adMeta {
   margin: 0;
-  font-size: var(--font-size-small);
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.adDate {
+  margin: 0.25rem 0 0;
+  font-size: 12px;
   color: var(--color-text-secondary, #6b7280);
 }
 

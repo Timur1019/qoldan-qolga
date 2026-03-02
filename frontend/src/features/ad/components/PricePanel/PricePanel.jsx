@@ -56,14 +56,18 @@ function PricePanel({
             <i className="bi bi-telephone me-1" aria-hidden /> {ad?.phone ? (maskPhone(ad.phone) ?? t('ads.phone')) : t('ads.phone')}
           </button>
         )}
-        <a
-          href={`https://t.me/${(ad?.phone || '').replace(/\D/g, '').slice(-9)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-outline-primary btn-sm"
-        >
-          <i className="bi bi-send me-1" aria-hidden /> Telegram
-        </a>
+        {((ad?.telegramUsername && String(ad.telegramUsername).trim()) || (ad?.phone && (ad.phone || '').replace(/\D/g, '').length >= 9)) && (
+          <a
+            href={ad?.telegramUsername?.trim()
+              ? `https://t.me/${String(ad.telegramUsername).replace(/^@/, '').trim()}`
+              : `https://t.me/+${(ad?.phone || '').replace(/\D/g, '').slice(-12)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-outline-primary btn-sm"
+          >
+            <i className="bi bi-send me-1" aria-hidden /> Telegram
+          </a>
+        )}
       </div>
       <div className="small text-muted mt-2 d-flex flex-wrap gap-2">
         <span>{t('ads.postedAt')}: {formatDate(ad?.createdAt)}</span>

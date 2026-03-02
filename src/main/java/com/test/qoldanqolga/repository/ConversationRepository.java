@@ -26,4 +26,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, Stri
            "LEFT JOIN FETCH c.buyer " +
            "WHERE c.buyerId = :userId OR a.userId = :userId ORDER BY c.createdAt DESC")
     List<Conversation> findAllByParticipant(@Param("userId") String userId);
+
+    List<Conversation> findAllByAdId(String adId);
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Возможна аренда (для одежды и обуви) -->
+    <changeSet id="048-add-can-rent" author="qoldan-qolga">
+        <addColumn tableName="advertisements">
+            <column name="can_rent" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Расширение длины item_condition для USED_LIKE_NEW, USED_GOOD, USED_FAIR -->
+    <changeSet id="048-extend-item-condition-length" author="qoldan-qolga">
+        <modifyDataType tableName="advertisements" columnName="item_condition" newDataType="VARCHAR(25)"/>
+    </changeSet>
+</databaseChangeLog>

@@ -99,7 +99,7 @@ export default function SellerProfileSidebar({
             canSubscribe && (
               <button
                 type="button"
-                className={profile.subscribed ? styles.subscribeBtnActive : styles.subscribeBtn}
+                className="btn btn-primary btn-sm"
                 onClick={onSubscribe}
               >
                 {profile.subscribed ? t('ads.youAreSubscribed') : t('ads.subscribe')}
@@ -124,7 +124,7 @@ export default function SellerProfileSidebar({
           <p className={styles.leaveReviewHint}>{t('reviews.leaveReviewHint')}</p>
           <button
             type="button"
-            className={styles.leaveReviewBtn}
+            className="btn btn-primary btn-sm w-100"
             onClick={onLeaveReview}
           >
             {t('reviews.leaveReview')}

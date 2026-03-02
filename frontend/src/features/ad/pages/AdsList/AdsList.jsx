@@ -6,13 +6,14 @@ import { useAuthModal } from '../../../../hooks'
 import { adsApi, referenceApi, chatApi, imageUrl } from '../../services/adApi'
 import { useFavoriteClick } from '../../../../hooks'
 import { formatPrice, formatAdCardDate } from '../../../../utils/formatters'
-import { PARAMS, ROUTES, adsPath, adsCategoryPath, categoryPathWithParams, adsCategoryPathWithParams, sellerPath } from '../../../../constants/routes'
+import { PARAMS, ROUTES, CLOTHING_ROOT_CODE, adsPath, adsCategoryPath, categoryPathWithParams, adsCategoryPathWithParams, sellerPath } from '../../../../constants/routes'
 import HeartIcon from '../../../../components/ui/HeartIcon'
 import AdsFiltersSidebar from '../../components/AdsFiltersSidebar'
 import CardGallery from '../../components/CardGallery'
+import bannerImg from '../../../../img/baner/baner.png'
 import styles from './AdsList.module.css'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 40
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 function RatingStars({ averageRating, totalReviews, t }) {
@@ -43,9 +44,10 @@ export default function AdsList() {
   const [searchParams, setSearchParams] = useSearchParams()
   const category = searchParams.get(PARAMS.CATEGORY) || ''
   const region = searchParams.get(PARAMS.REGION) || ''
+  const brandId = searchParams.get(PARAMS.BRAND) || ''
   const query = searchParams.get(PARAMS.QUERY) || ''
   const page = Math.max(0, parseInt(searchParams.get(PARAMS.PAGE) || '0', 10) || 0)
-  const sellerType = searchParams.get(PARAMS.SELLER_TYPE) || ''
+  const sellerTypes = searchParams.getAll(PARAMS.SELLER_TYPE) || []
   const hasLicense = searchParams.get(PARAMS.HAS_LICENSE)
   const worksByContract = searchParams.get(PARAMS.WORKS_BY_CONTRACT)
   const priceFrom = searchParams.get(PARAMS.PRICE_FROM) || ''
@@ -54,6 +56,11 @@ export default function AdsList() {
   const urgentBargain = searchParams.get(PARAMS.URGENT_BARGAIN)
   const canDeliver = searchParams.get(PARAMS.CAN_DELIVER)
   const giveAway = searchParams.get(PARAMS.GIVE_AWAY)
+  const itemConditions = searchParams.getAll(PARAMS.ITEM_CONDITION) || []
+  const handMadeOnlyParam = searchParams.get(PARAMS.HAND_MADE_ONLY)
+  const handMadeOnly = handMadeOnlyParam === 'true' ? true : handMadeOnlyParam === 'false' ? false : null
+  const canRentParam = searchParams.get(PARAMS.CAN_RENT)
+  const canRent = canRentParam === 'true'
   const [regions, setRegions] = useState([])
   const [categories, setCategories] = useState([])
   const [sidebarCategories, setSidebarCategories] = useState([])
@@ -64,7 +71,7 @@ export default function AdsList() {
   const [error, setError] = useState('')
   const [phoneRevealedIds, setPhoneRevealedIds] = useState(new Set())
   const [filterDraft, setFilterDraft] = useState({
-    sellerType: '',
+    sellerType: [],
     hasLicense: '',
     worksByContract: '',
     priceFrom: '',
@@ -73,12 +80,17 @@ export default function AdsList() {
     urgentBargain: false,
     canDeliver: false,
     giveAway: false,
+    brandId: '',
+    itemCondition: [],
+    handMadeOnly: '',
+    canRent: '',
   })
+  const [brands, setBrands] = useState([])
   const hasCategory = Boolean(category)
 
   useEffect(() => {
     setFilterDraft({
-      sellerType: searchParams.get(PARAMS.SELLER_TYPE) || '',
+      sellerType: searchParams.getAll(PARAMS.SELLER_TYPE) || [],
       hasLicense: searchParams.get(PARAMS.HAS_LICENSE) || '',
       worksByContract: searchParams.get(PARAMS.WORKS_BY_CONTRACT) || '',
       priceFrom: searchParams.get(PARAMS.PRICE_FROM) || '',
@@ -87,6 +99,10 @@ export default function AdsList() {
       urgentBargain: searchParams.get(PARAMS.URGENT_BARGAIN) === 'true',
       canDeliver: searchParams.get(PARAMS.CAN_DELIVER) === 'true',
       giveAway: searchParams.get(PARAMS.GIVE_AWAY) === 'true',
+      brandId: searchParams.get(PARAMS.BRAND) || '',
+      itemCondition: searchParams.getAll(PARAMS.ITEM_CONDITION) || [],
+      handMadeOnly: searchParams.get(PARAMS.HAND_MADE_ONLY) === 'true' ? true : searchParams.get(PARAMS.HAND_MADE_ONLY) === 'false' ? false : '',
+      canRent: searchParams.get(PARAMS.CAN_RENT) === 'true' ? true : searchParams.get(PARAMS.CAN_RENT) === 'false' ? false : '',
     })
   }, [searchParams])
 
@@ -130,47 +146,22 @@ export default function AdsList() {
       setCategoryBreadcrumb([])
       return
     }
-    referenceApi.getCategory(category).then(async (info) => {
+    referenceApi.getCategoryBreadcrumb(category).then((path) => {
+      setCategoryBreadcrumb(Array.isArray(path) ? path : [])
+    }).catch(() => setCategoryBreadcrumb([]))
+
+    referenceApi.getCategory(category).then((info) => {
       setCurrentCategoryInfo(info || null)
       if (!info) {
-        setCategoryBreadcrumb([])
         setSidebarCategories([])
         return
       }
-      const path = [{ code: info.code, nameRu: info.nameRu, nameUz: info.nameUz }]
-      let parentCode = info.parentCode ?? info.parent?.code
-      let parentId = info.parentId ?? info.parent?.id
-      while (parentCode || parentId) {
-        try {
-          if (parentCode) {
-            const parent = await referenceApi.getCategory(parentCode)
-            if (!parent) break
-            path.unshift({ code: parent.code, nameRu: parent.nameRu, nameUz: parent.nameUz })
-            parentCode = parent.parentCode ?? parent.parent?.code
-            parentId = parent.parentId ?? parent.parent?.id
-          } else if (parentId != null) {
-            const all = await referenceApi.getCategories().catch(() => [])
-            const flatten = (list) => (Array.isArray(list) ? list.flatMap((c) => [c, ...flatten(c.children || [])]) : [])
-            const flat = Array.isArray(all) ? (all.some((c) => (c.children || []).length > 0) ? flatten(all) : all) : []
-            const parent = flat.find((c) => c.id === parentId || c.id === Number(parentId))
-            if (!parent || !parent.code) break
-            path.unshift({ code: parent.code, nameRu: parent.nameRu, nameUz: parent.nameUz })
-            parentCode = parent.parentCode ?? parent.parent?.code
-            parentId = parent.parentId ?? parent.parent?.id
-          } else break
-        } catch {
-          break
-        }
-      }
-      setCategoryBreadcrumb(path)
-      /* В сайдбаре — подкатегории текущей категории (по клику переход) */
       referenceApi.getCategoryChildren(category).then((list) => {
         const listArr = Array.isArray(list) ? list : []
         setSidebarCategories(listArr.length > 0 ? listArr : [info])
       }).catch(() => setSidebarCategories([info]))
     }).catch(() => {
       setCurrentCategoryInfo(null)
-      setCategoryBreadcrumb([])
       referenceApi.getCategory(category).then((info) => {
         setCurrentCategoryInfo(info || null)
         referenceApi.getCategoryChildren(category).then((list) => {
@@ -182,11 +173,38 @@ export default function AdsList() {
   }, [hasCategory, category])
 
   useEffect(() => {
+    if (!category) {
+      setBrands([])
+      return
+    }
+    referenceApi.getBrandsByCategory(category).then((list) => {
+      const arr = Array.isArray(list) ? list : []
+      setBrands(arr)
+      // Сброс бренда в URL, если выбранный бренд не входит в список по новой категории
+      const currentBrandId = searchParams.get(PARAMS.BRAND)
+      if (currentBrandId && arr.length > 0 && !arr.some((b) => b.id === currentBrandId)) {
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete(PARAMS.BRAND)
+          return next
+        }, { replace: true })
+      }
+    }).catch(() => setBrands([]))
+  }, [category])
+
+  // Сериализуем массивы из URL, чтобы не подставлять новые ссылки на каждый рендер (иначе эффект крутится бесконечно)
+  const sellerTypesKey = (searchParams.getAll(PARAMS.SELLER_TYPE) || []).join(',')
+  const itemConditionsKey = (searchParams.getAll(PARAMS.ITEM_CONDITION) || []).join(',')
+
+  useEffect(() => {
+    const st = searchParams.getAll(PARAMS.SELLER_TYPE) || []
+    const ic = searchParams.getAll(PARAMS.ITEM_CONDITION) || []
     const params = { page, size: PAGE_SIZE }
     if (category) params.category = category
     if (region) params.region = region
+    if (brandId) params.brandId = brandId
     if (query.trim()) params.q = query.trim()
-    if (sellerType) params.sellerType = sellerType
+    if (st.length > 0) params.sellerType = st
     if (hasLicense === 'true') params.hasLicense = true
     if (hasLicense === 'false') params.hasLicense = false
     if (worksByContract === 'true') params.worksByContract = true
@@ -197,13 +215,18 @@ export default function AdsList() {
     if (urgentBargain === 'true') params.urgentBargain = true
     if (canDeliver === 'true') params.canDeliver = true
     if (giveAway === 'true') params.giveAway = true
+    if (ic.length > 0) params.itemCondition = ic
+    if (handMadeOnly === true) params.handMadeOnly = true
+    if (handMadeOnly === false) params.handMadeOnly = false
+    if (canRentParam === 'true') params.canRent = true
+    if (canRentParam === 'false') params.canRent = false
     setLoading(true)
     adsApi
       .list(params)
       .then(setData)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
-  }, [category, region, query, page, sellerType, hasLicense, worksByContract, priceFrom, priceTo, currency, urgentBargain, canDeliver, giveAway])
+  }, [category, region, brandId, query, page, sellerTypesKey, hasLicense, worksByContract, priceFrom, priceTo, currency, urgentBargain, canDeliver, giveAway, itemConditionsKey, handMadeOnly, canRentParam])
 
   const setPage = (newPage) => {
     const next = new URLSearchParams(searchParams)
@@ -222,10 +245,28 @@ export default function AdsList() {
 
   const ads = data.content || []
 
+  if (loading && ads.length === 0) {
+    return (
+      <div className={styles.globalLoading} aria-busy="true">
+        <span className={styles.globalLoadingSpinner} aria-hidden />
+        <p className={styles.globalLoadingText}>{t('common.loading')}</p>
+      </div>
+    )
+  }
+
   const setRegion = (code) => {
     const next = new URLSearchParams(searchParams)
     if (code) next.set(PARAMS.REGION, code)
     else next.delete(PARAMS.REGION)
+    next.delete(PARAMS.PAGE)
+    setSearchParams(next)
+  }
+
+  const setBrandId = (id) => {
+    const next = new URLSearchParams(searchParams)
+    if (id) next.set(PARAMS.BRAND, id)
+    else next.delete(PARAMS.BRAND)
+    next.delete(PARAMS.PAGE)
     setSearchParams(next)
   }
 
@@ -233,8 +274,14 @@ export default function AdsList() {
     const next = new URLSearchParams(searchParams)
     next.delete(PARAMS.PAGE)
     Object.entries(filters).forEach(([k, v]) => {
-      if (v != null && v !== '') next.set(k, String(v))
-      else next.delete(k)
+      if (Array.isArray(v)) {
+        next.delete(k)
+        v.filter((x) => x != null && x !== '').forEach((x) => next.append(k, String(x)))
+      } else if (v != null && v !== '') {
+        next.set(k, String(v))
+      } else {
+        next.delete(k)
+      }
     })
     setSearchParams(next, { replace: true })
   }
@@ -248,6 +295,10 @@ export default function AdsList() {
 
   const categoryName = (c) => (c ? (lang === 'ru' ? c.nameRu : c.nameUz) : '')
   const currentCategory = currentCategoryInfo || [...categories, ...sidebarCategories].find((c) => c.code === category)
+  const isClothingCategory = Boolean(
+    category === CLOTHING_ROOT_CODE ||
+    (Array.isArray(categoryBreadcrumb) && categoryBreadcrumb.some((c) => c.code === CLOTHING_ROOT_CODE))
+  )
 
   const formatPhone = (phone) => {
     if (!phone) return ''
@@ -376,23 +427,25 @@ export default function AdsList() {
           />
         </span>
         <div className={styles.cardBody}>
-          <button
-            type="button"
-            className={styles.favoriteBtn}
-            onClick={(e) => handleFavoriteClick(e, ad)}
-            aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
-          >
-            <HeartIcon
-              filled={!!ad.favorite}
-              className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
-              size={18}
-            />
-          </button>
+          <div className={styles.cardPriceRow}>
+            <p className={styles.cardPrice}>
+              {formatPrice(ad.price, ad.currency)}
+              {ad.isNegotiable && ` (${t('ads.negotiable')})`}
+            </p>
+            <button
+              type="button"
+              className={styles.favoriteBtn}
+              onClick={(e) => handleFavoriteClick(e, ad)}
+              aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
+            >
+              <HeartIcon
+                filled={!!ad.favorite}
+                className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
+                size={18}
+              />
+            </button>
+          </div>
           <h2 className={styles.cardTitle}>{ad.title}</h2>
-          <p className={styles.cardPrice}>
-            {formatPrice(ad.price, ad.currency)}
-            {ad.isNegotiable && ` (${t('ads.negotiable')})`}
-          </p>
           {(ad.region || ad.category) && (
             <p className={styles.cardMeta}>
               {ad.category}
@@ -446,25 +499,34 @@ export default function AdsList() {
             regions={regions}
             sidebarCategories={sidebarCategories}
             currentCategoryCode={category}
+            sidebarTitle={currentCategory ? categoryName(currentCategory) : t('ads.adsInUzbekistan')}
             filterDraft={filterDraft}
             setFilterDraft={setFilterDraft}
             region={region}
             setRegion={setRegion}
+            brandId={brandId}
+            setBrandId={setBrandId}
+            isClothingCategory={isClothingCategory}
             onApply={() => applyFilters({
               [PARAMS.CATEGORY]: category || undefined,
               [PARAMS.REGION]: region || undefined,
+              [PARAMS.BRAND]: filterDraft.brandId || undefined,
               [PARAMS.QUERY]: query || undefined,
-              [PARAMS.SELLER_TYPE]: filterDraft.sellerType || undefined,
-              [PARAMS.HAS_LICENSE]: filterDraft.hasLicense || undefined,
-              [PARAMS.WORKS_BY_CONTRACT]: filterDraft.worksByContract || undefined,
+              [PARAMS.SELLER_TYPE]: (Array.isArray(filterDraft.sellerType) && filterDraft.sellerType.length > 0) ? filterDraft.sellerType : undefined,
+              [PARAMS.HAS_LICENSE]: filterDraft.hasLicense === true || filterDraft.hasLicense === 'true' ? 'true' : filterDraft.hasLicense === false || filterDraft.hasLicense === 'false' ? 'false' : undefined,
+              [PARAMS.WORKS_BY_CONTRACT]: filterDraft.worksByContract === true || filterDraft.worksByContract === 'true' ? 'true' : filterDraft.worksByContract === false || filterDraft.worksByContract === 'false' ? 'false' : undefined,
               [PARAMS.PRICE_FROM]: filterDraft.priceFrom || undefined,
               [PARAMS.PRICE_TO]: filterDraft.priceTo || undefined,
               [PARAMS.CURRENCY]: filterDraft.currency === 'FROM_AD' ? undefined : filterDraft.currency || undefined,
               [PARAMS.URGENT_BARGAIN]: filterDraft.urgentBargain ? 'true' : undefined,
               [PARAMS.CAN_DELIVER]: filterDraft.canDeliver ? 'true' : undefined,
               [PARAMS.GIVE_AWAY]: filterDraft.giveAway ? 'true' : undefined,
+              [PARAMS.ITEM_CONDITION]: (Array.isArray(filterDraft.itemCondition) && filterDraft.itemCondition.length > 0) ? filterDraft.itemCondition : undefined,
+              [PARAMS.HAND_MADE_ONLY]: filterDraft.handMadeOnly === true ? 'true' : filterDraft.handMadeOnly === false ? 'false' : undefined,
+              [PARAMS.CAN_RENT]: filterDraft.canRent === true ? 'true' : filterDraft.canRent === false ? 'false' : undefined,
             })}
             onReset={resetFilters}
+            brands={brands}
             buildCategoryLink={(c) => categoryPathWithParams(c, searchParams)}
             buildAdsLink={(c) => adsCategoryPathWithParams(c, searchParams)}
             t={t}
@@ -491,20 +553,25 @@ export default function AdsList() {
             </div>
           )}
           {hasCategory && (
-            <div className="app-card d-flex align-items-center justify-content-between gap-3 p-3 mb-3">
-              <p className="mb-0 fw-semibold">{t('ads.sellAndEarn')}</p>
-              <Link to="/ads/create" className="btn btn-primary">{t('ads.postAd')}</Link>
+            <div className={`${styles.sellBanner} app-card`}>
+              <div className={styles.sellBannerText}>
+                <p className={styles.sellBannerTitle}>{t('ads.sellAndEarn')}</p>
+                <p className={styles.sellBannerSubtitle}>{t('profile.ctaReviewsHint')}</p>
+              </div>
+              <div className={styles.sellBannerImgWrap}>
+                <img src={bannerImg} alt="" className={styles.sellBannerImg} />
+              </div>
+              <div className={styles.sellBannerActions}>
+                <Link to={ROUTES.ADS_CREATE} className="btn btn-primary btn-lg text-white">
+                  {t('ads.postAd')}
+                </Link>
+              </div>
             </div>
           )}
           <h1 className="h2 mb-3">
             {hasCategory ? (currentCategory ? categoryName(currentCategory) : t('nav.services')) : t('ads.listTitle')}
           </h1>
-          {loading && ads.length === 0 ? (
-            <div className={styles.listLoading} aria-busy="true">
-              <span className={styles.listLoadingSpinner} aria-hidden />
-              <p>{t('common.loading')}</p>
-            </div>
-          ) : ads.length === 0 ? (
+          {ads.length === 0 ? (
             <p className={styles.noAds}>{t('ads.noAds')}</p>
           ) : (
             <div className={styles.listWrap}>
@@ -529,39 +596,18 @@ export default function AdsList() {
               )}
             </div>
           )}
-          {data.totalPages > 1 && (
-            <nav className="mt-3" aria-label={t('ads.pagination')}>
-              <ul className="pagination pagination-sm mb-0">
-                <li className="page-item" style={{ minWidth: '2.5rem', textAlign: 'center' }}>
-                  <span className="page-link border-0 bg-transparent small">
-                    {page + 1} / {data.totalPages}
-                    {data.totalElements != null && ` (${data.totalElements})`}
-                  </span>
-                </li>
-                <li className="page-item">
-                  <button
-                    type="button"
-                    className="page-link"
-                    onClick={() => setPage(page - 1)}
-                    disabled={data.first ?? page <= 0}
-                    aria-label={t('ads.prevPage')}
-                  >
-                    <i className="bi bi-chevron-left" aria-hidden />
-                  </button>
-                </li>
-                <li className="page-item">
-                  <button
-                    type="button"
-                    className="page-link"
-                    onClick={() => setPage(page + 1)}
-                    disabled={data.last ?? page >= data.totalPages - 1}
-                    aria-label={t('ads.nextPage')}
-                  >
-                    <i className="bi bi-chevron-right" aria-hidden />
-                  </button>
-                </li>
-              </ul>
-            </nav>
+          {ads.length > 0 && !data.last && (
+            <div className={styles.showMoreWrap}>
+              <button
+                type="button"
+                className={styles.showMoreBtn}
+                onClick={() => setPage(page + 1)}
+                disabled={loading}
+                aria-label={t('common.showMore')}
+              >
+                {loading ? t('common.loading') : t('common.showMore')}
+              </button>
+            </div>
           )}
         </main>
       </div>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Одежда и обувь — корневая категория -->
+    <changeSet id="047-insert-odezhda-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Kiyim va poyabzal', 'Одежда и обувь', 'Odezhda_obuv', 9, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <!-- Женская одежда -->
+    <changeSet id="047-insert-zhenskaya-odezhda" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ayollar kiyimi', 'Женская одежда', 'Zhenskaya_odezhda', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Odezhda_obuv' LIMIT 1;</sql>
+    </changeSet>
+    <changeSet id="047-insert-zhenskaya-odezhda-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sport kiyimlari', 'Спортивная одежда', 'Sport_odezhda', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Chaponlar', 'Чапаны', 'Chapany', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shortilar', 'Шорты', 'Shorty', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ustki ayollar kiyimi', 'Верхняя женская одежда', 'Verkhnyaya_zhenskaya', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ko''ylaklar', 'Платья', 'Platya', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tunikalar', 'Туники', 'Tuniki', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yubkalar', 'Юбки', 'Yubki', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tolstovki va svitshotlar', 'Толстовки и свитшоты', 'Tolstovki_svitshoty', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Djemperlar, sviterlar, kardiganlar', 'Джемперы, свитеры, кардиганы', 'Djempery_svitery', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Abaya', 'Абайа', 'Abaya', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Pidjaklar va kostyumlar', 'Пиджаки и костюмы', 'Pidjaki_kostyumy', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shimlar', 'Брюки', 'Bryuki', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Jinsilar', 'Джинсы', 'Dzhinsy', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ichki kiyimlar', 'Нижнее бельё', 'Nizhnee_belyo', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Peniuar', 'Пеньюар', 'Peniuar', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'To''y ko''ylaklari va kostyumlar', 'Свадебные платья и костюмы', 'Svadebnye_platya', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ko''ylaklar va bluzkalar', 'Рубашки и блузки', 'Rubashki_bluzki', 17, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Toplar va futbolkalar', 'Топы и футболки', 'Topy_futbolki', 18, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Suzish kostyumlari', 'Купальники', 'Kupalniki', 19, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Zhenskaya_odezhda_drugoe', 20, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_odezhda' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Женская обувь -->
+    <changeSet id="047-insert-zhenskaya-obuv" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ayollar poyabzali', 'Женская обувь', 'Zhenskaya_obuv', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Odezhda_obuv' LIMIT 1;</sql>
+    </changeSet>
+    <changeSet id="047-insert-zhenskaya-obuv-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kedi', 'Кеды', 'Kedy', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tufli', 'Туфли', 'Tufli', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Etiklar', 'Сапоги', 'Sapogi', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sandallar', 'Босоножки', 'Bosonozhki', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Botilonlar', 'Ботильоны', 'Botilony', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Botinkalar va yarim botinkalar', 'Ботинки и полуботинки', 'Botinki_polubotinki', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Krossovki va kedi', 'Кроссовки и кеды', 'Krossovki_kedy', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yarim etiklar', 'Полусапоги', 'Polusapogi', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Baletkilar', 'Балетки', 'Baletki', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uggi, valenki, dutiklar', 'Угги, валенки, дутики', 'Uggi_valenki_dutiki', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sabo va myuli', 'Сабо и мюли', 'Sabo_myuli', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Rezina poyabzal', 'Резиновая обувь', 'Rezinovaya_obuv', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mokasini va loferlar', 'Мокасины и лоферы', 'Mokasiny_lofery', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sandaletlar', 'Сандали', 'Sandali', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shlepantsi va slantsi', 'Шлёпанцы и сланцы', 'Shlepantsy_slancy', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uy poyabzali', 'Домашняя обувь', 'Domashnyaya_obuv', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sport poyabzali', 'Спортивная обувь', 'Sport_obuv', 17, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sliponlar va espadrilli', 'Слипоны и эспадрильи', 'Slipony_espadrilli', 18, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kroksi', 'Кроксы', 'Kroksi', 19, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Zhenskaya_obuv_drugoe', 20, false, id, NOW(), NOW() FROM categories WHERE code = 'Zhenskaya_obuv' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Мужская одежда -->
+    <changeSet id="047-insert-muzhskaya-odezhda" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Erkaklar kiyimi', 'Мужская одежда', 'Muzhskaya_odezhda', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Odezhda_obuv' LIMIT 1;</sql>
+    </changeSet>
+    <changeSet id="047-insert-muzhskaya-odezhda-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ustki erkaklar kiyimi', 'Верхняя мужская одежда', 'Verkhnyaya_muzhskaya', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ko''ftalar va futbolkalar', 'Кофты и футболки', 'Kofty_futbolki', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Pidjaklar va kostyumlar', 'Пиджаки и костюмы', 'Muzh_pidjaki_kostyumy', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Jinsilar', 'Джинсы', 'Muzh_dzhinsy', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shimlar', 'Брюки', 'Muzh_bryuki', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ko''ylaklar', 'Рубашки', 'Muzh_rubashki', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sport kostyumlari', 'Спортивные костюмы', 'Sport_kostyumy', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Chaponlar', 'Чапаны', 'Muzh_chapany', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shortilar', 'Шорты', 'Muzh_shorty', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ichki kiyimlar', 'Нижнее бельё', 'Muzh_nizhnee_belyo', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Muzhskaya_odezhda_drugoe', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_odezhda' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Мужская обувь -->
+    <changeSet id="047-insert-muzhskaya-obuv" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Erkaklar poyabzali', 'Мужская обувь', 'Muzhskaya_obuv', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Odezhda_obuv' LIMIT 1;</sql>
+    </changeSet>
+    <changeSet id="047-insert-muzhskaya-obuv-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Krossovkilar', 'Кроссовки', 'Muzh_krossovki', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Botinkalar va yarim botinkalar', 'Ботинки и полуботинки', 'Muzh_botinki', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tufli', 'Туфли', 'Muzh_tufli', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kedi', 'Кеды', 'Muzh_kedy', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Etiklar va yarim etiklar', 'Сапоги и полусапоги', 'Muzh_sapogi', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mokasini va loferlar', 'Мокасины и лоферы', 'Muzh_mokasiny', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sport poyabzali', 'Спортивная обувь', 'Muzh_sport_obuv', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uggi, valenki, dutiklar', 'Угги, валенки, дутики', 'Muzh_uggi_valenki', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ish poyabzali', 'Рабочая обувь', 'Rabochaya_obuv', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Rezina poyabzal', 'Резиновая обувь', 'Muzh_rezinovaya_obuv', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sandaletlar', 'Сандалии', 'Muzh_sandali', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shlepantsi va slantsi', 'Шлёпанцы и сланцы', 'Muzh_shlepantsy', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uy poyabzali', 'Домашняя обувь', 'Muzh_domashnyaya_obuv', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sliponlar va espadrilli', 'Слипоны и эспадрильи', 'Muzh_slipony', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kroksi', 'Кроксы', 'Muzh_kroksi', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Muzhskaya_obuv_drugoe', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Muzhskaya_obuv' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

@@ -63,8 +63,9 @@ public class AdvertisementController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String region,
+            @RequestParam(required = false) String brandId,
             @RequestParam(required = false) String q,
-            @RequestParam(required = false) String sellerType,
+            @RequestParam(required = false) List<String> sellerType,
             @RequestParam(required = false) Boolean hasLicense,
             @RequestParam(required = false) Boolean worksByContract,
             @RequestParam(required = false) BigDecimal priceFrom,
@@ -73,6 +74,9 @@ public class AdvertisementController {
             @RequestParam(required = false) Boolean urgentBargain,
             @RequestParam(required = false) Boolean canDeliver,
             @RequestParam(required = false) Boolean giveAway,
+            @RequestParam(required = false) List<String> itemCondition,
+            @RequestParam(required = false) Boolean handMadeOnly,
+            @RequestParam(required = false) Boolean canRent,
             @PageableDefault(size = 20, sort = "createdAt") Pageable pageable,
             @AuthenticationPrincipal UserDetails user
     ) {
@@ -80,6 +84,7 @@ public class AdvertisementController {
                 .status(status)
                 .category(category)
                 .region(region)
+                .brandId(brandId)
                 .query(q)
                 .sellerType(sellerType)
                 .hasLicense(hasLicense)
@@ -90,6 +95,9 @@ public class AdvertisementController {
                 .urgentBargain(urgentBargain)
                 .canDeliver(canDeliver)
                 .giveAway(giveAway)
+                .itemCondition(itemCondition)
+                .handMadeOnly(handMadeOnly)
+                .canRent(canRent)
                 .build();
         String userId = user != null ? user.getUsername() : null;
         return ResponseEntity.ok(advertisementService.list(params, userId, pageable));

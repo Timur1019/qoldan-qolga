@@ -27,7 +27,7 @@ export default function CardGallery({ imageUrls = [], className, imageWrapClassN
         className={imageWrapClassName}
         onMouseMove={handleMouseMove}
       >
-        <img src={imageUrl(mainUrl)} alt="" className={styles.image} />
+        <img src={imageUrl(mainUrl)} alt="" className={styles.image} loading="lazy" decoding="async" />
       </span>
       {urls.length > 1 && (
         <span className={styles.dots} role="tablist" aria-hidden>

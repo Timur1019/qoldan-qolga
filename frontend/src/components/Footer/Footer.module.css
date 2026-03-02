@@ -1,0 +1,255 @@
+.footer {
+  margin-top: auto;
+  background: #fff;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  padding: 2rem 0;
+}
+
+.footerInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .footerInner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.footerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.regionsSection {
+  margin: 0;
+}
+
+.regionsTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+}
+
+.regionsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.35rem 1rem;
+}
+
+.regionLink {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #6b7280);
+  text-decoration: none;
+}
+
+.regionLink:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.moreRegionsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  padding: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.moreRegionsBtn:hover {
+  color: var(--color-primary);
+}
+
+.moreRegionsBtn i {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+}
+
+.navLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.navLink {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #6b7280);
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.socialAndLang {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.socialBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.socialBtn:hover {
+  background: #ffffff;
+  color: var(--color-primary);
+}
+
+.socialBtn i {
+  font-size: 1.1rem;
+}
+
+.langSwitch {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.langBtn,
+.langBtnActive {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  background: #fff;
+  color: var(--color-text-secondary, #6b7280);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.langBtn:hover {
+  background: #f9fafb;
+  color: var(--color-text);
+}
+
+.langBtnActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.langBtnActive:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #ffffff;
+}
+
+.langFlag {
+  display: none;
+}
+
+/* Блок приложения */
+.appSection {
+  margin: 0;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .appSection {
+    text-align: left;
+  }
+}
+
+.appTitle {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+}
+
+.appContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .appContent {
+    flex-direction: column;
+  }
+}
+
+.qrPlaceholder {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  min-height: 80px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qrPlaceholderText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.appButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.appStoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #04492d;
+  border: none;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(4, 73, 45, 0.35);
+}
+
+.appStoreBtn:hover {
+  background: var(--color-primary-hover, #033421);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.appStoreBtn i {
+  font-size: 1.25rem;
+  color: #ffffff;
+}

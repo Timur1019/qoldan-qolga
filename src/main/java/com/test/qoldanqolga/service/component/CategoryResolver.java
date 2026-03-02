@@ -19,8 +19,9 @@ public class CategoryResolver {
     private final CategoryRepository categoryRepository;
 
     /**
-     * Возвращает список кодов для фильтрации: выбранная категория + её дочерние + код родителя (если есть).
-     * Так объявления с категорией родителя (например Xizmatlar) отображаются и при выборе подкатегории.
+     * Возвращает список кодов для фильтрации: выбранная категория + все потомки (рекурсивно).
+     * При выборе «Электроника» вернёт Elektronika, Telefonlar_aloqa, Mobil_telefonlar, Televizorlar и т.д. —
+     * чтобы выводились все объявления из раздела и подразделов.
      */
     public List<String> resolveCategoryCodes(String categoryCode) {
         if (categoryCode == null || categoryCode.isBlank()) {
@@ -30,22 +31,25 @@ public class CategoryResolver {
                 .map(cat -> {
                     List<String> result = new ArrayList<>();
                     result.add(cat.getCode());
-                    categoryRepository.findByParentId(cat.getId()).stream()
-                            .map(Category::getCode)
-                            .forEach(result::add);
-                    if (cat.getParentId() != null && !cat.getParentId().isBlank()) {
-                        categoryRepository.findById(cat.getParentId())
-                                .map(Category::getCode)
-                                .ifPresent(parentCode -> {
-                                    if (!result.contains(parentCode)) {
-                                        result.add(parentCode);
-                                    }
-                                });
-                    }
+                    collectDescendantCodes(cat.getId(), result);
                     return result;
                 })
                 .orElse(List.of(categoryCode));
         LogUtil.debug(CategoryResolver.class, "Category resolved: code={} resultSize={}", categoryCode, codes.size());
         return codes;
+    }
+
+    /** Рекурсивно добавляет коды всех дочерних категорий в result. */
+    private void collectDescendantCodes(String parentId, List<String> result) {
+        if (parentId == null || parentId.isBlank()) {
+            return;
+        }
+        List<Category> children = categoryRepository.findByParentIdOrderBySortOrderAscNameUzAsc(parentId);
+        for (Category child : children) {
+            if (child.getCode() != null && !result.contains(child.getCode())) {
+                result.add(child.getCode());
+                collectDescendantCodes(child.getId(), result);
+            }
+        }
     }
 }

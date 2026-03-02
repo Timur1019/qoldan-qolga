@@ -17,7 +17,8 @@ public class AdListParams {
     private String category;
     private String region;
     private String query;
-    private String sellerType;
+    /** Несколько значений: фильтр по любому из типов продавца (PRIVATE, BUSINESS). */
+    private List<String> sellerType;
     private Boolean hasLicense;
     private Boolean worksByContract;
     private BigDecimal priceFrom;
@@ -26,4 +27,11 @@ public class AdListParams {
     private Boolean urgentBargain;
     private Boolean canDeliver;
     private Boolean giveAway;
+    private String brandId;
+    /** Список состояний: фильтр по любому из (USED, NEW, HANDMADE, USED_LIKE_NEW и т.д.). */
+    private List<String> itemCondition;
+    /** true = только ручная работа, false = исключить ручную работу, null = без фильтра */
+    private Boolean handMadeOnly;
+    /** true = возможна аренда (для одежды/обуви) */
+    private Boolean canRent;
 }

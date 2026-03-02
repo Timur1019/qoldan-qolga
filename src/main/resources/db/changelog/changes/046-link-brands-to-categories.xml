@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Привязка новых брендов (045) к подкатегориям бытовой техники -->
+    <changeSet id="046-link-new-brands-appliances" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b
+            CROSS JOIN categories c
+            WHERE c.code IN (
+                'Kuhnya_uchun', 'Uy_uchun', 'Klimat_oborudovaniye',
+                'Aerogril', 'Blenderlar', 'Kuler_su', 'Mikserlar', 'Gocht_maydalagich', 'Sokovizhimalka', 'Tosterlar', 'Elektr_gril', 'Vytyazhki', 'Mayda_kuhna_texnika', 'Elektr_choynak', 'Kofevarka_kofemolka', 'Kuhna_kombayn', 'Parovka_multivarka', 'Hlebopech', 'Mikroto''lqin', 'Plita_pech', 'Posudomoyka', 'Suv_filtr', 'Holodilnik_morozilka', 'Kuhnya_boshqa',
+                'Pylesos', 'Stiralnaya_mashina', 'Utug', 'Shveynaya_vyazalnaya', 'Uy_zapchasti', 'Uy_boshqa',
+                'Klimat_boshqa', 'Ventilyator', 'Konditsioner', 'Obogrevatel', 'Ochistitel_uvlazhnitel', 'Termometr_meteostansiya'
+            )
+            AND b.slug IN ('gorizont','rubin','akai','akira','alonsa','alpari','alpina','amana','ariete','artel','artlina','ascaso','asko','atlanta','aurora','avalon','bauknecht','beston','bezzera','binatone','bissell','black-decker','blendtec','blomberg','bompani','bosch','brasilia','breville','briel','chambrer','clatronic','climadiff','coido','daewoo','dako-mabe','delfa','deluxe','delvir','demiand','desany','dexp','dirt','eio','elbee','elect','elekta','elenberg','energy','erisson','eurometalnova','euronova','expobar','faema','fagor','ferre','first','franke','fratelli-onofri','frigidaire','fulgor','futurmat','gaggenau','gaggia','general-electric','goodwell','greta','haeger','haley','hansa','hauswirt','heyner','hofmann','home-element','hoover','hyundai','ilve','intex','irit','kaiser','kenwood','kia','kirby','korkmaz','kuppersbusch','la-cimbali','la-marzocco','la-pavoni','lamo','lavazza','lelit','lg','liberton','luma-bella','lumme','luxell','magimix','magnit','makita','marta','maxima','maxwell','maytag','mdv','melitta','mora','morphy-richards','mystery','nardi','neff','ninja','nord','novex','nutribullet','oak','orion','panasonic','phantom','philco','piece','piramit','polar','polaris','pozis','rainford','rancilio','redber','renomax','restart','roboclean','rolsen','rotel','rotex','russell-hobbs','samsung','saturn','sharp','shivaki','siltal','simfer','sitronic','skiff','smile','snaige','sonifer','soteco','stinol','supra','synco','teka','trisa','tuvio','uakeen','unit','ves','vestel','vestfrost','viconte','vigor','vinosafe','vitamix','vitech','vitek','vitesse','volmer','vr','welkin','wellton','west','xiaomi','zauber','zerowatt','ziffler','zigmund-shtain')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <!-- Привязка брендов к категориям «Красота и здоровье» -->
+    <changeSet id="046-link-brands-beauty-health" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b
+            CROSS JOIN categories c
+            WHERE c.code IN (
+                'Krasota_zdorovie', 'Pribory_aksessuary', 'Britvy_trimmary', 'Pribory_ukladka', 'Massazhery', 'Pribory_uhod_koja', 'Epilyatory', 'Elekt_zubnie_schetki', 'Ultrazvukovye_vanny', 'Vesy', 'Pribory_prochee',
+                'Parfyumeriya', 'Sredstva_gigieny', 'Kosmetika', 'Sredstva_dlya_volos',
+                'Medicinskie_izdeliya', 'Kontaktnye_linzy', 'Tovary_dlya_invalidov', 'Irrigatory', 'Tonometry', 'Ingalyatory', 'Medicinskie_pribory', 'Ustroystva_dezinfekciya', 'Elektrogrelki_prostyni', 'Koncentratory_kisloroda', 'Medicinskie_prochee'
+            )
+            AND b.slug IN ('akvafor','aksion','atlant','barer','biryusa','vesta','vyatka','gazmash','geyzer','gefest','gorizont','lada','ladomir','mechta','novovyatka','oka','omichka','rubin','saratov','smolensk','feya','zvi','idel','krona','drugaya-marka','aeg','akai','akira','ardo','ariston','artel','braun','breville','candy','delonghi','electrolux','gorenje','haier','indesit','kenwood','miele','midea','moulinex','panasonic','philips','redmond','rowenta','samsung','scarlett','severin','siemens','tefal','whirlpool','zanussi','zelmer','bork','dyson','karcher','krups','vax','thomas','irobot','xiaomi','vitamix','vitek')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

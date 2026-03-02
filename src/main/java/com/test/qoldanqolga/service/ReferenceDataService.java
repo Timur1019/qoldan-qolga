@@ -1,5 +1,6 @@
 package com.test.qoldanqolga.service;
 
+import com.test.qoldanqolga.dto.reference.BrandDto;
 import com.test.qoldanqolga.dto.reference.CategoryDto;
 import com.test.qoldanqolga.dto.reference.CreateCategoryRequest;
 import com.test.qoldanqolga.dto.reference.RegionDto;
@@ -21,7 +22,14 @@ public interface ReferenceDataService {
 
     Optional<CategoryDto> getCategoryByCode(String code);
 
+    /** Путь от корневой категории до указанной (включительно). Пустой список, если категория не найдена. */
+    List<CategoryDto> getCategoryBreadcrumb(String code);
+
     List<CategoryDto> getChildCategories(String parentCode);
 
     List<CategoryDto> getCategoriesForHome();
+
+    List<BrandDto> getAllBrands();
+
+    List<BrandDto> getBrandsByCategoryCode(String categoryCode);
 }

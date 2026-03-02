@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Электроника — корневая категория -->
+    <changeSet id="033-insert-elektronika-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Elektronika', 'Электроника', 'Elektronika', 4, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <!-- Телефоны и связь + подкатегории -->
+    <changeSet id="033-insert-telefonlar-aloqa" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Telefonlar va aloqa', 'Телефоны и связь', 'Telefonlar_aloqa', 1, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-telefonlar-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mobil telefonlar', 'Мобильные телефоны', 'Mobil_telefonlar', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Aksessuarlar', 'Аксессуары', 'Telefon_aksessuarlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ratsiyalar', 'Рации', 'Ratsiyalar', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sim-kartalar / tariflar / raqamlar', 'Сим-карты / тарифы / номера', 'Sim_tariflar', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Statsionar telefonlar', 'Стационарные телефоны', 'Statsionar_telefonlar', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Smart-soatlar, bilaguzuklar', 'Смарт-часы, браслеты и кольца', 'Smart_soatlar', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ehtiyot qismlar', 'Запчасти', 'Telefon_zapchasti', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Telefonlar_boshqa', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Telefonlar_aloqa' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Аудио и видео + подкатегории -->
+    <changeSet id="033-insert-audio-video" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Audio va video', 'Аудио и видео', 'Audio_video', 2, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-audio-video-sub" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Televizorlar', 'Телевизоры', 'Televizorlar', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;
+        </sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Proektorlar', 'Проекторы', 'Proektorlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Quloqchinlar', 'Наушники', 'Quloqchinlar', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Akustika, kolonkalar', 'Акустика, колонки, сабвуферы', 'Akustika', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Musiqa markazlari, magnitolalar', 'Музыкальные центры, магнитолы', 'Musiqa_markazlar', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kuchaytirgichlar va resiverlar', 'Усилители и ресиверы', 'Kuchaytirgichlar', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Videokameralar', 'Видеокамеры', 'Videokameralar', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Video, DVD va Blu-ray pleerlar', 'Видео, DVD и Blu-ray плееры', 'Video_pleerlar', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kabellar va adapterlar', 'Кабели и адаптеры', 'Kabellar_adapterlar', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Musiqa va filmlar', 'Музыка и фильмы', 'Musiqa_filmlar', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mikrofonlar', 'Микрофоны', 'Mikrofonlar', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'MP3-pleerlar', 'MP3-плееры', 'MP3_pleerlar', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Aksessuarlar', 'Аксессуары', 'Audio_aksessuarlar', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Satellit texnikasi', 'Спутниковая техника', 'Satellit_texnika', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Audio_video_boshqa', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Audio_video' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Товары для компьютера -->
+    <changeSet id="033-insert-komp-tovarlar" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kompyuter uchun tovarlar', 'Товары для компьютера', 'Komp_tovarlar', 3, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-komp-tovarlar-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Komplektuyushchi', 'Комплектующие', 'Komplektuyushchi', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Monitorlar', 'Мониторы', 'Monitorlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tarmoq uskunalari', 'Сетевое оборудование', 'Tarmoq_uskunalari', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Klaviaturalar va sichqonchalar', 'Клавиатуры и мыши', 'Klaviaturalar_sichqonchalar', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Aksessuarlar', 'Аксессуары', 'Komp_aksessuarlar', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Djoystiklar va rul', 'Джойстики и рули', 'Djoystiklar', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Fleshkalar va xotira kartalari', 'Флэшки и карты памяти', 'Fleshkalar', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Akustika', 'Акустика', 'Komp_akustika', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tashqi qattiq disklar', 'Переносные жёсткие диски', 'Tashqi_hdd', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Veb-kameralar', 'Веб-камеры', 'Veb_kameralar', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'TV-tyunerlar', 'ТВ-тюнеры', 'TV_tyunerlar', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ehtiyot qismlar', 'Запчасти', 'Komp_zapchasti', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Komp_tovarlar_boshqa', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Komp_tovarlar' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Ноутбуки -->
+    <changeSet id="033-insert-noutbuklar" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Noutbuklar', 'Ноутбуки', 'Noutbuklar', 4, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+
+    <!-- Игры, приставки и программы -->
+    <changeSet id="033-insert-o-yinlar" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''yinlar, pristavkalar va dasturlar', 'Игры, приставки и программы', 'Oyinlar_pristavkalar', 5, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-o-yinlar-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''yin pristavkalari', 'Игровые приставки', 'Oyin_pristavkalari', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Oyinlar_pristavkalar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Pristavkalar uchun o''yinlar', 'Игры для приставок', 'Oyinlar_pristavka', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Oyinlar_pristavkalar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kompyuter o''yinlari', 'Компьютерные игры', 'Komp_oyinlari', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Oyinlar_pristavkalar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Aksessuarlar', 'Аксессуары', 'Oyin_aksessuarlar', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Oyinlar_pristavkalar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Oyinlar_boshqa', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Oyinlar_pristavkalar' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Настольные компьютеры -->
+    <changeSet id="033-insert-stol-kompyuterlar" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Stol kompyuterlari', 'Настольные компьютеры', 'Stol_kompyuterlar', 6, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-stol-komp-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tizim bloklari', 'Системные блоки', 'Tizim_bloklari', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Stol_kompyuterlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Serverlar', 'Серверы', 'Serverlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Stol_kompyuterlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Monobloklar', 'Моноблоки', 'Monobloklar', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Stol_kompyuterlar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Stol_komp_boshqa', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Stol_kompyuterlar' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Фототехника -->
+    <changeSet id="033-insert-fototeknika" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Fototeknika', 'Фототехника', 'Fototeknika', 7, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-fototeknika-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uskunalar va aksessuarlar', 'Оборудование и аксессуары', 'Foto_uskunalar', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shtativlar, monopodlar', 'Штативы, моноподы, крепления', 'Shtativlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Chaqlagichlar va studiya yorug''ligi', 'Вспышки и студийный свет', 'Chaqlagichlar', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Obektivlar', 'Объективы', 'Obektivlar', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kompakt fotoapparatlar', 'Компактные фотоаппараты', 'Kompakt_foto', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Plyonka fotoapparatlar', 'Плёночные фотоаппараты', 'Plyonka_foto', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Raqamli fotoapparatlar', 'Цифровые фотоаппараты', 'Raqamli_foto', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Durbinlar va teleskoplar', 'Бинокли и телескопы', 'Durbinlar', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Fototeknika_boshqa', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Fototeknika' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Планшеты и электронные книги -->
+    <changeSet id="033-insert-planchetlar" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Planchetlar va elektron kitoblar', 'Планшеты и электронные книги', 'Planchetlar_kitoblar', 8, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-planchetlar-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Planchetlar', 'Планшеты', 'Planchetlar', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Planchetlar_kitoblar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Aksessuarlar', 'Аксессуары', 'Planchet_aksessuarlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Planchetlar_kitoblar' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektron kitoblar', 'Электронные книги', 'Elektron_kitoblar', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Planchetlar_kitoblar' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Оргтехника и расходники -->
+    <changeSet id="033-insert-orgtexnika" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Orgtexnika va sarf materiallar', 'Оргтехника и расходники', 'Orgtexnika', 9, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-orgtexnika-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'MFU, kopiyalar va skanerlar', 'МФУ, копиры и сканеры', 'MFU_skanerlar', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Printerlar', 'Принтеры', 'Org_printerlar', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'IBP, tarmoq filtrlari', 'ИБП, сетевые фильтры', 'IBP_filtrlar', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Telefoniya', 'Телефония', 'Org_telefoniya', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qog''oz yo''qotgichlar', 'Уничтожители бумаг', 'Qogoz_yoqotgichlar', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sarf materiallar', 'Расходные материалы', 'Sarf_materiallar', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Orgtexnika_boshqa', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Orgtexnika' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Цифровой контент и софт -->
+    <changeSet id="033-insert-raqamli-kontent" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Raqamli kontent va dasturiy ta''minot', 'Цифровой контент и софт', 'Raqamli_kontent_soft', 10, false, id, NOW(), NOW()
+            FROM categories WHERE code = 'Elektronika' LIMIT 1;
+        </sql>
+    </changeSet>
+    <changeSet id="033-insert-raqamli-kontent-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Raqamli kontent', 'Цифровой контент', 'Raqamli_kontent', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Raqamli_kontent_soft' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Dasturiy ta''minot', 'Софт', 'Soft', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Raqamli_kontent_soft' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

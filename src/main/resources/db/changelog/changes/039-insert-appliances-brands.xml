@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Бренды бытовой техники. ON CONFLICT (slug) DO NOTHING — не дублируем существующие. -->
+    <changeSet id="039-insert-appliances-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brands (id, name_uz, name_ru, slug, sort_order, is_active, created_at, updated_at)
+            VALUES
+            (gen_random_uuid()::text, 'Akvafor', 'Аквафор', 'akvafor', 300, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Aksion', 'Аксион', 'aksion', 301, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Atlant', 'Атлант', 'atlant', 302, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Barer', 'Барьер', 'barer', 303, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Biryusa', 'Бирюса', 'biryusa', 304, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Vesta', 'Веста', 'vesta', 305, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Vyatka', 'Вятка', 'vyatka', 306, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Gazmash', 'Газмаш', 'gazmash', 307, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Geyzer', 'Гейзер', 'geyzer', 308, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Gefest', 'Гефест', 'gefest', 309, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Lada', 'Лада', 'lada', 310, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Ladomir', 'Ладомир', 'ladomir', 311, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Mechta', 'Мечта', 'mechta', 312, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Novovyatka', 'Нововятка', 'novovyatka', 313, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Oka', 'Ока', 'oka', 314, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Omichka', 'Омичка', 'omichka', 315, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Saratov', 'Саратов', 'saratov', 316, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Smolensk', 'Смоленск', 'smolensk', 317, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Feya', 'Фея', 'feya', 318, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'ZVI', 'ЗВИ', 'zvi', 319, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Idel', 'Идель', 'idel', 320, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Krona', 'Крона', 'krona', 321, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'AEG', 'AEG', 'aeg', 322, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Ardo', 'Ardo', 'ardo', 323, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Ariston', 'Ariston', 'ariston', 324, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Candy', 'Candy', 'candy', 325, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Delonghi', 'Delonghi', 'delonghi', 326, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Electrolux', 'Electrolux', 'electrolux', 327, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Gorenje', 'Gorenje', 'gorenje', 328, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Indesit', 'Indesit', 'indesit', 329, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Miele', 'Miele', 'miele', 330, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Moulinex', 'Moulinex', 'moulinex', 331, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Redmond', 'Redmond', 'redmond', 332, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Rowenta', 'Rowenta', 'rowenta', 333, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Siemens', 'Siemens', 'siemens', 334, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Tefal', 'Tefal', 'tefal', 335, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Whirlpool', 'Whirlpool', 'whirlpool', 336, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Zanussi', 'Zanussi', 'zanussi', 337, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Braun', 'Braun', 'braun', 338, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Karcher', 'Karcher', 'karcher', 339, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Krups', 'Krups', 'krups', 340, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Philips', 'Philips', 'philips', 341, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Dyson', 'Dyson', 'dyson', 342, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Bork', 'Bork', 'bork', 343, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Liebherr', 'Liebherr', 'liebherr', 344, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Scarlett', 'Scarlett', 'scarlett', 345, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Vax', 'Vax', 'vax', 346, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Thomas', 'Thomas', 'thomas', 347, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'iRobot', 'iRobot', 'irobot', 348, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'KitchenAid', 'KitchenAid', 'kitchenaid', 349, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Nespresso', 'Nespresso', 'nespresso', 350, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Jura', 'Jura', 'jura', 351, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Saeco', 'Saeco', 'saeco', 352, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Smeg', 'Smeg', 'smeg', 353, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Hotpoint-Ariston', 'Hotpoint-Ariston', 'hotpoint-ariston', 354, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Beko', 'BEKO', 'beko', 355, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Brandt', 'Brandt', 'brandt', 356, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Haier', 'Haier', 'haier', 357, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Midea', 'Midea', 'midea', 358, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Severin', 'Severin', 'severin', 359, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'Zelmer', 'Zelmer', 'zelmer', 360, true, NOW(), NOW())
+            ON CONFLICT (slug) DO NOTHING;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
