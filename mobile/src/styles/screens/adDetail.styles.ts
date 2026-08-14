@@ -5,6 +5,7 @@ import { radius, spacing } from '@/theme/spacing';
 
 export const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
+  scroll: { flex: 1, backgroundColor: colors.bg },
   loader: { flex: 1, marginTop: 40 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   gallery: { backgroundColor: colors.bgSubtle },
@@ -116,4 +117,30 @@ export const styles = StyleSheet.create({
   headerReport: { paddingHorizontal: 8 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 4, color: colors.text },
   description: { fontSize: 14, lineHeight: 20, color: colors.text, marginBottom: spacing.sm },
+  trackPrice: { fontSize: 14, fontWeight: '600', color: colors.primary, marginTop: 4, marginBottom: 4 },
+  stickyBar: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderTopWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.bg,
+  },
+  stickyBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: colors.bg,
+  },
+  stickyBtnPrimary: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  stickyBtnText: { fontWeight: '700', color: colors.primary, fontSize: 13 },
+  stickyBtnPrimaryText: { fontWeight: '700', color: colors.white, fontSize: 13 },
 });

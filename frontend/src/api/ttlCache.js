@@ -22,3 +22,7 @@ export function cachedGet(key, loader, ttlMs = 5 * 60 * 1000) {
   store.set(key, { inflight, expires: 0 })
   return inflight
 }
+
+export function invalidateCachedGet(key) {
+  store.delete(key)
+}

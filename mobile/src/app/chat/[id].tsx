@@ -21,6 +21,7 @@ import { useStompChat } from '@/hooks/useStompChat';
 import { colors } from '@/theme/colors';
 import type { MessageDto } from '@/types/api';
 import { groupMessagesByDate, type ChatListItem } from '@/utils/chatFormat';
+import { asMessageList, upsertMessage } from '@/utils/pendingChat';
 
 import { styles } from '@/styles/screens/conversation.styles';
 
@@ -47,21 +48,31 @@ export default function ConversationScreen() {
     if (!id || !isAuthenticated) {
       setLoading(false);
       setMessages([]);
-      return;
+      return undefined;
     }
+    let cancelled = false;
     setLoading(true);
     chatApi
       .getMessages(id)
-      .then((list) => setMessages(Array.isArray(list) ? (list as MessageDto[]) : []))
-      .catch(() => setMessages([]))
-      .finally(() => setLoading(false));
+      .then((list) => {
+        if (!cancelled) setMessages(asMessageList<MessageDto>(list));
+      })
+      .catch(() => {
+        if (!cancelled) setMessages([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     chatApi.markAsRead(id).catch(() => {});
-  }, [id, isAuthenticated]);
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isAuthenticated, user?.id]);
 
   const handleIncoming = useCallback(
     (raw: unknown) => {
       const msg = raw as MessageDto;
-      setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+      setMessages((prev) => upsertMessage(prev, msg));
       if (msg.senderId !== user?.id) {
         chatApi.markAsRead(id).catch(() => {});
       }
@@ -82,7 +93,7 @@ export default function ConversationScreen() {
     setText('');
     try {
       const msg = (await chatApi.sendMessage(id, value)) as MessageDto;
-      setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+      setMessages((prev) => upsertMessage(prev, msg));
     } catch {
       setText(value);
     } finally {

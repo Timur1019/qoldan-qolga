@@ -249,6 +249,12 @@ export const uz: TranslationDict = {
   'ads.priceInsightRangeCheap': 'Foydali',
   'ads.priceInsightRangeExpensive': 'Qimmat',
   'ads.similarAds': "O'xshash e'lonlar",
+  'ads.trackPrice': 'Narxni kuzatish',
+  'ads.trackPriceStop': "Kuzatishni to'xtatish",
+  'notify.priceWatchOn': "Narxni kuzatamiz. O'zgarsa xabar beramiz.",
+  'notify.priceWatchOff': "Narxni kuzatish o'chirildi",
+  'notify.priceWatchDropped': 'Narx tushdi: {amount}',
+  'notify.priceWatchRose': 'Narx oshdi: {amount}',
 
   'settings.notifications': 'Bildirishnomalar',
   'settings.notificationsTitle': 'Bildirishnomalar sozlamasi',

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
 import { useAuthModal } from '../../../hooks'
@@ -7,6 +7,7 @@ import { useLang } from '../../../context/LangContext'
 import { adsApi, chatApi, usersApi } from '../services/adApi'
 import { isAuthError } from '../../../api/client'
 import { ROUTES } from '../../../constants/routes'
+import { setPendingChat, takePendingChat } from '../utils/pendingChat'
 
 /**
  * Хук действий на странице объявления: чат, подписка, жалоба, избранное.
@@ -19,22 +20,46 @@ export function useAdActions(ad, user, { setAd, setError }) {
   const { showToast } = useToast()
   const [chatGoing, setChatGoing] = useState(false)
 
-  const handleWriteSeller = useCallback((initialText) => {
-    if (!isAuthenticated) return openAuthModal()
-    if (!ad || ad.userId === user?.id) return
+  const openConversation = useCallback((adId, initialText) => {
     setChatGoing(true)
     chatApi
-      .getOrCreateConversation(ad.id)
-      .then((conv) => {
-        navigate(`${ROUTES.CHAT}?conversation=${encodeURIComponent(conv.id)}${initialText ? `&initial=${encodeURIComponent(initialText)}` : ''}`)
+      .getOrCreateConversation(adId)
+      .then(async (conv) => {
+        if (initialText) {
+          await chatApi.sendMessage(conv.id, initialText)
+        }
+        navigate(`${ROUTES.CHAT}?conversation=${encodeURIComponent(conv.id)}`)
       })
       .catch(() => setChatGoing(false))
-  }, [ad, user?.id, isAuthenticated, openAuthModal, navigate])
+  }, [navigate])
+
+  useEffect(() => {
+    if (!isAuthenticated || !ad?.id || ad.userId === user?.id) return
+    const pending = takePendingChat()
+    if (!pending?.adId) return
+    if (pending.adId !== ad.id) {
+      setPendingChat(pending)
+      return
+    }
+    openConversation(ad.id, pending.text)
+  }, [ad?.id, ad?.userId, isAuthenticated, openConversation, user?.id])
+
+  const handleWriteSeller = useCallback((initialText) => {
+    if (!isAuthenticated) {
+      if (ad?.id) setPendingChat({ adId: ad.id, text: initialText || '' })
+      return openAuthModal()
+    }
+    if (!ad || ad.userId === user?.id) return
+    openConversation(ad.id, initialText)
+  }, [ad, user?.id, isAuthenticated, openAuthModal, openConversation])
 
   const handleSendFromAsk = useCallback((text) => {
     const trimmed = (text || '').trim()
     if (!trimmed) return
-    if (!isAuthenticated) return openAuthModal()
+    if (!isAuthenticated) {
+      if (ad?.id) setPendingChat({ adId: ad.id, text: trimmed })
+      return openAuthModal()
+    }
     if (!ad || ad.userId === user?.id) return
     setChatGoing(true)
     chatApi

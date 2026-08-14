@@ -9,10 +9,12 @@ import { isSystemConversation } from '../../features/ad/utils/publicAds'
 import UserAvatar, { getInitials } from '../../components/ui/UserAvatar'
 import ConversationList from './ConversationList'
 import { formatTime, formatDateHeader, groupMessagesByDate } from './chatFormat'
+import { asMessageList, upsertMessage } from './chatListUtils'
+import { takePendingChat } from '../../features/ad/utils/pendingChat'
 import styles from './Chat.module.css'
 
 export default function Chat() {
-  const { user } = useAuth()
+  const { user, isAuthenticated } = useAuth()
   const { t } = useLang()
   const [searchParams, setSearchParams] = useSearchParams()
   const openId = searchParams.get('conversation') || null
@@ -47,21 +49,42 @@ export default function Chat() {
   }, [messageMenuId])
 
   const loadConversations = useCallback(() => {
+    if (!isAuthenticated) {
+      setConversations([])
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError('')
     chatApi
       .getConversations()
       .then((list) => {
-        setConversations(list || [])
+        setConversations(asMessageList(list))
         window.dispatchEvent(new CustomEvent('chat-count-refresh'))
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
-  }, [])
+  }, [isAuthenticated])
 
   useEffect(() => {
     loadConversations()
   }, [loadConversations])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    const pending = takePendingChat()
+    if (!pending?.adId) return
+    chatApi
+      .getOrCreateConversation(pending.adId)
+      .then(async (conv) => {
+        if (pending.text) {
+          await chatApi.sendMessage(conv.id, pending.text)
+        }
+        setSearchParams({ conversation: conv.id }, { replace: true })
+        loadConversations()
+      })
+      .catch(() => {})
+  }, [isAuthenticated, loadConversations, setSearchParams])
 
   useEffect(() => {
     const current = selectedIdRef.current
@@ -73,21 +96,30 @@ export default function Chat() {
   }, [openId, conversations])
 
   useEffect(() => {
-    if (!selectedId) return
-    setMessages([])
+    if (!selectedId || !isAuthenticated) return undefined
+    let cancelled = false
     setMessagesLoading(true)
     chatApi
       .getMessages(selectedId)
-      .then(setMessages)
-      .catch(() => setMessages([]))
-      .finally(() => setMessagesLoading(false))
+      .then((list) => {
+        if (!cancelled) setMessages(asMessageList(list))
+      })
+      .catch(() => {
+        if (!cancelled) setMessages([])
+      })
+      .finally(() => {
+        if (!cancelled) setMessagesLoading(false)
+      })
     chatApi.markAsRead(selectedId).then(() => {
       window.dispatchEvent(new CustomEvent('chat-count-refresh'))
       setConversations((prev) =>
         prev.map((c) => (c.id === selectedId ? { ...c, unreadCount: 0 } : c))
       )
     }).catch(() => {})
-  }, [selectedId])
+    return () => {
+      cancelled = true
+    }
+  }, [selectedId, isAuthenticated, user?.id])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -98,11 +130,7 @@ export default function Chat() {
     const fromOther = msg.senderId !== user?.id
     const isViewingThis = msg.conversationId === selectedId
     if (isViewingThis) {
-      setMessages((prev) => {
-        const existing = prev.findIndex((m) => m.id === msg.id)
-        if (existing >= 0) return prev.map((m, i) => (i === existing ? msg : m))
-        return [...prev, msg]
-      })
+      setMessages((prev) => upsertMessage(prev, msg))
       if (fromOther) {
         chatApi.markAsRead(msg.conversationId).then(() => {
           window.dispatchEvent(new CustomEvent('chat-count-refresh'))
@@ -131,7 +159,10 @@ export default function Chat() {
     setSending(true)
     chatApi
       .sendMessage(selectedId, text)
-      .then(() => setSendText(''))
+      .then((created) => {
+        setSendText('')
+        if (created) setMessages((prev) => upsertMessage(prev, created))
+      })
       .catch(() => {})
       .finally(() => setSending(false))
   }
@@ -276,7 +307,7 @@ export default function Chat() {
                     {t('common.loading')}
                   </div>
                 ) : (
-                  groupMessagesByDate(messages).map((item, idx) => {
+                  groupMessagesByDate(asMessageList(messages)).map((item, idx) => {
                     if (item.type === 'date') {
                       return (
                         <div key={`date-${idx}`} className={styles.dateWrap}>

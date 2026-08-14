@@ -249,6 +249,12 @@ export const ru: TranslationDict = {
   'ads.priceInsightRangeCheap': 'Выгодно',
   'ads.priceInsightRangeExpensive': 'Дорого',
   'ads.similarAds': 'Похожие объявления',
+  'ads.trackPrice': 'Отслеживать цену',
+  'ads.trackPriceStop': 'Не отслеживать',
+  'notify.priceWatchOn': 'Следим за ценой. Сообщим, если она изменится.',
+  'notify.priceWatchOff': 'Отслеживание цены выключено',
+  'notify.priceWatchDropped': 'Цена снизилась на {amount}',
+  'notify.priceWatchRose': 'Цена выросла на {amount}',
 
   'settings.notifications': 'Уведомления',
   'settings.notificationsTitle': 'Настройка уведомлений',

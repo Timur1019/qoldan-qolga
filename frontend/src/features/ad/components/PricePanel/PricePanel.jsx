@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import { formatPrice, formatDate, maskPhone } from '../../utils/adFormatters'
+import TrackPriceButton from './TrackPriceButton'
 import styles from './PricePanel.module.css'
 
 
@@ -12,6 +13,8 @@ function PricePanel({
   isAuthenticated,
   phoneRevealed,
   onPhoneClick,
+  priceWatching,
+  onTrackPrice,
 }) {
   const { t } = useLang()
   const rawDigits = (ad?.phone || '').replace(/\D/g, '')
@@ -31,7 +34,12 @@ function PricePanel({
         </span>
       )}
       <h1 className="h5 mb-2">{ad?.title}</h1>
-      <a href="#track" className="small text-primary text-decoration-none">{t('ads.trackPrice')} <i className="bi bi-chevron-right" aria-hidden /></a>
+      <TrackPriceButton
+        watching={priceWatching}
+        onClick={onTrackPrice}
+        label={t('ads.trackPrice')}
+        stopLabel={t('ads.trackPriceStop')}
+      />
       {ad?.canDeliver && (
         <div className="small text-muted mt-1"><i className="bi bi-truck me-1" aria-hidden /> {t('ads.delivery')}</div>
       )}

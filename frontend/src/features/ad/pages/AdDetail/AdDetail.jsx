@@ -6,6 +6,7 @@ import { useRegionLabel } from '../../../../context/RegionsContext'
 import { adsCategoryPath, sellerPath } from '../../../../constants/routes'
 import { useAdDetail } from '../../hooks/useAdDetail'
 import { useAdActions } from '../../hooks/useAdActions'
+import { usePriceWatch } from '../../hooks/usePriceWatch'
 import { usersApi, imageUrl, referenceApi } from '../../services/adApi'
 import AdGallery from '../../components/AdGallery/AdGallery'
 import PricePanel from '../../components/PricePanel'
@@ -54,6 +55,7 @@ export default function AdDetail() {
   const regionLabel = useRegionLabel(ad?.region)
 
   const actions = useAdActions(ad, user, { setAd, setError })
+  const priceWatch = usePriceWatch(ad)
 
   useEffect(() => {
     currencyApi
@@ -148,7 +150,7 @@ export default function AdDetail() {
 
   return (
     <div className={`page-container app-page ${styles.widePage}`}>
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+      <div className={`d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 ${styles.topBar}`}>
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item"><Link to="/">{t('nav.home')}</Link></li>
@@ -305,6 +307,8 @@ export default function AdDetail() {
                 isAuthenticated={isAuthenticated}
                 phoneRevealed={phoneRevealed}
                 onPhoneClick={handlePhoneClick}
+                priceWatching={priceWatch.watching}
+                onTrackPrice={priceWatch.toggle}
               />
               {ad.userId && (
                 <SellerInfo

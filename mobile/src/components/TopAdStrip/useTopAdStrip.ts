@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { referenceApi } from '@/api/client';
-import { getDismissedBannerId, setDismissedBannerId } from './topAdStripDismiss';
+import { useAuth } from '@/context/AuthContext';
+import { dismissBannerForAWhile, isBannerDismissed } from './topAdStripDismiss';
 
 export type SiteTopBanner = {
   id: string;
@@ -13,34 +14,41 @@ export type SiteTopBanner = {
   sortOrder?: number;
 };
 
+async function pickBanner(list: unknown): Promise<SiteTopBanner | null> {
+  const items = Array.isArray(list) ? (list as SiteTopBanner[]) : [];
+  for (const b of items) {
+    if (b?.id && !(await isBannerDismissed(b.id))) return b;
+  }
+  return null;
+}
+
 export function useTopAdStrip() {
+  const { isAuthenticated } = useAuth();
   const [banner, setBanner] = useState<SiteTopBanner | null>(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const list = await referenceApi.getSiteTopBanners();
-        if (cancelled) return;
-        const items = Array.isArray(list) ? (list as SiteTopBanner[]) : [];
-        const dismissed = await getDismissedBannerId();
-        const next = items.find((b) => b?.id && b.id !== dismissed) || null;
-        setBanner(next);
-      } catch {
-        if (!cancelled) setBanner(null);
-      } finally {
-        if (!cancelled) setReady(true);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+  const load = useCallback(async () => {
+    try {
+      const list = await referenceApi.getSiteTopBanners();
+      setBanner(await pickBanner(list));
+    } catch {
+      setBanner(null);
+    } finally {
+      setReady(true);
+    }
   }, []);
+
+  useEffect(() => {
+    void load();
+    const timer = setInterval(() => {
+      void load();
+    }, 60 * 1000);
+    return () => clearInterval(timer);
+  }, [isAuthenticated, load]);
 
   const dismiss = useCallback(() => {
     if (!banner?.id) return;
-    void setDismissedBannerId(banner.id);
+    void dismissBannerForAWhile(banner.id);
     setBanner(null);
   }, [banner?.id]);
 

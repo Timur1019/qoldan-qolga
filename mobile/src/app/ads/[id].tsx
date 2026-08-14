@@ -22,10 +22,12 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useRegionLabel } from '@/context/RegionsContext';
 import { useAdDetail } from '@/hooks/useAdDetail';
 import { useFavoriteClick } from '@/hooks/useFavoriteClick';
+import { usePriceWatch } from '@/hooks/usePriceWatch';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { colors } from '@/theme/colors';
 import { buildTelegramUrl, hasTelegramContact, maskPhone, telUrl } from '@/utils/contacts';
 import { extractLocationFromDescription } from '@/utils/descriptionLocation';
+import { setPendingChat, takePendingChat } from '@/utils/pendingChat';
 import { formatDate, formatPrice } from '@/utils/formatters';
 import { buildPriceInsight } from '@/utils/priceInsight';
 import { resolveSellerBadge } from '@/constants/sellerTypes';
@@ -62,6 +64,7 @@ export default function AdDetailScreen() {
     [ad?.id, setAd]
   );
   const handleRelatedFavorite = useFavoriteClick(updateRelatedFavorite);
+  const priceWatch = usePriceWatch(ad);
 
   useEffect(() => {
     referenceApi
@@ -103,6 +106,11 @@ export default function AdDetailScreen() {
 
   const openChat = useCallback(() => {
     if (!ad) return;
+    if (!isAuthenticated) {
+      void setPendingChat({ adId: ad.id });
+      requireAuth();
+      return;
+    }
     requireAuth(() => {
       setCreatingChat(true);
       chatApi
@@ -117,7 +125,29 @@ export default function AdDetailScreen() {
         })
         .finally(() => setCreatingChat(false));
     });
-  }, [ad, requireAuth]);
+  }, [ad, isAuthenticated, requireAuth]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !ad?.id || user?.id === ad.userId) return;
+    const pending = takePendingChat();
+    if (!pending?.adId) return;
+    if (pending.adId !== ad.id) {
+      void setPendingChat(pending);
+      return;
+    }
+    setCreatingChat(true);
+    chatApi
+      .getOrCreateConversation(ad.id)
+      .then(async (conv) => {
+        const c = conv as { id: string };
+        if (pending.text) {
+          await chatApi.sendMessage(c.id, pending.text);
+        }
+        router.push(`/chat/${c.id}`);
+      })
+      .catch(() => {})
+      .finally(() => setCreatingChat(false));
+  }, [ad?.id, isAuthenticated, user?.id]);
 
   const onPhone = useCallback(() => {
     if (!ad?.phone) return;
@@ -184,7 +214,8 @@ export default function AdDetailScreen() {
   const priceInsight = buildPriceInsight(ad, similar, usdToUzs);
 
   return (
-    <ScrollView style={styles.container} nestedScrollEnabled>
+    <View style={styles.container}>
+    <ScrollView style={styles.scroll} nestedScrollEnabled>
       <Stack.Screen
         options={{
           title: '',
@@ -253,6 +284,11 @@ export default function AdDetailScreen() {
           </Pressable>
         </View>
         <Text style={styles.title}>{ad.title}</Text>
+        <Pressable onPress={priceWatch.toggle} hitSlop={8}>
+          <Text style={styles.trackPrice}>
+            {priceWatch.watching ? t('ads.trackPriceStop') : t('ads.trackPrice')} ›
+          </Text>
+        </Pressable>
         {ad.category ? (
           <Pressable onPress={() => router.push(`/categories/${ad.category}`)}>
             <Text style={styles.categoryLink}>{categoryLabel || ad.category}</Text>
@@ -387,5 +423,23 @@ export default function AdDetailScreen() {
         onAuthRequired={() => requireAuth()}
       />
     </ScrollView>
+    {!isOwner ? (
+      <View style={styles.stickyBar}>
+        <Pressable style={[styles.stickyBtn, styles.stickyBtnPrimary]} onPress={openChat} disabled={creatingChat}>
+          <Text style={styles.stickyBtnPrimaryText}>{creatingChat ? '...' : 'Chat'}</Text>
+        </Pressable>
+        {!!ad.phone && (
+          <Pressable style={styles.stickyBtn} onPress={onPhone}>
+            <Text style={styles.stickyBtnText}>Tel</Text>
+          </Pressable>
+        )}
+        {showTelegram && (
+          <Pressable style={styles.stickyBtn} onPress={onTelegram}>
+            <Text style={styles.stickyBtnText}>Telegram</Text>
+          </Pressable>
+        )}
+      </View>
+    ) : null}
+    </View>
   );
 }

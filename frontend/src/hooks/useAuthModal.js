@@ -17,6 +17,9 @@ export function useAuthModal() {
           PARAMS.AUTH,
           mode === PARAMS.AUTH_REGISTER ? PARAMS.AUTH_REGISTER : PARAMS.AUTH_LOGIN
         )
+        const from = `${window.location.pathname}${window.location.search}`
+        const clean = from.replace(/([?&])auth=[^&]*/g, '').replace(/[?&]from=[^&]*/g, '')
+        next.set(PARAMS.FROM, clean.startsWith('/') ? clean : window.location.pathname)
         return next
       },
       { replace: true }

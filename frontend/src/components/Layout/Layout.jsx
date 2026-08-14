@@ -144,7 +144,10 @@ export default function Layout() {
   }
 
   return (
-    <div className={styles.layout}>
+    <div
+      className={styles.layout}
+      style={{ '--layout-header-height': `${headerOffset}px` }}
+    >
       <BusinessModalProvider openModal={() => setBusinessModalOpen(true)}>
         <>
       <header ref={headerRef} className={styles.header}>

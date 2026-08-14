@@ -15,6 +15,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { colors } from '@/theme/colors';
 import type { ConversationDto } from '@/types/api';
+import { takePendingChat } from '@/utils/pendingChat';
 
 import { styles } from '@/styles/screens/chatList.styles';
 
@@ -60,7 +61,17 @@ export default function ChatListScreen() {
   useFocusEffect(
     useCallback(() => {
       void load('full');
-    }, [load])
+      if (!isAuthenticated) return;
+      const pending = takePendingChat();
+      if (!pending?.adId) return;
+      void chatApi.getOrCreateConversation(pending.adId).then(async (conv) => {
+        const c = conv as { id: string };
+        if (pending.text) {
+          await chatApi.sendMessage(c.id, pending.text);
+        }
+        router.push(`/chat/${c.id}`);
+      });
+    }, [isAuthenticated, load])
   );
 
   const ordered = useMemo(() => sortConversations(conversations), [conversations]);

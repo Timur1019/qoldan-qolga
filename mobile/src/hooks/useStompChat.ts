@@ -19,7 +19,7 @@ export function useStompChat(conversationId: string | null | undefined, onMessag
   }, [onMessage]);
 
   useEffect(() => {
-    if (!conversationId || typeof onMessage !== 'function') {
+    if (!conversationId) {
       setConnected(false);
       return;
     }
@@ -51,7 +51,7 @@ export function useStompChat(conversationId: string | null | undefined, onMessag
       client.deactivate();
       clientRef.current = null;
     };
-  }, [conversationId, onMessage]);
+  }, [conversationId]);
 
   return { connected };
 }
