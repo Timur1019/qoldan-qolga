@@ -6,7 +6,7 @@ import com.test.qoldanqolga.service.image.ImageStorageService;
 import com.test.qoldanqolga.service.image.ImageValidator;
 import com.test.qoldanqolga.service.image.StorageProperties;
 import com.test.qoldanqolga.util.LogUtil;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,13 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Service
-@RequiredArgsConstructor
 public class LocalImageStorageServiceImpl implements ImageStorageService {
 
     private final StorageProperties properties;
     private final ImageValidator imageValidator;
+    private final Executor imageExecutor;
+
+    public LocalImageStorageServiceImpl(
+            StorageProperties properties,
+            ImageValidator imageValidator,
+            @Qualifier("imageExecutor") Executor imageExecutor
+    ) {
+        this.properties = properties;
+        this.imageValidator = imageValidator;
+        this.imageExecutor = imageExecutor;
+    }
 
     @Override
     public String save(MultipartFile file) {
@@ -62,12 +73,12 @@ public class LocalImageStorageServiceImpl implements ImageStorageService {
             return List.of();
         }
         List<CompletableFuture<String>> futures = files.stream()
-                .map(file -> CompletableFuture.supplyAsync(() -> save(file)))
+                .map(file -> CompletableFuture.supplyAsync(() -> save(file), imageExecutor))
                 .toList();
         List<String> urls = new ArrayList<>(futures.size());
-        for (CompletableFuture<String> f : futures) {
+        for (CompletableFuture<String> future : futures) {
             try {
-                urls.add(f.join());
+                urls.add(future.join());
             } catch (Exception e) {
                 LogUtil.warn(LocalImageStorageServiceImpl.class, "Batch upload partial failure: {}", e.getMessage());
                 throw new ImageStorageException("Ошибка загрузки одного из файлов", e);

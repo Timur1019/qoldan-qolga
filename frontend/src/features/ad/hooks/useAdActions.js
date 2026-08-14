@@ -2,7 +2,10 @@ import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
 import { useAuthModal } from '../../../hooks'
+import { useToast } from '../../../context/ToastContext'
+import { useLang } from '../../../context/LangContext'
 import { adsApi, chatApi, usersApi } from '../services/adApi'
+import { isAuthError } from '../../../api/client'
 import { ROUTES } from '../../../constants/routes'
 
 /**
@@ -12,6 +15,8 @@ export function useAdActions(ad, user, { setAd, setError }) {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const openAuthModal = useAuthModal()
+  const { t } = useLang()
+  const { showToast } = useToast()
   const [chatGoing, setChatGoing] = useState(false)
 
   const handleWriteSeller = useCallback((initialText) => {
@@ -26,7 +31,6 @@ export function useAdActions(ad, user, { setAd, setError }) {
       .catch(() => setChatGoing(false))
   }, [ad, user?.id, isAuthenticated, openAuthModal, navigate])
 
-  /** Отправить сообщение продавцу со страницы объявления без перехода в чат */
   const handleSendFromAsk = useCallback((text) => {
     const trimmed = (text || '').trim()
     if (!trimmed) return
@@ -36,19 +40,23 @@ export function useAdActions(ad, user, { setAd, setError }) {
     chatApi
       .getOrCreateConversation(ad.id)
       .then((conv) => chatApi.sendMessage(conv.id, trimmed))
+      .then(() => showToast(t('notify.messageSent'), 'success'))
       .finally(() => setChatGoing(false))
-  }, [ad, user?.id, isAuthenticated, openAuthModal])
+  }, [ad, user?.id, isAuthenticated, openAuthModal, showToast, t])
 
   const handleSubscribe = useCallback((onSubscribed) => {
     if (!isAuthenticated) return openAuthModal()
     if (!ad || ad.userId === user?.id) return
     usersApi
       .toggleSubscribe(ad.userId)
-      .then((subscribed) => onSubscribed?.(subscribed))
-      .catch((err) => {
-        if (err?.message?.includes('401') || err?.message?.includes('авторизац')) openAuthModal()
+      .then((subscribed) => {
+        onSubscribed?.(subscribed)
+        showToast(subscribed ? t('notify.subscribed') : t('notify.unsubscribed'), 'success')
       })
-  }, [ad, user?.id, isAuthenticated, openAuthModal])
+      .catch((err) => {
+        if (isAuthError(err)) openAuthModal()
+      })
+  }, [ad, user?.id, isAuthenticated, openAuthModal, showToast, t])
 
   const handleReport = useCallback(() => {
     if (!isAuthenticated) return openAuthModal()
@@ -63,18 +71,18 @@ export function useAdActions(ad, user, { setAd, setError }) {
       .then((nowFavorite) => {
         setAd?.((prev) => (prev ? { ...prev, favorite: nowFavorite } : null))
         window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
+        showToast(nowFavorite ? t('notify.favoriteAdded') : t('notify.favoriteRemoved'), 'success')
       })
       .catch((err) => {
-        const msg = err.message || ''
-        if (msg.includes('401') || msg.includes('403') || msg.includes('Ошибка запроса') || msg.includes('авторизац') || msg.includes('Forbidden')) {
-          openAuthModal()
-        }
+        if (isAuthError(err)) openAuthModal()
       })
-  }, [ad, isAuthenticated, openAuthModal, setAd])
+  }, [ad, isAuthenticated, openAuthModal, setAd, showToast, t])
 
   const submitReport = useCallback((adId, reason) => {
-    return adsApi.report(adId, { reason }).catch((e) => setError?.(e.message))
-  }, [setError])
+    return adsApi.report(adId, { reason })
+      .then(() => showToast(t('notify.reportSent'), 'success'))
+      .catch((e) => setError?.(e.message))
+  }, [setError, showToast, t])
 
   return {
     handleWriteSeller,

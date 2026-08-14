@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { adsApi } from '../api/client'
 import { useAuthModal } from './useAuthModal'
 import { isAuthError } from '../api/client'
+import { useToast } from '../context/ToastContext'
+import { useLang } from '../context/LangContext'
 
 /**
  * Обработчик клика по «избранное»: переключает состояние и обновляет список через callback.
@@ -14,6 +16,8 @@ import { isAuthError } from '../api/client'
 export function useFavoriteClick(onUpdate) {
   const { isAuthenticated } = useAuth()
   const openAuthModal = useAuthModal()
+  const { showToast } = useToast()
+  const { t } = useLang()
 
   return useCallback(
     (e, ad) => {
@@ -28,11 +32,12 @@ export function useFavoriteClick(onUpdate) {
         .then((nowFavorite) => {
           onUpdate(ad.id, nowFavorite)
           window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
+          showToast(nowFavorite ? t('notify.favoriteAdded') : t('notify.favoriteRemoved'), 'success')
         })
         .catch((err) => {
           if (isAuthError(err)) openAuthModal()
         })
     },
-    [isAuthenticated, openAuthModal, onUpdate]
+    [isAuthenticated, openAuthModal, onUpdate, showToast, t]
   )
 }

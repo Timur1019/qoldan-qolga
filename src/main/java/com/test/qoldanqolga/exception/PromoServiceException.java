@@ -1,11 +1,12 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Базовое исключение для промо-услуг.
- */
-public class PromoServiceException extends RuntimeException {
+public class PromoServiceException extends BaseException {
 
     public PromoServiceException(String message) {
-        super(message);
+        super(ErrorCode.UNSUPPORTED_PROMO, message);
+    }
+
+    public PromoServiceException(ErrorCode code, String message) {
+        super(code, message);
     }
 }

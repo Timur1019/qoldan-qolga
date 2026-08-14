@@ -9,11 +9,14 @@ import { PARAMS } from '../constants/routes'
 export function useAuthModal() {
   const [, setSearchParams] = useSearchParams()
 
-  const openAuthModal = useCallback(() => {
+  const openAuthModal = useCallback((mode = PARAMS.AUTH_LOGIN) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
-        next.set(PARAMS.AUTH, PARAMS.AUTH_LOGIN)
+        next.set(
+          PARAMS.AUTH,
+          mode === PARAMS.AUTH_REGISTER ? PARAMS.AUTH_REGISTER : PARAMS.AUTH_LOGIN
+        )
         return next
       },
       { replace: true }

@@ -19,6 +19,24 @@ public class AdListItemDto {
     private BigDecimal price;
     private String currency;
     private String category;
+    private String brandId;
+    private String brandNameUz;
+    private String brandNameRu;
+    private String modelId;
+    private String modelNameUz;
+    private String modelNameRu;
+    private String modelCustom;
+    private Integer year;
+    private Integer mileage;
+    private String dealType;
+    private Integer rooms;
+    private BigDecimal areaM2;
+    private BigDecimal landAreaM2;
+    private Integer floor;
+    private Integer floorsTotal;
+    private String buildingType;
+    private String renovation;
+    private Boolean furnished;
     private String region;
     private String description;
     private String status;
@@ -33,8 +51,17 @@ public class AdListItemDto {
     private String userDisplayName;
     private String userAvatar;
     private String phone;
+    private String telegramUsername;
     private Double averageRating;
     private Long totalReviews;
     /** Продавец подтверждён как магазин. */
     private Boolean sellerIsStore;
+    /** Тип продавца в объявлении: PRIVATE, STORE, DEALER, … */
+    private String sellerType;
+    /** Онлайн-показ. */
+    private Boolean onlineShowing;
+    private Boolean isVip;
+    private Boolean isTop;
+    private Boolean isHighlighted;
+    private Instant promoUntil;
 }

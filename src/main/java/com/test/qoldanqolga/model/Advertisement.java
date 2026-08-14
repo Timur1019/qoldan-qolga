@@ -85,6 +85,10 @@ public class Advertisement extends BaseEntity {
     @Column(name = "give_away", nullable = false)
     private Boolean giveAway = false;
 
+    /** Онлайн-показ (недвижимость и др.). */
+    @Column(name = "online_showing", nullable = false)
+    private Boolean onlineShowing = false;
+
     @Column(name = "location_lat", precision = 10, scale = 7)
     private BigDecimal locationLat;
 
@@ -105,6 +109,74 @@ public class Advertisement extends BaseEntity {
     @Column(name = "can_rent", nullable = false)
     private Boolean canRent = false;
 
+    @Column(name = "model_id", length = 36)
+    private String modelId;
+
+    @Column(name = "model_custom", length = 100)
+    private String modelCustom;
+
+    @Column(name = "year")
+    private Integer year;
+
+    @Column(name = "mileage")
+    private Integer mileage;
+
+    @Column(name = "body_type", length = 30)
+    private String bodyType;
+
+    @Column(name = "transmission", length = 20)
+    private String transmission;
+
+    @Column(name = "fuel_type", length = 20)
+    private String fuelType;
+
+    @Column(name = "drive_type", length = 10)
+    private String driveType;
+
+    @Column(name = "engine_volume", precision = 8, scale = 2)
+    private BigDecimal engineVolume;
+
+    @Column(name = "exterior_color", length = 30)
+    private String exteriorColor;
+
+    @Column(name = "seats")
+    private Integer seats;
+
+    @Column(name = "steering", length = 10)
+    private String steering;
+
+    @Column(name = "owners_count")
+    private Integer ownersCount;
+
+    /** SALE | RENT */
+    @Column(name = "deal_type", length = 10)
+    private String dealType;
+
+    /** 0 = студия, 1..N комнат */
+    @Column(name = "rooms")
+    private Integer rooms;
+
+    @Column(name = "area_m2", precision = 10, scale = 2)
+    private BigDecimal areaM2;
+
+    @Column(name = "land_area_m2", precision = 12, scale = 2)
+    private BigDecimal landAreaM2;
+
+    @Column(name = "floor")
+    private Integer floor;
+
+    @Column(name = "floors_total")
+    private Integer floorsTotal;
+
+    @Column(name = "building_type", length = 20)
+    private String buildingType;
+
+    @Column(name = "renovation", length = 20)
+    private String renovation;
+
+    @Column(name = "furnished", nullable = false)
+    private Boolean furnished = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
@@ -113,11 +185,39 @@ public class Advertisement extends BaseEntity {
     @JoinColumn(name = "brand_id", insertable = false, updatable = false)
     private Brand brand;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id", insertable = false, updatable = false)
+    private VehicleModel vehicleModel;
+
     @Column(nullable = false)
     private Integer views = 0;
 
     @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
+
+    @Column(name = "is_vip", nullable = false)
+    private Boolean isVip = false;
+
+    @Column(name = "is_top", nullable = false)
+    private Boolean isTop = false;
+
+    @Column(name = "is_highlighted", nullable = false)
+    private Boolean isHighlighted = false;
+
+    @Column(name = "promo_priority", nullable = false)
+    private Integer promoPriority = 0;
+
+    @Column(name = "promo_until")
+    private Instant promoUntil;
+
+    @Column(name = "boosted_at")
+    private Instant boostedAt;
+
+    @Column(name = "next_boost_at")
+    private Instant nextBoostAt;
+
+    @Column(name = "boost_interval_hours")
+    private Integer boostIntervalHours;
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderNum, id")

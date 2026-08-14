@@ -6,10 +6,13 @@ import com.test.qoldanqolga.mapper.AdvertisementMapper;
 import com.test.qoldanqolga.model.AdImage;
 import com.test.qoldanqolga.model.Advertisement;
 import com.test.qoldanqolga.model.Favorite;
+import com.test.qoldanqolga.model.User;
 import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.repository.FavoriteRepository;
+import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.FavoriteService;
 import com.test.qoldanqolga.util.LogUtil;
+import com.test.qoldanqolga.util.SellerStatusUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,7 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +37,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final AdvertisementRepository advertisementRepository;
+    private final UserRepository userRepository;
     private final AdvertisementMapper advertisementMapper;
 
     @Override
@@ -95,6 +101,17 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     @Transactional(readOnly = true)
+    public Set<String> getFavoriteAdIds(String userId, Collection<String> advertisementIds) {
+        if (userId == null || advertisementIds == null || advertisementIds.isEmpty()) {
+            return Set.of();
+        }
+        List<String> list = favoriteRepository.findAdvertisementIdsByUserIdAndAdvertisementIdIn(userId, advertisementIds);
+        LogUtil.debug(FavoriteServiceImpl.class, "Get favorite ids for page: userId={} pageSize={} hits={}", userId, advertisementIds.size(), list.size());
+        return new HashSet<>(list);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<AdListItemDto> getFavoriteAds(String userId, Pageable pageable) {
         Page<Favorite> favorites = favoriteRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
         List<String> adIds = favorites.getContent().stream()
@@ -106,6 +123,15 @@ public class FavoriteServiceImpl implements FavoriteService {
         LogUtil.debug(FavoriteServiceImpl.class, "Get favorite ads: userId={} count={}", userId, adIds.size());
         List<Advertisement> ads = advertisementRepository.findByIdInWithImages(adIds);
         Map<String, Advertisement> adMap = ads.stream().collect(Collectors.toMap(Advertisement::getId, a -> a));
+        List<String> ownerIds = ads.stream()
+                .map(Advertisement::getUserId)
+                .filter(id -> id != null && !id.isBlank())
+                .distinct()
+                .toList();
+        Map<String, User> usersById = ownerIds.isEmpty()
+                ? Map.of()
+                : userRepository.findAllById(ownerIds).stream()
+                        .collect(Collectors.toMap(User::getId, u -> u, (a, b) -> a, HashMap::new));
         List<AdListItemDto> dtos = adIds.stream()
                 .map(adMap::get)
                 .filter(Objects::nonNull)
@@ -117,6 +143,13 @@ public class FavoriteServiceImpl implements FavoriteService {
                             .map(AdImage::getUrl)
                             .toList());
                     dto.setFavorite(true);
+                    dto.setUserId(ad.getUserId());
+                    User owner = ad.getUserId() != null ? usersById.get(ad.getUserId()) : null;
+                    if (owner != null) {
+                        dto.setUserDisplayName(owner.getDisplayName());
+                        dto.setUserAvatar(owner.getAvatar());
+                    }
+                    dto.setSellerIsStore(SellerStatusUtil.isStore(owner, ad.getSellerType()));
                     return dto;
                 })
                 .toList();

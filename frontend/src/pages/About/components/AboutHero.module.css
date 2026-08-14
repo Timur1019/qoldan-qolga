@@ -1,0 +1,48 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.25rem;
+  align-items: center;
+  background: linear-gradient(145deg, #06613c 0%, #04492d 78%);
+  border-radius: 28px;
+  padding: 2.4rem 2.6rem;
+}
+
+.copy {
+  max-width: 460px;
+}
+
+.title {
+  margin: 0 0 1.35rem;
+  font-size: clamp(1.7rem, 3.4vw, 2.55rem);
+  line-height: 1.2;
+  font-weight: 700;
+  color: #fff;
+}
+
+.joinBtn {
+  border: 0;
+  background: #fff;
+  color: #04492d;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 999px;
+  padding: 0.85rem 1.7rem;
+  cursor: pointer;
+}
+
+.joinBtn:hover {
+  background: #f3faf6;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 1.7rem 1.2rem 1.3rem;
+    text-align: center;
+  }
+
+  .copy {
+    max-width: none;
+  }
+}

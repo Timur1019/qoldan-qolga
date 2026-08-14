@@ -1,8 +1,12 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import CategoryIcon from '../../../../components/ui/CategoryIcon'
+import TransportSidebarFields from './TransportSidebarFields'
+import RealEstateSidebarFields from './RealEstateSidebarFields'
+import { sellerTypeOptionsForCategory } from '../../../../constants/sellerTypes'
 import styles from './AdsFiltersSidebar.module.css'
 
-/** Блок фильтра с чекбоксами: можно выбрать несколько значений (массив). */
+/** Блок фильтра с чекбоксами: можно выбрать несколько значений одновременно. */
 function FilterCheckboxBlock({
   title,
   options,
@@ -11,34 +15,36 @@ function FilterCheckboxBlock({
   idPrefix,
   setFilterDraft,
 }) {
-  const selected = Array.isArray(value) ? value : []
+  const selected = Array.isArray(value) ? value.map(String) : []
   const toggle = (optVal) => {
+    const key = String(optVal)
     setFilterDraft((d) => {
-      const arr = Array.isArray(d[fieldKey]) ? [...d[fieldKey]] : []
-      const idx = arr.indexOf(optVal)
+      const raw = Array.isArray(d[fieldKey]) ? d[fieldKey] : []
+      const arr = raw.map(String)
+      const idx = arr.indexOf(key)
       if (idx >= 0) arr.splice(idx, 1)
-      else arr.push(optVal)
+      else arr.push(key)
       return { ...d, [fieldKey]: arr }
     })
   }
   return (
     <div className={styles.sidebarBlock}>
       <p className="small fw-semibold text-secondary mb-2">{title}</p>
-      <div className="d-flex flex-column gap-1">
+      <div className={styles.checkList}>
         {options.map(({ value: optVal, label }) => {
           const id = `${idPrefix}-${String(optVal)}`
-          const isChecked = selected.includes(optVal)
+          const isChecked = selected.includes(String(optVal))
           return (
-            <div key={id} className="form-check">
+            <label key={id} className={styles.checkRow} htmlFor={id}>
               <input
                 type="checkbox"
                 id={id}
                 checked={isChecked}
                 onChange={() => toggle(optVal)}
-                className="form-check-input"
+                className={styles.checkInput}
               />
-              <label className="form-check-label small" htmlFor={id}>{label}</label>
-            </div>
+              <span className={styles.checkLabel}>{label}</span>
+            </label>
           )
         })}
       </div>
@@ -46,7 +52,7 @@ function FilterCheckboxBlock({
   )
 }
 
-/** Блок «Да / Нет» двумя чекбоксами: один выбран = фильтр, оба или ни одного = без фильтра. */
+/** Да/Нет: внутри пары взаимоисключающие; между разными блоками — независимо. */
 function FilterYesNoCheckboxes({
   title,
   fieldKey,
@@ -60,27 +66,27 @@ function FilterYesNoCheckboxes({
   return (
     <div className={styles.sidebarBlock}>
       <p className="small fw-semibold text-secondary mb-2">{title}</p>
-      <div className="d-flex flex-column gap-1">
-        <div className="form-check">
+      <div className={styles.checkList}>
+        <label className={styles.checkRow} htmlFor={`${idPrefix}-yes`}>
           <input
             type="checkbox"
             id={`${idPrefix}-yes`}
             checked={normalized === true}
             onChange={() => setFilterDraft((d) => ({ ...d, [fieldKey]: normalized === true ? '' : true }))}
-            className="form-check-input"
+            className={styles.checkInput}
           />
-          <label className="form-check-label small" htmlFor={`${idPrefix}-yes`}>{yesLabel}</label>
-        </div>
-        <div className="form-check">
+          <span className={styles.checkLabel}>{yesLabel}</span>
+        </label>
+        <label className={styles.checkRow} htmlFor={`${idPrefix}-no`}>
           <input
             type="checkbox"
             id={`${idPrefix}-no`}
             checked={normalized === false}
             onChange={() => setFilterDraft((d) => ({ ...d, [fieldKey]: normalized === false ? '' : false }))}
-            className="form-check-input"
+            className={styles.checkInput}
           />
-          <label className="form-check-label small" htmlFor={`${idPrefix}-no`}>{noLabel}</label>
-        </div>
+          <span className={styles.checkLabel}>{noLabel}</span>
+        </label>
       </div>
     </div>
   )
@@ -93,16 +99,16 @@ export default function AdsFiltersSidebar({
   sidebarTitle,
   filterDraft,
   setFilterDraft,
-  region,
-  setRegion,
-  brands = [],
-  brandId = '',
-  setBrandId,
+  onCurrencyChange,
   onApply,
   onReset,
   buildCategoryLink,
   buildAdsLink,
+  brands = [],
   isClothingCategory = false,
+  transportFlags = {},
+  realEstateFlags = {},
+  filterFlags = {},
   t,
   lang,
 }) {
@@ -123,7 +129,6 @@ export default function AdsFiltersSidebar({
     ? sidebarCategories.slice(0, 8)
     : sidebarCategories
 
-  // Состояние: разные опции для категории «Одежда и обувь» и для остальных (только значения для чекбоксов, без «Любое»)
   const conditionOptions = useMemo(
     () =>
       isClothingCategory
@@ -133,26 +138,35 @@ export default function AdsFiltersSidebar({
             { value: 'USED_FAIR', label: t('ads.conditionUsedFair') },
             { value: 'NEW', label: t('ads.conditionNew') },
           ]
-        : [
-            { value: 'USED', label: t('ads.conditionUsed') },
-            { value: 'NEW', label: t('ads.conditionNew') },
-            { value: 'HANDMADE', label: t('ads.conditionHandmade') },
-          ],
-    [isClothingCategory, t]
+        : filterFlags.handmade === false
+          ? [
+              { value: 'USED', label: t('ads.conditionUsed') },
+              { value: 'NEW', label: t('ads.conditionNew') },
+            ]
+          : [
+              { value: 'USED', label: t('ads.conditionUsed') },
+              { value: 'NEW', label: t('ads.conditionNew') },
+              { value: 'HANDMADE', label: t('ads.conditionHandmade') },
+            ],
+    [isClothingCategory, filterFlags.handmade, t]
   )
   const sellerTypeOptions = useMemo(
-    () => [
-      { value: 'PRIVATE', label: t('ads.sellerPrivate') },
-      { value: 'BUSINESS', label: t('ads.sellerBusiness') },
-    ],
-    [t]
+    () =>
+      sellerTypeOptionsForCategory(currentCategoryCode).map((o) => ({
+        value: o.value,
+        label: t(o.labelKey),
+      })),
+    [currentCategoryCode, t]
   )
   const yesLabel = lang === 'ru' ? 'Да' : 'Ha'
   const noLabel = lang === 'ru' ? 'Нет' : "Yo'q"
 
   return (
     <aside className={`app-card ${styles.sidebar}`}>
-      <h2 className="h6 mb-3">{title}</h2>
+      <h2 className={`h6 mb-3 ${styles.sidebarTitle}`}>
+        {currentCategoryCode ? <CategoryIcon code={currentCategoryCode} className={styles.sidebarTitleIcon} /> : null}
+        <span>{title}</span>
+      </h2>
       <div className={styles.sidebarBlock}>
         <p className="small fw-semibold text-secondary mb-2">{t('ads.adsInUzbekistan')}</p>
         <ul className="list-unstyled mb-0">
@@ -167,7 +181,11 @@ export default function AdsFiltersSidebar({
                   className={`${styles.sidebarCatItem} ${isActive ? styles.sidebarCatItemActive : ''}`}
                   aria-current={isActive ? 'page' : undefined}
                 >
-                  {categoryName(c)} <i className="bi bi-chevron-right small" aria-hidden />
+                  <span className={styles.sidebarCatMain}>
+                    <CategoryIcon code={code} parentCode={c.parentCode} className={styles.sidebarCatIcon} />
+                    <span>{categoryName(c)}</span>
+                  </span>
+                  <i className="bi bi-chevron-right small" aria-hidden />
                 </Link>
               </li>
             )
@@ -189,8 +207,8 @@ export default function AdsFiltersSidebar({
       <div className={styles.sidebarBlock}>
         <label className="form-label small fw-semibold text-secondary">{t('ads.region')}</label>
         <select
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
+          value={filterDraft.region || ''}
+          onChange={(e) => setFilterDraft((d) => ({ ...d, region: e.target.value }))}
           className="form-select form-select-sm"
         >
           <option value="">— {t('ads.allRegions')}</option>
@@ -202,16 +220,18 @@ export default function AdsFiltersSidebar({
         </select>
       </div>
 
-      <FilterCheckboxBlock
-        title={t('ads.conditionLabel')}
-        options={conditionOptions}
-        value={filterDraft.itemCondition}
-        fieldKey="itemCondition"
-        idPrefix="itemCondition"
-        setFilterDraft={setFilterDraft}
-      />
+      {filterFlags.condition !== false && (
+        <FilterCheckboxBlock
+          title={t('ads.conditionLabel')}
+          options={conditionOptions}
+          value={filterDraft.itemCondition}
+          fieldKey="itemCondition"
+          idPrefix="itemCondition"
+          setFilterDraft={setFilterDraft}
+        />
+      )}
 
-      {isClothingCategory && (
+      {filterFlags.canRent && (
         <FilterYesNoCheckboxes
           title={t('ads.canRentLabel')}
           fieldKey="canRent"
@@ -223,17 +243,19 @@ export default function AdsFiltersSidebar({
         />
       )}
 
-      <FilterYesNoCheckboxes
-        title={t('ads.handMadeLabel')}
-        fieldKey="handMadeOnly"
-        value={filterDraft.handMadeOnly}
-        setFilterDraft={setFilterDraft}
-        idPrefix="handMadeOnly"
-        yesLabel={t('ads.handMadeYes')}
-        noLabel={t('ads.handMadeNo')}
-      />
+      {filterFlags.handmade !== false && (
+        <FilterYesNoCheckboxes
+          title={t('ads.handMadeLabel')}
+          fieldKey="handMadeOnly"
+          value={filterDraft.handMadeOnly}
+          setFilterDraft={setFilterDraft}
+          idPrefix="handMadeOnly"
+          yesLabel={t('ads.handMadeYes')}
+          noLabel={t('ads.handMadeNo')}
+        />
+      )}
 
-      {brands.length > 0 && (
+      {brands.length > 0 && !realEstateFlags.realEstate && !transportFlags.brand && (
         <div className={`${styles.sidebarBlock} ${styles.brandBlock}`}>
           <p className="small fw-semibold text-secondary mb-2">{lang === 'ru' ? 'Производитель' : 'Ishlab chiqaruvchi'}</p>
           {!brandBlockCollapsed && (
@@ -253,24 +275,20 @@ export default function AdsFiltersSidebar({
               </div>
               <div className={styles.brandList}>
                 {filteredBrands.map((b) => {
-                  const isChecked = (brandId || filterDraft.brandId || '') === b.id
+                  const isChecked = (filterDraft.brandId || '') === b.id
                   return (
-                    <div key={b.id} className="form-check">
+                    <label key={b.id} className={styles.checkRow} htmlFor={`brand-${b.id}`}>
                       <input
                         type="checkbox"
-                        className="form-check-input"
+                        className={styles.checkInput}
                         id={`brand-${b.id}`}
                         checked={isChecked}
                         onChange={() => {
-                          const v = isChecked ? '' : b.id
-                          setFilterDraft((d) => ({ ...d, brandId: v }))
-                          setBrandId?.(v)
+                          setFilterDraft((d) => ({ ...d, brandId: isChecked ? '' : b.id, modelId: '' }))
                         }}
                       />
-                      <label className="form-check-label small" htmlFor={`brand-${b.id}`}>
-                        {lang === 'ru' ? b.nameRu : b.nameUz}
-                      </label>
-                    </div>
+                      <span className={styles.checkLabel}>{lang === 'ru' ? b.nameRu : b.nameUz}</span>
+                    </label>
                   )
                 })}
               </div>
@@ -288,6 +306,22 @@ export default function AdsFiltersSidebar({
         </div>
       )}
 
+      <TransportSidebarFields
+        flags={transportFlags}
+        filterDraft={filterDraft}
+        setFilterDraft={setFilterDraft}
+        brands={brands}
+        t={t}
+        lang={lang}
+      />
+
+      <RealEstateSidebarFields
+        flags={realEstateFlags}
+        filterDraft={filterDraft}
+        setFilterDraft={setFilterDraft}
+        t={t}
+      />
+
       <FilterCheckboxBlock
         title={t('ads.sellerType')}
         options={sellerTypeOptions}
@@ -297,25 +331,29 @@ export default function AdsFiltersSidebar({
         setFilterDraft={setFilterDraft}
       />
 
-      <FilterYesNoCheckboxes
-        title={t('ads.hasLicense')}
-        fieldKey="hasLicense"
-        value={filterDraft.hasLicense}
-        setFilterDraft={setFilterDraft}
-        idPrefix="hasLicense"
-        yesLabel={yesLabel}
-        noLabel={noLabel}
-      />
+      {filterFlags.license && (
+        <FilterYesNoCheckboxes
+          title={t('ads.hasLicense')}
+          fieldKey="hasLicense"
+          value={filterDraft.hasLicense}
+          setFilterDraft={setFilterDraft}
+          idPrefix="hasLicense"
+          yesLabel={yesLabel}
+          noLabel={noLabel}
+        />
+      )}
 
-      <FilterYesNoCheckboxes
-        title={t('ads.worksByContract')}
-        fieldKey="worksByContract"
-        value={filterDraft.worksByContract}
-        setFilterDraft={setFilterDraft}
-        idPrefix="worksByContract"
-        yesLabel={yesLabel}
-        noLabel={noLabel}
-      />
+      {filterFlags.contract && (
+        <FilterYesNoCheckboxes
+          title={t('ads.worksByContract')}
+          fieldKey="worksByContract"
+          value={filterDraft.worksByContract}
+          setFilterDraft={setFilterDraft}
+          idPrefix="worksByContract"
+          yesLabel={yesLabel}
+          noLabel={noLabel}
+        />
+      )}
 
       <div className={styles.sidebarBlock}>
         <p className="small fw-semibold text-secondary mb-2">{t('ads.currency')}</p>
@@ -329,7 +367,13 @@ export default function AdsFiltersSidebar({
               key={value}
               type="button"
               className={`btn ${filterDraft.currency === value || (value === 'FROM_AD' && (!filterDraft.currency || filterDraft.currency === 'FROM_AD')) ? 'btn-primary' : 'btn-outline-secondary'}`}
-              onClick={() => setFilterDraft((d) => ({ ...d, currency: value }))}
+              onClick={() => {
+                if (typeof onCurrencyChange === 'function') {
+                  onCurrencyChange(value)
+                } else {
+                  setFilterDraft((d) => ({ ...d, currency: value }))
+                }
+              }}
             >
               {label}
             </button>
@@ -365,47 +409,55 @@ export default function AdsFiltersSidebar({
         </div>
       </div>
 
+      {(filterFlags.urgentBargain !== false || filterFlags.canDeliver !== false || filterFlags.giveAway !== false) && (
       <div className={styles.sidebarBlock}>
         <p className={styles.sidebarBlockTitle}>{t('ads.additionally')}</p>
         <div className={styles.filterToggles}>
-          <div className={styles.filterToggleRow}>
-            <span>{t('ads.urgentBargain')}</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={filterDraft.urgentBargain}
-              className={`${styles.filterToggle} ${filterDraft.urgentBargain ? styles.filterToggleOn : ''}`}
-              onClick={() => setFilterDraft((d) => ({ ...d, urgentBargain: !d.urgentBargain }))}
-            >
-              <span className={styles.filterToggleKnob} />
-            </button>
-          </div>
-          <div className={styles.filterToggleRow}>
-            <span>{t('ads.courierDelivery')}</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={filterDraft.canDeliver}
-              className={`${styles.filterToggle} ${filterDraft.canDeliver ? styles.filterToggleOn : ''}`}
-              onClick={() => setFilterDraft((d) => ({ ...d, canDeliver: !d.canDeliver }))}
-            >
-              <span className={styles.filterToggleKnob} />
-            </button>
-          </div>
-          <div className={styles.filterToggleRow}>
-            <span>{t('ads.giveAway')}</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={filterDraft.giveAway}
-              className={`${styles.filterToggle} ${filterDraft.giveAway ? styles.filterToggleOn : ''}`}
-              onClick={() => setFilterDraft((d) => ({ ...d, giveAway: !d.giveAway }))}
-            >
-              <span className={styles.filterToggleKnob} />
-            </button>
-          </div>
+          {filterFlags.urgentBargain !== false && (
+            <div className={styles.filterToggleRow}>
+              <span>{t('ads.urgentBargain')}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={filterDraft.urgentBargain}
+                className={`${styles.filterToggle} ${filterDraft.urgentBargain ? styles.filterToggleOn : ''}`}
+                onClick={() => setFilterDraft((d) => ({ ...d, urgentBargain: !d.urgentBargain }))}
+              >
+                <span className={styles.filterToggleKnob} />
+              </button>
+            </div>
+          )}
+          {filterFlags.canDeliver !== false && (
+            <div className={styles.filterToggleRow}>
+              <span>{t('ads.courierDelivery')}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={filterDraft.canDeliver}
+                className={`${styles.filterToggle} ${filterDraft.canDeliver ? styles.filterToggleOn : ''}`}
+                onClick={() => setFilterDraft((d) => ({ ...d, canDeliver: !d.canDeliver }))}
+              >
+                <span className={styles.filterToggleKnob} />
+              </button>
+            </div>
+          )}
+          {filterFlags.giveAway !== false && (
+            <div className={styles.filterToggleRow}>
+              <span>{t('ads.giveAway')}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={filterDraft.giveAway}
+                className={`${styles.filterToggle} ${filterDraft.giveAway ? styles.filterToggleOn : ''}`}
+                onClick={() => setFilterDraft((d) => ({ ...d, giveAway: !d.giveAway }))}
+              >
+                <span className={styles.filterToggleKnob} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
+      )}
 
       <div className="d-flex gap-2 mt-3">
         <button type="button" className="btn btn-outline-secondary btn-sm flex-grow-1" onClick={onReset}>

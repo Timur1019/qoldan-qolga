@@ -1,48 +1,78 @@
-import { createContext, useContext, useState, useCallback, useRef } from 'react'
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react'
+import { useLang } from './LangContext'
+import { registerToastHandler } from '../utils/toastBus'
+import { formatApiError } from '../utils/apiError'
+import styles from './ToastContext.module.css'
 
 const ToastContext = createContext(null)
+const TOAST_DURATION = 4200
 
-const TOAST_DURATION = 3500
+const ICONS = {
+  success: 'bi-check-circle-fill',
+  error: 'bi-exclamation-circle-fill',
+  warning: 'bi-exclamation-triangle-fill',
+  info: 'bi-info-circle-fill',
+}
 
 export function ToastProvider({ children }) {
-  const [message, setMessage] = useState(null)
+  const { t } = useLang()
+  const [toast, setToast] = useState(null)
   const timerRef = useRef(null)
-
-  const showToast = useCallback((msg) => {
-    if (timerRef.current) clearTimeout(timerRef.current)
-    setMessage(msg)
-    timerRef.current = setTimeout(() => {
-      setMessage(null)
-      timerRef.current = null
-    }, TOAST_DURATION)
-  }, [])
 
   const hideToast = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = null
-    setMessage(null)
+    setToast(null)
   }, [])
 
+  const showToast = useCallback((message, type = 'success') => {
+    if (!message) return
+    if (timerRef.current) clearTimeout(timerRef.current)
+    setToast({ message, type, code: null })
+    timerRef.current = setTimeout(() => {
+      setToast(null)
+      timerRef.current = null
+    }, TOAST_DURATION)
+  }, [])
+
+  const showApiError = useCallback((err) => {
+    const message = formatApiError(err, t)
+    if (timerRef.current) clearTimeout(timerRef.current)
+    setToast({ message, type: 'error', code: err?.code || null })
+    timerRef.current = setTimeout(() => {
+      setToast(null)
+      timerRef.current = null
+    }, TOAST_DURATION)
+  }, [t])
+
+  useEffect(() => {
+    registerToastHandler((type, payload) => {
+      if (type === 'error' && payload && typeof payload === 'object') {
+        showApiError(payload)
+        return
+      }
+      showToast(payload, type || 'info')
+    })
+    return () => registerToastHandler(null)
+  }, [showToast, showApiError])
+
   return (
-    <ToastContext.Provider value={{ showToast, hideToast }}>
+    <ToastContext.Provider value={{ showToast, showApiError, hideToast }}>
       {children}
-      {message != null && (
+      {toast != null && (
         <div
-          className="toast-notification position-fixed bottom-0 end-0 m-3 p-3 rounded shadow app-card d-flex align-items-center gap-2"
-          role="status"
+          className={`${styles.toast} ${styles[toast.type] || styles.info}`}
+          role={toast.type === 'error' ? 'alert' : 'status'}
           aria-live="polite"
-          style={{
-            zIndex: 10000,
-            maxWidth: '90vw',
-            backgroundColor: 'var(--color-bg-card, #ffffff)',
-            border: '1px solid var(--color-border, #e5e7eb)',
-            fontSize: 'var(--font-size-body, 15px)',
-            fontWeight: 500,
-            color: 'var(--color-text, #111827)',
-          }}
         >
-          <i className="bi bi-check-circle-fill text-success" aria-hidden />
-          <span>{message}</span>
+          <i className={`bi ${ICONS[toast.type] || ICONS.info} ${styles.icon}`} aria-hidden />
+          <div className={styles.body}>
+            <span>{toast.message}</span>
+            {toast.code ? <span className={styles.code}>{toast.code}</span> : null}
+          </div>
+          <button type="button" className={styles.close} onClick={hideToast} aria-label={t('common.close')}>
+            <i className="bi bi-x-lg" aria-hidden />
+          </button>
         </div>
       )}
     </ToastContext.Provider>
@@ -51,6 +81,6 @@ export function ToastProvider({ children }) {
 
 export function useToast() {
   const ctx = useContext(ToastContext)
-  if (!ctx) return { showToast: () => {}, hideToast: () => {} }
+  if (!ctx) return { showToast: () => {}, showApiError: () => {}, hideToast: () => {} }
   return ctx
 }

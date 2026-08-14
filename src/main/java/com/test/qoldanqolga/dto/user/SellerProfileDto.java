@@ -20,4 +20,8 @@ public class SellerProfileDto {
     private long subscribersCount;
     private boolean subscribed; // false для своего профиля или неаутентифицированного
     private Boolean profileVerified;
+    /** Подтверждённый магазин (одобренная заявка) или true для UI бейджа. */
+    private Boolean storeVerified;
+    /** Совместимость с фронтом: то же, что storeVerified. */
+    private Boolean sellerIsStore;
 }

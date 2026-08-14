@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,9 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
 
     @Query("SELECT f.advertisementId FROM Favorite f WHERE f.userId = :userId")
     List<String> findAdvertisementIdsByUserId(@Param("userId") String userId);
+
+    @Query("SELECT f.advertisementId FROM Favorite f WHERE f.userId = :userId AND f.advertisementId IN :adIds")
+    List<String> findAdvertisementIdsByUserIdAndAdvertisementIdIn(
+            @Param("userId") String userId,
+            @Param("adIds") Collection<String> adIds);
 }

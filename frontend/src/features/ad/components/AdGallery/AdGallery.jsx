@@ -1,17 +1,31 @@
 import { useState, useEffect } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import { imageUrl } from '../../services/adApi'
+import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
 import styles from './AdGallery.module.css'
 
-export default function AdGallery({ images: rawImages, lightboxFooter }) {
+export default function AdGallery({ images: rawImages, lightboxFooter, overlay }) {
   const { t } = useLang()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [failedUrls, setFailedUrls] = useState(() => new Set())
 
-  const images = rawImages?.length
+  const images = (rawImages?.length
     ? [...rawImages].sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0))
     : []
+  ).filter((img) => img?.url && !failedUrls.has(img.url))
   const mainImage = images[selectedIndex] || images[0]
+
+  const markFailed = (url) => {
+    if (!url) return
+    setFailedUrls((prev) => {
+      if (prev.has(url)) return prev
+      const next = new Set(prev)
+      next.add(url)
+      return next
+    })
+    setSelectedIndex(0)
+  }
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -46,7 +60,7 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
                 className={`${styles.thumbBtn} ${selectedIndex === idx ? styles.thumbBtnActive : ''}`}
                 onClick={() => setSelectedIndex(idx)}
               >
-                <img src={imageUrl(img.url)} alt="" loading="lazy" decoding="async" />
+                <img src={imageUrl(img.url)} alt="" loading="lazy" decoding="async" onError={() => markFailed(img.url)} />
               </button>
             ))}
           </div>
@@ -74,9 +88,9 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
             aria-label={t('ads.enlarge')}
           >
             {mainImage ? (
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} decoding="async" />
+              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} decoding="async" onError={() => markFailed(mainImage.url)} />
             ) : (
-              <div className={styles.mainImagePlaceholder} />
+              <AdImagePlaceholder className={styles.mainImagePlaceholder} />
             )}
             {mainImage && (
               <div className={styles.mainImageHoverOverlay}>
@@ -84,6 +98,7 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
               </div>
             )}
           </div>
+          {overlay}
           {images.length > 1 && (
             <div className={styles.dots} role="tablist" aria-label={t('ads.imageCount')}>
               {images.map((_, idx) => (
@@ -129,7 +144,7 @@ export default function AdGallery({ images: rawImages, lightboxFooter }) {
             }}
           >
             <div className={styles.lightboxContent}>
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} decoding="async" />
+              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} decoding="async" onError={() => markFailed(mainImage.url)} />
             </div>
             {images.length > 1 && (
               <div className={styles.lightboxDots} role="tablist" aria-label={t('ads.imageCount')}>

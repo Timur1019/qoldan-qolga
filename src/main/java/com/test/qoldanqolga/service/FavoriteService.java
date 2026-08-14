@@ -4,6 +4,7 @@ import com.test.qoldanqolga.dto.ad.AdListItemDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface FavoriteService {
@@ -23,6 +24,8 @@ public interface FavoriteService {
     boolean isFavorite(String userId, String advertisementId);
 
     Set<String> getFavoriteAdIds(String userId);
+
+    Set<String> getFavoriteAdIds(String userId, Collection<String> advertisementIds);
 
     Page<AdListItemDto> getFavoriteAds(String userId, Pageable pageable);
 }

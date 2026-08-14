@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLang } from '../../context/LangContext'
 import { referenceApi } from '../../api/client'
+import CategoryIcon from '../ui/CategoryIcon'
 import styles from './CategorySelectModal.module.css'
 
 export default function CategorySelectModal({ categories, value, onSelect, onClose }) {
@@ -124,7 +125,10 @@ export default function CategorySelectModal({ categories, value, onSelect, onClo
                   className={`btn w-100 d-flex align-items-center justify-content-between rounded ${value === c.code ? 'btn-primary' : 'btn-light'}`}
                   onClick={() => handleItemClick(c)}
                 >
-                  <span className="text-start">{name(c)}</span>
+                  <span className="text-start d-flex align-items-center gap-2">
+                    <CategoryIcon code={c.code} parentCode={c.parentCode || currentParent?.code} className="text-secondary" />
+                    {name(c)}
+                  </span>
                   {c.hasChildren ? (
                     <i className="bi bi-chevron-right" aria-hidden />
                   ) : (

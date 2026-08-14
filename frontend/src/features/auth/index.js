@@ -1,6 +1,4 @@
 /**
- * Feature: Авторизация
+ * Feature: Авторизация (только телефон / SMS)
  */
 export { default as AuthModal } from './components/AuthModal/AuthModal'
-export { default as Login } from './pages/Login/Login'
-export { default as Register } from './pages/Register/Register'

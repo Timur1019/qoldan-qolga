@@ -1,0 +1,28 @@
+.card {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+}
+
+.title {
+  width: 88%;
+  margin-top: 0.15rem;
+}
+
+.price {
+  width: 52%;
+}
+
+.meta {
+  width: 64%;
+}

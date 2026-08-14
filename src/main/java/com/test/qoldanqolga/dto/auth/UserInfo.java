@@ -13,9 +13,12 @@ public class UserInfo {
 
     private String id;
     private String email;
+    private String phone;
     private String displayName;
     private String avatar;
     private java.util.List<String> avatarPhotos;
     private String role;
     private Boolean profileVerified;
+    /** Подтверждённый магазин / Pro (после одобрения заявки). */
+    private Boolean storeVerified;
 }

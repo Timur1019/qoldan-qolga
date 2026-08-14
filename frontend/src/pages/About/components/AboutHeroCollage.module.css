@@ -1,0 +1,10 @@
+.collage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg {
+  width: min(100%, 420px);
+  height: auto;
+}

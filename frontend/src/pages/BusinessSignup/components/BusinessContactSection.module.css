@@ -1,0 +1,94 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+.label {
+  margin: 0 0 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.req {
+  color: #dc2626;
+}
+
+.phoneWrap {
+  display: flex;
+  align-items: stretch;
+  height: 2.75rem;
+  border-radius: 10px;
+  background: #f3f4f6;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.phoneWrap:focus-within {
+  background: #fff;
+  border-color: rgba(4, 73, 45, 0.45);
+  box-shadow: 0 0 0 3px rgba(4, 73, 45, 0.12);
+}
+
+.prefix {
+  display: grid;
+  place-items: center;
+  padding: 0 0.85rem;
+  border-right: 1px solid #e5e7eb;
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: #4b5563;
+  background: rgba(17, 24, 39, 0.03);
+}
+
+.phoneInput {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0 0.9rem;
+  font-size: 0.95rem;
+  color: #111827;
+  outline: none;
+}
+
+.phoneInput::placeholder {
+  color: #9ca3af;
+}
+
+.agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.agreeInput {
+  margin-top: 0.2rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  accent-color: var(--color-primary, #04492d);
+}
+
+.agreeText {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #4b5563;
+}
+
+.link {
+  color: var(--color-primary, #04492d);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  opacity: 0.85;
+}

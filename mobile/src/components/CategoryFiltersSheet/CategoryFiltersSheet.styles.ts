@@ -1,0 +1,103 @@
+import { StyleSheet } from 'react-native';
+
+import { colors } from '@/theme/colors';
+import { radius, spacing } from '@/theme/spacing';
+
+export const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: colors.overlay,
+  },
+  sheet: {
+    backgroundColor: colors.bg,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    height: '92%',
+    paddingBottom: spacing.lg,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  title: { fontSize: 17, fontWeight: '700', color: colors.text },
+  scroll: { flex: 1 },
+  body: { padding: spacing.lg, gap: spacing.sm, paddingBottom: spacing.xxl },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+  },
+  fieldLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+    marginBottom: 4,
+  },
+  lookupBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 12,
+    backgroundColor: colors.bg,
+  },
+  lookupBtnText: { flex: 1, fontSize: 15, color: colors.text, fontWeight: '500' },
+  priceRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: colors.text,
+  },
+  dash: { color: colors.muted },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  toggleLabel: { flex: 1, fontSize: 14, color: colors.text, paddingRight: spacing.md },
+  footer: {
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm,
+    paddingTop: spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+  },
+  primaryBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  primaryBtnText: { color: colors.white, fontWeight: '700', fontSize: 15 },
+  secondaryBtn: {
+    borderRadius: radius.md,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  secondaryBtnText: { color: colors.muted, fontWeight: '600', fontSize: 14 },
+});

@@ -1,13 +1,10 @@
 /**
  * SellerAdsSection — секция объявлений продавца.
- * Табы «Активные»/«Архив»; карточки в той же сетке и стиле, что на главной и в списке объявлений.
+ * Табы «Активные»/«Архив»; карточки в единой сетке AdCard.
  */
-import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { formatPrice, formatAdCardDate } from '../../utils/formatters'
-import { adsPath } from '../../constants/routes'
-import HeartIcon from '../../components/ui/HeartIcon'
-import CardGallery from '../../features/ad/components/CardGallery'
+import AdCard from '../../features/ad/components/AdCard'
+import gridStyles from '../../features/ad/components/AdCardGrid/AdCardGrid.module.css'
 import ProfileTabs from './ProfileTabs'
 import styles from './SellerProfile.module.css'
 
@@ -19,7 +16,6 @@ export default function SellerAdsSection({
   onTabChange,
   activeCount,
   archiveCount,
-  isAuthenticated,
   sellerId,
   currentUserId,
   onFavoriteClick,
@@ -43,47 +39,17 @@ export default function SellerAdsSection({
       {filtered.length === 0 ? (
         <p className={styles.empty}>{t('ads.noAds')}</p>
       ) : (
-        <ul className={styles.adsGrid}>
+        <ul className={gridStyles.grid}>
           {filtered.map((ad) => (
-            <li key={ad.id} className={`${styles.adCard} app-card app-card-hover`}>
-              <Link to={adsPath(ad.id)} className={styles.adLink}>
-                <span className={styles.adImgWrap}>
-                  <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
-                    {ad.sellerIsStore ? 'Магазин' : 'Частный'}
-                  </span>
-                  <CardGallery
-                    imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
-                  />
-                </span>
-                <div className={styles.adBody}>
-                  <p className={styles.adPrice}>
-                    {formatPrice(ad.price, ad.currency)}
-                    {ad.isNegotiable && ` (${t('ads.negotiable')})`}
-                  </p>
-                  {showFavorite && (
-                    <button
-                      type="button"
-                      className={styles.favBtn}
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavoriteClick(e, ad) }}
-                      aria-label={getFavoriteAriaLabel(ad)}
-                    >
-                      <HeartIcon
-                        filled={!!ad.favorite}
-                        className={`${styles.heartIcon} ${ad.favorite ? styles.heartFilled : styles.heartOutline}`}
-                        size={18}
-                      />
-                    </button>
-                  )}
-                  <h2 className={styles.adTitle}>{ad.title}</h2>
-                  {ad.region && <p className={styles.adMeta}>{ad.region}</p>}
-                  {ad.createdAt && (
-                    <p className={styles.adDate}>
-                      {formatAdCardDate(ad.createdAt, { today: t('profile.today'), yesterday: t('profile.yesterday') })}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            </li>
+            <AdCard
+              key={ad.id}
+              ad={ad}
+              t={t}
+              showFavorite={showFavorite}
+              onFavoriteClick={onFavoriteClick}
+              favorite={!!ad.favorite}
+              heartAriaLabel={getFavoriteAriaLabel?.(ad)}
+            />
           ))}
         </ul>
       )}

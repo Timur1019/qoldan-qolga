@@ -4,13 +4,18 @@ import com.test.qoldanqolga.dto.ad.AdListItemDto;
 import com.test.qoldanqolga.mapper.AdvertisementMapper;
 import com.test.qoldanqolga.model.AdImage;
 import com.test.qoldanqolga.model.Advertisement;
+import com.test.qoldanqolga.model.Brand;
 import com.test.qoldanqolga.model.User;
+import com.test.qoldanqolga.model.VehicleModel;
 import com.test.qoldanqolga.repository.AdImageRepository;
+import com.test.qoldanqolga.repository.BrandRepository;
 import com.test.qoldanqolga.repository.ReviewRepository;
 import com.test.qoldanqolga.repository.UserRepository;
+import com.test.qoldanqolga.repository.VehicleModelRepository;
 import com.test.qoldanqolga.service.AdListQueryService;
 import com.test.qoldanqolga.service.FavoriteService;
 import com.test.qoldanqolga.util.LogUtil;
+import com.test.qoldanqolga.util.SellerStatusUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +33,8 @@ public class AdListQueryServiceImpl implements AdListQueryService {
     private final AdImageRepository adImageRepository;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final BrandRepository brandRepository;
+    private final VehicleModelRepository vehicleModelRepository;
     private final FavoriteService favoriteService;
     private final AdvertisementMapper advertisementMapper;
 
@@ -52,11 +59,17 @@ public class AdListQueryServiceImpl implements AdListQueryService {
                     .orElse(list.isEmpty() ? null : list.get(0).getUrl());
             mainUrlByAdId.put(adId, main);
         }
-        Set<String> favoriteIds = currentUserId != null ? favoriteService.getFavoriteAdIds(currentUserId) : Set.of();
+        Set<String> favoriteIds = currentUserId != null ? favoriteService.getFavoriteAdIds(currentUserId, adIds) : Set.of();
 
-        List<String> userIds = ads.stream().map(Advertisement::getUserId).distinct().collect(Collectors.toList());
-        Map<String, User> usersById = userIds.isEmpty() ? Map.of() : userRepository.findAllById(userIds).stream()
-                .collect(Collectors.toMap(User::getId, u -> u));
+        List<String> userIds = ads.stream().map(Advertisement::getUserId).filter(id -> id != null && !id.isBlank()).distinct().collect(Collectors.toList());
+        Map<String, User> usersById = userIds.isEmpty() ? new HashMap<>() : userRepository.findAllById(userIds).stream()
+                .collect(Collectors.toMap(User::getId, u -> u, (a, b) -> a, HashMap::new));
+        List<String> brandIds = ads.stream().map(Advertisement::getBrandId).filter(id -> id != null && !id.isBlank()).distinct().collect(Collectors.toList());
+        Map<String, Brand> brandsById = brandIds.isEmpty() ? new HashMap<>() : brandRepository.findAllById(brandIds).stream()
+                .collect(Collectors.toMap(Brand::getId, b -> b, (a, b) -> a, HashMap::new));
+        List<String> modelIds = ads.stream().map(Advertisement::getModelId).filter(id -> id != null && !id.isBlank()).distinct().collect(Collectors.toList());
+        Map<String, VehicleModel> modelsById = modelIds.isEmpty() ? new HashMap<>() : vehicleModelRepository.findAllById(modelIds).stream()
+                .collect(Collectors.toMap(VehicleModel::getId, m -> m, (a, b) -> a, HashMap::new));
         Map<String, double[]> ratingsByUser = new HashMap<>();
         if (withUserRatings && !userIds.isEmpty()) {
             for (Object[] row : reviewRepository.findAverageAndCountByTargetUserIdIn(userIds)) {
@@ -76,13 +89,31 @@ public class AdListQueryServiceImpl implements AdListQueryService {
             dto.setFavorite(favoriteIds.contains(ad.getId()));
             dto.setUserId(ad.getUserId());
             dto.setPhone(ad.getPhone());
-            User u = finalUsersById.get(ad.getUserId());
+            dto.setTelegramUsername(ad.getTelegramUsername());
+            Brand brand = ad.getBrandId() != null ? brandsById.get(ad.getBrandId()) : null;
+            if (brand != null) {
+                dto.setBrandNameUz(brand.getNameUz());
+                dto.setBrandNameRu(brand.getNameRu());
+            }
+            VehicleModel model = ad.getModelId() != null ? modelsById.get(ad.getModelId()) : null;
+            if (model != null) {
+                dto.setModelNameUz(model.getNameUz());
+                dto.setModelNameRu(model.getNameRu());
+            }
+            User u = ad.getUserId() != null ? finalUsersById.get(ad.getUserId()) : null;
             if (u != null) {
                 dto.setUserDisplayName(u.getDisplayName());
                 dto.setUserAvatar(u.getAvatar());
-                dto.setSellerIsStore(Boolean.TRUE.equals(u.getStoreVerified()));
+                dto.setSellerIsStore(SellerStatusUtil.isStore(u, ad.getSellerType()));
+            } else {
+                dto.setSellerIsStore(SellerStatusUtil.isStore(null, ad.getSellerType()));
             }
-            double[] r = finalRatingsByUser.get(ad.getUserId());
+            dto.setSellerType(SellerStatusUtil.normalize(ad.getSellerType()));
+            if (dto.getSellerType() == null && Boolean.TRUE.equals(dto.getSellerIsStore())) {
+                dto.setSellerType(SellerStatusUtil.STORE);
+            }
+            dto.setOnlineShowing(Boolean.TRUE.equals(ad.getOnlineShowing()));
+            double[] r = ad.getUserId() != null ? finalRatingsByUser.get(ad.getUserId()) : null;
             if (r != null) {
                 dto.setAverageRating(r[0]);
                 dto.setTotalReviews((long) r[1]);

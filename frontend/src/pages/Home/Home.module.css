@@ -1,19 +1,41 @@
+/* Совпадает с шапкой/футером — без выпирания */
+:global(.page-container).homePage {
+  max-width: var(--layout-max, 1280px);
+}
+
 .title {
-  margin: 0 0 0.5rem;
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-semibold);
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.65rem, 3vw, 2.1rem);
+  font-weight: 750;
+  letter-spacing: -0.03em;
   color: var(--color-text);
 }
 
-.lead {
-  margin: 0;
-  font-size: var(--font-size-description);
-  color: var(--color-text-secondary);
+.topRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--layout-gap, 0.85rem);
+  align-items: stretch;
+  margin: 1.15rem 0 0;
+  min-width: 0;
 }
 
-.welcome {
-  margin: 0.5rem 0 1rem;
-  font-size: var(--font-size-body);
+.topMain {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+}
+
+.topSide {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+}
+
+@media (max-width: 991px) {
+  .topRow {
+    grid-template-columns: 1fr;
+  }
 }
 
 .globalLoading {
@@ -31,7 +53,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border, #e5e7eb);
-  border-top-color: var(--color-primary, #2563eb);
+  border-top-color: var(--color-primary, #04492d);
   border-radius: 50%;
   animation: homeSpin 0.8s linear infinite;
 }
@@ -47,304 +69,17 @@
   color: var(--color-text-secondary, #6b7280);
 }
 
-/* Категории: в ряд по 6, все карточки одинаковой ширины и высоты */
-.cardsGrid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
-  margin: 1rem 0;
-}
-
-@media (max-width: 991px) {
-  .cardsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 767px) {
-  .cardsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Карточка категории на главной: одинаковая ширина и высота, название слева, иконка в правом нижнем углу */
-.card {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 1.25rem 1.5rem;
-  background: var(--color-bg-card, #fff);
-  border: 1px solid var(--color-border, #e5e7eb);
-  border-radius: var(--radius-card, 16px);
-  text-decoration: none;
-  color: inherit;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
-  transition: box-shadow 0.2s, border-color 0.2s;
-  min-height: 100px;
-  height: 100px;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-card-hover, 0 8px 24px rgba(0, 0, 0, 0.1));
-  border-color: var(--color-primary);
-}
-
-.cardTitle {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  font-size: var(--font-size-category-btn, 15px);
-  line-height: 1.3;
-  color: var(--color-text, #1a1a1a);
-  z-index: 1;
-  text-align: left;
-  padding-right: 4rem;
-}
-
-.card:hover .cardTitle {
-  color: var(--color-primary);
-}
-
-.cardIconPeek {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 72px;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9ca3af;
-  z-index: 0;
-}
-
-.cardIcon {
-  width: 56px;
-  height: 56px;
-}
-
-.cardAll {
-  background: var(--color-bg-card, #fff);
-  border: 1px solid var(--color-border, #e5e7eb);
-}
-
-.cardAll .cardArrow {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  font-size: 1.5rem;
-  color: var(--color-text-secondary, #6b7280);
-  z-index: 0;
-}
-
-/* Баннер «Продавайте и зарабатывайте» */
-.sellBanner {
-  margin: 1.5rem 0 0;
-  padding: 0.75rem 1.5rem;
-  border-radius: 20px;
-
-  background: linear-gradient(135deg, #ffffff 0%, rgba(107, 205, 131, 0.82) 40%, rgba(232, 248, 240, 0.95) 100%);
-  border: 1px solid rgba(4, 73, 45, 0.12);
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  min-height: 85px;
-  transition: all 0.25s ease;
-}
-
-.sellBanner:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.08);
-}
-
-.sellBannerText {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-width: 520px;
-}
-
-.sellBannerTitle {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.sellBannerSubtitle {
-  margin: 0;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.sellBannerImgWrap {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sellBannerImg {
-  max-height: 90px;
-  max-width: 620px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
-.sellBannerActions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
-.sellBannerSecondary {
-  font-size: 14px;
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.sellBannerSecondary:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .sellBanner {
-    flex-direction: column;
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .sellBannerImg {
-    max-height: 80px;
-    max-width: 380px;
-  }
-}
-
-.promoSection {
-  margin-top: 2.5rem;
-}
-
-.promoTitle {
-  margin: 0 0 1rem;
-  font-size: 1.4rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text, #1a1a1a);
-}
-
-.promoRow {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
-}
-
-@media (min-width: 576px) {
-  .promoRow {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 992px) {
-  .promoRow {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
-  }
-}
-
-/* Карточки «Выгодно и полезно»: фон через background-image, overlay, текст внизу, вся карточка — ссылка */
-.promoCard {
-  min-height: 150px;
-  border-radius: var(--radius-card, 16px);
-  border: 1px solid var(--color-border, #e5e7eb);
-  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.promoCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-}
-
-.promoCardLink {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 150px;
-  color: inherit;
-  text-decoration: none;
-  position: relative;
-}
-
-/* Градиентный overlay поверх фона (от прозрачного сверху к затемнению снизу) */
-.promoCardOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.35) 40%, transparent 100%);
-  pointer-events: none;
-}
-
-/* Текстовый контент внизу карточки */
-.promoContent {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.promoBadge {
-  align-self: flex-start;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-semibold);
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--color-text, #1a1a1a);
-  margin-bottom: 0.15rem;
-}
-
-.promoCardTitle {
-  margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
-  color: #fff;
-}
-
-.promoCardSubtitle {
-  margin: 0;
-  font-size: var(--font-size-small);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-@media (min-width: 992px) {
-  .promoCard {
-    min-height: 150px;
-  }
-}
-
-/* Секция объявлений на главной */
 .adsSection {
-  margin-top: 2.5rem;
+  margin-top: 2.75rem;
   padding-top: 2rem;
   border-top: 1px solid var(--color-border, #e5e7eb);
 }
 
 .adsSectionTitle {
   margin: 0 0 1rem;
-  font-size: var(--font-size-title-page, 32px);
-  font-weight: var(--font-weight-bold);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
   color: var(--color-text, #1a1a1a);
 }
 
@@ -354,215 +89,25 @@
   color: var(--color-muted, #6b7280);
 }
 
-.adsGrid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 20px;
+.loadingMoreGrid {
+  margin-top: 1rem;
+  opacity: 0.72;
+  animation: homeSkeletonFade 0.28s ease-out both;
 }
 
-@media (min-width: 480px) {
-  .adsGrid {
-    grid-template-columns: repeat(2, 1fr);
+@keyframes homeSkeletonFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
-}
-
-@media (min-width: 768px) {
-  .adsGrid {
-    grid-template-columns: repeat(3, 1fr);
+  to {
+    opacity: 0.72;
+    transform: translateY(0);
   }
-}
-
-@media (min-width: 1024px) {
-  .adsGrid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-.adCard {
-  border: none;
-  border-radius: var(--radius-card, 16px);
-  overflow: hidden;
-  background: var(--color-bg-card, #fff);
-  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.05));
-  transition: box-shadow 0.2s;
-}
-
-.adCard:hover {
-  box-shadow: var(--shadow-card-hover, 0 8px 24px rgba(0, 0, 0, 0.1));
-}
-
-.adCardLink {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.adCardImageWrap {
-  position: relative;
-  display: block;
-  border-radius: var(--radius-image, 12px) var(--radius-image, 12px) 0 0;
-  overflow: hidden;
-}
-
-.sellerBadgeStore,
-.sellerBadgePrivate {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 1;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.3;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-.sellerBadgeStore {
-  background: #059669;
-  color: #fff;
-}
-
-.sellerBadgePrivate {
-  background: #64748b;
-  color: #fff;
-}
-
-.adCardImage {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
-}
-
-.adCardImagePlaceholder {
-  width: 100%;
-  height: 180px;
-  background: var(--color-bg-subtle, #f3f4f6);
-}
-
-.adCardBody {
-  padding: 0.6rem 0.75rem 0.75rem;
-  padding-right: 2.25rem;
-  position: relative;
-}
-
-.favoriteBtn {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.5rem;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  color: #374151;
-  transition: color 0.15s, transform 0.15s;
-}
-
-.favoriteBtn:hover {
-  color: #e11d48;
-  transform: scale(1.06);
-}
-
-.heartIcon {
-  width: 20px;
-  height: 20px;
-}
-
-.heartFilled {
-  stroke: #000;
-  fill: #e11d48;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
-}
-
-.heartOutline {
-  stroke: #000;
-  fill: none;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
-}
-
-.adCardPrice {
-  margin: 0 0 0.25rem;
-  font-size: 15px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text, #1a1a1a);
-  line-height: 1.3;
-}
-
-.adCardTitle {
-  margin: 0 0 0.25rem;
-  font-size: 13px;
-  font-weight: var(--font-weight-normal);
-  color: var(--color-text, #1a1a1a);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.35;
-}
-
-.adCardMeta,
-.adCardDate {
-  margin: 0;
-  font-size: 12px;
-  color: var(--color-text-secondary, #6b7280);
-}
-
-.adCardDate {
-  margin: 0.25rem 0 0;
 }
 
 .adsFooter {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+  justify-content: center;
   margin-top: 1.5rem;
-}
-
-.showMoreBtn {
-  display: block;
-  width: 100%;
-  max-width: 320px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #374151;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.showMoreBtn:hover:not(:disabled) {
-  background: #e5e7eb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.showMoreBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.adsMoreLink {
-  display: inline-block;
-  font-weight: 500;
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.adsMoreLink:hover {
-  text-decoration: none;
-  font-weight: 600;
 }

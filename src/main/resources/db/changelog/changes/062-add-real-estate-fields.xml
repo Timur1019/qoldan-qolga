@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="062-add-real-estate-columns-to-ads" author="qoldan-qolga">
+        <addColumn tableName="advertisements">
+            <column name="deal_type" type="VARCHAR(10)"/>
+            <column name="rooms" type="INT"/>
+            <column name="area_m2" type="DECIMAL(10,2)"/>
+            <column name="land_area_m2" type="DECIMAL(12,2)"/>
+            <column name="floor" type="INT"/>
+            <column name="floors_total" type="INT"/>
+            <column name="building_type" type="VARCHAR(20)"/>
+            <column name="renovation" type="VARCHAR(20)"/>
+            <column name="furnished" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_deal_type">
+            <column name="deal_type"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_rooms">
+            <column name="rooms"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_area_m2">
+            <column name="area_m2"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_building_type">
+            <column name="building_type"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_district">
+            <column name="district"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

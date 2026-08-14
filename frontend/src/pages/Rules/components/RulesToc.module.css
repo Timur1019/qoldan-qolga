@@ -1,0 +1,43 @@
+.wrap {
+  background: #fff;
+  border: 1px solid #dce5df;
+  border-radius: 18px;
+  padding: 1rem 1.1rem;
+  position: sticky;
+  top: 5.5rem;
+}
+
+.label {
+  margin: 0 0 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.link {
+  color: #1f2937;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.link:hover {
+  color: var(--color-primary, #04492d);
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    position: static;
+  }
+}

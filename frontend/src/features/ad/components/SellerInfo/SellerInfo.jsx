@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
 import { imageUrl } from '../../services/adApi'
 import { sellerPath } from '../../../../constants/routes'
+import { resolveSellerBadge } from '../../../../constants/sellerTypes'
 import styles from './SellerInfo.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
@@ -12,6 +13,7 @@ function SellerInfo({
   sellerDisplayName,
   sellerAvatar,
   sellerIsStore,
+  sellerType,
   adsCount,
   sinceIso,
   ratingText,
@@ -22,6 +24,7 @@ function SellerInfo({
   const { t } = useLang()
   const isAvatarPhoto = sellerAvatar && (sellerAvatar.startsWith('/') || sellerAvatar.startsWith('http'))
   const avatarEmoji = sellerAvatar && AVATAR_EMOJI[sellerAvatar] ? AVATAR_EMOJI[sellerAvatar] : null
+  const badge = resolveSellerBadge({ sellerIsStore, sellerType })
 
   return (
     <>
@@ -31,9 +34,9 @@ function SellerInfo({
           <Link to={sellerId ? sellerPath(sellerId) : '#'} className={styles.sellerCardName}>
             {sellerDisplayName} ›
           </Link>
-          {sellerIsStore != null && (
-            <span className={`badge ms-1 ${sellerIsStore ? 'bg-success' : 'bg-secondary'}`} style={{ fontSize: '0.7rem' }}>
-              {sellerIsStore ? 'Магазин' : 'Частный'}
+          {(sellerIsStore != null || sellerType) && (
+            <span className={`badge ms-1 ${badge.tone === 'private' ? 'bg-secondary' : 'bg-success'}`} style={{ fontSize: '0.7rem' }}>
+              {t(badge.labelKey)}
             </span>
           )}
           <div className={styles.sellerCardStat}>{adsCount} {t('ads.sellerAds')}</div>

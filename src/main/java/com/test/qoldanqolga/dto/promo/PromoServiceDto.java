@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +21,11 @@ public class PromoServiceDto {
     private Integer durationDays;
     private String descriptionRu;
     private String descriptionUz;
+    private Integer priority;
+    private Integer boostIntervalHours;
+    private Boolean vip;
+    private Boolean top;
+    private Boolean highlight;
+    private List<String> featuresRu = new ArrayList<>();
+    private List<String> featuresUz = new ArrayList<>();
 }

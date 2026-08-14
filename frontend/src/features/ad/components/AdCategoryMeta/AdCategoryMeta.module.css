@@ -1,0 +1,26 @@
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.4rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  color: var(--color-primary, #04492d);
+}
+
+.sep {
+  opacity: 0.6;
+}

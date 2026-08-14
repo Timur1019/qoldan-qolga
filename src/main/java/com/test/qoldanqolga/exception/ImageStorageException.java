@@ -1,15 +1,16 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Базовое исключение для операций хранения изображений.
- */
-public class ImageStorageException extends RuntimeException {
+public class ImageStorageException extends BaseException {
 
     public ImageStorageException(String message) {
-        super(message);
+        super(ErrorCode.IMAGE_STORAGE_ERROR, message);
+    }
+
+    public ImageStorageException(ErrorCode code, String message) {
+        super(code, message);
     }
 
     public ImageStorageException(String message, Throwable cause) {
-        super(message, cause);
+        super(ErrorCode.IMAGE_STORAGE_ERROR, message, cause);
     }
 }

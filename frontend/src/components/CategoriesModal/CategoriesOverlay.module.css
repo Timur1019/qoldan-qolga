@@ -1,0 +1,14 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: default;
+}
+
+.panelSlot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1280px, calc(100% - 2rem));
+}

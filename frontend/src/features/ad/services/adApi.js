@@ -10,3 +10,5 @@ export {
   referenceApi,
   imageUrl,
 } from '../../../api/client'
+
+export { currencyApi } from './currencyApi'

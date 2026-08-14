@@ -21,10 +21,11 @@
 }
 
 .headerInner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
+  box-sizing: border-box;
   width: 100%;
+  max-width: var(--layout-max, 1280px);
+  margin: 0 auto;
+  padding: 0 var(--layout-pad, 1.5rem);
 }
 
 .headerTop {
@@ -119,23 +120,6 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
-}
-
-.categoriesOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.15);
-  border: none;
-  cursor: default;
-}
-
-.categoriesDropdownWrap {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 1000;
 }
 
 .nav {
@@ -266,6 +250,8 @@
 
 .main {
   flex: 1;
-  padding: 1.5rem;
+  /* Горизонталь — у page-container / headerInner, иначе контент «выпирает» */
+  padding: 1.25rem 0 1.5rem;
   background: #ffffff;
+  overflow-x: clip;
 }

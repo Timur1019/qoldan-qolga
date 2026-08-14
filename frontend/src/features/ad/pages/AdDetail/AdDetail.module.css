@@ -1,5 +1,9 @@
 /* Layout — контейнер страницы через page-container app-page в JSX */
 
+:global(.page-container).widePage {
+  max-width: var(--layout-max, 1280px);
+}
+
 .topBar {
   display: flex;
   align-items: center;

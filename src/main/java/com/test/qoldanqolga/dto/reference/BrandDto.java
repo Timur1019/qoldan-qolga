@@ -14,4 +14,6 @@ public class BrandDto {
     private String slug;
     private Integer sortOrder;
     private Boolean isPopular;
+    /** Число активных объявлений в выбранной категории (и потомках). */
+    private Long adCount;
 }

@@ -1,12 +1,16 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Thrown when an operation conflicts with current state (e.g. duplicate resource).
- * Mapped to HTTP 409 by {@link com.test.qoldanqolga.util.GlobalExceptionHandler}.
- */
-public class ConflictException extends RuntimeException {
+public class ConflictException extends BaseException {
 
     public ConflictException(String message) {
-        super(message);
+        super(ErrorCode.CONFLICT, message);
+    }
+
+    public ConflictException(ErrorCode code) {
+        super(code);
+    }
+
+    public ConflictException(ErrorCode code, String message) {
+        super(code, message);
     }
 }

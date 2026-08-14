@@ -63,10 +63,10 @@ export default function Footer() {
           </section>
 
           <nav className={styles.navLinks} aria-label={t('footer.navLabel')}>
-            <Link to="/about" className={styles.navLink}>{t('footer.about')}</Link>
+            <Link to={ROUTES.ABOUT} className={styles.navLink}>{t('footer.about')}</Link>
             <a href="mailto:support@qoldanqolga.uz" className={styles.navLink}>{t('footer.support')}</a>
-            <Link to={ROUTES.HOME} className={styles.navLink}>{t('footer.allRegions')}</Link>
-            <Link to="/rules" className={styles.navLink}>{t('footer.rules')}</Link>
+            <Link to={ROUTES.REGIONS} className={styles.navLink}>{t('footer.allRegions')}</Link>
+            <Link to={ROUTES.RULES} className={styles.navLink}>{t('footer.rules')}</Link>
             <a href="/blog" className={styles.navLink}>{t('footer.blog')}</a>
           </nav>
 

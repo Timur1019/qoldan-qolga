@@ -51,4 +51,26 @@
     <include file="changes/046-link-brands-to-categories.xml" relativeToChangelogFile="true"/>
     <include file="changes/047-insert-clothing-shoes-categories.xml" relativeToChangelogFile="true"/>
     <include file="changes/048-add-ad-can-rent-and-condition-length.xml" relativeToChangelogFile="true"/>
+    <include file="changes/049-insert-accessories-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/050-insert-kids-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/051-insert-construction-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/052-insert-animals-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/053-insert-stationery-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/054-insert-transport-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/055-add-vehicle-fields.xml" relativeToChangelogFile="true"/>
+    <include file="changes/056-insert-transport-brands-and-models.xml" relativeToChangelogFile="true"/>
+    <include file="changes/057-fix-category-brand-links.xml" relativeToChangelogFile="true"/>
+    <include file="changes/058-clean-beauty-device-brands.xml" relativeToChangelogFile="true"/>
+    <include file="changes/059-add-myid-session.xml" relativeToChangelogFile="true"/>
+    <include file="changes/060-add-ad-list-indexes.xml" relativeToChangelogFile="true"/>
+    <include file="changes/061-insert-real-estate-categories.xml" relativeToChangelogFile="true"/>
+    <include file="changes/062-add-real-estate-fields.xml" relativeToChangelogFile="true"/>
+    <include file="changes/063-add-ad-location.xml" relativeToChangelogFile="true"/>
+    <include file="changes/064-add-car-extra-fields.xml" relativeToChangelogFile="true"/>
+    <include file="changes/065-vehicle-spec-options.xml" relativeToChangelogFile="true"/>
+    <include file="changes/066-phone-auth.xml" relativeToChangelogFile="true"/>
+    <include file="changes/067-add-online-showing.xml" relativeToChangelogFile="true"/>
+    <include file="changes/068-site-top-banners.xml" relativeToChangelogFile="true"/>
+    <include file="changes/069-widen-engine-volume.xml" relativeToChangelogFile="true"/>
+    <include file="changes/070-ad-promo.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

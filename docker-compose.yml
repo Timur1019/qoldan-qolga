@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      MYID_REDIRECT_URI: ${MYID_REDIRECT_URI}
+      DEVSMS_TOKEN: ${DEVSMS_TOKEN:-}
+      DEVSMS_FROM: ${DEVSMS_FROM:-4546}
+      DEVSMS_BASE_URL: ${DEVSMS_BASE_URL:-https://devsms.uz/api}
+      DEVSMS_CALLBACK_URL: ${DEVSMS_CALLBACK_URL:-https://qoldan-qolga.uz/api/auth/phone/sms-callback}
+      DEVSMS_MOCK: ${DEVSMS_MOCK:-false}
+      UPLOAD_DIR: /app/uploads
+      DOCS_DIR: /app/uploads/docs
+    volumes:
+      - ./data/uploads:/app/uploads
+    expose:
+      - "8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_ORIGIN: ""
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "127.0.0.1:8282:80"

@@ -45,7 +45,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, St
 
     long countByUserIdAndStatus(String userId, String status);
 
-    @Query("SELECT a FROM Advertisement a LEFT JOIN FETCH a.user LEFT JOIN FETCH a.images WHERE a.id = :id")
+    @Query("SELECT a FROM Advertisement a LEFT JOIN FETCH a.user LEFT JOIN FETCH a.images LEFT JOIN FETCH a.brand LEFT JOIN FETCH a.vehicleModel WHERE a.id = :id")
     Optional<Advertisement> findByIdWithUserAndImages(String id);
 
     @Query("SELECT DISTINCT a FROM Advertisement a LEFT JOIN FETCH a.images WHERE a.id IN :ids")
@@ -61,9 +61,22 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, St
      */
     @Query("SELECT a FROM Advertisement a WHERE a.status = :status " +
            "AND (:cursor IS NULL OR a.id > :cursor) " +
+           "AND (:excludeAdId IS NULL OR :excludeAdId = '' OR a.id <> :excludeAdId) " +
            "ORDER BY a.id ASC")
     List<Advertisement> findByCursor(
             @Param("status") String status,
             @Param("cursor") String cursor,
+            @Param("excludeAdId") String excludeAdId,
             Pageable pageable);
+
+    @Query("SELECT a.brandId, COUNT(a) FROM Advertisement a " +
+           "WHERE a.status = :status " +
+           "AND a.deletedAt IS NULL " +
+           "AND a.brandId IN :brandIds " +
+           "AND a.category IN :categories " +
+           "GROUP BY a.brandId")
+    List<Object[]> countActiveByBrandIdInAndCategoryIn(
+            @Param("status") String status,
+            @Param("brandIds") Collection<String> brandIds,
+            @Param("categories") Collection<String> categories);
 }

@@ -1,11 +1,11 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
-import { PARAMS, ROUTES } from '../../constants/routes'
+import { ROUTES } from '../../constants/routes'
 
 /**
  * Рендерит children только для пользователей с ролью ADMIN.
- * Иначе редирект на /dashboard или на главную с ?auth=login.
+ * Иначе — на /admin/login или на кабинет.
  */
 export default function AdminRoute({ children }) {
   const { isAuthenticated, isAdmin, loading } = useAuth()
@@ -22,7 +22,12 @@ export default function AdminRoute({ children }) {
 
   if (!isAuthenticated) {
     const from = location.pathname + location.search
-    return <Navigate to={{ pathname: '/', search: `?${PARAMS.AUTH}=login&${PARAMS.FROM}=${encodeURIComponent(from)}` }} replace />
+    return (
+      <Navigate
+        to={{ pathname: '/admin/login', search: from && from !== ROUTES.ADMIN ? `?from=${encodeURIComponent(from)}` : '' }}
+        replace
+      />
+    )
   }
 
   if (!isAdmin) {

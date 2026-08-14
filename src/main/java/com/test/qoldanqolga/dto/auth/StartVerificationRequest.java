@@ -22,9 +22,8 @@ public class StartVerificationRequest {
     @NotBlank(message = "Укажите номер документа")
     private String documentNumber;
 
-    /** Base64 Data URI фото лица (для MyID). Обязателен при включённой интеграции MyID. */
-    private String photoFront;
-
-    /** Согласие на обработку персональных данных. Должно быть true для вызова MyID. */
+    @NotNull(message = "Нужно согласие на обработку персональных данных")
     private Boolean agreedOnTerms;
+
+    private String lang;
 }

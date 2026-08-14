@@ -151,7 +151,7 @@ export default function SellerProfile() {
   const showCTA = isOwner && totalReviews < 3
 
   return (
-    <div className="page-container app-page">
+    <div className={`page-container app-page ${styles.widePage}`}>
       <div className={styles.layout}>
         <SellerProfileSidebar
           profile={profile}
@@ -173,7 +173,6 @@ export default function SellerProfile() {
             onTabChange={setActiveTab}
             activeCount={activeCount}
             archiveCount={archiveCount}
-            isAuthenticated={isAuthenticated}
             sellerId={id}
             currentUserId={user?.id}
             onFavoriteClick={handleFavoriteClick}

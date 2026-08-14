@@ -31,6 +31,7 @@ export default function AdminLayout() {
             {navLink('/admin/reports', 'Жалобы')}
             {navLink('/admin/business-applications', 'Заявки «Магазин»')}
             {navLink('/admin/banners', 'Баннеры главной')}
+            {navLink('/admin/top-banners', 'Реклама в шапке')}
           </nav>
         </aside>
         <main className={styles.main}>

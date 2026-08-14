@@ -2,16 +2,15 @@ package com.test.qoldanqolga.exception;
 
 import java.util.List;
 
-/**
- * Исключение при ошибках бизнес-валидации (не Jakarta Bean Validation).
- * Mapped to HTTP 400 by {@link com.test.qoldanqolga.util.GlobalExceptionHandler}.
- */
-public class ValidationException extends RuntimeException {
+public class ValidationException extends BaseException {
 
     private final List<String> errors;
 
     public ValidationException(List<String> errors) {
-        super(errors != null && !errors.isEmpty() ? String.join("; ", errors) : "Ошибка валидации");
+        super(
+                ErrorCode.VALIDATION_ERROR,
+                errors != null && !errors.isEmpty() ? String.join("; ", errors) : ErrorCode.VALIDATION_ERROR.getDefaultMessage()
+        );
         this.errors = errors;
     }
 

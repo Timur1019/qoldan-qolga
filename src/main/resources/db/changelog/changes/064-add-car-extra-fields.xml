@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="064-add-car-extra-fields" author="qoldan-qolga">
+        <addColumn tableName="advertisements">
+            <column name="exterior_color" type="VARCHAR(30)"/>
+            <column name="seats" type="INT"/>
+            <column name="steering" type="VARCHAR(10)"/>
+            <column name="owners_count" type="INT"/>
+        </addColumn>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_exterior_color">
+            <column name="exterior_color"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_steering">
+            <column name="steering"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_seats">
+            <column name="seats"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

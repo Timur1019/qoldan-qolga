@@ -1,5 +1,6 @@
 package com.test.qoldanqolga.service.impl;
 
+import com.test.qoldanqolga.config.SystemConversationProperties;
 import com.test.qoldanqolga.constant.AdConstants;
 import com.test.qoldanqolga.dto.ad.AdDetailDto;
 import com.test.qoldanqolga.dto.ad.AdListParams;
@@ -13,9 +14,9 @@ import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.repository.AdvertisementSpecs;
 import com.test.qoldanqolga.service.AdListQueryService;
 import com.test.qoldanqolga.service.AdvertisementQueryService;
+import com.test.qoldanqolga.service.base.AbstractAdService;
 import com.test.qoldanqolga.service.component.AdDetailDtoBuilder;
 import com.test.qoldanqolga.service.component.CategoryResolver;
-import com.test.qoldanqolga.service.base.AbstractAdService;
 import com.test.qoldanqolga.service.component.CursorPaginationProcessor;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
     private final CategoryResolver categoryResolver;
     private final CursorPaginationProcessor cursorPaginationProcessor;
     private final AdDetailDtoBuilder adDetailDtoBuilder;
+    private final SystemConversationProperties systemConversationProperties;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +50,8 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
         String s = getEffectiveStatus(status);
         int limit = PaginationUtils.normalizeLimit(request.getLimit());
         var pageable = PaginationUtils.createCursorPageable(limit);
-        List<Advertisement> content = advertisementRepository.findByCursor(s, request.getCursor(), pageable);
+        List<Advertisement> content = advertisementRepository.findByCursor(
+                s, request.getCursor(), systemConversationProperties.getAdId(), pageable);
         LogUtil.debug(AdvertisementQueryServiceImpl.class, "List by cursor: status={} count={} cursor={}", s, content.size(), request.getCursor());
         return cursorPaginationProcessor.process(
                 content,
@@ -60,7 +63,7 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "adsList", key = "#params.status + '-' + (#params.category != null ? #params.category : '') + '-' + (#params.region != null ? #params.region : '') + '-' + (#params.brandId != null ? #params.brandId : '') + '-' + (#params.itemCondition != null ? #params.itemCondition.toString() : '') + '-' + (#params.sellerType != null ? #params.sellerType.toString() : '') + '-' + (#params.handMadeOnly != null ? #params.handMadeOnly : '') + '-' + (#params.canRent != null ? #params.canRent : '') + '-' + (#params.query != null ? #params.query : '') + '-' + #pageable.pageNumber + '-' + #pageable.pageSize", condition = "#currentUserId == null")
+    @Cacheable(value = "adsList", key = "T(com.test.qoldanqolga.cache.AdListCacheKeys).of(#params, #pageable)", condition = "#currentUserId == null")
     public Page<AdListItemDto> list(AdListParams params, String currentUserId, Pageable pageable) {
         String s = getEffectiveStatus(params != null ? params.getStatus() : null);
         String cat = params != null && params.getCategory() != null && !params.getCategory().isBlank()
@@ -68,23 +71,9 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
         List<String> categoryCodes = categoryResolver.resolveCategoryCodes(cat);
         Specification<Advertisement> spec = AdvertisementSpecs.withFilters(
                 s,
-                categoryCodes != null && categoryCodes.size() == 1 ? categoryCodes.get(0) : null,
-                categoryCodes != null && categoryCodes.size() > 1 ? categoryCodes : null,
-                params != null ? params.getRegion() : null,
-                params != null ? params.getQuery() : null,
-                params != null ? params.getSellerType() : null,
-                params != null ? params.getHasLicense() : null,
-                params != null ? params.getWorksByContract() : null,
-                params != null ? params.getPriceFrom() : null,
-                params != null ? params.getPriceTo() : null,
-                params != null ? params.getCurrency() : null,
-                params != null ? params.getUrgentBargain() : null,
-                params != null ? params.getCanDeliver() : null,
-                params != null ? params.getGiveAway() : null,
-                params != null ? params.getBrandId() : null,
-                params != null ? params.getItemCondition() : null,
-                params != null ? params.getHandMadeOnly() : null,
-                params != null ? params.getCanRent() : null
+                categoryCodes,
+                params,
+                systemConversationProperties.getAdId()
         );
         Page<Advertisement> page = advertisementRepository.findAll(spec, pageable);
         List<Advertisement> content = page.getContent();
@@ -126,9 +115,6 @@ public class AdvertisementQueryServiceImpl extends AbstractAdService implements 
     @Override
     @Transactional
     public void recordView(String id) {
-        if (advertisementRepository.existsById(id)) {
-            advertisementRepository.incrementViews(id);
-            LogUtil.debug(AdvertisementQueryServiceImpl.class, "View recorded: adId={}", id);
-        }
+        advertisementRepository.incrementViews(id);
     }
 }

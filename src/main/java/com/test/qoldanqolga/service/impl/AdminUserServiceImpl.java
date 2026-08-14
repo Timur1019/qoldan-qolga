@@ -9,6 +9,7 @@ import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.AdminUserService;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "authUsers", key = "#userId")
     public void updateUser(String userId, AdminUserUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId));

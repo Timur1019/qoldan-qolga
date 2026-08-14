@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
 import { ROUTES, sellerPath } from '../../constants/routes'
 import { imageUrl } from '../../api/client'
+import { isSellerStore } from '../../features/ad/utils/isSellerStore'
 import styles from './SellerProfile.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
@@ -85,6 +86,9 @@ export default function SellerProfileSidebar({
           <li>• {profile.adsCount} {t('ads.sellerAds')}</li>
           <li>• {profile.subscribersCount} {t('ads.subscriber')}</li>
           <li>• {ratingText}</li>
+          <li>
+            • {isSellerStore(profile) ? t('ads.sellerTypes.STORE') : t('ads.sellerTypes.PRIVATE')}
+          </li>
         </ul>
         <div className={`${styles.verificationBadge} ${idVerified ? styles.verificationBadgeOk : styles.verificationBadgeNone}`}>
           {idVerified ? t('profile.idVerified') : t('profile.idNotVerified')}

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,9 @@ public interface BrandRepository extends JpaRepository<Brand, String> {
 
     @Query("SELECT b FROM Brand b JOIN b.categories c WHERE c.code = :categoryCode AND b.isActive = true ORDER BY b.sortOrder ASC, b.nameUz ASC")
     List<Brand> findByCategoryCodeOrderBySortOrderAscNameUzAsc(@Param("categoryCode") String categoryCode);
+
+    @Query("SELECT DISTINCT b FROM Brand b JOIN b.categories c WHERE c.code IN :codes AND b.isActive = true ORDER BY b.sortOrder ASC, b.nameUz ASC")
+    List<Brand> findByCategoryCodeInOrderBySortOrderAscNameUzAsc(@Param("codes") Collection<String> codes);
 
     @Query("SELECT b FROM Brand b JOIN b.categories c WHERE c.id = :categoryId AND b.isActive = true ORDER BY b.sortOrder ASC, b.nameUz ASC")
     List<Brand> findByCategoryIdOrderBySortOrderAscNameUzAsc(@Param("categoryId") String categoryId);

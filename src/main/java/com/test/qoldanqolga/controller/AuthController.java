@@ -2,15 +2,17 @@ package com.test.qoldanqolga.controller;
 
 import com.test.qoldanqolga.dto.auth.AuthResponse;
 import com.test.qoldanqolga.dto.auth.LoginRequest;
+import com.test.qoldanqolga.dto.auth.PhoneSendCodeRequest;
+import com.test.qoldanqolga.dto.auth.PhoneSendCodeResponse;
+import com.test.qoldanqolga.dto.auth.PhoneVerifyRequest;
 import com.test.qoldanqolga.dto.auth.RegisterRequest;
-import com.test.qoldanqolga.dto.auth.StartVerificationRequest;
-import com.test.qoldanqolga.dto.auth.StartVerificationResponse;
+import com.test.qoldanqolga.dto.auth.SmsCallbackRequest;
 import com.test.qoldanqolga.dto.auth.UpdateProfileRequest;
 import com.test.qoldanqolga.dto.auth.UserInfo;
 import com.test.qoldanqolga.dto.user.ReviewDto;
 import com.test.qoldanqolga.service.AuthService;
+import com.test.qoldanqolga.service.PhoneAuthService;
 import com.test.qoldanqolga.service.ReviewService;
-import com.test.qoldanqolga.dto.auth.VerificationStartResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +35,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class AuthController {
 
     private final AuthService authService;
+    private final PhoneAuthService phoneAuthService;
     private final ReviewService reviewService;
 
     @Operation(summary = "Регистрация", description = "Создание нового аккаунта")
@@ -47,6 +50,34 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @Operation(summary = "Отправить SMS-код на телефон")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Код отправлен"),
+            @ApiResponse(responseCode = "400", description = "Ошибка"),
+            @ApiResponse(responseCode = "429", description = "Лимит запросов")
+    })
+    @PostMapping("/phone/send-code")
+    public ResponseEntity<PhoneSendCodeResponse> sendPhoneCode(@Valid @RequestBody PhoneSendCodeRequest request) {
+        return ResponseEntity.ok(phoneAuthService.sendCode(request));
+    }
+
+    @Operation(summary = "Подтвердить SMS-код и войти / зарегистрироваться")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Успешно"),
+            @ApiResponse(responseCode = "401", description = "Неверный код")
+    })
+    @PostMapping("/phone/verify")
+    public ResponseEntity<AuthResponse> verifyPhone(@Valid @RequestBody PhoneVerifyRequest request) {
+        return ResponseEntity.ok(phoneAuthService.verify(request));
+    }
+
+    @Operation(summary = "Callback статусов DevSMS (sent / delivered / failed)")
+    @PostMapping("/phone/sms-callback")
+    public ResponseEntity<Void> smsCallback(@RequestBody SmsCallbackRequest request) {
+        phoneAuthService.handleSmsCallback(request);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Текущий пользователь", description = "Профиль авторизованного пользователя", security = @SecurityRequirement(name = "bearerAuth"))
@@ -92,19 +123,5 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok(reviewService.getReviewsByAuthor(userDetails.getUsername(), pageable));
-    }
-
-    @Operation(summary = "Заявка на верификацию ID", description = "При настроенном MyID и переданном фото — вызов MyID и при успехе отметка профиля проверенным. Иначе — заявка модератору.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "400", description = "Ошибка MyID или валидации"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
-    @PostMapping("/verification/start")
-    public ResponseEntity<StartVerificationResponse> startVerification(
-            @Valid @RequestBody StartVerificationRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        if (userDetails == null) {
-            return ResponseEntity.status(401).build();
-        }
-        VerificationStartResult result = authService.startVerification(userDetails.getUsername(), request);
-        return ResponseEntity.status(result.getStatusCode()).body(result.getResponse());
     }
 }

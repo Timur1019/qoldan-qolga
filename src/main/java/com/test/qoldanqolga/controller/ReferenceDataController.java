@@ -3,6 +3,7 @@ package com.test.qoldanqolga.controller;
 import com.test.qoldanqolga.dto.reference.BrandDto;
 import com.test.qoldanqolga.dto.reference.CategoryDto;
 import com.test.qoldanqolga.dto.reference.RegionDto;
+import com.test.qoldanqolga.dto.reference.VehicleSpecOptionsDto;
 import com.test.qoldanqolga.service.ReferenceDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -81,5 +82,12 @@ public class ReferenceDataController {
     @GetMapping("/categories/{code}/brands")
     public ResponseEntity<List<BrandDto>> getBrandsByCategory(@PathVariable String code) {
         return ResponseEntity.ok(referenceDataService.getBrandsByCategoryCode(code));
+    }
+
+    @Operation(summary = "Справочник характеристик авто (кузов, КПП, цвет и т.д.)")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/vehicle-spec-options")
+    public ResponseEntity<VehicleSpecOptionsDto> getVehicleSpecOptions() {
+        return ResponseEntity.ok(referenceDataService.getVehicleSpecOptions());
     }
 }

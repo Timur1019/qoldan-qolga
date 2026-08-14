@@ -13,8 +13,10 @@ public class AuthResponse {
 
     private String token;
     private String email;
+    private String phone;
     private String displayName;
     private String userId;
     private String role;
     private String avatar;
+    private Boolean newUser;
 }

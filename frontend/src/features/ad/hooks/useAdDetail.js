@@ -1,19 +1,11 @@
 import { useState, useEffect } from 'react'
 import { adsApi, usersApi } from '../../../api/client'
+import { mergeAdsLists } from '../utils/mergeAdsLists'
+
+const RELATED_LIMIT = 10
 
 /**
  * Хук загрузки и управления данными страницы объявления.
- * @param {string} id — ID объявления
- * @returns {{
- *   ad: object|null,
- *   loading: boolean,
- *   error: string,
- *   sellerProfile: object|null,
- *   sellerAds: { content: array },
- *   reviewsSummary: object|null,
- *   similar: { content: array },
- *   setAd: function
- * }}
  */
 export function useAdDetail(id) {
   const [ad, setAd] = useState(null)
@@ -44,30 +36,46 @@ export function useAdDetail(id) {
   }, [id])
 
   useEffect(() => {
-    if (!ad?.userId) return
-    usersApi.getProfile(ad.userId).then((p) => setSellerProfile(p)).catch(() => setSellerProfile(null))
-  }, [ad?.userId])
+    if (!ad?.id) return
 
-  useEffect(() => {
-    if (!ad?.userId) return
-    usersApi.getReviews(ad.userId, { size: 1 }).then((data) => setReviewsSummary(data)).catch(() => setReviewsSummary(null))
-  }, [ad?.userId])
+    const profilePromise = ad.userId
+      ? usersApi.getProfile(ad.userId).catch(() => null)
+      : Promise.resolve(null)
+    const reviewsPromise = ad.userId
+      ? usersApi.getReviews(ad.userId, { size: 1 }).catch(() => null)
+      : Promise.resolve(null)
 
-  useEffect(() => {
-    if (!ad?.userId) return
-    usersApi.getAds(ad.userId, { size: 9 }).then((data) => {
-      const list = (data.content || []).filter((a) => a.id !== ad.id).slice(0, 8)
-      setSellerAds({ content: list })
-    }).catch(() => setSellerAds({ content: [] }))
-  }, [ad?.userId, ad?.id])
+    const sellerAdsPromise = ad.userId
+      ? usersApi.getAds(ad.userId, { size: 20 }).then((data) => {
+          const list = mergeAdsLists(data.content || [], [], {
+            excludeIds: [ad.id],
+            limit: RELATED_LIMIT,
+          })
+          return { content: list }
+        }).catch(() => ({ content: [] }))
+      : Promise.resolve({ content: [] })
 
-  useEffect(() => {
-    if (!ad?.category) return
-    adsApi.list({ category: ad.category, size: 8 }).then((data) => {
-      const list = (data.content || []).filter((a) => a.id !== ad.id).slice(0, 8)
-      setSimilar({ content: list })
-    }).catch(() => setSimilar({ content: [] }))
-  }, [ad?.id, ad?.category])
+    // Только та же категория — иначе «похожие» смешивают авто и квартиры.
+    const similarPromise = ad.category
+      ? adsApi
+          .list({ category: ad.category, size: 40, sort: 'createdAt,desc' })
+          .then((data) => ({
+            content: mergeAdsLists(data.content || [], [], {
+              excludeIds: [ad.id],
+              limit: RELATED_LIMIT,
+            }),
+          }))
+          .catch(() => ({ content: [] }))
+      : Promise.resolve({ content: [] })
+
+    Promise.all([profilePromise, reviewsPromise, sellerAdsPromise, similarPromise])
+      .then(([profile, reviews, sellerAdsData, similarData]) => {
+        setSellerProfile(profile)
+        setReviewsSummary(reviews)
+        setSellerAds(sellerAdsData)
+        setSimilar(similarData)
+      })
+  }, [ad?.userId, ad?.id, ad?.category])
 
   return {
     ad,

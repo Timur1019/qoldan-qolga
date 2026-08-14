@@ -1,9 +1,22 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
+import { useToast } from '../../../../context/ToastContext'
+import { formatApiError } from '../../../../utils/apiError'
 import { adsApi, imageUrl, referenceApi } from '../../services/adApi'
 import OSMMap from '../../../../components/OSMMap/OSMMap'
 import CategorySelectModal from '../../../../components/CategorySelectModal/CategorySelectModal'
+import CategoryIcon from '../../../../components/ui/CategoryIcon'
+import CreateAdTransportFields from '../../components/CreateAdTransportFields'
+import CreateAdRealEstateFields from '../../components/CreateAdRealEstateFields'
+import { isClothingTree } from '../../../../constants/routes'
+import { EMPTY_TRANSPORT_FIELDS, transportFieldFlags } from '../../../../constants/transport'
+import { seatsFromApi, seatsToApi, ownersFromApi, ownersToApi } from '../../utils/transportFormValues'
+import { EMPTY_REAL_ESTATE_FIELDS, realEstateFieldFlags } from '../../../../constants/realEstate'
+import CreateAdSellerTypeFields from '../../components/CreateAdSellerTypeFields/CreateAdSellerTypeFields'
+import { categoryFilterFlags } from '../../../../constants/categoryFilters'
+import { normalizeSellerType } from '../../../../constants/sellerTypes'
+import { appendLocationToDescription, extractLocationFromDescription } from '../../utils/descriptionLocation'
 import styles from './CreateAd.module.css'
 
 const CURRENCIES = [
@@ -16,6 +29,7 @@ export default function CreateAd({ edit: editMode }) {
   const navigate = useNavigate()
   const { id: editId } = useParams()
   const { t, lang } = useLang()
+  const { showToast, showApiError } = useToast()
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -30,13 +44,15 @@ export default function CreateAd({ edit: editMode }) {
   const brandDropdownRef = useRef(null)
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false)
+  const [categoryBreadcrumb, setCategoryBreadcrumb] = useState([])
   const [form, setForm] = useState({
     title: '',
     description: '',
     price: '',
     currency: 'UZS',
     category: 'Xizmatlar',
-    brandId: '',
+    ...EMPTY_TRANSPORT_FIELDS,
+    ...EMPTY_REAL_ESTATE_FIELDS,
     itemCondition: 'USED',
     canRent: false,
     phone: '',
@@ -46,6 +62,7 @@ export default function CreateAd({ edit: editMode }) {
     district: '',
     isNegotiable: false,
     giveAway: false,
+    onlineShowing: false,
     address: '',
     landmark: '',
     canDeliver: false,
@@ -113,6 +130,9 @@ export default function CreateAd({ edit: editMode }) {
       return
     }
     referenceApi.getBrandsByCategory(form.category).then((list) => setBrands(Array.isArray(list) ? list : [])).catch(() => setBrands([]))
+    referenceApi.getCategoryBreadcrumb(form.category)
+      .then((list) => setCategoryBreadcrumb(Array.isArray(list) ? list : []))
+      .catch(() => setCategoryBreadcrumb([]))
   }, [form.category])
 
   // При выборе точки на карте — координаты и reverse geocoding (адрес)
@@ -156,13 +176,36 @@ export default function CreateAd({ edit: editMode }) {
       const urls = imgs.sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0)).map((i) => i.url || i).filter(Boolean)
       setUploadedUrls(urls)
       const expiresAt = ad.expiresAt ? new Date(ad.expiresAt).toISOString().slice(0, 16) : ''
+      const parsed = extractLocationFromDescription(ad.description || '')
       setForm({
         title: ad.title || '',
-        description: ad.description || '',
+        description: parsed.description,
         price: ad.price != null ? String(ad.price) : '',
         currency: ad.currency || 'UZS',
         category: ad.category || 'Xizmatlar',
         brandId: ad.brandId || '',
+        modelId: ad.modelId || '',
+        modelCustom: ad.modelCustom || '',
+        year: ad.year != null ? String(ad.year) : '',
+        mileage: ad.mileage != null ? String(ad.mileage) : '',
+        bodyType: ad.bodyType || '',
+        transmission: ad.transmission || '',
+        fuelType: ad.fuelType || '',
+        driveType: ad.driveType || '',
+        engineVolume: ad.engineVolume != null ? String(ad.engineVolume) : '',
+        exteriorColor: ad.exteriorColor || '',
+        seats: seatsFromApi(ad.seats),
+        steering: ad.steering || '',
+        ownersCount: ownersFromApi(ad.ownersCount),
+        dealType: ad.dealType || '',
+        rooms: ad.rooms != null ? String(ad.rooms) : '',
+        areaM2: ad.areaM2 != null ? String(ad.areaM2) : '',
+        landAreaM2: ad.landAreaM2 != null ? String(ad.landAreaM2) : '',
+        floor: ad.floor != null ? String(ad.floor) : '',
+        floorsTotal: ad.floorsTotal != null ? String(ad.floorsTotal) : '',
+        buildingType: ad.buildingType || '',
+        renovation: ad.renovation || '',
+        furnished: !!ad.furnished,
         itemCondition: ad.itemCondition || 'USED',
         canRent: !!ad.canRent,
         phone: ad.phone || '',
@@ -172,8 +215,9 @@ export default function CreateAd({ edit: editMode }) {
         district: ad.district || '',
         isNegotiable: !!ad.isNegotiable,
         giveAway: !!ad.giveAway || ad.price === 0,
-        address: '',
-        landmark: '',
+        onlineShowing: !!ad.onlineShowing,
+        address: parsed.address,
+        landmark: parsed.landmark,
         canDeliver: !!ad.canDeliver,
         sellerType: ad.sellerType || '',
         hasLicense: !!ad.hasLicense,
@@ -183,6 +227,8 @@ export default function CreateAd({ edit: editMode }) {
         contactByTelegram: !!ad.telegramUsername,
         telegramUsername: ad.telegramUsername || '',
         expiresAt,
+        locationLat: ad.locationLat != null ? String(ad.locationLat) : '',
+        locationLng: ad.locationLng != null ? String(ad.locationLng) : '',
       })
     }).catch(() => {})
   }, [editMode, editId])
@@ -200,6 +246,10 @@ export default function CreateAd({ edit: editMode }) {
     () => (allCategories.length ? allCategories : categories).find((c) => c.code === form.category),
     [allCategories, categories, form.category]
   )
+  const isClothingCategory = isClothingTree(form.category, categoryBreadcrumb)
+  const transportFlags = transportFieldFlags(form.category, categoryBreadcrumb)
+  const realEstateFlags = realEstateFieldFlags(form.category, categoryBreadcrumb)
+  const filterFlags = categoryFilterFlags(form.category, categoryBreadcrumb)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -262,13 +312,11 @@ export default function CreateAd({ edit: editMode }) {
     setError('')
     setSubmitting(true)
     try {
-      let description = form.description.trim()
-      if (form.address?.trim() || form.landmark?.trim()) {
-        const parts = []
-        if (form.address?.trim()) parts.push(lang === 'ru' ? `Адрес: ${form.address.trim()}` : `Manzil: ${form.address.trim()}`)
-        if (form.landmark?.trim()) parts.push(lang === 'ru' ? `Ориентир: ${form.landmark.trim()}` : `Yo'nalish: ${form.landmark.trim()}`)
-        description = description ? `${description}\n\n${parts.join('\n')}` : parts.join('\n')
-      }
+      const description = appendLocationToDescription(form.description.trim(), {
+        address: form.address,
+        landmark: form.landmark,
+        lang,
+      })
       const price = form.giveAway ? 0 : (parseFloat(form.price) || 0)
       const expiresAt = form.expiresAt
         ? new Date(form.expiresAt).toISOString()
@@ -280,31 +328,58 @@ export default function CreateAd({ edit: editMode }) {
         currency: form.currency || 'UZS',
         category: form.category || 'Xizmatlar',
         brandId: form.brandId?.trim() || undefined,
-        itemCondition: form.itemCondition || 'USED',
-        canRent: !!form.canRent,
+        modelId: form.modelId?.trim() || undefined,
+        modelCustom: form.modelCustom?.trim() || undefined,
+        year: form.year !== '' && form.year != null ? parseInt(form.year, 10) : undefined,
+        mileage: form.mileage !== '' && form.mileage != null ? parseInt(form.mileage, 10) : undefined,
+        bodyType: form.bodyType || undefined,
+        transmission: form.transmission || undefined,
+        fuelType: form.fuelType || undefined,
+        driveType: form.driveType || undefined,
+        engineVolume: form.engineVolume !== '' && form.engineVolume != null ? Number(form.engineVolume) : undefined,
+        exteriorColor: form.exteriorColor || undefined,
+        seats: seatsToApi(form.seats),
+        steering: form.steering || undefined,
+        ownersCount: ownersToApi(form.ownersCount),
+        dealType: form.dealType || undefined,
+        rooms: form.rooms !== '' && form.rooms != null ? parseInt(form.rooms, 10) : undefined,
+        areaM2: form.areaM2 !== '' && form.areaM2 != null ? Number(form.areaM2) : undefined,
+        landAreaM2: form.landAreaM2 !== '' && form.landAreaM2 != null ? Number(form.landAreaM2) : undefined,
+        floor: form.floor !== '' && form.floor != null ? parseInt(form.floor, 10) : undefined,
+        floorsTotal: form.floorsTotal !== '' && form.floorsTotal != null ? parseInt(form.floorsTotal, 10) : undefined,
+        buildingType: form.buildingType || undefined,
+        renovation: form.renovation || undefined,
+        furnished: realEstateFlags.furnished ? !!form.furnished : false,
+        itemCondition: filterFlags.condition ? (form.itemCondition || 'USED') : 'USED',
+        canRent: filterFlags.canRent ? !!form.canRent : false,
         phone: form.phone.trim(),
         email: form.email.trim() || undefined,
         region: form.region.trim() || undefined,
         district: form.district.trim() || undefined,
         isNegotiable: form.isNegotiable,
-        canDeliver: form.canDeliver,
-        sellerType: form.sellerType || undefined,
-        hasLicense: form.hasLicense,
-        worksByContract: form.worksByContract,
-        urgentBargain: form.urgentBargain,
-        giveAway: form.giveAway,
+        canDeliver: filterFlags.canDeliver ? form.canDeliver : false,
+        sellerType: normalizeSellerType(form.sellerType) || form.sellerType || undefined,
+        hasLicense: filterFlags.license ? form.hasLicense : false,
+        worksByContract: filterFlags.contract ? form.worksByContract : false,
+        urgentBargain: filterFlags.urgentBargain ? form.urgentBargain : false,
+        giveAway: filterFlags.giveAway ? form.giveAway : false,
+        onlineShowing: filterFlags.onlineShowing ? !!form.onlineShowing : false,
         locationLat: form.locationLat ? Number(form.locationLat) : null,
         locationLng: form.locationLng ? Number(form.locationLng) : null,
         expiresAt,
         imageUrls: uploadedUrls,
-        telegramUsername: (form.telegramUsername || '').trim().replace(/^@/, '') || undefined,
+        telegramUsername: form.contactByTelegram
+          ? ((form.telegramUsername || '').trim().replace(/^@/, '') || null)
+          : null,
       }
       const res = editMode && editId
         ? await adsApi.update(editId, payload)
         : await adsApi.create(payload)
+      showToast(editMode ? t('notify.adSaved') : t('notify.adCreated'), 'success')
       navigate(`/ads/${res.id}`)
     } catch (err) {
-      setError(err.message || t('common.error'))
+      setError(formatApiError(err, t))
+      showApiError(err)
     } finally {
       setSubmitting(false)
     }
@@ -424,7 +499,8 @@ export default function CreateAd({ edit: editMode }) {
             className="form-select text-start d-flex align-items-center justify-content-between"
             onClick={() => setCategoryModalOpen(true)}
           >
-            <span className={!selectedCategoryObj ? 'text-muted' : ''}>
+            <span className={`d-inline-flex align-items-center gap-2 ${!selectedCategoryObj ? 'text-muted' : ''}`}>
+              {selectedCategoryObj ? <CategoryIcon code={selectedCategoryObj.code} parentCode={selectedCategoryObj.parentCode} /> : null}
               {selectedCategoryObj
                 ? (lang === 'ru' ? selectedCategoryObj.nameRu : selectedCategoryObj.nameUz)
                 : t('ads.selectCategory')}
@@ -433,7 +509,7 @@ export default function CreateAd({ edit: editMode }) {
           </button>
         </section>
 
-        {brands.length > 0 && (
+        {brands.length > 0 && !transportFlags.transport && !realEstateFlags.realEstate && (
           <section className={`app-card ${styles.card}`}>
             <label className="form-label fw-semibold">{lang === 'ru' ? 'Бренд' : 'Brend'}</label>
             <div className={styles.brandSelectWrap} ref={brandDropdownRef}>
@@ -495,8 +571,27 @@ export default function CreateAd({ edit: editMode }) {
           </section>
         )}
 
+        <CreateAdTransportFields
+          categoryCode={form.category}
+          categoryBreadcrumb={categoryBreadcrumb}
+          form={form}
+          brands={brands}
+          onChange={(patch) => setForm((p) => ({ ...p, ...patch }))}
+          t={t}
+          lang={lang}
+        />
+
+        <CreateAdRealEstateFields
+          categoryCode={form.category}
+          categoryBreadcrumb={categoryBreadcrumb}
+          form={form}
+          onChange={(patch) => setForm((p) => ({ ...p, ...patch }))}
+          t={t}
+        />
+
         <section className={`app-card ${styles.card}`}>
           <h2 className="h6 mb-2">{t('ads.dealConditions')}</h2>
+          {filterFlags.giveAway && (
           <div className={styles.giveAwayRow}>
             <div className={styles.giveAwayLeft}>
               <span className={styles.giveAwayIcon} aria-hidden>🎈</span>
@@ -512,6 +607,7 @@ export default function CreateAd({ edit: editMode }) {
               <span className={styles.toggleKnob} />
             </button>
           </div>
+          )}
 
           <h2 className="h6 mb-2 mt-3">{t('ads.formPrice')} *</h2>
           <div className={styles.priceRow}>
@@ -553,42 +649,23 @@ export default function CreateAd({ edit: editMode }) {
           </label>
         </section>
 
-        <section className={`app-card ${styles.card}`}>
-          <h2 className="h6 mb-2">{t('ads.sellerType')}</h2>
-          <div className={styles.filterOptions}>
-            <label className={styles.filterRadio}>
-              <input
-                type="radio"
-                name="sellerType"
-                value=""
-                checked={form.sellerType === ''}
-                onChange={handleChange}
-              />
-              <span>{t('ads.any')}</span>
-            </label>
-            <label className={styles.filterRadio}>
-              <input
-                type="radio"
-                name="sellerType"
-                value="PRIVATE"
-                checked={form.sellerType === 'PRIVATE'}
-                onChange={handleChange}
-              />
-              <span>{t('ads.sellerPrivate')}</span>
-            </label>
-            <label className={styles.filterRadio}>
-              <input
-                type="radio"
-                name="sellerType"
-                value="BUSINESS"
-                checked={form.sellerType === 'BUSINESS'}
-                onChange={handleChange}
-              />
-              <span>{t('ads.sellerBusiness')}</span>
-            </label>
-          </div>
+        <CreateAdSellerTypeFields
+          sellerType={form.sellerType}
+          categoryCode={form.category}
+          breadcrumb={categoryBreadcrumb}
+          onChange={handleChange}
+          t={t}
+        />
 
-          <h2 className="h6 mb-2 mt-3">{t('ads.hasLicense')}</h2>
+        {(filterFlags.license ||
+          filterFlags.contract ||
+          filterFlags.urgentBargain ||
+          filterFlags.condition ||
+          filterFlags.canRent) && (
+        <section className={`app-card ${styles.card}`}>
+          {filterFlags.license && (
+            <>
+          <h2 className="h6 mb-2">{t('ads.hasLicense')}</h2>
           <div className={styles.filterOptions}>
             <label className={styles.filterRadio}>
               <input
@@ -609,7 +686,11 @@ export default function CreateAd({ edit: editMode }) {
               <span>{lang === 'ru' ? 'Да' : 'Ha'}</span>
             </label>
           </div>
+            </>
+          )}
 
+          {filterFlags.contract && (
+            <>
           <h2 className="h6 mb-2 mt-3">{t('ads.worksByContract')}</h2>
           <div className={styles.filterOptions}>
             <label className={styles.filterRadio}>
@@ -631,7 +712,10 @@ export default function CreateAd({ edit: editMode }) {
               <span>{lang === 'ru' ? 'Да' : 'Ha'}</span>
             </label>
           </div>
+            </>
+          )}
 
+          {filterFlags.urgentBargain && (
           <div className={styles.giveAwayRow} style={{ marginTop: '1rem' }}>
             <div className={styles.giveAwayLeft}>
               <span className={styles.giveAwayIcon} aria-hidden>⚡</span>
@@ -647,43 +731,57 @@ export default function CreateAd({ edit: editMode }) {
               <span className={styles.toggleKnob} />
             </button>
           </div>
+          )}
 
+          {filterFlags.condition && (
           <div className="mb-0" style={{ marginTop: '1rem' }}>
             <p className="small fw-semibold text-secondary mb-2">{t('ads.conditionLabel')}</p>
             <div className="d-flex flex-wrap gap-3">
-              <div className="form-check">
-                <input type="radio" name="itemCondition" id="itemCondition-used" checked={form.itemCondition === 'USED'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED' }))} className="form-check-input" />
-                <label className="form-check-label" htmlFor="itemCondition-used">{t('ads.conditionUsed')}</label>
-              </div>
-              <div className="form-check">
-                <input type="radio" name="itemCondition" id="itemCondition-usedLikeNew" checked={form.itemCondition === 'USED_LIKE_NEW'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED_LIKE_NEW' }))} className="form-check-input" />
-                <label className="form-check-label" htmlFor="itemCondition-usedLikeNew">{t('ads.conditionUsedLikeNew')}</label>
-              </div>
-              <div className="form-check">
-                <input type="radio" name="itemCondition" id="itemCondition-usedGood" checked={form.itemCondition === 'USED_GOOD'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED_GOOD' }))} className="form-check-input" />
-                <label className="form-check-label" htmlFor="itemCondition-usedGood">{t('ads.conditionUsedGood')}</label>
-              </div>
-              <div className="form-check">
-                <input type="radio" name="itemCondition" id="itemCondition-usedFair" checked={form.itemCondition === 'USED_FAIR'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED_FAIR' }))} className="form-check-input" />
-                <label className="form-check-label" htmlFor="itemCondition-usedFair">{t('ads.conditionUsedFair')}</label>
-              </div>
+              {!isClothingCategory && (
+                <div className="form-check">
+                  <input type="radio" name="itemCondition" id="itemCondition-used" checked={form.itemCondition === 'USED'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED' }))} className="form-check-input" />
+                  <label className="form-check-label" htmlFor="itemCondition-used">{t('ads.conditionUsed')}</label>
+                </div>
+              )}
+              {isClothingCategory && (
+                <>
+                  <div className="form-check">
+                    <input type="radio" name="itemCondition" id="itemCondition-usedLikeNew" checked={form.itemCondition === 'USED_LIKE_NEW'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED_LIKE_NEW' }))} className="form-check-input" />
+                    <label className="form-check-label" htmlFor="itemCondition-usedLikeNew">{t('ads.conditionUsedLikeNew')}</label>
+                  </div>
+                  <div className="form-check">
+                    <input type="radio" name="itemCondition" id="itemCondition-usedGood" checked={form.itemCondition === 'USED_GOOD'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED_GOOD' }))} className="form-check-input" />
+                    <label className="form-check-label" htmlFor="itemCondition-usedGood">{t('ads.conditionUsedGood')}</label>
+                  </div>
+                  <div className="form-check">
+                    <input type="radio" name="itemCondition" id="itemCondition-usedFair" checked={form.itemCondition === 'USED_FAIR'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'USED_FAIR' }))} className="form-check-input" />
+                    <label className="form-check-label" htmlFor="itemCondition-usedFair">{t('ads.conditionUsedFair')}</label>
+                  </div>
+                </>
+              )}
               <div className="form-check">
                 <input type="radio" name="itemCondition" id="itemCondition-new" checked={form.itemCondition === 'NEW'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'NEW' }))} className="form-check-input" />
                 <label className="form-check-label" htmlFor="itemCondition-new">{t('ads.conditionNew')}</label>
               </div>
-              <div className="form-check">
-                <input type="radio" name="itemCondition" id="itemCondition-handmade" checked={form.itemCondition === 'HANDMADE'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'HANDMADE' }))} className="form-check-input" />
-                <label className="form-check-label" htmlFor="itemCondition-handmade">{t('ads.conditionHandmade')}</label>
-              </div>
+              {filterFlags.handmade && !isClothingCategory && (
+                <div className="form-check">
+                  <input type="radio" name="itemCondition" id="itemCondition-handmade" checked={form.itemCondition === 'HANDMADE'} onChange={() => setForm((p) => ({ ...p, itemCondition: 'HANDMADE' }))} className="form-check-input" />
+                  <label className="form-check-label" htmlFor="itemCondition-handmade">{t('ads.conditionHandmade')}</label>
+                </div>
+              )}
             </div>
           </div>
+          )}
+          {filterFlags.canRent && (
           <div className="mb-0 mt-2">
             <div className="form-check">
               <input type="checkbox" id="canRent" className="form-check-input" checked={!!form.canRent} onChange={(e) => setForm((p) => ({ ...p, canRent: e.target.checked }))} />
               <label className="form-check-label" htmlFor="canRent">{t('ads.canRentLabel')}</label>
             </div>
           </div>
+          )}
         </section>
+        )}
 
         <section className={`app-card ${styles.card}`}>
           <h2 className="h6 mb-2">{t('ads.formDescription')} *</h2>
@@ -750,6 +848,7 @@ export default function CreateAd({ edit: editMode }) {
             placeholder={t('ads.landmarkPlaceholder')}
             style={{ marginBottom: '0.5rem' }}
           />
+          {filterFlags.canDeliver && (
           <label className={styles.checkRow}>
             <input
               name="canDeliver"
@@ -759,6 +858,7 @@ export default function CreateAd({ edit: editMode }) {
             />
             <span>{t('ads.canDeliver')}</span>
           </label>
+          )}
         </section>
 
         <section className={`app-card ${styles.card}`}>
@@ -911,7 +1011,15 @@ export default function CreateAd({ edit: editMode }) {
               setCategoryModalOpen(false)
               return
             }
-            setForm((prev) => ({ ...prev, category: cat.code, brandId: '' }))
+            setForm((prev) => ({
+              ...prev,
+              category: cat.code,
+              sellerType: 'PRIVATE',
+              onlineShowing: false,
+              ...EMPTY_TRANSPORT_FIELDS,
+              ...EMPTY_REAL_ESTATE_FIELDS,
+              itemCondition: 'USED',
+            }))
             setAllCategories((prev) => {
               if (!cat || !cat.code) return prev
               const exists = prev.some((c) => c.code === cat.code)

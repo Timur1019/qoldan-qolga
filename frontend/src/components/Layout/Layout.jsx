@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Outlet, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
@@ -7,9 +7,10 @@ import { referenceApi, imageUrl } from '../../api/client'
 import { PARAMS, ROUTES } from '../../constants/routes'
 import { BusinessModalProvider } from '../../context/BusinessModalContext'
 import { AuthModal } from '../../features/auth'
-import CategoriesModal from '../CategoriesModal/CategoriesModal'
+import CategoriesOverlay from '../CategoriesModal/CategoriesOverlay'
 import BusinessModal from '../BusinessModal/BusinessModal'
 import Footer from '../Footer/Footer'
+import TopAdStrip from '../TopAdStrip/TopAdStrip'
 import styles from './Layout.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
@@ -40,6 +41,8 @@ export default function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const headerRef = useRef(null)
+  const [headerOffset, setHeaderOffset] = useState(0)
   const [profileOpen, setProfileOpen] = useState(false)
   const [regions, setRegions] = useState([])
   const [regionOpen, setRegionOpen] = useState(false)
@@ -51,12 +54,10 @@ export default function Layout() {
 
   const authParam = searchParams.get(PARAMS.AUTH)
   const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
-  const authInitialMode = authParam === PARAMS.AUTH_REGISTER ? 'register' : 'login'
-  const isAdsOrHome = location.pathname === ROUTES.ADS || location.pathname === ROUTES.HOME
+  const isCategoryAds = location.pathname === ROUTES.ADS && Boolean(searchParams.get(PARAMS.CATEGORY))
+  const isAdsOrHome = location.pathname === ROUTES.HOME || location.pathname === ROUTES.ADS
   const selectedRegionCode = isAdsOrHome ? (searchParams.get(PARAMS.REGION) || '') : ''
-  const [searchValue, setSearchValue] = useState(() =>
-    location.pathname === ROUTES.ADS ? (searchParams.get(PARAMS.QUERY) || '') : ''
-  )
+  const [searchValue, setSearchValue] = useState(() => searchParams.get(PARAMS.QUERY) || '')
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
@@ -73,35 +74,60 @@ export default function Layout() {
     }
   }, [searchParams])
 
-  // Синхронизировать поле поиска с URL на странице объявлений
   useEffect(() => {
-    if (location.pathname === ROUTES.ADS) {
+    if (location.pathname === ROUTES.ADS || location.pathname === ROUTES.HOME) {
       setSearchValue(searchParams.get(PARAMS.QUERY) || '')
-    } else if (location.pathname === ROUTES.HOME) {
-      setSearchValue('')
     }
   }, [location.pathname, searchParams])
 
   const handleSearchSubmit = (e) => {
     e?.preventDefault()
     const q = (typeof searchValue === 'string' ? searchValue : '').trim()
-    if (location.pathname === ROUTES.ADS) {
+    if (isCategoryAds) {
       const next = new URLSearchParams(searchParams)
       next.delete(PARAMS.PAGE)
       if (q) next.set(PARAMS.QUERY, q)
       else next.delete(PARAMS.QUERY)
       setSearchParams(next)
-    } else {
-      const params = new URLSearchParams()
-      if (q) params.set(PARAMS.QUERY, q)
-      navigate('/')
+      return
     }
+    const next = new URLSearchParams(location.pathname === ROUTES.HOME ? searchParams : '')
+    next.delete(PARAMS.PAGE)
+    next.delete(PARAMS.CATEGORY)
+    if (q) next.set(PARAMS.QUERY, q)
+    else next.delete(PARAMS.QUERY)
+    const qs = next.toString()
+    navigate(qs ? `${ROUTES.HOME}?${qs}` : ROUTES.HOME)
   }
 
   const selectedRegion = regions.find((r) => r.code === selectedRegionCode)
   const regionLabel = selectedRegion
     ? (lang === 'ru' ? selectedRegion.nameRu : selectedRegion.nameUz)
     : (lang === 'ru' ? 'Все регионы' : 'Barcha hududlar')
+
+  const closeCategories = useCallback(() => {
+    setCategoriesOpen(false)
+    setSearchParams((prev) => {
+      if (!prev.has(PARAMS.OPEN_CATEGORIES)) return prev
+      const next = new URLSearchParams(prev)
+      next.delete(PARAMS.OPEN_CATEGORIES)
+      return next
+    }, { replace: true })
+  }, [setSearchParams])
+
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return undefined
+    const update = () => setHeaderOffset(el.getBoundingClientRect().height)
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    window.addEventListener('resize', update)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', update)
+    }
+  }, [])
 
   const handleSelectRegion = (code) => {
     setRegionOpen(false)
@@ -121,7 +147,8 @@ export default function Layout() {
     <div className={styles.layout}>
       <BusinessModalProvider openModal={() => setBusinessModalOpen(true)}>
         <>
-      <header className={styles.header}>
+      <header ref={headerRef} className={styles.header}>
+        <TopAdStrip />
         {/* Верхняя полоса: фон касается краёв экрана, контент по центру */}
         <div className={styles.headerTop}>
           <div className={styles.headerInner}>
@@ -354,29 +381,12 @@ export default function Layout() {
             </nav>
           </div>
         </div>
-        {categoriesOpen && (
-          <>
-            <button
-              type="button"
-              className={styles.categoriesOverlay}
-              onClick={() => setCategoriesOpen(false)}
-              aria-label={lang === 'ru' ? 'Закрыть' : 'Yopish'}
-            />
-            <div className={styles.categoriesDropdownWrap}>
-              <CategoriesModal
-                onClose={() => {
-                  setCategoriesOpen(false)
-                  setSearchParams((prev) => {
-                    const next = new URLSearchParams(prev)
-                    next.delete(PARAMS.OPEN_CATEGORIES)
-                    return next
-                  }, { replace: true })
-                }}
-              />
-            </div>
-          </>
-        )}
       </header>
+      <CategoriesOverlay
+        open={categoriesOpen}
+        onClose={closeCategories}
+        headerOffset={headerOffset}
+      />
       <main className={styles.main}>
         <Outlet />
       </main>
@@ -384,7 +394,6 @@ export default function Layout() {
       <AuthModal
         open={authOpen}
         onClose={() => {}}
-        initialMode={authInitialMode}
       />
       <BusinessModal
         open={businessModalOpen}

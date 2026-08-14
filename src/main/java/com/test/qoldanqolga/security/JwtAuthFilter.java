@@ -1,7 +1,6 @@
 package com.test.qoldanqolga.security;
 
-import com.test.qoldanqolga.model.User;
-import com.test.qoldanqolga.repository.UserRepository;
+import com.test.qoldanqolga.service.security.AuthPrincipalLookup;
 import com.test.qoldanqolga.util.LogUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,14 +15,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    private final AuthPrincipalLookup authPrincipalLookup;
 
     @Override
     protected void doFilterInternal(
@@ -47,19 +45,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isEmpty() || userOpt.get().isDeleted() || userOpt.get().isCurrentlyBanned()) {
+        UserPrincipal principal = authPrincipalLookup.findActive(userId);
+        if (principal == null) {
             LogUtil.debug(JwtAuthFilter.class, "User not found, deleted or banned: userId={}", userId);
             filterChain.doFilter(request, response);
             return;
         }
-        UserPrincipal principal = new UserPrincipal(userOpt.get());
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         if (request.getRequestURI().startsWith("/api/admin")) {
-            LogUtil.info(JwtAuthFilter.class, "Admin request: userId={} role={}", userId, userOpt.get().getRole());
+            LogUtil.info(JwtAuthFilter.class, "Admin request: userId={} role={}", userId, principal.getRole());
         }
         filterChain.doFilter(request, response);
     }

@@ -1,0 +1,110 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  gap: 0.75rem;
+  padding: 1rem 1.05rem 1.05rem;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  position: relative;
+  min-height: 100%;
+}
+
+.card:hover {
+  border-color: rgba(4, 73, 45, 0.45);
+  transform: translateY(-1px);
+}
+
+.selected {
+  border-color: var(--color-primary, #04492d);
+  box-shadow: 0 0 0 3px rgba(4, 73, 45, 0.12);
+}
+
+.featured {
+  background: linear-gradient(180deg, #f3faf6 0%, #ffffff 55%);
+  border-color: rgba(4, 73, 45, 0.35);
+}
+
+.badge {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--color-primary, #04492d);
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+}
+
+.head {
+  padding-right: 3.5rem;
+}
+
+.name {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+}
+
+.price {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--color-primary, #04492d);
+}
+
+.duration {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.feature {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: #374151;
+}
+
+.check {
+  color: var(--color-primary, #04492d);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cta {
+  display: inline-flex;
+  justify-content: center;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--color-primary, #04492d);
+  background: rgba(4, 73, 45, 0.08);
+}
+
+.selected .cta {
+  background: var(--color-primary, #04492d);
+  color: #fff;
+}

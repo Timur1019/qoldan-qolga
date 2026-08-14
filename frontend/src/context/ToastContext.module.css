@@ -1,0 +1,89 @@
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10000;
+  max-width: min(420px, 92vw);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.icon {
+  flex-shrink: 0;
+  font-size: 1.15rem;
+  line-height: 1;
+  margin-top: 0.1rem;
+}
+
+.body {
+  min-width: 0;
+  flex: 1;
+}
+
+.code {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  letter-spacing: 0.02em;
+}
+
+.close {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-size: 1rem;
+}
+
+.close:hover {
+  color: #374151;
+}
+
+.success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.success .icon {
+  color: var(--color-primary, #04492d);
+}
+
+.error {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.error .icon {
+  color: #dc2626;
+}
+
+.warning {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.warning .icon {
+  color: #d97706;
+}
+
+.info {
+  border-color: #c5d9ce;
+  background: #f3f7f5;
+}
+
+.info .icon {
+  color: var(--color-primary, #04492d);
+}

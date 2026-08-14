@@ -46,6 +46,63 @@ public class CreateAdRequest {
     /** Возможна аренда (для одежды/обуви) */
     private Boolean canRent = false;
 
+    @Size(max = 36)
+    private String modelId;
+
+    @Size(max = 100)
+    private String modelCustom;
+
+    private Integer year;
+
+    private Integer mileage;
+
+    @Size(max = 30)
+    private String bodyType;
+
+    @Size(max = 20)
+    private String transmission;
+
+    @Size(max = 20)
+    private String fuelType;
+
+    @Size(max = 10)
+    private String driveType;
+
+    private BigDecimal engineVolume;
+
+    @Size(max = 30)
+    private String exteriorColor;
+
+    private Integer seats;
+
+    @Size(max = 10)
+    private String steering;
+
+    private Integer ownersCount;
+
+    /** SALE | RENT */
+    @Size(max = 10)
+    private String dealType;
+
+    /** 0 = студия */
+    private Integer rooms;
+
+    private BigDecimal areaM2;
+
+    private BigDecimal landAreaM2;
+
+    private Integer floor;
+
+    private Integer floorsTotal;
+
+    @Size(max = 20)
+    private String buildingType;
+
+    @Size(max = 20)
+    private String renovation;
+
+    private Boolean furnished = false;
+
     @NotBlank
     @Size(max = 20)
     private String phone;
@@ -67,8 +124,8 @@ public class CreateAdRequest {
 
     private Boolean canDeliver = false;
 
-    /** PRIVATE | BUSINESS */
-    @Size(max = 20)
+    /** PRIVATE | STORE | DEALER | AGENT | … (BUSINESS = legacy STORE) */
+    @Size(max = 32)
     private String sellerType;
 
     private Boolean hasLicense = false;
@@ -78,6 +135,9 @@ public class CreateAdRequest {
     private Boolean urgentBargain = false;
 
     private Boolean giveAway = false;
+
+    /** Онлайн-показ объекта / услуги. */
+    private Boolean onlineShowing = false;
 
     /** Геолокация места сделки (опционально). */
     private BigDecimal locationLat;

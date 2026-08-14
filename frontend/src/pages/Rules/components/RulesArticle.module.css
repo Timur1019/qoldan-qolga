@@ -1,0 +1,49 @@
+.article {
+  background: #fff;
+  border: 1px solid #dce5df;
+  border-radius: 18px;
+  padding: 1.5rem 1.6rem 1.75rem;
+}
+
+.section + .section {
+  margin-top: 1.6rem;
+  padding-top: 1.4rem;
+  border-top: 1px dashed #dce5df;
+}
+
+.heading {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.paragraph,
+.list,
+.note {
+  margin: 0 0 0.75rem;
+  color: #374151;
+  line-height: 1.65;
+  font-size: 0.98rem;
+}
+
+.list {
+  padding-left: 1.2rem;
+}
+
+.list li + li {
+  margin-top: 0.35rem;
+}
+
+.note {
+  background: #eef6f1;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  color: #04492d;
+}
+
+.paragraph:last-child,
+.list:last-child,
+.note:last-child {
+  margin-bottom: 0;
+}

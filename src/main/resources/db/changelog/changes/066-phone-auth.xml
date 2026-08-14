@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="066-phone-auth" author="qoldan">
+        <comment>Phone OTP auth: users.phone + phone_otps</comment>
+
+        <addColumn tableName="users">
+            <column name="phone" type="varchar(20)">
+                <constraints unique="true"/>
+            </column>
+            <column name="phone_verified_at" type="timestamp"/>
+        </addColumn>
+
+        <dropNotNullConstraint tableName="users" columnName="email" columnDataType="varchar(255)"/>
+        <dropNotNullConstraint tableName="users" columnName="password_hash" columnDataType="varchar(255)"/>
+
+        <createTable tableName="phone_otps">
+            <column name="id" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code_hash" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sms_status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attempts" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sms_id" type="bigint"/>
+            <column name="request_id" type="varchar(100)"/>
+            <column name="parts_count" type="int"/>
+            <column name="total_cost" type="int"/>
+            <column name="expires_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="verified_at" type="timestamp"/>
+            <column name="sent_at" type="timestamp"/>
+            <column name="delivered_at" type="timestamp"/>
+            <column name="failed_at" type="timestamp"/>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="timestamp"/>
+        </createTable>
+
+        <createIndex tableName="phone_otps" indexName="idx_phone_otps_phone_created">
+            <column name="phone"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="phone_otps" indexName="idx_phone_otps_sms_id">
+            <column name="sms_id"/>
+        </createIndex>
+        <createIndex tableName="phone_otps" indexName="idx_phone_otps_request_id">
+            <column name="request_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

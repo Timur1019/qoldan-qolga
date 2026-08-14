@@ -17,12 +17,18 @@ import java.time.Instant;
 @Setter
 public class User extends BaseEntity {
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(unique = true, length = 255)
     private String email;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     @JsonIgnore
     private String passwordHash;
+
+    @Column(unique = true, length = 20)
+    private String phone;
+
+    @Column(name = "phone_verified_at")
+    private Instant phoneVerifiedAt;
 
     @Column(nullable = false, length = 100)
     private String displayName;
@@ -51,6 +57,9 @@ public class User extends BaseEntity {
 
     @Column(name = "verification_requested_at")
     private Instant verificationRequestedAt;
+
+    @Column(name = "myid_session_id", length = 64)
+    private String myidSessionId;
 
     /** Пользователь заблокирован: есть дата окончания бана в будущем. */
     public boolean isCurrentlyBanned() {

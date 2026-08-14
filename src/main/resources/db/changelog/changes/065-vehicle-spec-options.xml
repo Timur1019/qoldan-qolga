@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="065-create-vehicle-spec-options" author="qoldan-qolga">
+        <createTable tableName="vehicle_spec_options">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="vehicle_spec_options_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+            <column name="group_code" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value_code" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_uz" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="100"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+        <addUniqueConstraint tableName="vehicle_spec_options" columnNames="group_code,value_code" constraintName="uk_vehicle_spec_group_value"/>
+        <createIndex tableName="vehicle_spec_options" indexName="idx_vehicle_spec_group_active">
+            <column name="group_code"/>
+            <column name="is_active"/>
+            <column name="sort_order"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="065-seed-vehicle-spec-options" author="qoldan-qolga">
+        <sql>
+            INSERT INTO vehicle_spec_options (id, group_code, value_code, name_uz, name_ru, sort_order, is_active, created_at, updated_at) VALUES
+            (gen_random_uuid()::text, 'BODY_TYPE', 'SEDAN', 'Sedan', 'Седан', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'HATCHBACK', 'Xetchbek', 'Хэтчбек', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'UNIVERSAL', 'Universal', 'Универсал', 3, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'SUV', 'Krossover / SUV', 'Кроссовер / внедорожник', 4, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'COUPE', 'Kupe', 'Купе', 5, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'MINIVAN', 'Miniven', 'Минивэн', 6, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'PICKUP', 'Pikap', 'Пикап', 7, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'CABRIOLET', 'Kabriolet', 'Кабриолет', 8, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'BODY_TYPE', 'OTHER', 'Boshqa', 'Другое', 9, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'TRANSMISSION', 'MANUAL', 'Mexanika', 'Механика', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'TRANSMISSION', 'AUTOMATIC', 'Avtomat', 'Автомат', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'TRANSMISSION', 'ROBOT', 'Robot', 'Робот', 3, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'TRANSMISSION', 'CVT', 'Variator', 'Вариатор', 4, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'FUEL_TYPE', 'PETROL', 'Benzin', 'Бензин', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'FUEL_TYPE', 'DIESEL', 'Dizel', 'Дизель', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'FUEL_TYPE', 'GAS', 'Gaz', 'Газ', 3, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'FUEL_TYPE', 'HYBRID', 'Gibrid', 'Гибрид', 4, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'FUEL_TYPE', 'ELECTRIC', 'Elektro', 'Электро', 5, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'DRIVE_TYPE', 'FWD', 'Old', 'Передний', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'DRIVE_TYPE', 'RWD', 'Orqa', 'Задний', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'DRIVE_TYPE', 'AWD', 'To''liq', 'Полный', 3, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'WHITE', 'Oq', 'Белый', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'SILVER', 'Kumushrang', 'Серебристый', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'GRAY', 'Kulrang', 'Серый', 3, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'BLACK', 'Qora', 'Чёрный', 4, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'BLUE', 'Ko''k', 'Синий', 5, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'RED', 'Qizil', 'Красный', 6, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'GREEN', 'Yashil', 'Зелёный', 7, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'BROWN', 'Jigarrang', 'Коричневый', 8, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'BEIGE', 'Bej', 'Бежевый', 9, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'GOLD', 'Oltin', 'Золотой', 10, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'ORANGE', 'To''q sariq', 'Оранжевый', 11, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'PURPLE', 'Binafsha', 'Фиолетовый', 12, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'YELLOW', 'Sariq', 'Жёлтый', 13, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'PINK', 'Pushti', 'Розовый', 14, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'EXTERIOR_COLOR', 'OTHER', 'Boshqa', 'Другой', 15, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'SEATS', '2', '2', '2', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'SEATS', '4', '4', '4', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'SEATS', '5', '5', '5', 3, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'SEATS', '7', '7', '7', 4, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'SEATS', '8PLUS', '8+', '8+', 5, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'STEERING', 'LEFT', 'Chap', 'Левый', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'STEERING', 'RIGHT', 'O''ng', 'Правый', 2, true, NOW(), NOW()),
+
+            (gen_random_uuid()::text, 'OWNERS_COUNT', '1', '1', '1', 1, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'OWNERS_COUNT', '2', '2', '2', 2, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'OWNERS_COUNT', '3', '3', '3', 3, true, NOW(), NOW()),
+            (gen_random_uuid()::text, 'OWNERS_COUNT', '4PLUS', '4+', '4+', 4, true, NOW(), NOW());
+        </sql>
+    </changeSet>
+</databaseChangeLog>

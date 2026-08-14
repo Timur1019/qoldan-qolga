@@ -23,6 +23,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Пользователи", description = "Профили продавцов, подписки, отзывы")
@@ -32,6 +34,21 @@ public class UserController {
     private final SellerProfileService sellerProfileService;
     private final UserSubscriptionService subscriptionService;
     private final ReviewService reviewService;
+
+    @Operation(summary = "Мои подписки", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Не авторизован")
+    })
+    @GetMapping("/me/subscriptions")
+    public ResponseEntity<List<SellerProfileDto>> getMySubscriptions(
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(sellerProfileService.getMySubscriptions(user.getUsername()));
+    }
 
     @Operation(summary = "Профиль продавца")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))

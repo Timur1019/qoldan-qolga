@@ -17,8 +17,8 @@ public interface BusinessApplicationService {
      * @param passportFile                Скан паспорта
      * @param registrationCertificateFile Свидетельство о регистрации
      * @param city                        Город
-     * @param productCategory             Категория товаров (fashion, electronics, …)
-     * @param shopUrl                     Ссылка на магазин (опционально)
+     * @param productCategory             Категория товаров (services, fashion, …)
+     * @param shopUrl                     Ник в соцсетях / Telegram (опционально)
      * @param phone                       Телефон
      * @param agreementAccepted           Согласие с условиями
      * @param userId                      ID пользователя (если авторизован), иначе null

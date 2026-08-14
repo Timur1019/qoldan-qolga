@@ -1,145 +1,85 @@
-import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
-import { adsApi, favoritesApi, usersApi, imageUrl } from '../../services/adApi'
-import { formatPrice, formatAdDate } from '../../../../utils/formatters'
-import { ROUTES, adsPath, sellerPath } from '../../../../constants/routes'
-import HeartIcon from '../../../../components/ui/HeartIcon'
-import CardGallery from '../../components/CardGallery'
+import { imageUrl } from '../../services/adApi'
+import { sellerPath } from '../../../../constants/routes'
+import useCategoryLabels from '../../hooks/useCategoryLabels'
+import FavoritesAdsSection from './FavoritesAdsSection'
+import FavoritesEmptyState from './FavoritesEmptyState'
+import { useFavoritesPage } from './useFavoritesPage'
+import AdCardSkeletonGrid from '../../../../components/ui/AdCardSkeletonGrid/AdCardSkeletonGrid'
+import ContentReveal from '../../../../components/ui/ContentReveal/ContentReveal'
+import LoadMoreButton from '../../../../components/ui/LoadMoreButton/LoadMoreButton'
 import styles from './Favorites.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 export default function Favorites() {
-  const { t } = useLang()
-  const [activeTab, setActiveTab] = useState('ads')
-  const [items, setItems] = useState([])
-  const [page, setPage] = useState(0)
-  const [lastPage, setLastPage] = useState(false)
-  const [recommended, setRecommended] = useState({ content: [] })
-  const [profiles, setProfiles] = useState([])
-  const [profilesLoading, setProfilesLoading] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [error, setError] = useState('')
+  const { t, lang } = useLang()
+  const {
+    activeTab,
+    setActiveTab,
+    items,
+    recommended,
+    profiles,
+    profilesLoading,
+    loading,
+    loadingMore,
+    lastPage,
+    error,
+    loadMore,
+    handleRemoveFavorite,
+    handleAddFavorite,
+    handleUnsubscribe,
+  } = useFavoritesPage()
 
-  const PAGE_SIZE = 80
+  const ads = items || []
+  const recAds = recommended || []
+  const categoryLabels = useCategoryLabels([...ads, ...recAds], lang)
 
-  const load = () => {
-    setLoading(true)
-    Promise.all([
-      favoritesApi.list({ page: 0, size: PAGE_SIZE }).catch((e) => {
-        setError(e.message)
-        return { content: [] }
-      }),
-      adsApi.list({ page: 0, size: 12 }).catch(() => ({ content: [] })),
-    ])
-      .then(([favRes, recRes]) => {
-        const fav = favRes || { content: [] }
-        setItems(fav.content || [])
-        const currentPage = typeof fav.number === 'number' ? fav.number : 0
-        const totalPages = typeof fav.totalPages === 'number' ? fav.totalPages : 1
-        const isLast = typeof fav.last === 'boolean' ? fav.last : currentPage + 1 >= totalPages
-        setPage(currentPage)
-        setLastPage(isLast)
-        setRecommended(recRes || { content: [] })
-      })
-      .finally(() => setLoading(false))
-  }
-
-  const loadMore = () => {
-    if (lastPage || loadingMore) return
-    const nextPage = page + 1
-    setLoadingMore(true)
-    favoritesApi
-      .list({ page: nextPage, size: PAGE_SIZE })
-      .then((res) => {
-        const content = res?.content || []
-        setItems((prev) => [...prev, ...content])
-        const currentPage = typeof res.number === 'number' ? res.number : nextPage
-        const totalPages = typeof res.totalPages === 'number' ? res.totalPages : currentPage + 1
-        const isLast = typeof res.last === 'boolean' ? res.last : currentPage + 1 >= totalPages
-        setPage(currentPage)
-        setLastPage(isLast)
-      })
-      .catch(() => {})
-      .finally(() => setLoadingMore(false))
-  }
-
-  const loadProfiles = () => {
-    setProfilesLoading(true)
-    usersApi.getMySubscriptions().then((list) => setProfiles(Array.isArray(list) ? list : [])).catch(() => setProfiles([])).finally(() => setProfilesLoading(false))
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  useEffect(() => {
-    if (activeTab === 'profiles') loadProfiles()
-  }, [activeTab])
-
-  const handleRemoveFavorite = (e, ad) => {
-    e.preventDefault()
-    e.stopPropagation()
-    adsApi.removeFavorite(ad.id).then(() => {
-      setItems((prev) => prev.filter((a) => a.id !== ad.id))
-      window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
-    }).catch(() => {})
-  }
-
-  const handleAddFavorite = (e, ad) => {
-    e.preventDefault()
-    e.stopPropagation()
-    adsApi.addFavorite(ad.id).then(() => {
-      setItems((prev) => [...prev, { ...ad, favorite: true }])
-      setRecommended((prev) => ({ ...prev, content: (prev.content || []).filter((a) => a.id !== ad.id) }))
-      window.dispatchEvent(new CustomEvent('favorites-count-refresh'))
-    }).catch(() => {})
-  }
-
-  const handleUnsubscribe = (e, profileId) => {
-    e.preventDefault()
-    e.stopPropagation()
-    usersApi.unsubscribe(profileId).then(() => {
-      setProfiles((prev) => prev.filter((p) => p.id !== profileId && String(p.id) !== String(profileId)))
-    }).catch(() => {})
+  const getProfileAvatar = (p) => {
+    const photoUrl =
+      p?.avatarUrl ||
+      p?.uploadedAvatar ||
+      (p?.avatar && (String(p.avatar).startsWith('/') || String(p.avatar).startsWith('http'))
+        ? p.avatar
+        : null)
+    if (photoUrl) return <img src={imageUrl(photoUrl)} alt="" className={styles.profileAvatarImg} />
+    const emoji = p?.avatar && AVATAR_EMOJI[p.avatar] ? AVATAR_EMOJI[p.avatar] : null
+    if (emoji) return <span className={styles.profileAvatarEmoji} aria-hidden>{emoji}</span>
+    const initials = (p?.displayName || '?').trim().split(/\s+/)
+    const initial =
+      initials.length >= 2
+        ? (initials[0][0] + initials[initials.length - 1][0]).toUpperCase()
+        : (p?.displayName || '?').slice(0, 2).toUpperCase()
+    return <span className={styles.profileAvatarInitial} aria-hidden>{initial}</span>
   }
 
   if (loading) {
     return (
-      <div className={styles.globalLoading} aria-busy="true">
-        <span className={styles.globalLoadingSpinner} aria-hidden />
-        <p className={styles.globalLoadingText}>{t('common.loading')}</p>
+      <div className={styles.page}>
+        <h1 className={styles.title}>{t('nav.favorites')}</h1>
+        <AdCardSkeletonGrid count={8} />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="page-container app-page">
-        <div className="alert alert-danger" role="alert"><i className="bi bi-exclamation-circle me-2" aria-hidden />{error}</div>
+      <div className={styles.page}>
+        <div className="alert alert-danger" role="alert">
+          <i className="bi bi-exclamation-circle me-2" aria-hidden />
+          {error}
+        </div>
       </div>
     )
   }
 
-  const ads = items || []
-  const recAds = recommended.content || []
-
-  const getProfileAvatar = (p) => {
-    const photoUrl = p?.avatarUrl || p?.uploadedAvatar || (p?.avatar && (String(p.avatar).startsWith('/') || String(p.avatar).startsWith('http')) ? p.avatar : null)
-    if (photoUrl) return <img src={imageUrl(photoUrl)} alt="" className={styles.profileAvatarImg} />
-    const emoji = p?.avatar && AVATAR_EMOJI[p.avatar] ? AVATAR_EMOJI[p.avatar] : null
-    if (emoji) return <span className={styles.profileAvatarEmoji} aria-hidden>{emoji}</span>
-    const initials = (p?.displayName || '?').trim().split(/\s+/)
-    const initial = initials.length >= 2 ? (initials[0][0] + initials[initials.length - 1][0]).toUpperCase() : (p?.displayName || '?').slice(0, 2).toUpperCase()
-    return <span className={styles.profileAvatarInitial} aria-hidden>{initial}</span>
-  }
-
   return (
-    <div className="page-container app-page">
-      <h1 className="h2 mb-3">{t('nav.favorites')}</h1>
-      <ul className="nav nav-tabs mb-4">
+    <ContentReveal>
+      <div className={styles.page}>
+      <h1 className={styles.title}>{t('nav.favorites')}</h1>
+
+      <ul className={`nav nav-tabs ${styles.tabs}`}>
         <li className="nav-item">
           <button
             type="button"
@@ -155,7 +95,8 @@ export default function Favorites() {
             className={`nav-link ${activeTab === 'profiles' ? 'active' : ''}`}
             onClick={() => setActiveTab('profiles')}
           >
-            {t('favorites.profilesTab')} <span className="badge bg-secondary ms-1">{profiles.length}</span>
+            {t('favorites.profilesTab')}{' '}
+            <span className="badge bg-secondary ms-1">{profiles.length}</span>
           </button>
         </li>
       </ul>
@@ -163,13 +104,9 @@ export default function Favorites() {
       {activeTab === 'profiles' ? (
         <div className={styles.profilesSection}>
           {profilesLoading ? (
-            <p className="text-muted">{t('common.loading')}</p>
+            <p className={styles.loadingText}>{t('common.loading')}</p>
           ) : profiles.length === 0 ? (
-            <div className="app-card text-center py-5 px-3">
-              <i className="bi bi-person-heart display-4 text-muted opacity-50 mb-3" aria-hidden />
-              <h2 className="h5 mb-2">{t('favorites.profilesEmptyTitle')}</h2>
-              <p className="text-muted small mb-0">{t('favorites.profilesEmptyText')}</p>
-            </div>
+            <FavoritesEmptyState variant="profiles" t={t} />
           ) : (
             <ul className={styles.profilesList}>
               {profiles.map((p) => (
@@ -178,8 +115,10 @@ export default function Favorites() {
                     <div className={styles.profileCardAvatar}>{getProfileAvatar(p)}</div>
                     <div className={styles.profileCardBody}>
                       <h2 className={styles.profileCardName}>{p.displayName || t('ads.seller')}</h2>
-                      <p className="text-muted small mb-0">
-                        {(p.adsCount ?? 0) > 0 ? `${p.adsCount} ${t('ads.sellerAds')}` : t('favorites.noActiveAds')}
+                      <p className={styles.profileMeta}>
+                        {(p.adsCount ?? 0) > 0
+                          ? `${p.adsCount} ${t('ads.sellerAds')}`
+                          : t('favorites.noActiveAds')}
                       </p>
                     </div>
                   </Link>
@@ -196,109 +135,57 @@ export default function Favorites() {
             </ul>
           )}
         </div>
-      ) : ads.length === 0 ? (
-        <div className="app-card text-center py-5 px-3">
-          <i className="bi bi-heart display-4 text-muted opacity-50 mb-3" aria-hidden />
-          <h2 className="h5 mb-2">{t('favorites.emptyTitle')}</h2>
-          <p className="text-muted small mb-3">{t('favorites.emptyText')}</p>
-          <Link to={ROUTES.ADS_MY} className="btn btn-primary">{t('home.viewAds')}</Link>
-        </div>
       ) : (
-        <div className={styles.favoritesListBlock}>
-          <ul className={styles.grid}>
-            {ads.map((ad) => (
-              <li key={ad.id} className={`${styles.card} app-card app-card-hover`}>
-                <Link to={adsPath(ad.id)} className={styles.cardLink}>
-                  <span className={styles.cardImageWrap}>
-                    <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
-                      {ad.sellerIsStore ? 'Магазин' : 'Частный'}
-                    </span>
-                    <CardGallery
-                      imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
-                    />
-                  </span>
-                  <div className={styles.cardBody}>
-                    <p className={styles.cardPrice}>
-                      {formatPrice(ad.price, ad.currency)}
-                      {ad.isNegotiable && ` (${t('ads.negotiable')})`}
-                    </p>
-                    <button
-                      type="button"
-                      className={styles.favoriteBtn}
-                      onClick={(e) => handleRemoveFavorite(e, ad)}
-                      aria-label={t('common.removeFromFavorites')}
-                    >
-                      <HeartIcon filled className={`${styles.heartIcon} ${styles.heartFilled}`} size={18} />
-                    </button>
-                    <h2 className={styles.cardTitle}>{ad.title}</h2>
-                    {(ad.region || ad.category) && (
-                      <p className={styles.cardMeta}>
-                        {ad.category}
-                        {ad.region && ` · ${ad.region}`}
-                      </p>
-                    )}
-                    {ad.createdAt && <p className={styles.cardDate}>{formatAdDate(ad.createdAt)}</p>}
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {!lastPage && (
-            <div className={styles.showMoreWrap}>
-              <button
-                type="button"
-                className={styles.showMoreBtn}
-                onClick={loadMore}
-                disabled={loadingMore}
-              >
-                {loadingMore ? t('common.loading') : t('common.showMore')}
-              </button>
+        <>
+          {ads.length === 0 && recAds.length === 0 ? (
+            <FavoritesEmptyState variant="ads" t={t} />
+          ) : null}
+
+          {ads.length === 0 && recAds.length > 0 ? (
+            <div className={styles.emptyHint}>
+              <h2 className={styles.emptyHintTitle}>{t('favorites.emptyTitle')}</h2>
+              <p className={styles.emptyHintText}>{t('favorites.emptyText')}</p>
             </div>
-          )}
-        </div>
-      )}
-      {ads.length === 0 && recAds.length > 0 && (
-        <section className="mt-5">
-          <h2 className="h5 mb-3">{t('favorites.mayLike')}</h2>
-          <ul className={styles.recommendGrid}>
-            {recAds.map((ad) => (
-              <li key={ad.id} className={`${styles.recommendCard} app-card app-card-hover`}>
-                <Link to={adsPath(ad.id)} className={styles.cardLink}>
-                  <span className={styles.cardImageWrap}>
-                    <span className={ad.sellerIsStore ? styles.sellerBadgeStore : styles.sellerBadgePrivate}>
-                      {ad.sellerIsStore ? 'Магазин' : 'Частный'}
-                    </span>
-                    <CardGallery
-                      imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+          ) : null}
+
+          {ads.length > 0 ? (
+            <FavoritesAdsSection
+              ads={ads}
+              t={t}
+              categoryLabels={categoryLabels}
+              onFavoriteClick={handleRemoveFavorite}
+              favorite
+              heartAriaLabel={t('common.removeFromFavorites')}
+              footer={
+                !lastPage ? (
+                  <div className={styles.showMoreWrap}>
+                    <LoadMoreButton
+                      className={styles.showMoreBtn}
+                      loading={loadingMore}
+                      label={t('common.showMore')}
+                      onClick={loadMore}
                     />
-                  </span>
-                  <div className={styles.cardBody}>
-                    <p className={styles.cardPrice}>
-                      {formatPrice(ad.price, ad.currency)}
-                      {ad.isNegotiable && ` (${t('ads.negotiable')})`}
-                    </p>
-                    <button
-                      type="button"
-                      className={styles.favoriteBtn}
-                      onClick={(e) => handleAddFavorite(e, ad)}
-                      aria-label={t('common.addToFavorites')}
-                    >
-                      <HeartIcon filled={false} className={`${styles.heartIcon} ${styles.heartOutline}`} size={18} />
-                    </button>
-                    <h2 className={styles.cardTitle}>{ad.title}</h2>
-                    {(ad.region || ad.category) && (
-                      <p className={styles.cardMeta}>
-                        {ad.category}
-                        {ad.region && ` · ${ad.region}`}
-                      </p>
-                    )}
                   </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+                ) : null
+              }
+            />
+          ) : null}
+
+          {recAds.length > 0 ? (
+            <FavoritesAdsSection
+              title={t('favorites.mayLike')}
+              ads={recAds}
+              t={t}
+              categoryLabels={categoryLabels}
+              onFavoriteClick={handleAddFavorite}
+              favorite={false}
+              heartAriaLabel={t('common.addToFavorites')}
+              showDate={false}
+            />
+          ) : null}
+        </>
       )}
-    </div>
+      </div>
+    </ContentReveal>
   )
 }

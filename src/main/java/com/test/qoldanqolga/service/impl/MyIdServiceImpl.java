@@ -1,163 +1,243 @@
 package com.test.qoldanqolga.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.qoldanqolga.config.MyIdProperties;
+import com.test.qoldanqolga.dto.myid.MyIdProfile;
+import com.test.qoldanqolga.dto.myid.MyIdWebSession;
+import com.test.qoldanqolga.exception.ErrorCode;
+import com.test.qoldanqolga.exception.MyIdException;
 import com.test.qoldanqolga.service.MyIdService;
-import com.test.qoldanqolga.service.MyIdVerificationResult;
 import com.test.qoldanqolga.util.LogUtil;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- * Клиент MyID API: получение токена, создание задачи идентификации, опрос статуса по external_id.
- * Учётные данные используются только на бэкенде.
- */
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+
 @Service
+@RequiredArgsConstructor
 public class MyIdServiceImpl implements MyIdService {
 
-    private static final int RESULT_SUCCESS = 1;
-    private static final int POLL_DELAY_MS = 500;
-    private static final int POLL_MAX_ATTEMPTS = 60;
-    private static final int INITIAL_DELAY_MS = 600;
+    private static final String GRANT_CLIENT_CREDENTIALS = "client_credentials";
+    private static final String GRANT_PASSWORD = "password";
+    private static final String GRANT_AUTH_CODE = "authorization_code";
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${app.myid.base-url:}")
-    private String baseUrl;
-
-    @Value("${app.myid.path.access-token:/api/v1/oauth2/access-token}")
-    private String pathAccessToken;
-
-    @Value("${app.myid.path.create-task:/api/v1/authentication/simple-inplace-authentication-request-task}")
-    private String pathCreateTask;
-
-    @Value("${app.myid.path.status-by-external:/api/v1/authentication/authentication-request-status-by-external}")
-    private String pathStatusByExternal;
-
-    @Value("${app.myid.client-id:}")
-    private String clientId;
-
-    @Value("${app.myid.username:}")
-    private String username;
-
-    @Value("${app.myid.password:}")
-    private String password;
+    private final RestTemplate restTemplate;
+    private final MyIdProperties properties;
+    private final ObjectMapper objectMapper;
 
     @Override
     public boolean isConfigured() {
-        return baseUrl != null && !baseUrl.isBlank()
-                && clientId != null && !clientId.isBlank()
-                && username != null && !username.isBlank()
-                && password != null && !password.isBlank();
+        return properties.isConfigured();
     }
 
     @Override
-    public MyIdVerificationResult verify(String passData, String birthDate, String photoBase64) {
-        if (!isConfigured()) {
-            LogUtil.warn(MyIdServiceImpl.class, "MyID verify called but not configured");
-            return MyIdVerificationResult.failure(-1, "Сервис верификации не настроен");
-        }
-        String token = getAccessToken();
-        if (token == null) {
-            return MyIdVerificationResult.failure(-1, "Не удалось получить токен MyID");
-        }
-        String externalId = UUID.randomUUID().toString();
-        if (!createTask(token, passData, birthDate, photoBase64, externalId)) {
-            return MyIdVerificationResult.failure(-1, "Не удалось создать задачу идентификации");
-        }
-        sleep(INITIAL_DELAY_MS);
-        return pollStatus(token, externalId);
+    public MyIdWebSession createWebSession(String passData, String birthDateIso, String ipAddress, String lang) {
+        ensureConfigured();
+        String token = getServiceAccessToken();
+        String sessionId = requestWebSession(token, ipAddress);
+        String redirectUrl = buildSdkUrl(sessionId, passData, birthDateIso, lang);
+        return new MyIdWebSession(sessionId, redirectUrl);
     }
 
-    private String getAccessToken() {
+    @Override
+    public MyIdProfile completeWithAuthCode(String authCode) {
+        ensureConfigured();
+        String personalToken = exchangeAuthCode(authCode);
+        return fetchProfile(personalToken);
+    }
+
+    private void ensureConfigured() {
+        if (!properties.isConfigured()) {
+            throw new MyIdException(ErrorCode.MYID_NOT_CONFIGURED);
+        }
+    }
+
+    private String getServiceAccessToken() {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", properties.getClientId().trim());
+        body.add("client_secret", properties.resolvedSecret());
+        if (hasText(properties.getUsername()) && hasText(properties.getPassword())) {
+            body.add("grant_type", GRANT_PASSWORD);
+            body.add("username", properties.getUsername().trim());
+            body.add("password", properties.getPassword().trim());
+        } else {
+            body.add("grant_type", GRANT_CLIENT_CREDENTIALS);
+        }
+        return postToken(body, "service");
+    }
+
+    private String exchangeAuthCode(String authCode) {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", GRANT_AUTH_CODE);
+        body.add("code", authCode.trim());
+        body.add("client_id", properties.getClientId().trim());
+        body.add("client_secret", properties.resolvedSecret());
+        body.add("redirect_uri", properties.getRedirectUri().trim());
+        return postToken(body, "authorization_code");
+    }
+
+    private String postToken(MultiValueMap<String, String> body, String kind) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "password");
-        body.add("username", username);
-        body.add("password", password);
-        body.add("client_id", clientId);
         try {
-            URI url = URI.create(baseUrl.replaceFirst("/$", "") + pathAccessToken);
-            ResponseEntity<JsonNode> resp = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), JsonNode.class);
-            if (resp.getBody() != null && resp.getBody().has("access_token")) {
-                return resp.getBody().get("access_token").asText();
+            ResponseEntity<JsonNode> response = restTemplate.postForEntity(
+                    URI.create(properties.apiUrl(properties.getAccessTokenPath())),
+                    new HttpEntity<>(body, headers),
+                    JsonNode.class
+            );
+            String token = text(response.getBody(), "access_token");
+            if (!hasText(token)) {
+                throw new MyIdException(ErrorCode.MYID_FAILED, "MyID не вернул access_token");
             }
+            return token;
+        } catch (HttpStatusCodeException e) {
+            LogUtil.error(MyIdServiceImpl.class, "MyID token ({}) failed: {}", kind, e.getResponseBodyAsString());
+            throw new MyIdException(ErrorCode.MYID_FAILED, extractError(e, "Не удалось получить токен MyID"));
+        } catch (MyIdException e) {
+            throw e;
         } catch (Exception e) {
-            LogUtil.error(MyIdServiceImpl.class, "MyID getAccessToken failed", e);
+            LogUtil.error(MyIdServiceImpl.class, "MyID token (" + kind + ") failed", e);
+            throw new MyIdException(ErrorCode.MYID_FAILED, "Не удалось получить токен MyID");
+        }
+    }
+
+    private String requestWebSession(String token, String ipAddress) {
+        HttpHeaders headers = bearerJson(token);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("max_retries", Math.max(1, properties.getMaxRetries()));
+        body.put("external_id", UUID.randomUUID().toString());
+        if (hasText(ipAddress)) {
+            body.put("ip_address", ipAddress);
+        }
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.postForEntity(
+                    URI.create(properties.apiUrl(properties.getWebSessionsPath())),
+                    new HttpEntity<>(body, headers),
+                    JsonNode.class
+            );
+            String sessionId = firstText(response.getBody(), "session_id", "sessionId", "id");
+            if (!hasText(sessionId) && response.getBody() != null && response.getBody().has("data")) {
+                sessionId = firstText(response.getBody().get("data"), "session_id", "sessionId", "id");
+            }
+            if (!hasText(sessionId)) {
+                throw new MyIdException(ErrorCode.MYID_FAILED, "MyID не вернул session_id");
+            }
+            LogUtil.info(MyIdServiceImpl.class, "MyID web session created");
+            return sessionId;
+        } catch (HttpStatusCodeException e) {
+            LogUtil.error(MyIdServiceImpl.class, "MyID create session failed: {}", e.getResponseBodyAsString());
+            throw new MyIdException(ErrorCode.MYID_FAILED, extractError(e, "Не удалось создать сессию MyID"));
+        } catch (MyIdException e) {
+            throw e;
+        } catch (Exception e) {
+            LogUtil.error(MyIdServiceImpl.class, "MyID create session failed", e);
+            throw new MyIdException(ErrorCode.MYID_FAILED, "Не удалось создать сессию MyID");
+        }
+    }
+
+    private MyIdProfile fetchProfile(String personalToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(personalToken);
+        headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON));
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.exchange(
+                    URI.create(properties.apiUrl(properties.getUsersMePath())),
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    JsonNode.class
+            );
+            JsonNode body = response.getBody();
+            if (body == null || body.isEmpty()) {
+                throw new MyIdException(ErrorCode.MYID_FAILED, "MyID не вернул данные пользователя");
+            }
+            return new MyIdProfile(body.toString());
+        } catch (HttpStatusCodeException e) {
+            LogUtil.error(MyIdServiceImpl.class, "MyID users/me failed: {}", e.getResponseBodyAsString());
+            throw new MyIdException(ErrorCode.MYID_FAILED, extractError(e, "Не удалось получить результат MyID"));
+        } catch (MyIdException e) {
+            throw e;
+        } catch (Exception e) {
+            LogUtil.error(MyIdServiceImpl.class, "MyID users/me failed", e);
+            throw new MyIdException(ErrorCode.MYID_FAILED, "Не удалось получить результат MyID");
+        }
+    }
+
+    private String buildSdkUrl(String sessionId, String passData, String birthDateIso, String lang) {
+        String resolvedLang = hasText(lang) ? lang : properties.getDefaultLang();
+        return UriComponentsBuilder.fromUriString(properties.sdkBase())
+                .path("/")
+                .queryParam("session_id", sessionId)
+                .queryParam("pass_data", passData)
+                .queryParam("birth_date", birthDateIso)
+                .queryParam("is_resident", "1")
+                .queryParam("redirect_uri", properties.getRedirectUri().trim())
+                .queryParam("lang", resolvedLang == null ? "ru" : resolvedLang)
+                .queryParam("theme", "light")
+                .encode()
+                .build()
+                .toUriString();
+    }
+
+    private static HttpHeaders bearerJson(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
+    }
+
+    private String extractError(HttpStatusCodeException e, String fallback) {
+        JsonNode node = readJson(e.getResponseBodyAsString());
+        String message = firstText(node, "message", "error_description", "error", "detail", "result_note");
+        return hasText(message) ? message : fallback;
+    }
+
+    private JsonNode readJson(String raw) {
+        if (!hasText(raw)) {
+            return null;
+        }
+        try {
+            return objectMapper.readTree(raw);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private static String text(JsonNode node, String field) {
+        if (node == null || !node.has(field) || node.get(field).isNull()) {
+            return null;
+        }
+        String value = node.get(field).asText();
+        return hasText(value) ? value : null;
+    }
+
+    private static String firstText(JsonNode node, String... fields) {
+        if (node == null) {
+            return null;
+        }
+        for (String field : fields) {
+            String value = text(node, field);
+            if (value != null) {
+                return value;
+            }
         }
         return null;
     }
 
-    private boolean createTask(String token, String passData, String birthDate, String photoBase64, String externalId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
-        Map<String, Object> body = Map.of(
-                "pass_data", passData,
-                "birth_date", birthDate,
-                "photo_from_camera", Map.of("front", photoBase64 == null ? "" : photoBase64),
-                "agreed_on_terms", true,
-                "client_id", clientId,
-                "external_id", externalId
-        );
-        try {
-            URI url = URI.create(baseUrl.replaceFirst("/$", "") + pathCreateTask);
-            ResponseEntity<JsonNode> resp = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), JsonNode.class);
-            if (resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null && resp.getBody().has("job_id")) {
-                return true;
-            }
-        } catch (Exception e) {
-            LogUtil.error(MyIdServiceImpl.class, "MyID createTask failed", e);
-        }
-        return false;
-    }
-
-    private MyIdVerificationResult pollStatus(String token, String externalId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
-        Map<String, String> body = Map.of("external_id", externalId, "client_id", clientId);
-        URI url = URI.create(baseUrl.replaceFirst("/$", "") + pathStatusByExternal);
-        for (int i = 0; i < POLL_MAX_ATTEMPTS; i++) {
-            try {
-                ResponseEntity<JsonNode> resp = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), JsonNode.class);
-                if (resp.getStatusCode().value() == 202) {
-                    sleep(POLL_DELAY_MS);
-                    continue;
-                }
-                if (resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null) {
-                    JsonNode node = resp.getBody();
-                    int resultCode = node.has("result_code") ? node.get("result_code").asInt() : -1;
-                    String resultNote = node.has("result_note") ? node.get("result_note").asText() : null;
-                    if (resultCode == RESULT_SUCCESS) {
-                        return MyIdVerificationResult.success();
-                    }
-                    return MyIdVerificationResult.failure(resultCode, resultNote);
-                }
-            } catch (Exception e) {
-                LogUtil.error(MyIdServiceImpl.class, "MyID pollStatus failed at attempt " + (i + 1), e);
-            }
-            sleep(POLL_DELAY_MS);
-        }
-        return MyIdVerificationResult.failure(-1, "Превышено время ожидания ответа MyID");
-    }
-
-    private static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Interrupted while waiting for MyID", e);
-        }
+    private static boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }

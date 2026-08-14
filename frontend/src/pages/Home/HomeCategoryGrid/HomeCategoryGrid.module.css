@@ -1,0 +1,176 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(112px, 1fr));
+  gap: var(--layout-gap, 0.85rem);
+  margin: 0;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+@media (max-width: 991px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+}
+
+.card {
+  --card-tint: rgba(4, 73, 45, 0.06);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  box-sizing: border-box;
+  min-height: 112px;
+  min-width: 0;
+  height: 100%;
+  padding: 1rem 1rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid rgba(4, 73, 45, 0.08);
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 100% 100%, var(--card-tint), transparent 55%),
+    linear-gradient(165deg, #fbfcfb 0%, #f3f6f4 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+  animation: cardIn 0.45s ease both;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--color-primary, #04492d);
+  opacity: 0;
+  transform: scaleY(0.4);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(4, 73, 45, 0.22);
+  box-shadow: 0 14px 32px rgba(4, 73, 45, 0.1);
+}
+
+.card:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.card:hover .title {
+  color: var(--color-primary, #04492d);
+}
+
+.card:hover .icon {
+  opacity: 0.72;
+  transform: translate(-4px, -4px) scale(1.06);
+}
+
+.title {
+  position: relative;
+  z-index: 1;
+  max-width: calc(100% - 3.25rem);
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--color-text, #111827);
+  transition: color 0.2s ease;
+}
+
+.iconPeek {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 5rem;
+  height: 5rem;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.icon {
+  font-size: 3.35rem;
+  line-height: 1;
+  color: #6b7c72;
+  opacity: 0.38;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+.cardAll {
+  background: linear-gradient(145deg, #04492d 0%, #0a5c3a 55%, #0d6b44 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.cardAll .title {
+  color: #fff;
+  max-width: calc(100% - 2.5rem);
+}
+
+.cardAll:hover .title {
+  color: #fff;
+}
+
+.cardAll::before {
+  display: none;
+}
+
+.arrow {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 1rem;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.cardAll:hover .arrow {
+  transform: translateX(3px);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+
+  .card,
+  .icon,
+  .arrow {
+    transition: none;
+  }
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="058-clear-beauty-device-brand-links" author="qoldan-qolga">
+        <sql>
+            DELETE FROM brand_categories bc
+            USING categories c
+            WHERE bc.category_id = c.id
+              AND c.code IN (
+                'Britvy_trimmary', 'Pribory_ukladka', 'Massazhery', 'Pribory_uhod_koja',
+                'Epilyatory', 'Elekt_zubnie_schetki', 'Ultrazvukovye_vanny', 'Vesy',
+                'Irrigatory', 'Tonometry', 'Ingalyatory', 'Medicinskie_pribory',
+                'Ustroystva_dezinfekciya', 'Elektrogrelki_prostyni', 'Koncentratory_kisloroda'
+              );
+        </sql>
+    </changeSet>
+
+    <changeSet id="058-link-beauty-device-brands-clean" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b
+            CROSS JOIN categories c
+            WHERE c.code IN (
+                'Britvy_trimmary', 'Pribory_ukladka', 'Massazhery', 'Pribory_uhod_koja',
+                'Epilyatory', 'Elekt_zubnie_schetki', 'Ultrazvukovye_vanny', 'Vesy'
+            )
+            AND b.slug IN (
+                'braun','philips','panasonic','xiaomi','dyson','rowenta','scarlett','vitek',
+                'bosch','samsung','artel','tefal','drugaya-marka'
+            )
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b
+            CROSS JOIN categories c
+            WHERE c.code IN (
+                'Irrigatory', 'Tonometry', 'Ingalyatory', 'Medicinskie_pribory',
+                'Ustroystva_dezinfekciya', 'Elektrogrelki_prostyni', 'Koncentratory_kisloroda'
+            )
+            AND b.slug IN (
+                'omron','and','microlife','philips','xiaomi','b-well','little-doctor','artel','drugaya-marka'
+            )
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

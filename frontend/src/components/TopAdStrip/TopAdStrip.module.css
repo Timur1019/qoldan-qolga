@@ -1,0 +1,124 @@
+.strip {
+  width: 100%;
+  background: #f0f0f0;
+  border-bottom: 1px solid #e4e4e4;
+}
+
+.inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--layout-max, 1280px);
+  margin: 0 auto;
+  padding: 0.45rem var(--layout-pad, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+  min-height: 40px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 0;
+  padding-right: 1.75rem;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: cover;
+  background: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.iconFallback {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #64748b;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.text {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: #1a1a1a;
+  min-width: 0;
+}
+
+.title {
+  font-weight: 500;
+}
+
+.link {
+  color: #0066ff;
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.close {
+  position: absolute;
+  right: var(--layout-pad, 1.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.close:hover {
+  color: #6b7280;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding: 0.4rem 0.75rem;
+    justify-content: flex-start;
+  }
+
+  .content {
+    justify-content: flex-start;
+    padding-right: 2rem;
+  }
+
+  .close {
+    right: 0.5rem;
+  }
+
+  .text {
+    font-size: 0.8125rem;
+  }
+}

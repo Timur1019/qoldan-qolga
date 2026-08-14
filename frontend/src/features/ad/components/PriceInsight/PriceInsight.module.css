@@ -1,0 +1,107 @@
+.overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  padding: 0.45rem 0.55rem 0.55rem;
+  pointer-events: none;
+  animation: insightRise 0.4s ease-out both;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 0.45rem 0.65rem 0.5rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.88));
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.inline {
+  margin: 0.65rem 0 0.85rem;
+  animation: insightRise 0.35s ease-out both;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #111827);
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.track {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #16a34a 0%, #84cc16 28%, #eab308 58%, #f97316 100%);
+}
+
+.marker {
+  position: absolute;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  margin-left: -6.5px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #04492d;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transform: translateY(-50%);
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  font-weight: 650;
+  color: var(--color-muted, #6b7280);
+}
+
+.excellent .title { color: #15803d; }
+.good .title { color: #3f6212; }
+.fair .title { color: #a16207; }
+.high .title { color: #c2410c; }
+
+.excellent .marker { border-color: #16a34a; }
+.good .marker { border-color: #65a30d; }
+.fair .marker { border-color: #ca8a04; }
+.high .marker { border-color: #ea580c; }
+
+@keyframes insightRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 576px) {
+  .overlay {
+    padding: 0.4rem;
+  }
+
+  .title {
+    font-size: 0.78rem;
+  }
+}

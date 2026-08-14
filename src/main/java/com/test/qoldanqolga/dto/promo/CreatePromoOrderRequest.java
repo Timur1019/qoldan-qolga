@@ -14,8 +14,14 @@ public class CreatePromoOrderRequest {
     @NotBlank(message = "Выберите услугу")
     private String serviceCode;
 
-    /** Нормализованный код услуги (trim). */
+    @NotBlank(message = "Выберите способ оплаты")
+    private String provider;
+
     public String getServiceCodeTrimmed() {
         return serviceCode != null ? serviceCode.trim() : null;
+    }
+
+    public String getProviderTrimmed() {
+        return provider != null ? provider.trim() : null;
     }
 }

@@ -5,6 +5,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
+import { useToast } from '../../context/ToastContext'
+import { formatApiError } from '../../utils/apiError'
 import { authApi, adsApi, imageUrl } from '../../api/client'
 import { usePhotoUpload } from '../../hooks'
 import styles from './EditProfile.module.css'
@@ -56,6 +58,7 @@ function initFormFromUser(data, setters) {
 export default function EditProfile() {
   const { user, refreshUser } = useAuth()
   const { t } = useLang()
+  const { showToast, showApiError } = useToast()
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [avatarPhotos, setAvatarPhotos] = useState([])
@@ -124,15 +127,17 @@ export default function EditProfile() {
         if (updated) initFormFromUser(updated, setters)
         await refreshUser()
         setSuccess(true)
+        showToast(t('notify.profileSaved'), 'success')
         window.dispatchEvent(new CustomEvent('profile-updated'))
         document.getElementById('displayName')?.focus()
       } catch (e) {
-        setError(e?.message || t('common.error'))
+        setError(formatApiError(e, t))
+        showApiError(e)
       } finally {
         setSaving(false)
       }
     },
-    [displayName, email, avatarPhotos, mainAvatar, setters, refreshUser, t]
+    [displayName, email, avatarPhotos, mainAvatar, setters, refreshUser, t, showToast, showApiError]
   )
 
   const handleRemovePhoto = useCallback(

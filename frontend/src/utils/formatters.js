@@ -13,6 +13,10 @@ const CURRENCY_NAMES = { UZS: 'сум' }
 export function formatPrice(price, currency = 'UZS') {
   if (price == null) return ''
   const cur = (currency || 'UZS').toUpperCase()
+  if (cur === 'USD') {
+    const rounded = Math.round(Number(price) * 100) / 100
+    return `${rounded.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} USD`
+  }
   const name = CURRENCY_NAMES[cur] ?? cur
   return `${Number(price).toLocaleString('ru-RU')} ${name}`
 }

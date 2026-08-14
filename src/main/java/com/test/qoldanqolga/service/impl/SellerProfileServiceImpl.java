@@ -10,10 +10,14 @@ import com.test.qoldanqolga.service.AdvertisementService;
 import com.test.qoldanqolga.service.SellerProfileService;
 import com.test.qoldanqolga.service.UserSubscriptionService;
 import com.test.qoldanqolga.util.LogUtil;
+import com.test.qoldanqolga.util.SellerStatusUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Профиль продавца: данные пользователя, счётчики, объявления.
@@ -53,6 +57,9 @@ public class SellerProfileServiceImpl implements SellerProfileService {
         dto.setSubscribersCount(subscribersCount);
         dto.setSubscribed(subscribed);
         dto.setProfileVerified(Boolean.TRUE.equals(user.getProfileVerified()));
+        boolean store = SellerStatusUtil.isStoreVerified(user);
+        dto.setStoreVerified(store);
+        dto.setSellerIsStore(store);
         LogUtil.debug(SellerProfileServiceImpl.class, "Seller profile viewed: sellerId={} currentUserId={}", sellerId, currentUserId);
         return dto;
     }
@@ -61,5 +68,24 @@ public class SellerProfileServiceImpl implements SellerProfileService {
     public Page<AdListItemDto> getSellerAds(String sellerId, Pageable pageable, String currentUserId) {
         LogUtil.debug(SellerProfileServiceImpl.class, "Get seller ads: sellerId={} page={}", sellerId, pageable.getPageNumber());
         return advertisementService.listByUser(sellerId, pageable, currentUserId);
+    }
+
+    @Override
+    public List<SellerProfileDto> getMySubscriptions(String currentUserId) {
+        List<String> sellerIds = subscriptionRepository.findSubscribedToIdsBySubscriberId(currentUserId);
+        List<SellerProfileDto> result = new ArrayList<>();
+        for (String sellerId : sellerIds) {
+            try {
+                SellerProfileDto dto = getSellerProfile(sellerId, currentUserId);
+                dto.setSubscribed(true);
+                result.add(dto);
+            } catch (ResourceNotFoundException ex) {
+                LogUtil.warn(SellerProfileServiceImpl.class,
+                        "Skip missing subscribed seller: subscriber={} sellerId={}", currentUserId, sellerId);
+            }
+        }
+        LogUtil.info(SellerProfileServiceImpl.class,
+                "My subscriptions loaded: userId={} count={}", currentUserId, result.size());
+        return result;
     }
 }

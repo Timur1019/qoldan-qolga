@@ -1,194 +1,68 @@
-/* Блок только для списка избранных объявлений (фон блока, общий фон страницы не меняется) */
-.favoritesListBlock {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1.25rem;
-  border: 1px solid #e8e8ed;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+.page {
+  min-width: 0;
+  padding: 0.25rem 0 1.5rem;
 }
 
-.globalLoading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  min-height: 100vh;
-  padding: 2rem;
-  color: var(--color-muted, #666);
-}
-
-.globalLoadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--color-border, #e5e7eb);
-  border-top-color: var(--color-primary, #2563eb);
-  border-radius: 50%;
-  animation: favSpin 0.8s linear infinite;
-}
-
-@keyframes favSpin {
-  to { transform: rotate(360deg); }
-}
-
-.globalLoadingText {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-text-secondary, #6b7280);
-}
-
-.grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
-}
-
-@media (min-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 960px) {
-  .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1280px) {
-  .grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-
-.card,
-.recommendCard {
-  overflow: hidden;
-  border-radius: var(--radius-card);
-}
-
-.cardLink {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.cardImageWrap {
-  position: relative;
-  display: block;
-  border-radius: var(--radius-image, 12px) var(--radius-image, 12px) 0 0;
-  overflow: hidden;
-}
-
-.sellerBadgeStore,
-.sellerBadgePrivate {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 1;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
+.title {
+  margin: 0 0 0.85rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.3;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-.sellerBadgeStore {
-  background: #059669;
-  color: #fff;
-}
-
-.sellerBadgePrivate {
-  background: #64748b;
-  color: #fff;
-}
-
-.cardBody {
-  padding: 0.6rem 0.75rem 0.75rem;
-  padding-right: 2.25rem;
-  position: relative;
-}
-
-.favoriteBtn {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.5rem;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  color: #374151;
-  transition: color 0.15s, transform 0.15s;
-}
-
-.favoriteBtn:hover {
-  color: #e11d48;
-  transform: scale(1.06);
-}
-
-.heartIcon {
-  width: 18px;
-  height: 18px;
-}
-
-.heartFilled {
-  stroke: #000;
-  fill: #e11d48;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
-}
-
-.heartOutline {
-  stroke: #000;
-  fill: none;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
-}
-
-.cardDate {
-  margin: 0.25rem 0 0;
-  font-size: 12px;
-  color: var(--color-text-secondary, #6b7280);
-}
-
-.cardTitle {
-  margin: 0 0 0.25rem;
-  font-size: 13px;
-  font-weight: var(--font-weight-normal);
-  line-height: 1.35;
   color: var(--color-text, #1a1a1a);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-.cardPrice {
-  margin: 0 0 0.25rem;
-  font-size: 15px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text, #1a1a1a);
-  line-height: 1.3;
+.tabs {
+  margin-bottom: 1.25rem;
 }
 
-.cardMeta {
+.loadingText {
   margin: 0;
-  font-size: 12px;
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-muted, #6b7280);
 }
 
-/* Вкладка «Профили» */
+.empty {
+  text-align: center;
+  padding: 2.5rem 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.emptyTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.emptyText {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.emptyHint {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.15rem;
+  border-radius: 14px;
+  background: #f6f8f7;
+  border: 1px solid rgba(4, 73, 45, 0.08);
+}
+
+.emptyHintTitle {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+}
+
+.emptyHintText {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-muted, #6b7280);
+}
+
 .profilesSection {
-  margin-top: 0;
+  margin-top: 0.25rem;
 }
 
 .profilesList {
@@ -260,25 +134,10 @@
   line-height: 1.3;
 }
 
-.recommendGrid {
-  list-style: none;
+.profileMeta {
   margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-@media (min-width: 640px) {
-  .recommendGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 960px) {
-  .recommendGrid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
+  font-size: 0.85rem;
+  color: var(--color-muted, #6b7280);
 }
 
 .showMoreWrap {

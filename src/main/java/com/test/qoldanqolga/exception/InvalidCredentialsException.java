@@ -1,12 +1,16 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Thrown when authentication fails (wrong password, disabled account, etc.).
- * Mapped to HTTP 401 by {@link com.test.qoldanqolga.util.GlobalExceptionHandler}.
- */
-public class InvalidCredentialsException extends RuntimeException {
+public class InvalidCredentialsException extends BaseException {
 
     public InvalidCredentialsException(String message) {
-        super(message);
+        super(ErrorCode.INVALID_CREDENTIALS, message);
+    }
+
+    public InvalidCredentialsException(ErrorCode code) {
+        super(code);
+    }
+
+    public InvalidCredentialsException(ErrorCode code, String message) {
+        super(code, message);
     }
 }

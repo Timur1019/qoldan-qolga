@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Для детей — корневая категория -->
+    <changeSet id="050-insert-dlya-detey-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Bolalar uchun', 'Для детей', 'Dlya_detey', 10, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <changeSet id="050-insert-dlya-detey-mid" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar krovatlari', 'Детские кровати', 'Detskie_krovati', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar shkaflari', 'Детские шкафы', 'Detskie_shkafy', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Partalar', 'Парты', 'Party', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar buyumlari va o''yinchoqlar', 'Товары для детей и игрушки', 'Tovary_dlya_detey', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar kiyimi va poyabzali', 'Детская одежда и обувь', 'Detskaya_odezhda_obuv', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Dlya_detey' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Товары для детей и игрушки -->
+    <changeSet id="050-insert-tovary-dlya-detey-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar aravachalari', 'Детские коляски', 'Detskie_kolyaski', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar mebeli', 'Детская мебель', 'Detskaya_mebel', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Velosipedlar, samokatlar va boshqa transport', 'Велосипеды и самокаты и другой транспорт', 'Velosipedy_samokaty', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ovqatlantirish buyumlari', 'Товары для кормления', 'Tovary_kormlenie', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtomobil o''rindiqlari', 'Автомобильные кресла', 'Avtokresla', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''yinchoqlar', 'Игрушки', 'Igrushki', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'To''shak buyumlari', 'Постельные принадлежности', 'Postelnye_prinadlezhnosti', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Cho''milish buyumlari', 'Товары для купания', 'Tovary_kupanie', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Maktab buyumlari', 'Товары для школы', 'Tovary_shkola', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bolalar sport tovarlari', 'Детские спортивные товары', 'Detskie_sport_tovary', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Detskie_tovary_prochee', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Tovary_dlya_detey' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Детская одежда и обувь -->
+    <changeSet id="050-insert-detskaya-odezhda-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yangi tug''ilganlar uchun', 'Для новорождённых', 'Dlya_novorozhdennyh', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Detskaya_odezhda_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qizlar kiyimi', 'Одежда для девочек', 'Odezhda_devochki', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Detskaya_odezhda_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qizlar poyabzali', 'Обувь для девочек', 'Obuv_devochki', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Detskaya_odezhda_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''g''il bolalar kiyimi', 'Одежда для мальчиков', 'Odezhda_malchiki', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Detskaya_odezhda_obuv' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''g''il bolalar poyabzali', 'Обувь для мальчиков', 'Obuv_malchiki', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Detskaya_odezhda_obuv' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,83 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.req {
+  color: #dc2626;
+}
+
+.zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 9.5rem;
+  padding: 1.25rem 1rem;
+  border-radius: 12px;
+  border: 1.5px dashed #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.zone:hover,
+.dragOver {
+  border-color: var(--color-primary, #04492d);
+  background: rgba(4, 73, 45, 0.04);
+}
+
+.hasFile {
+  border-style: solid;
+  border-color: rgba(4, 73, 45, 0.35);
+  background: rgba(4, 73, 45, 0.05);
+}
+
+.zoneIcon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.15rem;
+  border-radius: 10px;
+  background: rgba(4, 73, 45, 0.08);
+  color: var(--color-primary, #04492d);
+  font-size: 1.25rem;
+}
+
+.zoneTitle {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #111827;
+  word-break: break-word;
+}
+
+.zoneHint {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #dc2626;
+}

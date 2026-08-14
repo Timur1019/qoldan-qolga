@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { adminApi } from '../../api/client'
+import CategoryIcon from '../../components/ui/CategoryIcon'
 import styles from './AdminDashboard.module.css'
 
 export default function AdminDashboard() {
@@ -88,7 +89,7 @@ export default function AdminDashboard() {
   const rootCategories = categories.filter((c) => c.parentId == null)
   const getChildren = (id) => categories.filter((c) => c.parentId === id)
 
-  const renderCategoryNode = (item, depth = 0) => {
+  const renderCategoryNode = (item, depth = 0, parentCode = '') => {
     const children = getChildren(item.id)
     const hasChildren = children.length > 0
     const isExpanded = expandedIds.has(item.id)
@@ -109,6 +110,7 @@ export default function AdminDashboard() {
             ) : (
               <span className={styles.togglePlaceholder} />
             )}
+            <CategoryIcon code={item.code} parentCode={item.parentCode || parentCode} className={styles.treeIcon} />
             <span className={styles.treeName}>{item.nameRu}</span>
             <code className={styles.code}>{item.code}</code>
           </div>
@@ -123,7 +125,7 @@ export default function AdminDashboard() {
         </div>
         {hasChildren && isExpanded && (
           <ul className={depth === 0 ? styles.treeSublist : styles.treeSublistNested}>
-            {children.map((child) => renderCategoryNode(child, depth + 1))}
+            {children.map((child) => renderCategoryNode(child, depth + 1, item.code))}
           </ul>
         )}
       </li>

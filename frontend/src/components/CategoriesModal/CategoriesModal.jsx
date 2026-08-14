@@ -3,15 +3,10 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
 import { referenceApi } from '../../api/client'
 import { categoryPath, adsCategoryPath } from '../../constants/routes'
+import CategoryIcon from '../ui/CategoryIcon'
 import styles from './CategoriesModal.module.css'
 
-const CATEGORY_ICONS = { Xizmatlar: 'clipboard', Ish: 'briefcase', Transport: 'car-front' }
 const MAX_ITEMS_PER_GROUP = 4
-
-function CategoryIcon({ code }) {
-  const name = CATEGORY_ICONS[code] || 'folder'
-  return <i className={`bi bi-${name} text-secondary ${styles.catIcon}`} aria-hidden />
-}
 
 export default function CategoriesModal({ onClose }) {
   const { lang } = useLang()
@@ -116,7 +111,7 @@ export default function CategoriesModal({ onClose }) {
                     className={`btn w-100 d-flex align-items-center gap-2 text-start border-0 rounded-0 py-2 px-3 ${selected?.code === cat.code ? styles.catItemActive : styles.catItem}`}
                     onClick={() => setSelected(cat)}
                   >
-                    <CategoryIcon code={cat.code} />
+                    <CategoryIcon code={cat.code} parentCode={cat.parentCode} className={`text-secondary ${styles.catIcon}`} />
                     <span className="flex-grow-1">{name(cat)}</span>
                     <i className="bi bi-chevron-right text-muted small" aria-hidden />
                   </button>
@@ -132,6 +127,7 @@ export default function CategoriesModal({ onClose }) {
                   className="fw-bold text-dark text-decoration-none d-flex align-items-center gap-1 mb-3"
                   onClick={onClose}
                 >
+                  <CategoryIcon code={selected.code} parentCode={selected.parentCode} className="text-secondary" />
                   <span>{name(selected)}</span>
                   <i className="bi bi-chevron-right" aria-hidden />
                 </Link>
@@ -145,6 +141,7 @@ export default function CategoriesModal({ onClose }) {
                             className="fw-bold text-dark text-decoration-none d-inline-flex align-items-center gap-1"
                             onClick={onClose}
                           >
+                            <CategoryIcon code={child.code} parentCode={child.parentCode || selected?.code} className="text-secondary" />
                             {name(child)}
                             <i className="bi bi-chevron-right small" aria-hidden />
                           </Link>
@@ -155,7 +152,8 @@ export default function CategoriesModal({ onClose }) {
                               const visible = isExpanded ? list : list.slice(0, MAX_ITEMS_PER_GROUP)
                               return visible.map((sub) => (
                                 <li key={sub.code}>
-                                  <Link to={adsCategoryPath(sub.code)} className="text-dark text-decoration-none small" onClick={onClose}>
+                                  <Link to={adsCategoryPath(sub.code)} className={`text-dark text-decoration-none small ${styles.groupLink}`} onClick={onClose}>
+                                    <CategoryIcon code={sub.code} parentCode={sub.parentCode || child.code} className={styles.groupLinkIcon} />
                                     {name(sub)}
                                   </Link>
                                 </li>
@@ -199,6 +197,7 @@ export default function CategoriesModal({ onClose }) {
                           className="fw-bold text-dark text-decoration-none d-inline-flex align-items-center gap-1"
                           onClick={onClose}
                         >
+                          <CategoryIcon code={child.code} parentCode={child.parentCode || selected?.code} className="text-secondary" />
                           {name(child)}
                           <i className="bi bi-chevron-right small" aria-hidden />
                         </Link>

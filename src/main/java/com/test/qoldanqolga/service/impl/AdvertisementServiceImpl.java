@@ -7,6 +7,7 @@ import com.test.qoldanqolga.dto.ad.CreateAdRequest;
 import com.test.qoldanqolga.pagination.CursorPageRequest;
 import com.test.qoldanqolga.pagination.CursorPageResponse;
 import com.test.qoldanqolga.service.AdStatusService;
+import com.test.qoldanqolga.service.AdViewService;
 import com.test.qoldanqolga.service.AdvertisementCommandService;
 import com.test.qoldanqolga.service.AdvertisementQueryService;
 import com.test.qoldanqolga.service.AdvertisementService;
@@ -26,6 +27,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private final AdvertisementQueryService queryService;
     private final AdvertisementCommandService commandService;
     private final AdStatusService adStatusService;
+    private final AdViewService adViewService;
 
     @Override
     public CursorPageResponse<AdListItemDto> listByCursor(CursorPageRequest request, String status, String currentUserId) {
@@ -66,7 +68,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public void recordView(String id) {
         LogUtil.debug(AdvertisementServiceImpl.class, "Record view: adId={}", id);
-        queryService.recordView(id);
+        adViewService.recordViewAsync(id);
     }
 
     @Override

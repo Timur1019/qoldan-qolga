@@ -49,6 +49,16 @@
   color: #111;
 }
 
+.categoryValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.categoryIcon {
+  color: var(--color-primary, #04492d);
+}
+
 .askRow {
   display: flex;
   gap: 0.5rem;

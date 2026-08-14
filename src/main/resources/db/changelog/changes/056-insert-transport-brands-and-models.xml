@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="056-insert-transport-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brands (id, name_uz, name_ru, slug, sort_order, is_active, is_popular, created_at, updated_at)
+            SELECT gen_random_uuid()::text, v.name_uz, v.name_ru, v.slug, v.sort_order, true, v.is_popular, NOW(), NOW()
+            FROM (VALUES
+                ('Chevrolet', 'Chevrolet', 'chevrolet', 10, true),
+                ('Toyota', 'Toyota', 'toyota', 11, true),
+                ('BMW', 'BMW', 'bmw', 12, true),
+                ('Mercedes-Benz', 'Mercedes-Benz', 'mercedes-benz', 13, true),
+                ('Tesla', 'Tesla', 'tesla', 14, true),
+                ('BYD', 'BYD', 'byd', 15, true),
+                ('Volkswagen', 'Volkswagen', 'volkswagen', 16, false),
+                ('Chery', 'Chery', 'chery', 17, true),
+                ('Haval', 'Haval', 'haval', 18, true),
+                ('Honda', 'Honda', 'honda', 19, false),
+                ('Suzuki', 'Suzuki', 'suzuki', 20, false),
+                ('Kawasaki', 'Kawasaki', 'kawasaki', 21, false),
+                ('GAZ', 'ГАЗ', 'gaz', 22, false),
+                ('KAMAZ', 'КАМАЗ', 'kamaz', 23, false),
+                ('UAZ', 'УАЗ', 'uaz', 24, false),
+                ('Isuzu', 'Isuzu', 'isuzu', 25, false),
+                ('Volvo', 'Volvo', 'volvo-trucks', 26, false),
+                ('MAN', 'MAN', 'man-trucks', 27, false),
+                ('Ninebot', 'Ninebot', 'ninebot', 28, false),
+                ('Giant', 'Giant', 'giant', 29, false),
+                ('Trek', 'Trek', 'trek', 30, false),
+                ('Stels', 'Stels', 'stels', 31, false),
+                ('Mazda', 'Mazda', 'mazda', 32, false),
+                ('Nissan', 'Nissan', 'nissan', 33, false),
+                ('Mitsubishi', 'Mitsubishi', 'mitsubishi', 34, false),
+                ('Lexus', 'Lexus', 'lexus', 35, false),
+                ('Geely', 'Geely', 'geely', 36, true)
+            ) AS v(name_uz, name_ru, slug, sort_order, is_popular)
+            WHERE NOT EXISTS (SELECT 1 FROM brands b WHERE b.slug = v.slug);
+        </sql>
+    </changeSet>
+
+    <changeSet id="056-link-car-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Avtomobili'
+            AND b.slug IN ('chevrolet','daewoo','toyota','hyundai','kia','byd','tesla','mercedes-benz','bmw','volkswagen','lada','chery','haval','mazda','nissan','mitsubishi','lexus','geely','honda','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="056-link-moto-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code IN ('Motocikly_i_mototehnika','Vezdehody','Karting','Kvadrotsikly_i_baggi','Mopedy_i_skutery','Motocikly','Snegohody','Mototehnika_prochee')
+            AND b.slug IN ('honda','yamaha','suzuki','kawasaki','bmw','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="056-link-scooter-bike-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Elektrosamokaty'
+            AND b.slug IN ('xiaomi','ninebot','yamaha','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code = 'Transport_velosipedy'
+            AND b.slug IN ('giant','trek','stels','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="056-link-truck-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code IN ('Gruzoviki_i_spectehnika','Avtobusy','Avtodoma','Avtokrany','Buldozery','Gruzoviki','Kommunalnaya_tehnika','Legkiy_kommercheskiy','Navesnoe_oborudovanie','Pogruzchiki','Pricepy','Selhoztehnika','Stroitelnaya_tehnika','Lesozagotovka','Sedelnye_tyagachi','Ekskavatory','Spectehnika_drugoe')
+            AND b.slug IN ('gaz','kamaz','uaz','isuzu','volvo-trucks','man-trucks','hyundai','toyota','chevrolet','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="056-link-parts-water-brands" author="qoldan-qolga">
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code IN ('Zapchasti_i_aksessuary_transport','Zapchasti_transport','Zapchasti_dlya_to','Shiny_diski_kolesa','Avto_audio_video','Transport_aksessuary')
+            AND b.slug IN ('chevrolet','daewoo','toyota','hyundai','kia','bosch','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+        <sql>
+            INSERT INTO brand_categories (brand_id, category_id)
+            SELECT b.id, c.id FROM brands b, categories c
+            WHERE c.code IN ('Vodnyy_transport','Vodnyy_prochee','Veselnye_lodki','Gidrotsikly','Katera_i_yahty','Motornye_lodki_i_motory')
+            AND b.slug IN ('yamaha','honda','suzuki','drugaya-marka')
+            ON CONFLICT (brand_id, category_id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="056-insert-vehicle-models" author="qoldan-qolga">
+        <sql>
+            INSERT INTO vehicle_models (id, brand_id, name_uz, name_ru, slug, sort_order, is_active, created_at, updated_at)
+            SELECT gen_random_uuid()::text, b.id, v.name_uz, v.name_ru, v.slug, v.sort_order, true, NOW(), NOW()
+            FROM brands b
+            JOIN (VALUES
+                ('chevrolet', 'Cobalt', 'Cobalt', 'chevrolet-cobalt', 1),
+                ('chevrolet', 'Gentra', 'Gentra', 'chevrolet-gentra', 2),
+                ('chevrolet', 'Lacetti', 'Lacetti', 'chevrolet-lacetti', 3),
+                ('chevrolet', 'Malibu', 'Malibu', 'chevrolet-malibu', 4),
+                ('chevrolet', 'Tracker', 'Tracker', 'chevrolet-tracker', 5),
+                ('chevrolet', 'Equinox', 'Equinox', 'chevrolet-equinox', 6),
+                ('chevrolet', 'Onix', 'Onix', 'chevrolet-onix', 7),
+                ('chevrolet', 'Spark', 'Spark', 'chevrolet-spark', 8),
+                ('chevrolet', 'Nexia', 'Nexia', 'chevrolet-nexia', 9),
+                ('chevrolet', 'Damas', 'Damas', 'chevrolet-damas', 10),
+                ('chevrolet', 'Labo', 'Labo', 'chevrolet-labo', 11),
+                ('daewoo', 'Nexia', 'Nexia', 'daewoo-nexia', 1),
+                ('daewoo', 'Matiz', 'Matiz', 'daewoo-matiz', 2),
+                ('daewoo', 'Gentra', 'Gentra', 'daewoo-gentra', 3),
+                ('toyota', 'Camry', 'Camry', 'toyota-camry', 1),
+                ('toyota', 'Corolla', 'Corolla', 'toyota-corolla', 2),
+                ('toyota', 'Land Cruiser', 'Land Cruiser', 'toyota-land-cruiser', 3),
+                ('toyota', 'Prado', 'Prado', 'toyota-prado', 4),
+                ('toyota', 'RAV4', 'RAV4', 'toyota-rav4', 5),
+                ('toyota', 'Highlander', 'Highlander', 'toyota-highlander', 6),
+                ('hyundai', 'Tucson', 'Tucson', 'hyundai-tucson', 1),
+                ('hyundai', 'Santa Fe', 'Santa Fe', 'hyundai-santa-fe', 2),
+                ('hyundai', 'Elantra', 'Elantra', 'hyundai-elantra', 3),
+                ('hyundai', 'Sonata', 'Sonata', 'hyundai-sonata', 4),
+                ('hyundai', 'Accent', 'Accent', 'hyundai-accent', 5),
+                ('hyundai', 'Creta', 'Creta', 'hyundai-creta', 6),
+                ('kia', 'Sportage', 'Sportage', 'kia-sportage', 1),
+                ('kia', 'Sorento', 'Sorento', 'kia-sorento', 2),
+                ('kia', 'K5', 'K5', 'kia-k5', 3),
+                ('kia', 'Rio', 'Rio', 'kia-rio', 4),
+                ('kia', 'Cerato', 'Cerato', 'kia-cerato', 5),
+                ('byd', 'Song Plus', 'Song Plus', 'byd-song-plus', 1),
+                ('byd', 'Han', 'Han', 'byd-han', 2),
+                ('byd', 'Seal', 'Seal', 'byd-seal', 3),
+                ('byd', 'Yuan Plus', 'Yuan Plus', 'byd-yuan-plus', 4),
+                ('tesla', 'Model 3', 'Model 3', 'tesla-model-3', 1),
+                ('tesla', 'Model Y', 'Model Y', 'tesla-model-y', 2),
+                ('tesla', 'Model S', 'Model S', 'tesla-model-s', 3),
+                ('mercedes-benz', 'E-Class', 'E-Class', 'mercedes-e-class', 1),
+                ('mercedes-benz', 'C-Class', 'C-Class', 'mercedes-c-class', 2),
+                ('mercedes-benz', 'S-Class', 'S-Class', 'mercedes-s-class', 3),
+                ('mercedes-benz', 'GLE', 'GLE', 'mercedes-gle', 4),
+                ('bmw', '3 Series', '3 Series', 'bmw-3-series', 1),
+                ('bmw', '5 Series', '5 Series', 'bmw-5-series', 2),
+                ('bmw', 'X5', 'X5', 'bmw-x5', 3),
+                ('bmw', 'X3', 'X3', 'bmw-x3', 4),
+                ('lada', 'Vesta', 'Vesta', 'lada-vesta', 1),
+                ('lada', 'Granta', 'Granta', 'lada-granta', 2),
+                ('lada', 'Niva', 'Niva', 'lada-niva', 3),
+                ('chery', 'Tiggo 7 Pro', 'Tiggo 7 Pro', 'chery-tiggo-7-pro', 1),
+                ('chery', 'Tiggo 8', 'Tiggo 8', 'chery-tiggo-8', 2),
+                ('chery', 'Arrizo 8', 'Arrizo 8', 'chery-arrizo-8', 3),
+                ('haval', 'Jolion', 'Jolion', 'haval-jolion', 1),
+                ('haval', 'H6', 'H6', 'haval-h6', 2),
+                ('haval', 'Dargo', 'Dargo', 'haval-dargo', 3),
+                ('geely', 'Coolray', 'Coolray', 'geely-coolray', 1),
+                ('geely', 'Monjaro', 'Monjaro', 'geely-monjaro', 2),
+                ('geely', 'Atlas', 'Atlas', 'geely-atlas', 3),
+                ('honda', 'CBR', 'CBR', 'honda-cbr', 1),
+                ('honda', 'Dio', 'Dio', 'honda-dio', 2),
+                ('yamaha', 'YZF-R3', 'YZF-R3', 'yamaha-yzf-r3', 1),
+                ('yamaha', 'Jog', 'Jog', 'yamaha-jog', 2),
+                ('xiaomi', 'Mi Electric Scooter', 'Mi Electric Scooter', 'xiaomi-mi-scooter', 1),
+                ('ninebot', 'Max G30', 'Max G30', 'ninebot-max-g30', 1)
+            ) AS v(brand_slug, name_uz, name_ru, slug, sort_order) ON b.slug = v.brand_slug
+            WHERE NOT EXISTS (SELECT 1 FROM vehicle_models m WHERE m.slug = v.slug);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

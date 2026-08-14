@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Стройка и ремонт — корневая категория -->
+    <changeSet id="051-insert-stroyka-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Qurilish va ta''mir', 'Стройка и ремонт', 'Stroyka_remont', 11, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <changeSet id="051-insert-stroyka-mid" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qurilish va ta''mir buyumlari', 'Товары для строительства/ремонта', 'Stroy_tovary', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroyka_remont' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Asboblar', 'Инструменты', 'Instrumenty', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroyka_remont' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Товары для строительства/ремонта -->
+    <changeSet id="051-insert-stroy-tovary-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Santexnika', 'Сантехника', 'Stroy_santehnika', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ventilyatsiya', 'Вентиляция', 'Stroy_ventilyaciya', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Isitish', 'Отопление', 'Stroy_otoplenie', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektrika', 'Электрика', 'Stroy_elektrika', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yog''och materiallar', 'Пиломатериалы', 'Pilomaterialy', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Pardoz va qoplama materiallari', 'Отделочные и облицовочные материалы', 'Otdelochnye_materialy', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Derazalar / eshiklar / oyna / ko''zgular', 'Окна / двери / стекло / зеркала', 'Okna_dveri_steklo', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bo''yoq materiallari', 'Лакокрасочные материалы', 'Lakokrasochnye', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Metalloprokat / armatura', 'Металлопрокат / арматура', 'Metalloprok_armatura', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mahkamlash elementlari', 'Элементы крепежа', 'Elementy_krepezha', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'G''isht / beton / penobloklar', 'Кирпич / бетон / пеноблоки', 'Kirpich_beton_penobloki', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa qurilish materiallari', 'Прочие стройматериалы', 'Prochie_stroymaterialy', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Stroy_tovary' LIMIT 1;</sql>
+    </changeSet>
+
+    <!-- Инструменты -->
+    <changeSet id="051-insert-instrumenty-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qo''l asboblari', 'Ручной инструмент', 'Ruchnoy_instrument', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Instrumenty' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Benzin asboblari', 'Бензоинструмент', 'Benzoinstrument', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Instrumenty' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektr asboblari', 'Электроинструмент', 'Elektroinstrument', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Instrumenty' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Pnevmo asboblar', 'Пневмоинструмент', 'Pnevmoinstrument', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Instrumenty' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa asboblar', 'Прочий инструмент', 'Prochiy_instrument', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Instrumenty' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

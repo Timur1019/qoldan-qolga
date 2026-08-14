@@ -1,42 +1,65 @@
 import { useState } from 'react'
 import { imageUrl } from '../../services/adApi'
+import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
 import styles from './CardGallery.module.css'
 
-export default function CardGallery({ imageUrls = [], className, imageWrapClassName }) {
+export default function CardGallery({ imageUrls = [], className, imageWrapClassName, square = false }) {
   const urls = Array.isArray(imageUrls) ? imageUrls.filter(Boolean) : []
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [failed, setFailed] = useState(() => new Set())
 
-  const mainUrl = urls[selectedIndex] ?? urls[0]
+  const usable = urls.filter((url) => !failed.has(url))
+  const safeIndex = usable.length === 0 ? 0 : Math.min(selectedIndex, usable.length - 1)
+  const mainUrl = usable[safeIndex]
 
   const handleMouseMove = (e) => {
-    if (urls.length <= 1) return
+    if (usable.length <= 1) return
     const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const ratio = x / rect.width
-    const idx = Math.min(urls.length - 1, Math.max(0, Math.floor(ratio * urls.length)))
+    const ratio = (e.clientX - rect.left) / rect.width
+    const idx = Math.min(usable.length - 1, Math.max(0, Math.floor(ratio * usable.length)))
     setSelectedIndex(idx)
   }
 
+  const handleError = (url) => {
+    setFailed((prev) => {
+      if (prev.has(url)) return prev
+      const next = new Set(prev)
+      next.add(url)
+      return next
+    })
+    setSelectedIndex(0)
+  }
+
+  const imageClass = `${styles.image} ${square ? styles.imageSquare : ''}`
+
   if (!mainUrl) {
-    return <div className={`${styles.placeholder} ${imageWrapClassName || ''}`} />
+    return (
+      <span className={`${styles.wrap} ${className || ''}`}>
+        <AdImagePlaceholder className={imageWrapClassName} square={square} />
+      </span>
+    )
   }
 
   return (
     <span className={`${styles.wrap} ${className || ''}`}>
-      <span
-        className={imageWrapClassName}
-        onMouseMove={handleMouseMove}
-      >
-        <img src={imageUrl(mainUrl)} alt="" className={styles.image} loading="lazy" decoding="async" />
+      <span className={imageWrapClassName} onMouseMove={handleMouseMove}>
+        <img
+          src={imageUrl(mainUrl)}
+          alt=""
+          className={imageClass}
+          loading="lazy"
+          decoding="async"
+          onError={() => handleError(mainUrl)}
+        />
       </span>
-      {urls.length > 1 && (
+      {usable.length > 1 && (
         <span className={styles.dots} role="tablist" aria-hidden>
-          {urls.map((_, idx) => (
+          {usable.map((_, idx) => (
             <span
               key={idx}
-              className={`${styles.dot} ${selectedIndex === idx ? styles.dotActive : ''}`}
+              className={`${styles.dot} ${safeIndex === idx ? styles.dotActive : ''}`}
               role="tab"
-              aria-selected={selectedIndex === idx}
+              aria-selected={safeIndex === idx}
             />
           ))}
         </span>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
 import { adsApi } from '../../api/client'
 import CardGallery from '../../features/ad/components/CardGallery'
+import PromoModal from '../../features/ad/components/PromoModal'
 import { ROUTES, adsEditPath } from '../../constants/routes'
 import styles from './MyAds.module.css'
 
@@ -29,8 +30,6 @@ export default function MyAds() {
   const [error, setError] = useState('')
   const [openMenuId, setOpenMenuId] = useState(null)
   const [promoModalAd, setPromoModalAd] = useState(null)
-  const [selectedPromoService, setSelectedPromoService] = useState(null)
-  const [promoWarning, setPromoWarning] = useState('')
   const menuRef = useRef(null)
 
   useEffect(() => {
@@ -95,31 +94,10 @@ export default function MyAds() {
   const openPromoModal = (ad) => {
     setOpenMenuId(null)
     setPromoModalAd(ad)
-    setSelectedPromoService(null)
-    setPromoWarning('')
   }
 
   const closePromoModal = () => {
     setPromoModalAd(null)
-    setSelectedPromoService(null)
-    setPromoWarning('')
-  }
-
-  const handlePromoPay = () => {
-    if (!selectedPromoService) {
-      setPromoWarning(t('ads.promoSelectServiceWarning'))
-      return
-    }
-    if (!promoModalAd) return
-    setPromoWarning('')
-    adsApi
-      .createPromoOrder(promoModalAd.id, { serviceCode: selectedPromoService })
-      .then(() => {
-        closePromoModal()
-      })
-      .catch((e) => {
-        setPromoWarning(e.message || t('common.error'))
-      })
   }
 
   if (loading) {
@@ -157,12 +135,22 @@ export default function MyAds() {
           <h2 className={styles.usefulTitle}>{t('profile.usefulForYou')}</h2>
           <div className={styles.usefulCards}>
             <div className={styles.usefulCard}>
-              <div className={styles.usefulCardIcon} aria-hidden />
+              <div className={styles.usefulCardIcon} aria-hidden>
+                <svg className={styles.usefulCardIconSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3v18" />
+                  <path d="M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 3 4.5 3 4.5 1.3 4.5 3-2 3-4.5 3-4.5-1.3-4.5-3" />
+                </svg>
+              </div>
               <h3 className={styles.usefulCardTitle}>{t('profile.sellGuide')}</h3>
               <button type="button" className={styles.guideBtn}>{t('profile.guide')}</button>
             </div>
             <div className={styles.usefulCard}>
-              <div className={styles.usefulCardIconShield} aria-hidden />
+              <div className={styles.usefulCardIconShield} aria-hidden>
+                <svg className={styles.usefulCardIconSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3l7 3v5c0 4.5-3 8.2-7 9.5C8 19.2 5 15.5 5 11V6l7-3z" />
+                  <path d="M9.5 12l1.8 1.8L15 10" />
+                </svg>
+              </div>
               <h3 className={styles.usefulCardTitle}>{t('profile.sellerSafety')}</h3>
               <button type="button" className={styles.guideBtn}>{t('profile.guide')}</button>
             </div>
@@ -354,64 +342,9 @@ export default function MyAds() {
         )}
       </section>
 
-      {promoModalAd && (
-        <div className={styles.promoOverlay} onClick={closePromoModal} role="dialog" aria-modal="true" aria-labelledby="promo-modal-title">
-          <div className={styles.promoModal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.promoModalHeader}>
-              <h2 id="promo-modal-title" className={styles.promoModalTitle}>{t('ads.promoModalTitle')}</h2>
-              <button
-                type="button"
-                className={styles.promoModalClose}
-                onClick={closePromoModal}
-                aria-label={t('common.cancel')}
-              >
-                ✕
-              </button>
-            </div>
-            <div className={styles.promoModalBody}>
-              <div className={styles.promoOption}>
-                <label className={styles.promoOptionLabel}>
-                  <input
-                    type="radio"
-                    name="promoService"
-                    checked={selectedPromoService === 'maxi'}
-                    onChange={() => { setSelectedPromoService('maxi'); setPromoWarning('') }}
-                    className={styles.promoRadio}
-                  />
-                  <span className={styles.promoOptionTitle}>{t('ads.promoServiceMaxi')}</span>
-                </label>
-                <p className={styles.promoOptionPrice}>{t('ads.promoServiceMaxiPrice')}</p>
-              </div>
-              <div className={styles.promoOption}>
-                <label className={styles.promoOptionLabel}>
-                  <input
-                    type="radio"
-                    name="promoService"
-                    checked={selectedPromoService === 'up'}
-                    onChange={() => { setSelectedPromoService('up'); setPromoWarning('') }}
-                    className={styles.promoRadio}
-                  />
-                  <span className={styles.promoOptionTitle}>{t('ads.promoServiceUp')}</span>
-                </label>
-                <p className={styles.promoOptionPrice}>{t('ads.promoServiceUpPrice')}</p>
-                <p className={styles.promoOptionDesc}>{t('ads.promoServiceUpDesc')}</p>
-              </div>
-              {promoWarning && (
-                <p className={styles.promoWarning} role="alert">{promoWarning}</p>
-              )}
-            </div>
-            <div className={styles.promoModalFooter}>
-              <button
-                type="button"
-                className={styles.promoPayBtn}
-                onClick={handlePromoPay}
-              >
-                {t('ads.promoPayBtn')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {promoModalAd ? (
+        <PromoModal ad={promoModalAd} onClose={closePromoModal} />
+      ) : null}
     </div>
   )
 }

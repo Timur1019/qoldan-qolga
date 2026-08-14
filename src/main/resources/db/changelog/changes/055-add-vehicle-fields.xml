@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="055-create-vehicle-models" author="qoldan-qolga">
+        <createTable tableName="vehicle_models">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="vehicle_models_pkey"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMPTZ"/>
+            <column name="brand_id" type="VARCHAR(36)">
+                <constraints nullable="false" references="brands(id)" foreignKeyName="fk_vehicle_models_brand" deleteCascade="true"/>
+            </column>
+            <column name="name_uz" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_vehicle_models_slug"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="100"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+        <createIndex tableName="vehicle_models" indexName="idx_vehicle_models_brand_id">
+            <column name="brand_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="055-add-vehicle-columns-to-ads" author="qoldan-qolga">
+        <addColumn tableName="advertisements">
+            <column name="model_id" type="VARCHAR(36)"/>
+            <column name="model_custom" type="VARCHAR(100)"/>
+            <column name="year" type="INT"/>
+            <column name="mileage" type="INT"/>
+            <column name="body_type" type="VARCHAR(30)"/>
+            <column name="transmission" type="VARCHAR(20)"/>
+            <column name="fuel_type" type="VARCHAR(20)"/>
+            <column name="drive_type" type="VARCHAR(10)"/>
+            <column name="engine_volume" type="DECIMAL(4,2)"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="advertisements" baseColumnNames="model_id"
+            constraintName="fk_advertisements_vehicle_model"
+            referencedTableName="vehicle_models" referencedColumnNames="id"/>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_model_id">
+            <column name="model_id"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_brand_year">
+            <column name="brand_id"/>
+            <column name="year"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_mileage">
+            <column name="mileage"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_body_type">
+            <column name="body_type"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

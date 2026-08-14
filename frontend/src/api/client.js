@@ -1,3 +1,7 @@
+import { ApiError } from '../utils/apiError'
+import { notifyToast } from '../utils/toastBus'
+import { cachedGet } from './ttlCache'
+
 const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || ''
 const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : '/api'
 
@@ -29,6 +33,10 @@ export function buildQueryString(params) {
 
 /** Проверка: ошибка из-за отсутствия или невалидной авторизации. */
 export function isAuthError(err) {
+  const status = err?.status
+  if (status === 401 || status === 403) return true
+  const code = err?.code
+  if (code === 'UNAUTHORIZED' || code === 'FORBIDDEN' || code === 'INVALID_CREDENTIALS') return true
   const msg = err?.message || ''
   return (
     msg.includes('401') ||
@@ -40,48 +48,69 @@ export function isAuthError(err) {
 }
 
 export async function apiRequest(path, options = {}) {
+  const { silent = false, headers: extraHeaders, ...fetchOptions } = options
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`
   const token = getToken()
   const headers = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...extraHeaders,
   }
   if (token) {
     headers.Authorization = `Bearer ${token}`
   }
-  const res = await fetch(url, { ...options, headers })
+  const res = await fetch(url, { ...fetchOptions, headers })
   if (res.status === 204) {
     return undefined
   }
   const text = await res.text()
   const data = text ? (() => { try { return JSON.parse(text) } catch { return {} } })() : {}
   if (!res.ok) {
-    throw new Error(data.message || res.statusText || 'Ошибка запроса')
+    const err = ApiError.fromResponse(res.status, data)
+    const method = (fetchOptions.method || 'GET').toUpperCase()
+    const skipToast = silent || method === 'GET' || err.status === 401 || err.code === 'UNAUTHORIZED'
+    if (!skipToast) {
+      notifyToast('error', err)
+    }
+    throw err
   }
   return data
 }
 
 export const authApi = {
-  login: (email, password) =>
+  login: (body) =>
     apiRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(body),
+      silent: true,
     }),
-  register: (body) =>
-    apiRequest('/auth/register', {
+  sendPhoneCode: (phone) =>
+    apiRequest('/auth/phone/send-code', {
+      method: 'POST',
+      body: JSON.stringify({ phone }),
+      silent: true,
+    }),
+  verifyPhoneCode: (body) =>
+    apiRequest('/auth/phone/verify', {
       method: 'POST',
       body: JSON.stringify(body),
+      silent: true,
     }),
   me: () => apiRequest('/auth/me'),
   updateProfile: (body) =>
     apiRequest('/auth/me', { method: 'PATCH', body: JSON.stringify(body) }),
   /** Отзывы, которые я оставил другим пользователям (приватная страница «Мои отзывы»). */
   getMyReviews: (params) => apiRequest(`/auth/me/reviews${buildQueryString(params)}`),
-  /** Запуск проверки ID (MyID): возвращает redirectUrl или embedUrl. */
   startVerification: (body) =>
     apiRequest('/auth/verification/start', {
       method: 'POST',
       body: JSON.stringify(body),
+      silent: true,
+    }),
+  completeVerification: (body) =>
+    apiRequest('/auth/verification/complete', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      silent: true,
     }),
 }
 
@@ -119,6 +148,21 @@ export const adminApi = {
     apiRequest(`/admin/home-promo-banners/${encodeURIComponent(id)}`, {
       method: 'DELETE',
     }),
+  getSiteTopBanners: () => apiRequest('/admin/site-top-banners'),
+  createSiteTopBanner: (body) =>
+    apiRequest('/admin/site-top-banners', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  updateSiteTopBanner: (id, body) =>
+    apiRequest(`/admin/site-top-banners/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  deleteSiteTopBanner: (id) =>
+    apiRequest(`/admin/site-top-banners/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   getBusinessApplications: (params) =>
     apiRequest(`/admin/business-applications${buildQueryString(params)}`),
   getBusinessApplication: (id) =>
@@ -135,15 +179,18 @@ export const adminApi = {
 
 /** Регионы, категории, бренды, баннеры главной — с бэкенда */
 export const referenceApi = {
-  getRegions: () => apiRequest('/regions'),
-  getCategories: () => apiRequest('/categories'),
-  getCategory: (code) => apiRequest(`/categories/${encodeURIComponent(code)}`),
-  getCategoryBreadcrumb: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/breadcrumb`),
-  getCategoryChildren: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/children`),
-  getCategoriesForHome: () => apiRequest('/categories/home'),
-  getBrands: () => apiRequest('/brands'),
-  getBrandsByCategory: (code) => apiRequest(`/categories/${encodeURIComponent(code)}/brands`),
-  getHomePromoBanners: () => apiRequest('/home-promo-banners'),
+  getRegions: () => cachedGet('regions', () => apiRequest('/regions'), 30 * 60 * 1000),
+  getCategories: () => cachedGet('categories', () => apiRequest('/categories'), 10 * 60 * 1000),
+  getCategory: (code) => cachedGet(`category:${code}`, () => apiRequest(`/categories/${encodeURIComponent(code)}`), 10 * 60 * 1000),
+  getCategoryBreadcrumb: (code) => cachedGet(`breadcrumb:${code}`, () => apiRequest(`/categories/${encodeURIComponent(code)}/breadcrumb`), 10 * 60 * 1000),
+  getCategoryChildren: (code) => cachedGet(`children:${code}`, () => apiRequest(`/categories/${encodeURIComponent(code)}/children`), 10 * 60 * 1000),
+  getCategoriesForHome: () => cachedGet('categories-home', () => apiRequest('/categories/home'), 10 * 60 * 1000),
+  getBrands: () => cachedGet('brands', () => apiRequest('/brands'), 10 * 60 * 1000),
+  getBrandsByCategory: (code) => cachedGet(`brands:${code}`, () => apiRequest(`/categories/${encodeURIComponent(code)}/brands`), 10 * 60 * 1000),
+  getModelsByBrand: (brandId) => cachedGet(`models:${brandId}`, () => apiRequest(`/brands/${encodeURIComponent(brandId)}/models`), 10 * 60 * 1000),
+  getVehicleSpecOptions: () => cachedGet('vehicle-spec-options', () => apiRequest('/vehicle-spec-options'), 30 * 60 * 1000),
+  getHomePromoBanners: () => cachedGet('promo-banners', () => apiRequest('/home-promo-banners'), 5 * 60 * 1000),
+  getSiteTopBanners: () => cachedGet('site-top-banners', () => apiRequest('/site-top-banners'), 60 * 1000),
 }
 
 /** Заявки «Qoldan Qolga для бизнеса» (можно без авторизации) */
@@ -163,7 +210,7 @@ export const businessApplicationsApi = {
 const AD_VIEWED_KEY = 'ad-viewed'
 
 export const adsApi = {
-  list: (params) => apiRequest(`/ads${buildQueryString(params)}`),
+  list: (params, options) => apiRequest(`/ads${buildQueryString(params)}`, options),
   getById: (id) => apiRequest(`/ads/${id}`),
   recordView: (id) => apiRequest(`/ads/${id}/view`, { method: 'POST' }),
   wasAdViewedInSession: (id) => {
@@ -221,6 +268,12 @@ export const adsApi = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+  getPromoOrder: (orderId) => apiRequest(`/ads/promo/orders/${encodeURIComponent(orderId)}`),
+  mockCompletePromoPayment: (orderId) =>
+    apiRequest('/payments/mock/complete', {
+      method: 'POST',
+      body: JSON.stringify({ orderId }),
+    }),
   upload: async (file) => {
     const formData = new FormData()
     formData.append('file', file)
@@ -234,7 +287,11 @@ export const adsApi = {
       body: formData,
     })
     const data = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(data.message || res.statusText || 'Upload failed')
+    if (!res.ok) {
+      const err = ApiError.fromResponse(res.status, data)
+      notifyToast('error', err)
+      throw err
+    }
     return data
   },
   uploadBatch: async (files) => {
@@ -253,7 +310,11 @@ export const adsApi = {
       body: formData,
     })
     const data = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(data.message || res.statusText || 'Upload failed')
+    if (!res.ok) {
+      const err = ApiError.fromResponse(res.status, data)
+      notifyToast('error', err)
+      throw err
+    }
     return data
   },
 }

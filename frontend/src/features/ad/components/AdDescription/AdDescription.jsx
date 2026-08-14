@@ -1,6 +1,10 @@
 import { memo } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import { QUICK_QUESTIONS } from '../../utils/constants'
+import { descriptionWithoutLocation } from '../../utils/descriptionLocation'
+import CategoryIcon from '../../../../components/ui/CategoryIcon'
+import AdVehicleCharacteristics from './AdVehicleCharacteristics'
+import AdRealEstateCharacteristics from './AdRealEstateCharacteristics'
 import styles from './AdDescription.module.css'
 
 function AdDescription({
@@ -14,14 +18,15 @@ function AdDescription({
   onAskSend,
   chatGoing,
 }) {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const regionDisplay = regionLabel ?? ad?.region
+  const descriptionText = descriptionWithoutLocation(ad?.description)
 
   return (
     <>
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>{t('ads.description')}</h2>
-        <p className={styles.description}>{ad?.description}</p>
+        <p className={styles.description}>{descriptionText}</p>
       </section>
 
       <section className={styles.section}>
@@ -29,7 +34,10 @@ function AdDescription({
         <dl className={styles.charList}>
           <div className={styles.charRow}>
             <dt>{t('ads.category')}</dt>
-            <dd>{categoryLabel}</dd>
+            <dd className={styles.categoryValue}>
+              {ad?.category ? <CategoryIcon code={ad.category} className={styles.categoryIcon} /> : null}
+              {categoryLabel}
+            </dd>
           </div>
           {regionDisplay && (
             <div className={styles.charRow}>
@@ -37,7 +45,9 @@ function AdDescription({
               <dd>{regionDisplay}</dd>
             </div>
           )}
-          {ad?.itemCondition && (
+          <AdVehicleCharacteristics ad={ad} lang={lang} t={t} />
+          <AdRealEstateCharacteristics ad={ad} t={t} />
+          {ad?.itemCondition && ad?.dealType == null && (
             <div className={styles.charRow}>
               <dt>{t('ads.conditionLabel')}</dt>
               <dd>

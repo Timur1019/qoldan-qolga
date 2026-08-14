@@ -4,6 +4,7 @@ import com.test.qoldanqolga.dto.reference.BrandDto;
 import com.test.qoldanqolga.dto.reference.CategoryDto;
 import com.test.qoldanqolga.dto.reference.CreateCategoryRequest;
 import com.test.qoldanqolga.dto.reference.RegionDto;
+import com.test.qoldanqolga.dto.reference.VehicleSpecOptionsDto;
 import com.test.qoldanqolga.model.District;
 import com.test.qoldanqolga.model.Region;
 
@@ -32,4 +33,6 @@ public interface ReferenceDataService {
     List<BrandDto> getAllBrands();
 
     List<BrandDto> getBrandsByCategoryCode(String categoryCode);
+
+    VehicleSpecOptionsDto getVehicleSpecOptions();
 }

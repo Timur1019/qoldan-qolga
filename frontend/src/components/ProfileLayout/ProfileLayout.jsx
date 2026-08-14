@@ -3,11 +3,9 @@ import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
 import { useBusinessModal } from '../../context/BusinessModalContext'
 import { useChatUnreadCount, useFavoritesCount, useIdVerificationModal } from '../../hooks'
-import { ROUTES, sellerPath } from '../../constants/routes'
-import { imageUrl } from '../../api/client'
+import { ROUTES } from '../../constants/routes'
+import ProfileSidebarHead from './ProfileSidebarHead'
 import styles from './ProfileLayout.module.css'
-
-const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 const NavIcons = {
   idCheck: <i className="bi bi-person-badge" aria-hidden />,
@@ -21,7 +19,7 @@ const NavIcons = {
 }
 
 export default function ProfileLayout({ children }) {
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
   const { t } = useLang()
   const location = useLocation()
   const path = location.pathname
@@ -29,6 +27,7 @@ export default function ProfileLayout({ children }) {
   const isFavorites = path === '/dashboard/favorites' || path.startsWith('/dashboard/favorites')
   const isMyReviews = path === '/dashboard/reviews' || path.startsWith('/dashboard/reviews')
   const isChat = path === '/dashboard/chat' || path.startsWith('/dashboard/chat')
+  const isRules = path === ROUTES.DASHBOARD_RULES || path.startsWith(`${ROUTES.DASHBOARD_RULES}/`)
   const chatUnreadCount = useChatUnreadCount()
   const favoritesCount = useFavoritesCount()
   const openIdVerificationModal = useIdVerificationModal()
@@ -37,22 +36,7 @@ export default function ProfileLayout({ children }) {
   return (
     <div className={styles.wrap}>
       <aside className={`app-card ${styles.sidebar}`}>
-        <Link to={ROUTES.PROFILE_EDIT} className={`d-flex align-items-center gap-2 text-decoration-none text-dark ${styles.profileHead}`}>
-          <span className={`rounded-circle ${styles.avatar}`} aria-hidden>
-            {user?.avatar && (user.avatar.startsWith('/') || user.avatar.startsWith('http')) ? (
-              <img src={imageUrl(user.avatar)} alt="" className={`rounded-circle ${styles.avatarImg}`} />
-            ) : user?.avatar && AVATAR_EMOJI[user.avatar] ? (
-              AVATAR_EMOJI[user.avatar]
-            ) : (
-              ''
-            )}
-          </span>
-          <span className={`flex-grow-1 text-truncate small ${styles.contact}`}>{user?.phone || user?.email || '—'}</span>
-          <i className="bi bi-chevron-right text-secondary" aria-hidden />
-        </Link>
-        <Link to={user?.id ? sellerPath(user.id) : ROUTES.DASHBOARD} className="small text-primary text-decoration-none mb-3 d-block">
-          {t('profile.viewProfile')} ›
-        </Link>
+        <ProfileSidebarHead />
         <nav className={`nav flex-column gap-1 ${styles.nav}`}>
           <button type="button" className={`nav-link d-flex align-items-center gap-2 rounded ${styles.navItem}`} onClick={openIdVerificationModal}>
             <span className="text-secondary">{NavIcons.idCheck}</span>
@@ -90,7 +74,10 @@ export default function ProfileLayout({ children }) {
             <span className="flex-grow-1 text-start">{t('profile.forBusiness')}</span>
             <i className="bi bi-chevron-right text-secondary small" aria-hidden />
           </button>
-          <Link to={ROUTES.DASHBOARD} className={`nav-link d-flex align-items-center gap-2 rounded ${styles.navItem}`}>
+          <Link
+            to={ROUTES.DASHBOARD_RULES}
+            className={`nav-link d-flex align-items-center gap-2 rounded ${isRules ? styles.navItemActive : styles.navItem}`}
+          >
             <span className="text-secondary">{NavIcons.document}</span>
             <span className="flex-grow-1">{t('profile.rules')}</span>
             <i className="bi bi-chevron-right text-secondary small" aria-hidden />

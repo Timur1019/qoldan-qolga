@@ -1,11 +1,8 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Пользователь пытается оставить отзыв самому себе.
- */
-public class SelfReviewException extends RuntimeException {
+public class SelfReviewException extends BaseException {
 
     public SelfReviewException(String userId) {
-        super("Нельзя оставить отзыв самому себе");
+        super(ErrorCode.SELF_REVIEW);
     }
 }

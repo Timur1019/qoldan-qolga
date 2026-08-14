@@ -9,6 +9,8 @@ import com.test.qoldanqolga.repository.HomePromoBannerRepository;
 import com.test.qoldanqolga.service.HomePromoBannerService;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ public class HomePromoBannerServiceImpl implements HomePromoBannerService {
     private final HomePromoBannerRepository repository;
 
     @Override
+    @Cacheable("promoBanners")
     public List<HomePromoBannerDto> listForHome() {
         return repository.findAllByOrderBySortOrderAscIdAsc().stream()
                 .filter(b -> b.getDeletedAt() == null)
@@ -48,6 +51,7 @@ public class HomePromoBannerServiceImpl implements HomePromoBannerService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "promoBanners", allEntries = true)
     public HomePromoBannerDto create(CreateHomePromoBannerRequest request) {
         HomePromoBanner entity = new HomePromoBanner();
         entity.setTitle(request.getTitle());
@@ -63,6 +67,7 @@ public class HomePromoBannerServiceImpl implements HomePromoBannerService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "promoBanners", allEntries = true)
     public HomePromoBannerDto update(String id, UpdateHomePromoBannerRequest request) {
         HomePromoBanner entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Баннер", id));
@@ -79,6 +84,7 @@ public class HomePromoBannerServiceImpl implements HomePromoBannerService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "promoBanners", allEntries = true)
     public void delete(String id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Баннер", id);

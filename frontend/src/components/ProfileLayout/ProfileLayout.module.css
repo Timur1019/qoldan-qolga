@@ -1,7 +1,7 @@
 .wrap {
   display: flex;
   gap: 1.25rem;
-  max-width: 1200px;
+  max-width: var(--layout-max, 1280px);
   margin: 0 auto;
   align-items: flex-start;
 }
@@ -11,50 +11,6 @@
   width: 280px;
   padding: 1.25rem;
   background: #ffffff;
-}
-
-.profileHead {
-  margin-bottom: 0.75rem;
-  border-radius: var(--radius-sm);
-  padding: 0.25rem 0;
-  min-width: 0;
-}
-
-.profileHead:hover {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.profileHead .contact {
-  min-width: 0;
-}
-
-.avatar {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  overflow: hidden;
-}
-
-.avatarImg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.contact {
-  color: #374151;
 }
 
 .nav {

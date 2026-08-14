@@ -15,11 +15,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.cors.CorsConfiguration;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
@@ -43,12 +41,20 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**", "/api/health").permitAll()
                         .requestMatchers("/ws", "/ws/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/regions", "/api/categories", "/api/categories/**", "/api/brands").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/regions", "/api/categories", "/api/categories/**", "/api/brands", "/api/brands/**", "/api/vehicle-spec-options").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ads/**").permitAll()
+                        .requestMatchers(request ->
+                                "POST".equalsIgnoreCase(request.getMethod())
+                                        && request.getRequestURI() != null
+                                        && request.getRequestURI().matches(".*/api/ads/[^/]+/view"))
+                                .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/regions", "/api/categories", "/api/categories/home").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/home-promo-banners").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/site-top-banners").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/currency/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/business-applications").permitAll()
+                        .requestMatchers("/api/payments/payme", "/api/payments/click/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/docs/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -67,7 +73,7 @@ public class SecurityConfig {
             if (request.getRequestURI().startsWith("/api/")) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"message\":\"Требуется авторизация\"}");
+                response.getWriter().write("{\"code\":\"UNAUTHORIZED\",\"status\":401,\"message\":\"Требуется авторизация\"}");
             } else {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, authException.getMessage());
             }
@@ -81,7 +87,7 @@ public class SecurityConfig {
             if (request.getRequestURI().startsWith("/api/")) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"message\":\"Доступ запрещён: требуется роль ADMIN\"}");
+                response.getWriter().write("{\"code\":\"FORBIDDEN\",\"status\":403,\"message\":\"Доступ запрещён: требуется роль ADMIN\"}");
             } else {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
             }
@@ -91,7 +97,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"));
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://*.trycloudflare.com",
+                "http://qoldan-qolga.uz",
+                "https://qoldan-qolga.uz",
+                "http://www.qoldan-qolga.uz",
+                "https://www.qoldan-qolga.uz",
+                "http://5.182.26.233:*"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization"));

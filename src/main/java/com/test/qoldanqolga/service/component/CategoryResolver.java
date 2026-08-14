@@ -4,6 +4,7 @@ import com.test.qoldanqolga.model.Category;
 import com.test.qoldanqolga.repository.CategoryRepository;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class CategoryResolver {
      * При выборе «Электроника» вернёт Elektronika, Telefonlar_aloqa, Mobil_telefonlar, Televizorlar и т.д. —
      * чтобы выводились все объявления из раздела и подразделов.
      */
+    @Cacheable(value = "categoryCodes", key = "#categoryCode", condition = "#categoryCode != null && !#categoryCode.isBlank()")
     public List<String> resolveCategoryCodes(String categoryCode) {
         if (categoryCode == null || categoryCode.isBlank()) {
             return null;

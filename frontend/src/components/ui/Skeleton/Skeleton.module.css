@@ -1,0 +1,44 @@
+.bone {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-subtle, #eef2f7);
+  border-radius: 8px;
+}
+
+.bone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: skeletonShimmer 1.35s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.text {
+  height: 0.85rem;
+  border-radius: 6px;
+}
+
+.title {
+  height: 1rem;
+  border-radius: 6px;
+}
+
+.block {
+  border-radius: 12px;
+}
+
+.circle {
+  border-radius: 50%;
+}

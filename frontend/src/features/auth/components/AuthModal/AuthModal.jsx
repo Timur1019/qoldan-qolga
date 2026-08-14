@@ -2,39 +2,50 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../../../context/AuthContext'
 import { useLang } from '../../../../context/LangContext'
+import { useToast } from '../../../../context/ToastContext'
+import { formatApiError } from '../../../../utils/apiError'
 import { PARAMS, ROUTES } from '../../../../constants/routes'
-import { authApi } from '../../services/authApi'
+import { usePhoneAuth } from '../../hooks/usePhoneAuth'
+import PhoneAuthForm from './PhoneAuthForm'
+import PhoneCodeForm from './PhoneCodeForm'
 import styles from './AuthModal.module.css'
 
-export default function AuthModal({ open, onClose, initialMode = 'login' }) {
+function applyAuthSession(setAuth, res, rememberMe = true) {
+  setAuth(
+    res.token,
+    {
+      id: res.userId,
+      email: res.email,
+      phone: res.phone,
+      displayName: res.displayName,
+      role: res.role || 'USER',
+      avatar: res.avatar,
+    },
+    rememberMe,
+  )
+}
+
+export default function AuthModal({ open, onClose }) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { setAuth, refreshUser } = useAuth()
   const { t } = useLang()
-
-  const [mode, setMode] = useState(initialMode)
-  useEffect(() => {
-    if (open) setMode(initialMode)
-  }, [open, initialMode])
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [displayName, setDisplayName] = useState('')
+  const { showToast, showApiError } = useToast()
   const [rememberMe, setRememberMe] = useState(true)
-  const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const phoneAuth = usePhoneAuth()
+
+  useEffect(() => {
+    if (open) {
+      phoneAuth.reset()
+      setRememberMe(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when modal opens
+  }, [open])
 
   const redirectTo = searchParams.get(PARAMS.FROM) || ROUTES.DASHBOARD
 
-  const resetForm = () => {
-    setError('')
-    setEmail('')
-    setPassword('')
-    setDisplayName('')
-    setRememberMe(true)
-  }
-
   const handleClose = () => {
-    resetForm()
+    phoneAuth.reset()
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev)
       next.delete(PARAMS.AUTH)
@@ -44,60 +55,61 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
     onClose()
   }
 
-  const handleLogin = async (e) => {
+  const finishAuth = async (res, toastKey) => {
+    applyAuthSession(setAuth, res, rememberMe)
+    await refreshUser()
+    showToast(t(toastKey), 'success')
+    handleClose()
+    navigate(redirectTo, { replace: true })
+  }
+
+  const handleSendCode = async (e) => {
     e.preventDefault()
-    setError('')
-    setSubmitting(true)
+    phoneAuth.setError('')
     try {
-      const res = await authApi.login(email, password)
-      setAuth(res.token, {
-        id: res.userId,
-        email: res.email,
-        displayName: res.displayName,
-        role: res.role || 'USER',
-        avatar: res.avatar,
-      }, rememberMe)
-      await refreshUser()
-      handleClose()
-      navigate(redirectTo, { replace: true })
+      await phoneAuth.sendCode()
     } catch (err) {
-      setError(err.message || t('common.error'))
-    } finally {
-      setSubmitting(false)
+      phoneAuth.setError(formatApiError(err, t))
+      showApiError(err)
     }
   }
 
-  const handleRegister = async (e) => {
+  const handleVerifyCode = async (e) => {
     e.preventDefault()
-    setError('')
-    setSubmitting(true)
+    phoneAuth.setError('')
     try {
-      const res = await authApi.register({ email, password, displayName })
-      setAuth(res.token, {
-        id: res.userId,
-        email: res.email,
-        displayName: res.displayName,
-        role: res.role || 'USER',
-        avatar: res.avatar,
-      })
-      await refreshUser()
-      handleClose()
-      navigate(redirectTo, { replace: true })
+      const res = await phoneAuth.verifyCode()
+      const toastKey = res.newUser ? 'notify.registerSuccess' : 'notify.loginSuccess'
+      await finishAuth(res, toastKey)
     } catch (err) {
-      setError(err.message || t('common.error'))
-    } finally {
-      setSubmitting(false)
+      phoneAuth.setError(formatApiError(err, t))
+      showApiError(err)
     }
   }
 
-  const switchMode = (newMode) => {
-    setMode(newMode)
-    setError('')
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      next.set(PARAMS.AUTH, newMode)
-      return next
-    }, { replace: true })
+  const handleResend = async () => {
+    phoneAuth.setError('')
+    try {
+      await phoneAuth.resendCode()
+    } catch (err) {
+      phoneAuth.setError(formatApiError(err, t))
+      showApiError(err)
+    }
+  }
+
+  const labels = {
+    rememberMe: t('auth.rememberMe'),
+    loading: t('common.loading'),
+    phone: t('auth.phone'),
+    phoneHint: t('auth.phoneHint'),
+    sendCode: t('auth.sendCode'),
+    code: t('auth.code'),
+    codeSentTo: t('auth.codeSentTo'),
+    confirm: t('auth.confirmCode'),
+    changePhone: t('auth.changePhone'),
+    resend: t('auth.resendCode'),
+    resendIn: t('auth.resendIn'),
+    devCode: t('auth.devCode'),
   }
 
   if (!open) return null
@@ -121,109 +133,39 @@ export default function AuthModal({ open, onClose, initialMode = 'login' }) {
           <i className="bi bi-x-lg" aria-hidden />
         </button>
         <h2 id="auth-modal-title" className="h4 mb-4">
-          {mode === 'login' ? t('auth.loginTitle') : t('auth.registerTitle')}
+          {t('auth.phoneTitle')}
         </h2>
 
-        {mode === 'login' ? (
-          <form onSubmit={handleLogin} className={styles.form}>
-            {error && (
-              <div className="alert alert-danger py-2 mb-3" role="alert">
-                <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
-              </div>
-            )}
-            <div className="mb-3">
-              <label className="form-label">{t('auth.email')}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="form-control"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">{t('auth.password')}</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="form-control"
-              />
-            </div>
-            <div className="mb-3 form-check">
-              <input
-                type="checkbox"
-                id="auth-remember"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="form-check-input"
-              />
-              <label className="form-check-label" htmlFor="auth-remember">{t('auth.rememberMe')}</label>
-            </div>
-            <button type="submit" disabled={submitting} className="btn btn-primary w-100">
-              {submitting ? t('common.loading') : t('nav.login')}
-            </button>
-            <p className="mt-3 mb-0 text-muted small text-center">
-              {t('auth.noAccount')}{' '}
-              <button type="button" className="btn btn-link p-0 align-baseline text-primary text-decoration-none" onClick={() => switchMode('register')}>
-                {t('nav.register')}
-              </button>
-            </p>
-          </form>
-        ) : (
-          <form onSubmit={handleRegister} className={styles.form}>
-            {error && (
-              <div className="alert alert-danger py-2 mb-3" role="alert">
-                <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
-              </div>
-            )}
-            <div className="mb-3">
-              <label className="form-label">{t('auth.displayName')}</label>
-              <input
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                required
-                autoComplete="name"
-                className="form-control"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">{t('auth.email')}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="form-control"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">{t('auth.password')} (6+)</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                autoComplete="new-password"
-                className="form-control"
-              />
-            </div>
-            <button type="submit" disabled={submitting} className="btn btn-primary w-100">
-              {submitting ? t('common.loading') : t('nav.register')}
-            </button>
-            <p className="mt-3 mb-0 text-muted small text-center">
-              {t('auth.hasAccount')}{' '}
-              <button type="button" className="btn btn-link p-0 align-baseline text-primary text-decoration-none" onClick={() => switchMode('login')}>
-                {t('nav.login')}
-              </button>
-            </p>
-          </form>
+        {phoneAuth.step === 'phone' && (
+          <PhoneAuthForm
+            phone={phoneAuth.phone}
+            onPhoneChange={phoneAuth.setPhone}
+            onSubmit={handleSendCode}
+            submitting={phoneAuth.submitting}
+            error={phoneAuth.error}
+            rememberMe={rememberMe}
+            onRememberMeChange={setRememberMe}
+            labels={labels}
+          />
+        )}
+
+        {phoneAuth.step === 'code' && (
+          <PhoneCodeForm
+            phoneMasked={phoneAuth.phoneMasked}
+            code={phoneAuth.code}
+            onCodeChange={phoneAuth.setCode}
+            onSubmit={handleVerifyCode}
+            onResend={handleResend}
+            onBack={() => {
+              phoneAuth.setStep('phone')
+              phoneAuth.setError('')
+            }}
+            resendAfter={phoneAuth.resendAfter}
+            submitting={phoneAuth.submitting}
+            error={phoneAuth.error}
+            debugCode={phoneAuth.debugCode}
+            labels={labels}
+          />
         )}
       </div>
     </div>

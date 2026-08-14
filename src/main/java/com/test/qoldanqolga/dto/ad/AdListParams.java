@@ -34,4 +34,31 @@ public class AdListParams {
     private Boolean handMadeOnly;
     /** true = возможна аренда (для одежды/обуви) */
     private Boolean canRent;
+    private String modelId;
+    private Integer yearFrom;
+    private Integer yearTo;
+    private Integer mileageFrom;
+    private Integer mileageTo;
+    private List<String> bodyType;
+    private List<String> transmission;
+    private List<String> fuelType;
+    private List<String> driveType;
+    private BigDecimal engineVolumeFrom;
+    private BigDecimal engineVolumeTo;
+    private List<String> exteriorColor;
+    private List<String> seats;
+    private List<String> steering;
+    private List<String> ownersCount;
+    private String district;
+    private List<String> dealType;
+    private List<String> rooms;
+    private BigDecimal areaFrom;
+    private BigDecimal areaTo;
+    private BigDecimal landAreaFrom;
+    private BigDecimal landAreaTo;
+    private Integer floorFrom;
+    private Integer floorTo;
+    private List<String> buildingType;
+    private List<String> renovation;
+    private Boolean furnished;
 }

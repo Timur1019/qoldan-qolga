@@ -30,6 +30,10 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "averageRating", ignore = true)
     @Mapping(target = "totalReviews", ignore = true)
     @Mapping(target = "sellerIsStore", ignore = true)
+    @Mapping(target = "brandNameUz", ignore = true)
+    @Mapping(target = "brandNameRu", ignore = true)
+    @Mapping(target = "modelNameUz", ignore = true)
+    @Mapping(target = "modelNameRu", ignore = true)
     AdListItemDto toDto(Advertisement ad);
 
     /** Альias для toDto — сохраняет обратную совместимость. */
@@ -38,6 +42,10 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     }
 
     @Mapping(target = "userDisplayName", expression = "java(userDisplayName(ad))")
+    @Mapping(target = "brandNameUz", expression = "java(brandNameUz(ad))")
+    @Mapping(target = "brandNameRu", expression = "java(brandNameRu(ad))")
+    @Mapping(target = "modelNameUz", expression = "java(modelNameUz(ad))")
+    @Mapping(target = "modelNameRu", expression = "java(modelNameRu(ad))")
     @Mapping(target = "favorite", ignore = true)
     AdDetailDto toDetailDto(Advertisement ad);
 
@@ -50,8 +58,19 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "status", constant = AdConstants.STATUS_ACTIVE)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "brand", ignore = true)
+    @Mapping(target = "vehicleModel", ignore = true)
+    @Mapping(target = "isVip", ignore = true)
+    @Mapping(target = "isTop", ignore = true)
+    @Mapping(target = "isHighlighted", ignore = true)
+    @Mapping(target = "promoPriority", ignore = true)
+    @Mapping(target = "promoUntil", ignore = true)
+    @Mapping(target = "boostedAt", ignore = true)
+    @Mapping(target = "nextBoostAt", ignore = true)
+    @Mapping(target = "boostIntervalHours", ignore = true)
+    @Mapping(target = "modelId", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getModelId()))")
+    @Mapping(target = "modelCustom", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getModelCustom()))")
     @Mapping(target = "title", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trim(request.getTitle()))")
-    @Mapping(target = "description", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trim(request.getDescription()))")
+    @Mapping(target = "description", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.normalizeDescription(request.getDescription()))")
     @Mapping(target = "phone", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trim(request.getPhone()))")
     @Mapping(target = "email", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getEmail()))")
     @Mapping(target = "region", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getRegion()))")
@@ -60,7 +79,7 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "category", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.defaultCategory(request.getCategory()))")
     @Mapping(target = "brandId", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getBrandId()))")
     @Mapping(target = "itemCondition", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.defaultItemCondition(request.getItemCondition()))")
-    @Mapping(target = "sellerType", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.nonBlankOrNull(request.getSellerType()))")
+    @Mapping(target = "sellerType", expression = "java(com.test.qoldanqolga.util.SellerStatusUtil.normalize(com.test.qoldanqolga.util.CreateAdMapperHelper.nonBlankOrNull(request.getSellerType())))")
     @Mapping(target = "telegramUsername", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getTelegramUsername()))")
     @Mapping(target = "isNegotiable", expression = "java(Boolean.TRUE.equals(request.getIsNegotiable()))")
     @Mapping(target = "canDeliver", expression = "java(Boolean.TRUE.equals(request.getCanDeliver()))")
@@ -68,7 +87,10 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "worksByContract", expression = "java(Boolean.TRUE.equals(request.getWorksByContract()))")
     @Mapping(target = "urgentBargain", expression = "java(Boolean.TRUE.equals(request.getUrgentBargain()))")
     @Mapping(target = "giveAway", expression = "java(Boolean.TRUE.equals(request.getGiveAway()))")
+    @Mapping(target = "onlineShowing", expression = "java(Boolean.TRUE.equals(request.getOnlineShowing()))")
     @Mapping(target = "canRent", expression = "java(Boolean.TRUE.equals(request.getCanRent()))")
+    @Mapping(target = "furnished", expression = "java(Boolean.TRUE.equals(request.getFurnished()))")
+    @Mapping(target = "engineVolume", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.normalizeEngineVolume(request.getEngineVolume()))")
     Advertisement toEntity(CreateAdRequest request, @Context String userId);
 
     @AfterMapping
@@ -85,8 +107,19 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "brand", ignore = true)
+    @Mapping(target = "vehicleModel", ignore = true)
+    @Mapping(target = "isVip", ignore = true)
+    @Mapping(target = "isTop", ignore = true)
+    @Mapping(target = "isHighlighted", ignore = true)
+    @Mapping(target = "promoPriority", ignore = true)
+    @Mapping(target = "promoUntil", ignore = true)
+    @Mapping(target = "boostedAt", ignore = true)
+    @Mapping(target = "nextBoostAt", ignore = true)
+    @Mapping(target = "boostIntervalHours", ignore = true)
+    @Mapping(target = "modelId", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getModelId()))")
+    @Mapping(target = "modelCustom", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getModelCustom()))")
     @Mapping(target = "title", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trim(request.getTitle()))")
-    @Mapping(target = "description", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trim(request.getDescription()))")
+    @Mapping(target = "description", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.normalizeDescription(request.getDescription()))")
     @Mapping(target = "phone", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trim(request.getPhone()))")
     @Mapping(target = "telegramUsername", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getTelegramUsername()))")
     @Mapping(target = "email", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getEmail()))")
@@ -96,14 +129,17 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "category", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.defaultCategory(request.getCategory()))")
     @Mapping(target = "brandId", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getBrandId()))")
     @Mapping(target = "itemCondition", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.defaultItemCondition(request.getItemCondition()))")
-    @Mapping(target = "sellerType", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.nonBlankOrNull(request.getSellerType()))")
+    @Mapping(target = "sellerType", expression = "java(com.test.qoldanqolga.util.SellerStatusUtil.normalize(com.test.qoldanqolga.util.CreateAdMapperHelper.nonBlankOrNull(request.getSellerType())))")
     @Mapping(target = "isNegotiable", expression = "java(Boolean.TRUE.equals(request.getIsNegotiable()))")
     @Mapping(target = "canDeliver", expression = "java(Boolean.TRUE.equals(request.getCanDeliver()))")
     @Mapping(target = "hasLicense", expression = "java(Boolean.TRUE.equals(request.getHasLicense()))")
     @Mapping(target = "worksByContract", expression = "java(Boolean.TRUE.equals(request.getWorksByContract()))")
     @Mapping(target = "urgentBargain", expression = "java(Boolean.TRUE.equals(request.getUrgentBargain()))")
     @Mapping(target = "giveAway", expression = "java(Boolean.TRUE.equals(request.getGiveAway()))")
+    @Mapping(target = "onlineShowing", expression = "java(Boolean.TRUE.equals(request.getOnlineShowing()))")
     @Mapping(target = "canRent", expression = "java(Boolean.TRUE.equals(request.getCanRent()))")
+    @Mapping(target = "furnished", expression = "java(Boolean.TRUE.equals(request.getFurnished()))")
+    @Mapping(target = "engineVolume", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.normalizeEngineVolume(request.getEngineVolume()))")
     void updateEntity(CreateAdRequest request, @MappingTarget Advertisement ad);
 
     /**
@@ -134,6 +170,22 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
 
     default String userDisplayName(Advertisement ad) {
         return ad.getUser() != null ? ad.getUser().getDisplayName() : null;
+    }
+
+    default String brandNameUz(Advertisement ad) {
+        return ad.getBrand() != null ? ad.getBrand().getNameUz() : null;
+    }
+
+    default String brandNameRu(Advertisement ad) {
+        return ad.getBrand() != null ? ad.getBrand().getNameRu() : null;
+    }
+
+    default String modelNameUz(Advertisement ad) {
+        return ad.getVehicleModel() != null ? ad.getVehicleModel().getNameUz() : null;
+    }
+
+    default String modelNameRu(Advertisement ad) {
+        return ad.getVehicleModel() != null ? ad.getVehicleModel().getNameRu() : null;
     }
 
     /**

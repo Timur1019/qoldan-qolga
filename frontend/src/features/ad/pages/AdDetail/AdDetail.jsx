@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../../../../context/AuthContext'
 import { useLang } from '../../../../context/LangContext'
+import { useRegionLabel } from '../../../../context/RegionsContext'
 import { adsCategoryPath, sellerPath } from '../../../../constants/routes'
 import { useAdDetail } from '../../hooks/useAdDetail'
 import { useAdActions } from '../../hooks/useAdActions'
@@ -12,8 +13,15 @@ import AdDescription from '../../components/AdDescription'
 import AdLocation from '../../components/AdLocation'
 import SellerInfo from '../../components/SellerInfo'
 import SellerAds from '../../components/SellerAds'
+import SimilarAdsSection from '../../components/SimilarAdsSection/SimilarAdsSection'
+import PriceInsight from '../../components/PriceInsight/PriceInsight'
+import { buildPriceInsight } from '../../utils/priceInsight'
+import CategoryIcon from '../../../../components/ui/CategoryIcon'
 import { formatDate, maskPhone } from '../../utils/adFormatters'
+import { extractLocationFromDescription } from '../../utils/descriptionLocation'
 import { REPORT_REASONS } from '../../utils/constants'
+import { isSellerStore } from '../../utils/isSellerStore'
+import { currencyApi } from '../../services/adApi'
 import styles from './AdDetail.module.css'
 
 const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
@@ -29,7 +37,7 @@ export default function AdDetail() {
   const [sellerSubscribed, setSellerSubscribed] = useState(null)
   const [phoneRevealed, setPhoneRevealed] = useState(false)
   const [categoryName, setCategoryName] = useState(null)
-  const [regionName, setRegionName] = useState(null)
+  const [usdToUzs, setUsdToUzs] = useState(12800)
 
   const {
     ad,
@@ -43,7 +51,19 @@ export default function AdDetail() {
     setAd,
   } = useAdDetail(id)
 
+  const regionLabel = useRegionLabel(ad?.region)
+
   const actions = useAdActions(ad, user, { setAd, setError })
+
+  useEffect(() => {
+    currencyApi
+      .getRate()
+      .then((rate) => {
+        const value = Number(rate?.usdToUzs)
+        if (value > 0) setUsdToUzs(value)
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!ad?.userId || ad.userId === user?.id || !isAuthenticated) return
@@ -53,7 +73,6 @@ export default function AdDetail() {
   useEffect(() => {
     if (!ad) {
       setCategoryName(null)
-      setRegionName(null)
       return
     }
     if (ad.category) {
@@ -64,17 +83,7 @@ export default function AdDetail() {
     } else {
       setCategoryName(null)
     }
-    if (ad.region) {
-      referenceApi.getRegions().then((regions) => {
-        const list = Array.isArray(regions) ? regions : []
-        const found = list.find((r) => String(r?.code) === String(ad.region))
-        if (found) setRegionName(lang === 'ru' ? found.nameRu : found.nameUz)
-        else setRegionName(ad.region)
-      }).catch(() => setRegionName(ad.region))
-    } else {
-      setRegionName(null)
-    }
-  }, [ad?.id, ad?.category, ad?.region, lang])
+  }, [ad?.id, ad?.category, lang])
 
   const handleReportClick = () => {
     if (actions.handleReport() === true) {
@@ -127,7 +136,7 @@ export default function AdDetail() {
   }
 
   const categoryLabel = categoryName ?? ad.category ?? '—'
-  const regionLabel = regionName ?? ad.region ?? null
+  const locationFromDescription = extractLocationFromDescription(ad.description)
   const sellerDisplayName = sellerProfile?.displayName ?? ad.userDisplayName ?? t('ads.seller')
   const sellerAvatar = sellerProfile?.avatar
   const avgRating = reviewsSummary?.averageRating ?? 0
@@ -135,14 +144,20 @@ export default function AdDetail() {
   const ratingText = totalReviews > 0
     ? `${avgRating.toFixed(1)} (${totalReviews})`
     : t('reviews.noReviews')
+  const priceInsight = buildPriceInsight(ad, similar?.content, usdToUzs)
 
   return (
-    <div className="page-container app-page">
+    <div className={`page-container app-page ${styles.widePage}`}>
       <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item"><Link to="/">{t('nav.home')}</Link></li>
-            <li className="breadcrumb-item"><Link to={adsCategoryPath(ad.category)}>{categoryLabel}</Link></li>
+            <li className="breadcrumb-item">
+              <Link to={adsCategoryPath(ad.category)} className="d-inline-flex align-items-center gap-1">
+                <CategoryIcon code={ad.category} />
+                {categoryLabel}
+              </Link>
+            </li>
             <li className="breadcrumb-item active text-truncate" style={{ maxWidth: '200px' }} aria-current="page">{ad.title.length > 50 ? ad.title.slice(0, 50) + '…' : ad.title}</li>
           </ol>
         </nav>
@@ -163,6 +178,7 @@ export default function AdDetail() {
             <div className={styles.leftCard}>
               <AdGallery
                 images={ad.images}
+                overlay={<PriceInsight insight={priceInsight} t={t} overlay />}
                 lightboxFooter={ad.userId ? (
                   <div className={styles.lightboxFooterWrap}>
                     <div className={styles.lightboxFooterSeller}>
@@ -249,10 +265,10 @@ export default function AdDetail() {
                 chatGoing={actions.chatGoing}
               />
               <AdLocation
-                region={ad.region}
+                region={regionLabel || ad.region}
                 district={ad.district}
-                address={ad.address}
-                landmark={ad.landmark}
+                address={ad.address || locationFromDescription.address}
+                landmark={ad.landmark || locationFromDescription.landmark}
                 canDeliver={ad.canDeliver}
               />
             </div>
@@ -295,7 +311,8 @@ export default function AdDetail() {
                   sellerId={ad.userId}
                   sellerDisplayName={sellerDisplayName}
                   sellerAvatar={sellerAvatar}
-                  sellerIsStore={ad.sellerIsStore}
+                  sellerIsStore={isSellerStore(ad)}
+                  sellerType={ad.sellerType}
                   adsCount={sellerProfile?.adsCount ?? 0}
                   sinceIso={sellerProfile?.createdAt}
                   ratingText={ratingText}
@@ -309,7 +326,7 @@ export default function AdDetail() {
         </div>
 
         <SellerAds ads={sellerAds.content} titleKey="ads.sellerAdsTitle" />
-        <SellerAds ads={similar.content} titleKey="ads.similar" />
+        <SimilarAdsSection ads={(similar.content || []).slice(0, 10)} />
       </div>
 
       {reportModalOpen && (

@@ -1,16 +1,12 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Thrown when a requested resource does not exist.
- * Mapped to HTTP 404 by {@link com.test.qoldanqolga.util.GlobalExceptionHandler}.
- */
-public class ResourceNotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends BaseException {
 
     public ResourceNotFoundException(String message) {
-        super(message);
+        super(ErrorCode.NOT_FOUND, message);
     }
 
     public ResourceNotFoundException(String resourceName, Object identifier) {
-        super(String.format("%s не найдено: %s", resourceName, identifier));
+        super(ErrorCode.NOT_FOUND, String.format("%s не найдено: %s", resourceName, identifier));
     }
 }

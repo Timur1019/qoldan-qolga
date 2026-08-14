@@ -156,6 +156,11 @@
   min-width: 0;
 }
 
+.treeIcon {
+  flex-shrink: 0;
+  color: var(--color-primary, #04492d);
+}
+
 .toggleBtn {
   display: flex;
   align-items: center;

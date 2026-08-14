@@ -9,6 +9,7 @@ import com.test.qoldanqolga.pagination.CursorPageResponse;
 import com.test.qoldanqolga.dto.ad.ReportAdRequest;
 import com.test.qoldanqolga.dto.promo.PromoServiceDto;
 import com.test.qoldanqolga.dto.promo.CreatePromoOrderRequest;
+import com.test.qoldanqolga.dto.promo.PromoOrderResponse;
 import com.test.qoldanqolga.service.AdReportService;
 import com.test.qoldanqolga.service.AdvertisementService;
 import com.test.qoldanqolga.service.FavoriteService;
@@ -64,6 +65,33 @@ public class AdvertisementController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String brandId,
+            @RequestParam(required = false) String modelId,
+            @RequestParam(required = false) Integer yearFrom,
+            @RequestParam(required = false) Integer yearTo,
+            @RequestParam(required = false) Integer mileageFrom,
+            @RequestParam(required = false) Integer mileageTo,
+            @RequestParam(required = false) List<String> bodyType,
+            @RequestParam(required = false) List<String> transmission,
+            @RequestParam(required = false) List<String> fuelType,
+            @RequestParam(required = false) List<String> driveType,
+            @RequestParam(required = false) BigDecimal engineVolumeFrom,
+            @RequestParam(required = false) BigDecimal engineVolumeTo,
+            @RequestParam(required = false) List<String> exteriorColor,
+            @RequestParam(required = false) List<String> seats,
+            @RequestParam(required = false) List<String> steering,
+            @RequestParam(required = false) List<String> ownersCount,
+            @RequestParam(required = false) String district,
+            @RequestParam(required = false) List<String> dealType,
+            @RequestParam(required = false) List<String> rooms,
+            @RequestParam(required = false) BigDecimal areaFrom,
+            @RequestParam(required = false) BigDecimal areaTo,
+            @RequestParam(required = false) BigDecimal landAreaFrom,
+            @RequestParam(required = false) BigDecimal landAreaTo,
+            @RequestParam(required = false) Integer floorFrom,
+            @RequestParam(required = false) Integer floorTo,
+            @RequestParam(required = false) List<String> buildingType,
+            @RequestParam(required = false) List<String> renovation,
+            @RequestParam(required = false) Boolean furnished,
             @RequestParam(required = false) String q,
             @RequestParam(required = false) List<String> sellerType,
             @RequestParam(required = false) Boolean hasLicense,
@@ -77,7 +105,7 @@ public class AdvertisementController {
             @RequestParam(required = false) List<String> itemCondition,
             @RequestParam(required = false) Boolean handMadeOnly,
             @RequestParam(required = false) Boolean canRent,
-            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable,
+            @PageableDefault(size = 20, sort = {"promoPriority", "boostedAt", "createdAt"}, direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal UserDetails user
     ) {
         AdListParams params = AdListParams.builder()
@@ -85,6 +113,33 @@ public class AdvertisementController {
                 .category(category)
                 .region(region)
                 .brandId(brandId)
+                .modelId(modelId)
+                .yearFrom(yearFrom)
+                .yearTo(yearTo)
+                .mileageFrom(mileageFrom)
+                .mileageTo(mileageTo)
+                .bodyType(bodyType)
+                .transmission(transmission)
+                .fuelType(fuelType)
+                .driveType(driveType)
+                .engineVolumeFrom(engineVolumeFrom)
+                .engineVolumeTo(engineVolumeTo)
+                .exteriorColor(exteriorColor)
+                .seats(seats)
+                .steering(steering)
+                .ownersCount(ownersCount)
+                .district(district)
+                .dealType(dealType)
+                .rooms(rooms)
+                .areaFrom(areaFrom)
+                .areaTo(areaTo)
+                .landAreaFrom(landAreaFrom)
+                .landAreaTo(landAreaTo)
+                .floorFrom(floorFrom)
+                .floorTo(floorTo)
+                .buildingType(buildingType)
+                .renovation(renovation)
+                .furnished(furnished)
                 .query(q)
                 .sellerType(sellerType)
                 .hasLicense(hasLicense)
@@ -268,10 +323,25 @@ public class AdvertisementController {
         return ResponseEntity.ok(promoService.getServices());
     }
 
+    @Operation(summary = "Статус заказа промо", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/promo/orders/{orderId}")
+    public ResponseEntity<PromoOrderResponse> getPromoOrder(
+            @PathVariable String orderId,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(promoService.getOrder(orderId, user.getUsername()));
+    }
+
     @Operation(summary = "Заказать промо", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponses({@ApiResponse(responseCode = "204", description = "OK"), @ApiResponse(responseCode = "401", description = "Не авторизован")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Не авторизован")
+    })
     @PostMapping("/{adId}/promo/order")
-    public ResponseEntity<Void> createPromoOrder(
+    public ResponseEntity<PromoOrderResponse> createPromoOrder(
             @PathVariable String adId,
             @Valid @RequestBody CreatePromoOrderRequest request,
             @AuthenticationPrincipal UserDetails user
@@ -279,7 +349,6 @@ public class AdvertisementController {
         if (user == null) {
             return ResponseEntity.status(401).build();
         }
-        promoService.createOrder(adId, request, user.getUsername());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(promoService.createOrder(adId, request, user.getUsername()));
     }
 }

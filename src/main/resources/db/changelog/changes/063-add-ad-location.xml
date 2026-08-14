@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="063-add-ad-location" author="cursor">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="advertisements" columnName="location_lat"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="advertisements">
+            <column name="location_lat" type="DECIMAL(10,7)"/>
+            <column name="location_lng" type="DECIMAL(10,7)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

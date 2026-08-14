@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="054-transport-show-on-home" author="qoldan-qolga">
+        <sql>UPDATE categories SET show_on_home = true, updated_at = NOW() WHERE code = 'Transport';</sql>
+    </changeSet>
+
+    <changeSet id="054-insert-transport-mid" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtomobillar', 'Автомобили', 'Avtomobili', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektrosamokatlar', 'Электросамокаты', 'Elektrosamokaty', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Velosipedlar', 'Велосипеды', 'Transport_velosipedy', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mototsikllar va mototexnika', 'Мотоциклы и мототехника', 'Motocikly_i_mototehnika', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Suv transporti', 'Водный транспорт', 'Vodnyy_transport', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yuk mashinalari va maxsus texnika', 'Грузовики и спецтехника', 'Gruzoviki_i_spectehnika', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ehtiyot qismlar va aksessuarlar', 'Запчасти и аксессуары', 'Zapchasti_i_aksessuary_transport', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Transport' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="054-insert-mototehnika-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Hamma joyda yuradiganlar', 'Вездеходы', 'Vezdehody', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Karting', 'Картинг', 'Karting', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kvadrotsikllar va baggi', 'Квадроциклы и багги', 'Kvadrotsikly_i_baggi', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mopedlar va skuterlar', 'Мопеды и скутеры', 'Mopedy_i_skutery', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mototsikllar', 'Мотоциклы', 'Motocikly', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qor mashinalari', 'Снегоходы', 'Snegohody', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Прочее', 'Mototehnika_prochee', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Motocikly_i_mototehnika' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="054-insert-vodnyy-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa suv transporti', 'Прочий водный транспорт', 'Vodnyy_prochee', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Vodnyy_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Eshkakli qayiqlar', 'Вёсельные лодки', 'Veselnye_lodki', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Vodnyy_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Gidrotsikllar', 'Гидроциклы', 'Gidrotsikly', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Vodnyy_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Katerlar va yaxtalar', 'Катера и яхты', 'Katera_i_yahty', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Vodnyy_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Motorli qayiqlar va motorlar', 'Моторные лодки и моторы', 'Motornye_lodki_i_motory', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Vodnyy_transport' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="054-insert-spectehnika-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtobuslar', 'Автобусы', 'Avtobusy', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtouylar', 'Автодома', 'Avtodoma', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtokranlar', 'Автокраны', 'Avtokrany', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Buldozerlar', 'Бульдозеры', 'Buldozery', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yuk mashinalari', 'Грузовики', 'Gruzoviki', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kommunal texnika', 'Коммунальная техника', 'Kommunalnaya_tehnika', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yengil tijorat transporti', 'Лёгкий коммерческий транспорт', 'Legkiy_kommercheskiy', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Osma uskunalar', 'Навесное оборудование', 'Navesnoe_oborudovanie', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yuklagichlar', 'Погрузчики', 'Pogruzchiki', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tirkamalar', 'Прицепы', 'Pricepy', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qishloq xo''jalik texnikasi', 'Сельхозтехника', 'Selhoztehnika', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qurilish texnikasi', 'Строительная техника', 'Stroitelnaya_tehnika', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''rmon texnikasi', 'Техника для лесозаготовки', 'Lesozagotovka', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sedelli tyagachlar', 'Седельные тягачи', 'Sedelnye_tyagachi', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ekskavatorlar', 'Экскаваторы', 'Ekskavatory', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa', 'Другое', 'Spectehnika_drugoe', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Gruzoviki_i_spectehnika' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="054-insert-zapchasti-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ehtiyot qismlar', 'Запчасти', 'Zapchasti_transport', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Zapchasti_i_aksessuary_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'TO ehtiyot qismlari', 'Запчасти для ТО', 'Zapchasti_dlya_to', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Zapchasti_i_aksessuary_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Shinalar, disklar va g''ildiraklar', 'Шины, диски и колёса', 'Shiny_diski_kolesa', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Zapchasti_i_aksessuary_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Audio va videoteknika', 'Аудио- и видеотехника', 'Avto_audio_video', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Zapchasti_i_aksessuary_transport' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Aksessuarlar', 'Аксессуары', 'Transport_aksessuary', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Zapchasti_i_aksessuary_transport' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>

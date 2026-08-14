@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="070-ad-promo-fields" author="qoldan">
+        <addColumn tableName="advertisements">
+            <column name="is_vip" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_top" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_highlighted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="promo_priority" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="promo_until" type="timestamptz"/>
+            <column name="boosted_at" type="timestamptz"/>
+            <column name="next_boost_at" type="timestamptz"/>
+            <column name="boost_interval_hours" type="int"/>
+        </addColumn>
+        <createIndex tableName="advertisements" indexName="idx_ad_promo_rank">
+            <column name="promo_priority" descending="true"/>
+            <column name="boosted_at" descending="true"/>
+            <column name="created_at" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="070-promo-orders" author="qoldan">
+        <createTable tableName="promo_orders">
+            <column name="id" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ad_id" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="service_code" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(18,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="varchar(3)" defaultValue="UZS">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="provider" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="provider_txn_id" type="varchar(128)"/>
+            <column name="payment_url" type="varchar(1024)"/>
+            <column name="created_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="timestamptz"/>
+            <column name="paid_at" type="timestamptz"/>
+        </createTable>
+        <createIndex tableName="promo_orders" indexName="idx_promo_orders_ad">
+            <column name="ad_id"/>
+        </createIndex>
+        <createIndex tableName="promo_orders" indexName="idx_promo_orders_user">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex tableName="promo_orders" indexName="idx_promo_orders_status">
+            <column name="status"/>
+        </createIndex>
+        <addForeignKeyConstraint
+                baseTableName="promo_orders"
+                baseColumnNames="ad_id"
+                referencedTableName="advertisements"
+                referencedColumnNames="id"
+                constraintName="fk_promo_orders_ad"/>
+    </changeSet>
+</databaseChangeLog>

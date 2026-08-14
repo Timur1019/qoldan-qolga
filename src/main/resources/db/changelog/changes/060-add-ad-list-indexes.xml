@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="060-idx-ads-status-created" author="qoldan-qolga">
+        <sql>CREATE INDEX IF NOT EXISTS idx_ads_status_created_at ON advertisements (status, created_at DESC);</sql>
+    </changeSet>
+    <changeSet id="060-idx-ads-status-category-created" author="qoldan-qolga">
+        <sql>CREATE INDEX IF NOT EXISTS idx_ads_status_category_created_at ON advertisements (status, category, created_at DESC);</sql>
+    </changeSet>
+    <changeSet id="060-idx-ads-status-region-created" author="qoldan-qolga">
+        <sql>CREATE INDEX IF NOT EXISTS idx_ads_status_region_created_at ON advertisements (status, region, created_at DESC);</sql>
+    </changeSet>
+    <changeSet id="060-idx-ads-status-brand-created" author="qoldan-qolga">
+        <sql>CREATE INDEX IF NOT EXISTS idx_ads_status_brand_created_at ON advertisements (status, brand_id, created_at DESC);</sql>
+    </changeSet>
+</databaseChangeLog>

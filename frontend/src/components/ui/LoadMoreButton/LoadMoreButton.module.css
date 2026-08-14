@@ -1,0 +1,40 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 9rem;
+  padding: 0.65rem 1.5rem;
+  border: 1px solid rgba(4, 73, 45, 0.2);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-primary, #04492d);
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(4, 73, 45, 0.06);
+  border-color: rgba(4, 73, 45, 0.4);
+}
+
+.btn:disabled {
+  opacity: 0.72;
+  cursor: default;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(4, 73, 45, 0.2);
+  border-top-color: var(--color-primary, #04492d);
+  border-radius: 50%;
+  animation: loadMoreSpin 0.7s linear infinite;
+}
+
+@keyframes loadMoreSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

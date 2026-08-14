@@ -9,12 +9,16 @@ import com.test.qoldanqolga.dto.homepromo.HomePromoBannerDto;
 import com.test.qoldanqolga.dto.homepromo.UpdateHomePromoBannerRequest;
 import com.test.qoldanqolga.dto.reference.CategoryDto;
 import com.test.qoldanqolga.dto.reference.CreateCategoryRequest;
+import com.test.qoldanqolga.dto.sitetop.CreateSiteTopBannerRequest;
+import com.test.qoldanqolga.dto.sitetop.SiteTopBannerDto;
+import com.test.qoldanqolga.dto.sitetop.UpdateSiteTopBannerRequest;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.AdminReportService;
 import com.test.qoldanqolga.service.AdminUserService;
 import com.test.qoldanqolga.service.AdminBusinessApplicationService;
 import com.test.qoldanqolga.service.HomePromoBannerService;
 import com.test.qoldanqolga.service.ReferenceDataService;
+import com.test.qoldanqolga.service.SiteTopBannerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,6 +59,7 @@ public class AdminController {
     private final AdminBusinessApplicationService adminBusinessApplicationService;
     private final UserRepository userRepository;
     private final HomePromoBannerService homePromoBannerService;
+    private final SiteTopBannerService siteTopBannerService;
 
     @Operation(summary = "Дашборд", description = "Только для роли ADMIN", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "403", description = "Доступ запрещён")})
@@ -157,6 +162,43 @@ public class AdminController {
     @DeleteMapping("/home-promo-banners/{id}")
     public ResponseEntity<Void> deleteHomePromoBanner(@PathVariable String id) {
         homePromoBannerService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Список рекламы в шапке (админ)", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/site-top-banners")
+    public ResponseEntity<List<SiteTopBannerDto>> getSiteTopBanners() {
+        return ResponseEntity.ok(siteTopBannerService.listForAdmin());
+    }
+
+    @Operation(summary = "Создать рекламу в шапке", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @PostMapping("/site-top-banners")
+    public ResponseEntity<SiteTopBannerDto> createSiteTopBanner(@Valid @RequestBody CreateSiteTopBannerRequest request) {
+        return ResponseEntity.ok(siteTopBannerService.create(request));
+    }
+
+    @Operation(summary = "Обновить рекламу в шапке", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Баннер не найден")
+    })
+    @PutMapping("/site-top-banners/{id}")
+    public ResponseEntity<SiteTopBannerDto> updateSiteTopBanner(
+            @PathVariable String id,
+            @Valid @RequestBody UpdateSiteTopBannerRequest request) {
+        return ResponseEntity.ok(siteTopBannerService.update(id, request));
+    }
+
+    @Operation(summary = "Удалить рекламу в шапке", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "Баннер не найден")
+    })
+    @DeleteMapping("/site-top-banners/{id}")
+    public ResponseEntity<Void> deleteSiteTopBanner(@PathVariable String id) {
+        siteTopBannerService.delete(id);
         return ResponseEntity.noContent().build();
     }
 

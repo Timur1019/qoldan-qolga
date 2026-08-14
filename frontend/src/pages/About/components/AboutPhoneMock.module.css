@@ -1,0 +1,125 @@
+.phone {
+  width: 158px;
+  height: 318px;
+  margin: 0 auto;
+  border-radius: 26px;
+  background: #eef2ef;
+  border: 1px solid #d7dfd9;
+  padding: 8px;
+  position: relative;
+}
+
+.notch {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d0d8d3;
+  z-index: 1;
+}
+
+.screen {
+  height: 100%;
+  border-radius: 20px;
+  background: #fbfcfb;
+  overflow: hidden;
+  padding: 26px 10px 12px;
+}
+
+.searchBar {
+  height: 20px;
+  border-radius: 8px;
+  background: #edf1ee;
+  margin-bottom: 10px;
+}
+
+.listing,
+.create,
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adCard {
+  background: #fff;
+  border: 1px solid #edf1ee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.adPhoto {
+  height: 68px;
+  background: #dceee3;
+}
+
+.adPhotoAlt {
+  background: #e8ece9;
+}
+
+.adMeta {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adPrice {
+  font-size: 11px;
+  font-weight: 700;
+  color: #04492d;
+}
+
+.adLine,
+.adLineShort,
+.createTitle,
+.createLine,
+.createLineShort {
+  height: 5px;
+  border-radius: 999px;
+  background: #edf1ee;
+}
+
+.adLineShort,
+.createLineShort {
+  width: 55%;
+}
+
+.photoDrop {
+  height: 108px;
+  border-radius: 12px;
+  border: 1.5px dashed #7aa58c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #04492d;
+  font-size: 26px;
+  background: #f6faf7;
+}
+
+.createBtn {
+  height: 28px;
+  border-radius: 8px;
+  background: #04492d;
+  margin-top: 8px;
+}
+
+.catRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #edf1ee;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.catRow i {
+  color: #04492d;
+}

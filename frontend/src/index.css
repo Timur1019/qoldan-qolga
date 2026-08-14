@@ -50,6 +50,11 @@
   --font-size-buttons: 15px;
   --font-size-category-btn: 15px;
 
+  /* Единая ширина контента (шапка / страница / футер) */
+  --layout-max: 1280px;
+  --layout-pad: 1.5rem;
+  --layout-gap: 0.85rem;
+
   /* Радиусы и тени: лёгкие карточки с мягкими краями */
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -144,9 +149,9 @@ p {
   font-size: var(--font-size-small);
 }
 
-/* Карточки и секции (единый стиль блока) */
+/* Горизонтальные отступы — у page-container (как у headerInner), без двойного padding */
 .app-page {
-  padding: 1.5rem;
+  padding: 0;
 }
 
 .app-card {
@@ -269,9 +274,13 @@ textarea:disabled {
 }
 
 
-/* Выравнивание контейнеров по центру, как в CRM */
+/* Как headerInner: одна ширина + боковые отступы */
 .page-container {
-  max-width: 1200px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--layout-max, 1280px);
   margin: 0 auto;
+  padding-left: var(--layout-pad, 1.5rem);
+  padding-right: var(--layout-pad, 1.5rem);
 }
 

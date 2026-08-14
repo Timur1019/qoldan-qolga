@@ -10,11 +10,8 @@ import lombok.Setter;
 import java.util.Map;
 
 /**
- * Единый формат ответа об ошибке для всего API.
- * <ul>
- *   <li>{@code message} — всегда есть</li>
- *   <li>{@code errors} — только при ошибках валидации (поле → сообщение)</li>
- * </ul>
+ * Единый формат ответа об ошибке.
+ * code + status всегда есть; errors — только при валидации полей.
  */
 @Getter
 @Setter
@@ -24,18 +21,16 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiErrorResponse {
 
+    private String code;
+    private int status;
     private String message;
-
-    /**
-     * Ошибки по полям (для MethodArgumentNotValidException).
-     */
     private Map<String, String> errors;
 
-    public static ApiErrorResponse of(String message) {
-        return ApiErrorResponse.builder().message(message).build();
+    public static ApiErrorResponse of(String code, int status, String message) {
+        return ApiErrorResponse.builder().code(code).status(status).message(message).build();
     }
 
-    public static ApiErrorResponse of(String message, Map<String, String> errors) {
-        return ApiErrorResponse.builder().message(message).errors(errors).build();
+    public static ApiErrorResponse of(String code, int status, String message, Map<String, String> errors) {
+        return ApiErrorResponse.builder().code(code).status(status).message(message).errors(errors).build();
     }
 }

@@ -4,6 +4,7 @@ import { useLang } from '../../../../context/LangContext'
 import { referenceApi } from '../../services/adApi'
 import { PARAMS, ROUTES, categoryPathWithParams, adsCategoryPathWithParams } from '../../../../constants/routes'
 import AdsFiltersSidebar from '../../components/AdsFiltersSidebar'
+import CategoryIcon from '../../../../components/ui/CategoryIcon'
 import styles from './CategoryView.module.css'
 
 const DEFAULT_FILTER_DRAFT = {
@@ -138,7 +139,12 @@ export default function CategoryView() {
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb mb-2 mb-md-3">
           <li className="breadcrumb-item"><Link to={ROUTES.HOME}>{t('nav.home')}</Link></li>
-          <li className="breadcrumb-item active" aria-current="page">{name(category)}</li>
+          <li className="breadcrumb-item active" aria-current="page">
+            <span className="d-inline-flex align-items-center gap-1">
+              <CategoryIcon code={category.code} parentCode={category.parentCode} />
+              {name(category)}
+            </span>
+          </li>
         </ol>
       </nav>
       <div className={styles.layoutWithSidebar}>
@@ -161,7 +167,10 @@ export default function CategoryView() {
             <p className="mb-0 fw-semibold">{t('ads.sellAndEarn')}</p>
             <Link to="/ads/create" className="btn btn-primary">{t('ads.postAd')}</Link>
           </div>
-          <h1 className="h2 mb-3">{name(category)}</h1>
+          <h1 className="h2 mb-3 d-inline-flex align-items-center gap-2">
+            <CategoryIcon code={category.code} parentCode={category.parentCode} />
+            {name(category)}
+          </h1>
         </main>
       </div>
     </div>

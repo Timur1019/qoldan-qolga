@@ -1,11 +1,8 @@
 package com.test.qoldanqolga.exception;
 
-/**
- * Пользователь пытается подписаться на самого себя.
- */
-public class SelfSubscriptionException extends RuntimeException {
+public class SelfSubscriptionException extends BaseException {
 
     public SelfSubscriptionException(String userId) {
-        super("Нельзя подписаться на самого себя");
+        super(ErrorCode.SELF_SUBSCRIPTION);
     }
 }

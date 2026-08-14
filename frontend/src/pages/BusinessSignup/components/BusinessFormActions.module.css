@@ -1,0 +1,65 @@
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding-top: 0.25rem;
+}
+
+.cancel,
+.submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0 1.15rem;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.cancel:disabled,
+.submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.cancel {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+}
+
+.cancel:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.submit {
+  border: 1px solid transparent;
+  background: var(--color-primary, #04492d);
+  color: #fff;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--color-primary-hover, #033a24);
+}
+
+.arrow {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+@media (max-width: 520px) {
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel,
+  .submit {
+    width: 100%;
+  }
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="061-insert-nedvizhimost-root" author="qoldan-qolga">
+        <sql>
+            INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            VALUES (gen_random_uuid()::text, 'Ko''chmas mulk', 'Недвижимость', 'Nedvizhimost', 3, true, NULL, NOW(), NOW());
+        </sql>
+    </changeSet>
+
+    <changeSet id="061-insert-nedvizhimost-mid" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kvartiralar', 'Квартиры', 'Kvartiry', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Nedvizhimost' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uylar, dachalar', 'Дома, дачи', 'Doma_dachi', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Nedvizhimost' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yer uchastkalari', 'Участки', 'Uchastki', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Nedvizhimost' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tijorat', 'Коммерческая', 'Kommercheskaya', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Nedvizhimost' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Garajlar / parking', 'Гаражи / паркинг', 'Garazhi_parkovki', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Nedvizhimost' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="061-insert-kvartiry-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yangi qurilish', 'Новостройки', 'Kvartiry_novostroyki', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Kvartiry' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ikkilamchi bozor', 'Вторичка', 'Kvartiry_vtorichka', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Kvartiry' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Xonadonlar', 'Комнаты', 'Komnaty', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Kvartiry' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="061-insert-kommercheskaya-sub" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ofislar', 'Офисы', 'Ofisy', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Kommercheskaya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Do''konlar', 'Магазины', 'Magaziny', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Kommercheskaya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Omborlar', 'Склады', 'Sklady', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Kommercheskaya' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Boshqa tijorat', 'Прочая коммерческая', 'Kommercheskaya_prochee', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Kommercheskaya' LIMIT 1;</sql>
+    </changeSet>
+</databaseChangeLog>
