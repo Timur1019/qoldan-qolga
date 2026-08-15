@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
 import { useAuth } from '../../../../context/AuthContext'
-import { useAuthModal } from '../../../../hooks'
+import { useAuthModal, useIsMobile } from '../../../../hooks'
 import { adsApi, referenceApi, chatApi, currencyApi } from '../../services/adApi'
 import { useFavoriteClick } from '../../../../hooks'
 import { filterPublicAds } from '../../utils/publicAds'
@@ -28,6 +28,7 @@ export default function AdsList() {
   const { t, lang } = useLang()
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
+  const isMobile = useIsMobile()
   const openAuthModal = useAuthModal()
   const [searchParams, setSearchParams] = useSearchParams()
   const {
@@ -331,6 +332,7 @@ export default function AdsList() {
 
   return (
     <div className="page-container app-page">
+      {!isMobile && (
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb mb-2 mb-md-3">
           <li className="breadcrumb-item">
@@ -367,7 +369,9 @@ export default function AdsList() {
           )}
         </ol>
       </nav>
+      )}
       <div className={styles.layoutWithSidebar}>
+        {!isMobile && (
         <AdsFiltersSidebar
             regions={regions}
             sidebarCategories={sidebarCategories}
@@ -431,6 +435,7 @@ export default function AdsList() {
             t={t}
             lang={lang}
           />
+        )}
         <main className={styles.mainContent}>
           <AdsFilterBar
             filters={filters}
@@ -464,11 +469,13 @@ export default function AdsList() {
               t={t}
             />
           )}
-          <HomeSellBanner t={t} compact />
+          {!isMobile && <HomeSellBanner t={t} compact />}
+          {!isMobile && (
           <h1 className="h2 mb-3 d-inline-flex align-items-center gap-2">
             {currentCategory ? <CategoryIcon code={currentCategory.code} parentCode={currentCategory.parentCode} /> : null}
             {currentCategory ? categoryName(currentCategory) : t('common.loading')}
           </h1>
+          )}
           {loading && ads.length === 0 ? (
             <ul className={styles.adRowList} aria-busy="true">
               {Array.from({ length: 6 }, (_, i) => (

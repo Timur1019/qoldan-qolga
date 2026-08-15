@@ -427,7 +427,7 @@ export default function CreateAd({ edit: editMode }) {
 
   return (
     <div className="page-container app-page">
-      <h1 className="h2 mb-4">{editMode && editId ? (lang === 'ru' ? 'Редактировать объявление' : 'E\'lonni tahrirlash') : t('ads.createTitle')}</h1>
+      <h1 className={`h2 mb-4 ${styles.pageTitle}`}>{editMode && editId ? (lang === 'ru' ? 'Редактировать объявление' : 'E\'lonni tahrirlash') : t('ads.createTitle')}</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         {error && (
           <div className="alert alert-danger" role="alert">

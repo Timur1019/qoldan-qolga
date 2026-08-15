@@ -20,6 +20,19 @@
   color: #0f172a;
 }
 
+@media (max-width: 767px) {
+  .pageTitle {
+    display: none;
+  }
+
+  .card {
+    padding: 12px 0;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
 .form {
   display: flex;
   flex-direction: column;

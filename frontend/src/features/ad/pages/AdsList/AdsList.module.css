@@ -1042,3 +1042,43 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+@media (max-width: 767px) {
+  .adRow,
+  .adRowLink {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    gap: 8px;
+  }
+
+  .adRow {
+    padding: 0 0 12px;
+    margin-bottom: 12px;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .adRowImageWrap,
+  .adRowGalleryWrap {
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .adRowDesc,
+  .adRowSeller {
+    display: none;
+  }
+
+  .adRowTitle {
+    font-size: 15px;
+  }
+
+  .adRowPrice {
+    font-size: 18px;
+    font-weight: 700;
+  }
+}

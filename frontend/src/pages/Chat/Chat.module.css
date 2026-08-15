@@ -256,9 +256,14 @@
 @media (max-width: 767px) {
   .layout {
     flex-direction: column;
-    min-height: calc(100dvh - 140px);
+    min-height: calc(100dvh - var(--layout-header-height, 64px) - 62px);
     border: 0;
     box-shadow: none;
+  }
+
+  .mobilePage {
+    padding: 0;
+    max-width: none;
   }
 
   .sidebar {
@@ -276,11 +281,16 @@
   }
 
   .threadOpen {
-    min-height: calc(100dvh - 72px);
+    min-height: calc(100dvh - var(--layout-header-height, 64px));
   }
 
   .messages {
     flex: 1;
     max-height: none;
+  }
+
+  .composer {
+    position: sticky;
+    bottom: 0;
   }
 }

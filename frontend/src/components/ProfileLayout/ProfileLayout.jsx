@@ -5,6 +5,7 @@ import { useBusinessModal } from '../../context/BusinessModalContext'
 import { useChatUnreadCount, useFavoritesCount, useIdVerificationModal, useIsMobile } from '../../hooks'
 import { ROUTES } from '../../constants/routes'
 import ProfileSidebarHead from './ProfileSidebarHead'
+import ProfileMobileMenu from './ProfileMobileMenu'
 import styles from './ProfileLayout.module.css'
 
 const NavIcons = {
@@ -35,7 +36,20 @@ export default function ProfileLayout({ children }) {
   const { openModal: openBusinessModal } = useBusinessModal()
 
   if (isMobile) {
-    return <div className={styles.mobileMain}>{children}</div>
+    const showMenu = path === ROUTES.PROFILE_EDIT || path.startsWith('/dashboard/profile')
+    return (
+      <div className={styles.mobileMain}>
+        {showMenu && (
+          <ProfileMobileMenu
+            t={t}
+            onIdVerification={openIdVerificationModal}
+            onBusiness={openBusinessModal}
+            onLogout={logout}
+          />
+        )}
+        {children}
+      </div>
+    )
   }
 
   return (

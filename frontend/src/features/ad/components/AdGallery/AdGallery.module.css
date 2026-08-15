@@ -123,6 +123,28 @@
   min-height: 220px;
 }
 
+@media (max-width: 767px) {
+  .galleryWrap {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .thumbStrip {
+    display: none;
+  }
+
+  .mainImageWrap,
+  .mainImageClickable,
+  .mainImage,
+  .mainImagePlaceholder {
+    max-height: none;
+    aspect-ratio: 1;
+    border-radius: 0;
+  }
+}
+
 /* Lightbox */
 .lightboxOverlay {
   position: fixed;

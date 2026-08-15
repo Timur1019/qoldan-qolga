@@ -74,6 +74,15 @@
   margin-bottom: 1.5rem;
 }
 
+@media (max-width: 767px) {
+  .profileCard {
+    min-height: 0;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+  }
+}
+
 .profileCardActions {
   margin-top: auto;
   padding-top: 1rem;

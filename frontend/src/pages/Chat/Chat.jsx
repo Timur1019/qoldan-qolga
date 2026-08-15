@@ -246,9 +246,9 @@ export default function Chat() {
     : selected?.adTitle
 
   return (
-    <div className="page-container app-page">
+    <div className={isMobile ? styles.mobilePage : 'page-container app-page'}>
       {!isMobile && <h1 className="h2 mb-3">{t('profile.chat')}</h1>}
-      <div className={`${styles.layout} ${isMobile && selectedId ? styles.threadOpen : ''} app-card border-0 shadow-sm overflow-hidden`}>
+      <div className={`${styles.layout} ${isMobile && selectedId ? styles.threadOpen : ''} ${isMobile ? '' : 'app-card border-0 shadow-sm'} overflow-hidden`}>
         <aside className={styles.sidebar}>
           <ConversationList
             conversations={conversations}

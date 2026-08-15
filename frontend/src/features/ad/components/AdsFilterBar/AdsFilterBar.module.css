@@ -6,6 +6,15 @@
   margin-bottom: 0.75rem;
 }
 
+@media (max-width: 767px) {
+  .bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 .chipSlot {
   position: relative;
 }

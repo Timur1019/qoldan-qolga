@@ -43,7 +43,7 @@ function PricePanel({
       {ad?.canDeliver && (
         <div className="small text-muted mt-1"><i className="bi bi-truck me-1" aria-hidden /> {t('ads.delivery')}</div>
       )}
-      <div className="d-flex flex-wrap gap-2 mt-3">
+      <div className={`d-flex flex-wrap gap-2 mt-3 ${styles.actions}`}>
         <button
           type="button"
           className="btn btn-primary btn-sm"

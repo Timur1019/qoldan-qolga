@@ -147,6 +147,28 @@
   overflow: visible;
 }
 
+@media (max-width: 767px) {
+  .topBar {
+    display: none;
+  }
+
+  .leftCard,
+  .rightCard {
+    padding: 12px 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .threeCol {
+    gap: 0;
+  }
+
+  .rightCol {
+    padding-bottom: 76px;
+  }
+}
+
 .adMeta {
   display: flex;
   flex-direction: column;

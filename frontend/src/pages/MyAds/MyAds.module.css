@@ -15,6 +15,26 @@
   box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.06));
 }
 
+@media (max-width: 767px) {
+  .page {
+    padding: 0 12px;
+  }
+
+  .useful,
+  .topRow {
+    display: none;
+  }
+
+  .rowImageWrap {
+    width: 112px;
+    height: 112px;
+  }
+
+  .myAdsSection {
+    padding: 0;
+  }
+}
+
 .usefulTitle {
   margin: 0 0 1rem;
   font-size: 1rem;

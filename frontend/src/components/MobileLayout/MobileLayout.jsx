@@ -64,12 +64,21 @@ export default function MobileLayout() {
   const handleSearchSubmit = (e) => {
     e?.preventDefault()
     const q = (typeof searchValue === 'string' ? searchValue : '').trim()
-    const next = new URLSearchParams(location.pathname === ROUTES.HOME ? searchParams : '')
+    const onAds = location.pathname === ROUTES.ADS || location.pathname.startsWith('/categories/')
+    const next = new URLSearchParams(onAds || location.pathname === ROUTES.HOME ? searchParams : '')
     next.delete(PARAMS.PAGE)
-    next.delete(PARAMS.CATEGORY)
     next.delete(PARAMS.AUTH)
     if (q) next.set(PARAMS.QUERY, q)
     else next.delete(PARAMS.QUERY)
+    if (onAds) {
+      setSearchParams(next)
+      if (location.pathname.startsWith('/categories/')) {
+        const qs = next.toString()
+        navigate(qs ? `${ROUTES.ADS}?${qs}` : ROUTES.ADS)
+      }
+      return
+    }
+    next.delete(PARAMS.CATEGORY)
     const qs = next.toString()
     navigate(qs ? `${ROUTES.HOME}?${qs}` : ROUTES.HOME)
   }
@@ -87,7 +96,7 @@ export default function MobileLayout() {
     <div className={styles.layout} style={{ '--layout-header-height': `${headerOffset}px` }}>
       <BusinessModalProvider openModal={() => setBusinessModalOpen(true)}>
         <header ref={headerRef} className={styles.top}>
-          <TopAdStrip />
+          {location.pathname === ROUTES.HOME && <TopAdStrip />}
           <MobileHeader
             mode={headerMode}
             title={getMobileTitle(location.pathname, t)}

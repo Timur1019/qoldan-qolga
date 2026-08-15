@@ -18,4 +18,8 @@
   .layoutWithSidebar {
     flex-direction: column;
   }
+
+  .layoutWithSidebar > :first-child {
+    display: none;
+  }
 }
