@@ -1,0 +1,24 @@
+.layout {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #ffffff;
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  padding: 0 0 8px;
+  background: #ffffff;
+}
+
+.mainWithTabs {
+  padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+}

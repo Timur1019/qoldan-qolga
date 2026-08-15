@@ -1,0 +1,99 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: flex-end;
+  height: calc(52px + max(env(safe-area-inset-bottom, 0px), 10px));
+  padding: 6px 4px max(env(safe-area-inset-bottom, 0px), 10px);
+  background: #ffffff;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  min-width: 0;
+  padding: 2px 0 0;
+  color: var(--color-text, #111827);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.item i {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.item span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item:hover,
+.item:visited {
+  color: var(--color-text, #111827);
+  text-decoration: none;
+}
+
+.itemActive,
+.itemActive:hover,
+.itemActive:visited {
+  color: var(--color-primary, #04492d);
+}
+
+.iconWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.badge {
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  background: var(--color-primary, #04492d);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+}
+
+.sellIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-text, #111827);
+  color: #fff;
+}
+
+.sellIcon i {
+  font-size: 18px;
+  color: #fff;
+}
+
+.sellIconActive {
+  background: var(--color-primary, #04492d);
+}
+
+.itemActive .sellIcon i {
+  color: #fff;
+}

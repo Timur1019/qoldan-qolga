@@ -284,3 +284,13 @@ textarea:disabled {
   padding-right: var(--layout-pad, 1.5rem);
 }
 
+@media (max-width: 767px) {
+  :root {
+    --layout-pad: 12px;
+  }
+
+  html[data-shell="mobile"] body {
+    min-width: 0;
+  }
+}
+

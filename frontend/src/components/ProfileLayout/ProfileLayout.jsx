@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
 import { useBusinessModal } from '../../context/BusinessModalContext'
-import { useChatUnreadCount, useFavoritesCount, useIdVerificationModal } from '../../hooks'
+import { useChatUnreadCount, useFavoritesCount, useIdVerificationModal, useIsMobile } from '../../hooks'
 import { ROUTES } from '../../constants/routes'
 import ProfileSidebarHead from './ProfileSidebarHead'
 import styles from './ProfileLayout.module.css'
@@ -21,6 +21,7 @@ const NavIcons = {
 export default function ProfileLayout({ children }) {
   const { logout } = useAuth()
   const { t } = useLang()
+  const isMobile = useIsMobile()
   const location = useLocation()
   const path = location.pathname
   const isMyAds = path === '/dashboard/ads' || path.startsWith('/dashboard/ads')
@@ -32,6 +33,10 @@ export default function ProfileLayout({ children }) {
   const favoritesCount = useFavoritesCount()
   const openIdVerificationModal = useIdVerificationModal()
   const { openModal: openBusinessModal } = useBusinessModal()
+
+  if (isMobile) {
+    return <div className={styles.mobileMain}>{children}</div>
+  }
 
   return (
     <div className={styles.wrap}>

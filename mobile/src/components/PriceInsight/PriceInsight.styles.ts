@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
     left: 0,
-    10|    right: 0,
+    right: 0,
     bottom: 0,
     zIndex: 4,
     padding: spacing.sm,
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   card: {
-    20|    paddingVertical: 7,
+    paddingVertical: 7,
     paddingHorizontal: 10,
     borderRadius: 12,
     backgroundColor: 'rgba(255,255,255,0.94)',
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 4,
     gap: 4,
-    30|  },
+  },
   title: {
     fontSize: 13,
     fontWeight: '700',
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 14,
     color: colors.muted,
-    40|  },
+  },
   track: {
     height: 14,
     justifyContent: 'center',

@@ -32,9 +32,28 @@
   display: grid;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 767px) {
+  .title {
+    display: none;
+  }
+
   .topRow {
     grid-template-columns: 1fr;
+    margin-top: 4px;
+  }
+
+  .topSide {
+    display: none;
+  }
+
+  .adsSection {
+    margin-top: 1.1rem;
+    padding-top: 0.85rem;
+  }
+
+  .adsSectionTitle {
+    font-size: 1.15rem;
+    margin-bottom: 0.65rem;
   }
 }
 

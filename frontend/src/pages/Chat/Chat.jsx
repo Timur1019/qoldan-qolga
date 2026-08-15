@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLang } from '../../context/LangContext'
 import { chatApi } from '../../api/client'
-import { useStompChat } from '../../hooks/useStompChat'
+import { useIsMobile, useStompChat } from '../../hooks'
 import { adsPath } from '../../constants/routes'
 import { isSystemConversation } from '../../features/ad/utils/publicAds'
 import UserAvatar, { getInitials } from '../../components/ui/UserAvatar'
@@ -16,6 +16,7 @@ import styles from './Chat.module.css'
 export default function Chat() {
   const { user, isAuthenticated } = useAuth()
   const { t } = useLang()
+  const isMobile = useIsMobile()
   const [searchParams, setSearchParams] = useSearchParams()
   const openId = searchParams.get('conversation') || null
 
@@ -246,8 +247,8 @@ export default function Chat() {
 
   return (
     <div className="page-container app-page">
-      <h1 className="h2 mb-3">{t('profile.chat')}</h1>
-      <div className={`${styles.layout} app-card border-0 shadow-sm overflow-hidden`}>
+      {!isMobile && <h1 className="h2 mb-3">{t('profile.chat')}</h1>}
+      <div className={`${styles.layout} ${isMobile && selectedId ? styles.threadOpen : ''} app-card border-0 shadow-sm overflow-hidden`}>
         <aside className={styles.sidebar}>
           <ConversationList
             conversations={conversations}

@@ -12,6 +12,12 @@
   color: var(--color-text, #1a1a1a);
 }
 
+@media (max-width: 767px) {
+  .title {
+    display: none;
+  }
+}
+
 .tabs {
   margin-bottom: 1.25rem;
 }

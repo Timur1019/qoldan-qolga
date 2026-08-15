@@ -97,6 +97,12 @@
   color: #111827;
 }
 
+@media (max-width: 767px) {
+  .title {
+    display: none;
+  }
+}
+
 .tabs {
   display: flex;
   gap: 0.25rem;

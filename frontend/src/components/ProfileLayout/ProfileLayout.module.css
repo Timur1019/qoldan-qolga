@@ -45,6 +45,11 @@
   background: #ffffff;
 }
 
+.mobileMain {
+  min-width: 0;
+  background: #ffffff;
+}
+
 @media (max-width: 768px) {
   .wrap {
     flex-direction: column;

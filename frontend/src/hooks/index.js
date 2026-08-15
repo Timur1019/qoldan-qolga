@@ -1,4 +1,5 @@
 export { useAuthModal } from './useAuthModal'
+export { useIsMobile } from './useIsMobile'
 export { useIdVerificationModal } from '../context/IdVerificationContext'
 export { useChatUnreadCount } from './useChatUnreadCount'
 export { useFavoritesCount } from './useFavoritesCount'

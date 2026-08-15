@@ -14,6 +14,13 @@ export const translations = {
       addAd: 'E\'lon qo\'shish',
       favorites: 'Sevimlilar',
     },
+    tabs: {
+      search: 'Qidiruv',
+      favorites: 'Sevimlilar',
+      sell: 'Sotish',
+      chat: 'Xabarlar',
+      profile: 'Profil',
+    },
     footer: {
       regionsTitle: "Boshqa hududlardagi e'lonlar",
       moreRegions: "Yana",
@@ -634,6 +641,13 @@ export const translations = {
       myAds: 'Мои объявления',
       addAd: 'Добавить объявление',
       favorites: 'Избранное',
+    },
+    tabs: {
+      search: 'Поиск',
+      favorites: 'Избранное',
+      sell: 'Продажа',
+      chat: 'Сообщения',
+      profile: 'Профиль',
     },
     footer: {
       regionsTitle: 'Объявления в других регионах',
