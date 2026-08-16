@@ -10,8 +10,26 @@
   .bar {
     flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 4px;
+    overflow-y: visible;
+    padding: 4px 0 8px;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chipWrap {
+    overflow: visible;
+    flex-shrink: 0;
+  }
+
+  .chip {
+    min-height: 40px;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.9375rem;
+    line-height: 1.25;
   }
 }
 

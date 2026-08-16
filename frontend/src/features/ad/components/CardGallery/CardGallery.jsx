@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { imageUrl } from '../../services/adApi'
+import { useGalleryPointer } from '../../hooks/useGalleryPointer'
 import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
 import styles from './CardGallery.module.css'
 
@@ -11,14 +12,7 @@ export default function CardGallery({ imageUrls = [], className, imageWrapClassN
   const usable = urls.filter((url) => !failed.has(url))
   const safeIndex = usable.length === 0 ? 0 : Math.min(selectedIndex, usable.length - 1)
   const mainUrl = usable[safeIndex]
-
-  const handleMouseMove = (e) => {
-    if (usable.length <= 1) return
-    const rect = e.currentTarget.getBoundingClientRect()
-    const ratio = (e.clientX - rect.left) / rect.width
-    const idx = Math.min(usable.length - 1, Math.max(0, Math.floor(ratio * usable.length)))
-    setSelectedIndex(idx)
-  }
+  const pointer = useGalleryPointer(usable.length, setSelectedIndex)
 
   const handleError = (url) => {
     setFailed((prev) => {
@@ -42,13 +36,21 @@ export default function CardGallery({ imageUrls = [], className, imageWrapClassN
 
   return (
     <span className={`${styles.wrap} ${className || ''}`}>
-      <span className={imageWrapClassName} onMouseMove={handleMouseMove}>
+      <span
+        className={`${imageWrapClassName || ''} ${styles.touchSurface}`}
+        onPointerDown={pointer.onPointerDown}
+        onPointerMove={pointer.onPointerMove}
+        onPointerUp={pointer.onPointerUp}
+        onPointerCancel={pointer.onPointerCancel}
+        onClickCapture={pointer.onClickCapture}
+      >
         <img
           src={imageUrl(mainUrl)}
           alt=""
           className={imageClass}
           loading="lazy"
           decoding="async"
+          draggable={false}
           onError={() => handleError(mainUrl)}
         />
       </span>

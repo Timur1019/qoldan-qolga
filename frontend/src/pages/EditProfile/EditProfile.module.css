@@ -11,7 +11,22 @@
   }
 
   .form {
-    padding: 0.75rem 12px 1.25rem;
+    padding: 0.75rem 12px calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .avatarRow {
+    padding: 8px 0 12px;
+    scrollbar-width: none;
+  }
+
+  .avatarRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .avatarAdd,
+  .avatarOption,
+  .avatarRemoveBtn {
+    flex-shrink: 0;
   }
 }
 

@@ -50,6 +50,9 @@
   cursor: pointer;
   display: block;
   max-height: 70vh;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .mainImageClickable:focus-visible {
@@ -69,8 +72,14 @@
 }
 
 .mainImageClickable:hover .mainImageHoverOverlay,
-.mainImageClickable:focus .mainImageHoverOverlay {
+.mainImageClickable:focus-visible .mainImageHoverOverlay {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .mainImageHoverOverlay {
+    display: none;
+  }
 }
 
 .enlargeText {
@@ -190,6 +199,9 @@
   justify-content: center;
   min-height: 0;
   position: relative;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .lightboxDots {

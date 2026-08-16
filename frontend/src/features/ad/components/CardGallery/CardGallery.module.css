@@ -3,6 +3,13 @@
   display: block;
 }
 
+.touchSurface {
+  display: block;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .image {
   width: 100%;
   aspect-ratio: 4/3.15;

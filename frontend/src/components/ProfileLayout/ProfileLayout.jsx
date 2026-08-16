@@ -39,6 +39,7 @@ export default function ProfileLayout({ children }) {
     const showMenu = path === ROUTES.PROFILE_EDIT || path.startsWith('/dashboard/profile')
     return (
       <div className={styles.mobileMain}>
+        {children}
         {showMenu && (
           <ProfileMobileMenu
             t={t}
@@ -47,7 +48,6 @@ export default function ProfileLayout({ children }) {
             onLogout={logout}
           />
         )}
-        {children}
       </div>
     )
   }

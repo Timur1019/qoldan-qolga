@@ -1046,26 +1046,33 @@
 @media (max-width: 767px) {
   .adRow,
   .adRowLink {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     min-height: 0;
-    gap: 8px;
+    gap: 10px;
   }
 
   .adRow {
-    padding: 0 0 12px;
-    margin-bottom: 12px;
+    padding: 10px 0 12px;
+    margin-bottom: 0;
+    min-height: 0;
     border-radius: 0;
     box-shadow: none;
     border-bottom: 1px solid var(--color-border, #e5e7eb);
   }
 
   .adRowImageWrap,
-  .adRowGalleryWrap {
-    width: 100%;
-    min-height: 0;
-    height: auto;
+  .adRowGalleryWrap,
+  .adRowGallery {
+    width: 112px;
+    min-width: 112px;
+    height: 112px;
+    min-height: 112px;
     aspect-ratio: 1;
+  }
+
+  .adRowImageWrap img {
+    min-height: 112px;
   }
 
   .adRowDesc,
@@ -1075,10 +1082,11 @@
 
   .adRowTitle {
     font-size: 15px;
+    padding-right: 28px;
   }
 
   .adRowPrice {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
   }
 }

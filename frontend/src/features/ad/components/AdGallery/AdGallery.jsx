@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import { imageUrl } from '../../services/adApi'
+import { useGalleryPointer } from '../../hooks/useGalleryPointer'
 import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
 import styles from './AdGallery.module.css'
 
@@ -39,14 +40,12 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
     }
   }, [lightboxOpen])
 
-  const goPrev = (e) => {
-    e?.stopPropagation()
-    setSelectedIndex((i) => (i === 0 ? images.length - 1 : i - 1))
-  }
-  const goNext = (e) => {
-    e?.stopPropagation()
-    setSelectedIndex((i) => (i === images.length - 1 ? 0 : i + 1))
-  }
+  const openLightbox = useCallback(() => {
+    if (mainImage) setLightboxOpen(true)
+  }, [mainImage])
+
+  const pointer = useGalleryPointer(images.length, setSelectedIndex, { onTap: openLightbox })
+  const lightboxPointer = useGalleryPointer(images.length, setSelectedIndex)
 
   return (
     <>
@@ -68,27 +67,23 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
         <div className={styles.mainImageWrap}>
           <div
             className={styles.mainImageClickable}
-            onClick={() => mainImage && setLightboxOpen(true)}
-            onMouseMove={(e) => {
-              if (images.length <= 1) return
-              const rect = e.currentTarget.getBoundingClientRect()
-              const x = e.clientX - rect.left
-              const ratio = x / rect.width
-              const idx = Math.min(images.length - 1, Math.max(0, Math.floor(ratio * images.length)))
-              setSelectedIndex(idx)
-            }}
+            onPointerDown={pointer.onPointerDown}
+            onPointerMove={pointer.onPointerMove}
+            onPointerUp={pointer.onPointerUp}
+            onPointerCancel={pointer.onPointerCancel}
+            onClickCapture={pointer.onClickCapture}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
-                mainImage && setLightboxOpen(true)
+                openLightbox()
               }
             }}
             aria-label={t('ads.enlarge')}
           >
             {mainImage ? (
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} decoding="async" onError={() => markFailed(mainImage.url)} />
+              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} decoding="async" draggable={false} onError={() => markFailed(mainImage.url)} />
             ) : (
               <AdImagePlaceholder className={styles.mainImagePlaceholder} />
             )}
@@ -134,17 +129,13 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
           <div
             className={styles.lightboxImageWrap}
             onClick={(e) => e.stopPropagation()}
-            onMouseMove={(e) => {
-              if (images.length <= 1) return
-              const rect = e.currentTarget.getBoundingClientRect()
-              const x = e.clientX - rect.left
-              const ratio = x / rect.width
-              const idx = Math.min(images.length - 1, Math.max(0, Math.floor(ratio * images.length)))
-              setSelectedIndex(idx)
-            }}
+            onPointerDown={lightboxPointer.onPointerDown}
+            onPointerMove={lightboxPointer.onPointerMove}
+            onPointerUp={lightboxPointer.onPointerUp}
+            onPointerCancel={lightboxPointer.onPointerCancel}
           >
             <div className={styles.lightboxContent}>
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} decoding="async" onError={() => markFailed(mainImage.url)} />
+              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} decoding="async" draggable={false} onError={() => markFailed(mainImage.url)} />
             </div>
             {images.length > 1 && (
               <div className={styles.lightboxDots} role="tablist" aria-label={t('ads.imageCount')}>

@@ -257,6 +257,7 @@
   .layout {
     flex-direction: column;
     min-height: calc(100dvh - var(--layout-header-height, 64px) - 62px);
+    overflow: visible;
     border: 0;
     box-shadow: none;
   }
@@ -284,12 +285,31 @@
     min-height: calc(100dvh - var(--layout-header-height, 64px));
   }
 
-  .messages {
+  .thread,
+  .threadContent {
+    min-height: 0;
     flex: 1;
+  }
+
+  .messages {
+    flex: 1 1 auto;
+    min-height: 0;
     max-height: none;
   }
 
+  .msgCol {
+    max-width: min(78%, 520px);
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .bubble {
+    width: max-content;
+    max-width: 100%;
+  }
+
   .composer {
+    flex-shrink: 0;
     position: sticky;
     bottom: 0;
   }

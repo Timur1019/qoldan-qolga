@@ -4,6 +4,7 @@ import { useAuth } from '../../../../context/AuthContext'
 import { useLang } from '../../../../context/LangContext'
 import { useRegionLabel } from '../../../../context/RegionsContext'
 import { adsCategoryPath, sellerPath } from '../../../../constants/routes'
+import { useIsMobile } from '../../../../hooks'
 import { useAdDetail } from '../../hooks/useAdDetail'
 import { useAdActions } from '../../hooks/useAdActions'
 import { usePriceWatch } from '../../hooks/usePriceWatch'
@@ -30,6 +31,7 @@ const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆',
 export default function AdDetail() {
   const { id } = useParams()
   const { t, lang } = useLang()
+  const isMobile = useIsMobile()
   const { isAuthenticated, user } = useAuth()
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [reportReason, setReportReason] = useState('')
@@ -150,29 +152,31 @@ export default function AdDetail() {
 
   return (
     <div className={`page-container app-page ${styles.widePage}`}>
-      <div className={`d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 ${styles.topBar}`}>
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb mb-0">
-            <li className="breadcrumb-item"><Link to="/">{t('nav.home')}</Link></li>
-            <li className="breadcrumb-item">
-              <Link to={adsCategoryPath(ad.category)} className="d-inline-flex align-items-center gap-1">
-                <CategoryIcon code={ad.category} />
-                {categoryLabel}
-              </Link>
-            </li>
-            <li className="breadcrumb-item active text-truncate" style={{ maxWidth: '200px' }} aria-current="page">{ad.title.length > 50 ? ad.title.slice(0, 50) + '…' : ad.title}</li>
-          </ol>
-        </nav>
-        <button
-          type="button"
-          className="btn btn-outline-danger btn-sm"
-          onClick={actions.handleFavorite}
-          aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
-        >
-          <i className={`bi ${ad.favorite ? 'bi-heart-fill' : 'bi-heart'} me-1`} aria-hidden />
-          {ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
-        </button>
-      </div>
+      {!isMobile && (
+        <div className={`d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 ${styles.topBar}`}>
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb mb-0">
+              <li className="breadcrumb-item"><Link to="/">{t('nav.home')}</Link></li>
+              <li className="breadcrumb-item">
+                <Link to={adsCategoryPath(ad.category)} className="d-inline-flex align-items-center gap-1">
+                  <CategoryIcon code={ad.category} />
+                  {categoryLabel}
+                </Link>
+              </li>
+              <li className="breadcrumb-item active text-truncate" style={{ maxWidth: '200px' }} aria-current="page">{ad.title.length > 50 ? ad.title.slice(0, 50) + '…' : ad.title}</li>
+            </ol>
+          </nav>
+          <button
+            type="button"
+            className="btn btn-outline-danger btn-sm"
+            onClick={actions.handleFavorite}
+            aria-label={ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
+          >
+            <i className={`bi ${ad.favorite ? 'bi-heart-fill' : 'bi-heart'} me-1`} aria-hidden />
+            {ad.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
+          </button>
+        </div>
+      )}
 
       <div className={styles.mainContent}>
         <div className={styles.threeCol}>
@@ -309,6 +313,7 @@ export default function AdDetail() {
                 onPhoneClick={handlePhoneClick}
                 priceWatching={priceWatch.watching}
                 onTrackPrice={priceWatch.toggle}
+                onFavorite={isMobile ? actions.handleFavorite : undefined}
               />
               {ad.userId && (
                 <SellerInfo

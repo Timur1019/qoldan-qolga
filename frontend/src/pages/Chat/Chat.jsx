@@ -91,10 +91,16 @@ export default function Chat() {
     const current = selectedIdRef.current
     if (openId && conversations.some((c) => c.id === openId)) {
       if (current !== openId) setSelectedId(openId)
-    } else if (conversations.length > 0 && !current) {
-      setSelectedId(openId || conversations[0].id)
+      return
     }
-  }, [openId, conversations])
+    if (isMobile) {
+      if (!openId && current) setSelectedId(null)
+      return
+    }
+    if (conversations.length > 0 && !current) {
+      setSelectedId(conversations[0].id)
+    }
+  }, [openId, conversations, isMobile])
 
   useEffect(() => {
     if (!selectedId || !isAuthenticated) return undefined
@@ -248,7 +254,7 @@ export default function Chat() {
   return (
     <div className={isMobile ? styles.mobilePage : 'page-container app-page'}>
       {!isMobile && <h1 className="h2 mb-3">{t('profile.chat')}</h1>}
-      <div className={`${styles.layout} ${isMobile && selectedId ? styles.threadOpen : ''} ${isMobile ? '' : 'app-card border-0 shadow-sm'} overflow-hidden`}>
+      <div className={`${styles.layout} ${isMobile && selectedId ? styles.threadOpen : ''} ${isMobile ? '' : 'app-card border-0 shadow-sm overflow-hidden'}`}>
         <aside className={styles.sidebar}>
           <ConversationList
             conversations={conversations}

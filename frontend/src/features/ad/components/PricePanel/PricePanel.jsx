@@ -15,6 +15,7 @@ function PricePanel({
   onPhoneClick,
   priceWatching,
   onTrackPrice,
+  onFavorite,
 }) {
   const { t } = useLang()
   const rawDigits = (ad?.phone || '').replace(/\D/g, '')
@@ -33,7 +34,19 @@ function PricePanel({
           <i className="bi bi-lightning-charge me-1" aria-hidden /> {t('ads.urgentBargain')}
         </span>
       )}
-      <h1 className="h5 mb-2">{ad?.title}</h1>
+      <div className={styles.titleRow}>
+        <h1 className={`h5 mb-0 ${styles.title}`}>{ad?.title}</h1>
+        {onFavorite && (
+          <button
+            type="button"
+            className={styles.favoriteBtn}
+            onClick={onFavorite}
+            aria-label={ad?.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites')}
+          >
+            <i className={`bi ${ad?.favorite ? 'bi-heart-fill' : 'bi-heart'}`} aria-hidden />
+          </button>
+        )}
+      </div>
       <TrackPriceButton
         watching={priceWatching}
         onClick={onTrackPrice}
