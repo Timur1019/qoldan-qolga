@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { referenceApi } from '../services/adApi'
+import { referenceApi } from '@/api/reference'
 
 const cache = new Map()
 

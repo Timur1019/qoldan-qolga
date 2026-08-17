@@ -27,6 +27,11 @@ public class AsyncConfig {
         return buildExecutor("view-", 2, 8, 500);
     }
 
+    @Bean(name = "pushExecutor")
+    public Executor pushExecutor() {
+        return buildExecutor("push-", 2, 6, 200);
+    }
+
     private static Executor buildExecutor(String prefix, int core, int max, int queue) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix(prefix);

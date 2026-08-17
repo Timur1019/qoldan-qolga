@@ -1,0 +1,28 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.field + .field {
+  margin-top: 0.85rem;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin-bottom: 0.35rem;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 0.5rem;
+}
+
+.error {
+  font-size: 0.8rem;
+  color: var(--color-error, #b91c1c);
+  margin-top: 0.35rem;
+}

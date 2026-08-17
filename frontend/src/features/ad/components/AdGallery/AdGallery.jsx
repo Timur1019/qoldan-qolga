@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useLang } from '../../../../context/LangContext'
-import { imageUrl } from '../../services/adApi'
+import { imageUrl } from '@/api/client'
 import { useGalleryPointer } from '../../hooks/useGalleryPointer'
 import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
 import styles from './AdGallery.module.css'

@@ -1,0 +1,24 @@
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.danger {
+  color: var(--color-error, #b91c1c);
+  background: rgba(185, 28, 28, 0.08);
+}
+
+.success {
+  color: #047857;
+  background: rgba(4, 120, 87, 0.08);
+}
+
+.compact {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}

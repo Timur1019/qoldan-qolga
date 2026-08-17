@@ -1,3 +1,4 @@
+import { UiAlert, UiButton, UiField, UiInput } from '@/shared/ui'
 import styles from './PhoneCodeForm.module.css'
 
 export default function PhoneCodeForm({
@@ -15,11 +16,7 @@ export default function PhoneCodeForm({
 }) {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
-      {error && (
-        <div className="alert alert-danger py-2 mb-3" role="alert">
-          <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
-        </div>
-      )}
+      {error ? <UiAlert compact>{error}</UiAlert> : null}
       <p className={styles.hint}>
         {labels.codeSentTo} <strong>{phoneMasked}</strong>
       </p>
@@ -28,11 +25,8 @@ export default function PhoneCodeForm({
           {labels.devCode}: {debugCode}
         </p>
       )}
-      <div className="mb-3">
-        <label className="form-label" htmlFor="auth-otp">
-          {labels.code}
-        </label>
-        <input
+      <UiField label={labels.code} htmlFor="auth-otp">
+        <UiInput
           id="auth-otp"
           type="text"
           inputMode="numeric"
@@ -41,13 +35,13 @@ export default function PhoneCodeForm({
           value={code}
           onChange={(e) => onCodeChange(e.target.value.replace(/\D/g, ''))}
           required
-          className={`form-control text-center ${styles.codeInput}`}
+          className={`text-center ${styles.codeInput}`}
           autoFocus
         />
-      </div>
-      <button type="submit" disabled={submitting || code.length < 4} className="btn btn-primary w-100">
+      </UiField>
+      <UiButton type="submit" fullWidth loading={submitting} disabled={submitting || code.length < 4}>
         {submitting ? labels.loading : labels.confirm}
-      </button>
+      </UiButton>
       <div className={styles.actions}>
         <button type="button" className={styles.linkBtn} onClick={onBack} disabled={submitting}>
           {labels.changePhone}

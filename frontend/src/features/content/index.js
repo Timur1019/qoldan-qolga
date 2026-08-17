@@ -1,0 +1,6 @@
+export { default as About } from './About/About'
+export { default as Regions } from './Regions/Regions'
+export { default as Rules } from './Rules/Rules'
+export { default as RuleDocument } from './Rules/RuleDocument'
+export { default as PromoResult } from './PromoResult/PromoResult'
+export { default as VerificationCallback } from './VerificationCallback/VerificationCallback'

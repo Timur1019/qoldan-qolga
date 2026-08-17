@@ -1,5 +1,5 @@
 import AdCard from '../../components/AdCard'
-import gridStyles from '../../components/AdCardGrid/AdCardGrid.module.css'
+import AdCardGrid from '../../components/AdCardGrid'
 import styles from './FavoritesAdsSection.module.css'
 
 /** Сетка избранных / рекомендаций рядом с сайдбаром. */
@@ -19,7 +19,7 @@ export default function FavoritesAdsSection({
   return (
     <section className={styles.section}>
       {title ? <h2 className={styles.title}>{title}</h2> : null}
-      <ul className={gridStyles.gridBesideNav}>
+      <AdCardGrid variant="besideNav">
         {ads.map((ad) => (
           <AdCard
             key={ad.id}
@@ -33,7 +33,7 @@ export default function FavoritesAdsSection({
             showDate={showDate}
           />
         ))}
-      </ul>
+      </AdCardGrid>
       {footer}
     </section>
   )

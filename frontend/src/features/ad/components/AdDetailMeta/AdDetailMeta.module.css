@@ -1,0 +1,24 @@
+.adMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: var(--font-size-body);
+  margin-bottom: 0.75rem;
+}
+
+.adMetaRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.adMetaLabel {
+  color: var(--color-text-secondary, #6b7280);
+  font-weight: 400;
+}
+
+.adMetaValue {
+  color: var(--color-text, #1a1a1a);
+  font-weight: 400;
+}

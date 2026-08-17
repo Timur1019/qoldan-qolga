@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLang } from '../../context/LangContext'
-import { authApi } from '../../api/client'
+import { authApi } from '@/api/auth'
 import {
   formatBirthDateInput,
   formatNumberInput,

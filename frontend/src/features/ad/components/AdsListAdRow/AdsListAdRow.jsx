@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { imageUrl } from '../../services/adApi'
+import UserAvatar from '@/components/ui/UserAvatar'
 import { formatAdCardDate } from '../../../../utils/formatters'
 import { formatDisplayPrice } from '../../utils/priceDisplay'
 import { vehicleBrandModel, vehicleMetaLine } from '../../utils/transportDisplay'
@@ -10,29 +10,8 @@ import HeartIcon from '../../../../components/ui/HeartIcon'
 import { useRegionLabel } from '../../../../context/RegionsContext'
 import CardGallery from '../CardGallery'
 import AdImageBadges from '../AdImageBadges/AdImageBadges'
-import styles from '../../pages/AdsList/AdsList.module.css'
-
-const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
-
-function RatingStars({ averageRating, totalReviews, t }) {
-  const avg = averageRating ?? 0
-  const count = totalReviews ?? 0
-  const full = Math.floor(avg)
-  const half = (avg - full) >= 0.5 ? 1 : 0
-  const empty = Math.max(0, 5 - full - half)
-  return (
-    <div className={styles.ratingLine}>
-      <span className={styles.stars} aria-hidden title={`${avg.toFixed(1)}`}>
-        {'★'.repeat(full)}{half ? '½' : ''}{'☆'.repeat(empty)}
-      </span>
-      {count > 0 && (
-        <span className={styles.ratingText}>
-          {avg.toFixed(1)} · {count} {t('reviews.countPlural')}
-        </span>
-      )}
-    </div>
-  )
-}
+import AdsListAdRowRating from './AdsListAdRowRating'
+import styles from './AdsListAdRow.module.css'
 
 function formatPhone(phone) {
   if (!phone) return ''
@@ -41,9 +20,6 @@ function formatPhone(phone) {
   return phone
 }
 
-/**
- * Строка списка объявлений — вынесена из AdsList, чтобы не remount при каждом рендере родителя.
- */
 export default function AdsListAdRow({
   ad,
   lang,
@@ -60,8 +36,6 @@ export default function AdsListAdRow({
   const regionLabel = useRegionLabel(ad?.region)
   const urls = ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])
   const sellerName = ad.userDisplayName || t('ads.seller')
-  const isAvatarPhoto = ad.userAvatar && (ad.userAvatar.startsWith('/') || ad.userAvatar.startsWith('http'))
-  const avatarEmoji = ad.userAvatar && AVATAR_EMOJI[ad.userAvatar] ? AVATAR_EMOJI[ad.userAvatar] : null
   const desc = (ad.description || '').trim()
   const dateLabels = { today: t('chat.today'), yesterday: t('chat.yesterday') }
   const telegramHref = telegramHrefFromAd(ad)
@@ -115,22 +89,14 @@ export default function AdsListAdRow({
       <div className={styles.adRowSeller}>
         <div className={styles.adRowSellerTop}>
           <div className={styles.adRowAvatarWrap}>
-            {isAvatarPhoto ? (
-              <img src={imageUrl(ad.userAvatar)} alt="" className={styles.adRowAvatar} />
-            ) : avatarEmoji ? (
-              <span className={styles.adRowAvatarEmoji} aria-hidden>{avatarEmoji}</span>
-            ) : (
-              <span className={styles.adRowAvatarInitial} aria-hidden>
-                {sellerName?.charAt(0)?.toUpperCase() || '?'}
-              </span>
-            )}
+            <UserAvatar avatar={ad.userAvatar} name={sellerName} size={44} />
           </div>
           <Link to={sellerPath(ad.userId)} className={styles.adRowSellerName} onClick={(e) => e.stopPropagation()}>
             {sellerName}
           </Link>
         </div>
         {(ad.totalReviews ?? 0) > 0 && (
-          <RatingStars averageRating={ad.averageRating} totalReviews={ad.totalReviews} t={t} />
+          <AdsListAdRowRating averageRating={ad.averageRating} totalReviews={ad.totalReviews} t={t} />
         )}
         <div className={styles.adRowActions}>
           {!isOwnAd && ad.userId && (

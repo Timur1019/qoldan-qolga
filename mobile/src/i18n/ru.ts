@@ -256,6 +256,9 @@ export const ru: TranslationDict = {
   'notify.priceWatchDropped': 'Цена снизилась на {amount}',
   'notify.priceWatchRose': 'Цена выросла на {amount}',
 
+  'notify.welcomeTitle': 'Добро пожаловать',
+  'notify.welcomeBody': 'Уведомления включены: сообщения, статусы и акции — как в обычном приложении.',
+
   'settings.notifications': 'Уведомления',
   'settings.notificationsTitle': 'Настройка уведомлений',
   'settings.feed': 'Настройка ленты',
@@ -266,10 +269,12 @@ export const ru: TranslationDict = {
   'settings.deleteAccount': 'Удалить аккаунт',
   'settings.deleteHint':
     'Чтобы удалить аккаунт, напишите в поддержку. Полное удаление также доступно на сайте.',
-  'settings.notifImportant': 'Важные уведомления',
-  'settings.notifImportantSub': 'Статусы заказов, доставка и сообщения',
-  'settings.notifPromo': 'Акции и предложения',
-  'settings.notifPromoSub': 'Подборки, скидки и рекомендации',
+  'settings.notifChat': 'Сообщения',
+  'settings.notifChatSub': 'Новые ответы в чате с покупателями и продавцами',
+  'settings.notifSystem': 'Системные',
+  'settings.notifSystemSub': 'Модерация, статус магазина и важные события',
+  'settings.notifPromo': 'Акции и продвижение',
+  'settings.notifPromoSub': 'Когда тариф активирован и подборки объявлений',
 
   'legal.privacy': 'Политика обработки персональных данных',
   'legal.terms': 'Пользовательское соглашение',

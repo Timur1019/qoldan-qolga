@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { referenceApi } from '../../services/adApi'
+import { referenceApi } from '@/api/reference'
 import { transportFieldFlags } from '../../../../constants/transport'
 import CreateAdCarSpecs from './CreateAdCarSpecs'
 import styles from './CreateAdTransportFields.module.css'

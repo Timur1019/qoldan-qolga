@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { referenceApi } from '../api/client'
+import { referenceApi } from '@/api/reference'
 import { useLang } from './LangContext'
 import { buildRegionLabelMap, resolveRegionLabel } from '../utils/regionLabel'
 

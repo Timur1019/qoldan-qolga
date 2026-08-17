@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { chatApi } from '../api/client'
+import { chatApi } from '@/api/chat'
 import { useAuth } from '../context/AuthContext'
 
 /**

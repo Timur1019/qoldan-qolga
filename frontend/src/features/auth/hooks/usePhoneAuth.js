@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { authApi } from '../services/authApi'
+import { authApi } from '@/api/auth'
 import { normalizePhoneInput } from '../utils/phoneFormat'
 
 /**

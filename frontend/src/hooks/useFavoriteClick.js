@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { adsApi } from '../api/client'
+import { adsApi } from '@/api/ads'
 import { useAuthModal } from './useAuthModal'
-import { isAuthError } from '../api/client'
+import { isAuthError } from '@/api/client'
 import { useToast } from '../context/ToastContext'
 import { useLang } from '../context/LangContext'
 

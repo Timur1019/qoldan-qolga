@@ -1,0 +1,38 @@
+.select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #1e293b;
+  background: #fff;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--input-focus-shadow, 0 0 0 3px rgba(16, 185, 129, 0.15));
+}
+
+.select:disabled {
+  background: #f8fafc;
+  cursor: not-allowed;
+}
+
+.sm {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+}
+
+.placeholder {
+  color: #94a3b8;
+}

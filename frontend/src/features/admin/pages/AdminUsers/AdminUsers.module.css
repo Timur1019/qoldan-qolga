@@ -1,0 +1,79 @@
+.page {
+  max-width: 960px;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.muted {
+  color: var(--color-muted, #64748b);
+  margin: 0;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table th,
+.table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table th {
+  font-weight: 600;
+  color: #475569;
+  background: #f8fafc;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rowBanned {
+  background: #fef2f2;
+}
+
+.rowPending {
+  background: #fffbeb;
+}
+
+.link {
+  color: var(--color-primary, #2563eb);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.badgeOk {
+  color: #059669;
+  font-weight: 600;
+}
+
+.bannedUntil {
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+.verificationRequested {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+

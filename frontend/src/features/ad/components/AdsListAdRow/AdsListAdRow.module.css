@@ -1,0 +1,387 @@
+.adRow {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+  min-height: 230px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: background 0.15s;
+}
+
+.adRowHighlighted {
+  background: linear-gradient(180deg, rgba(4, 73, 45, 0.07), #fff 48%);
+  box-shadow: 0 0 0 1.5px rgba(4, 73, 45, 0.28), 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.adRow:hover {
+  background: #ebebeb;
+}
+
+.adRow:last-child {
+  margin-bottom: 0;
+}
+
+.adRowLink {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.adRowImageWrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 200px;
+  min-height: 230px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.sellerBadgeStore,
+.sellerBadgePrivate {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.sellerBadgeStore {
+  background: #059669;
+  color: #fff;
+}
+
+.sellerBadgePrivate {
+  background: #64748b;
+  color: #fff;
+}
+
+.adRowGalleryWrap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+}
+
+.adRowGallery {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+}
+
+.adRowImageWrap img {
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.adRowBody {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  padding-right: 2.25rem;
+  position: relative;
+}
+
+.adRowFavorite {
+  position: absolute;
+  top: 0.15rem;
+  right: 0.15rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.adRowFavorite:hover {
+  color: #e11d48;
+}
+
+.adRowTitle {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adRowPrice {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.adRowMeta {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted, #666);
+}
+
+.adRowDesc {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-muted, #666);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.adRowDate {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.adRowSeller {
+  flex-shrink: 0;
+  width: 200px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.adRowSellerTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adRowAvatarWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adRowSellerName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: none;
+  text-align: center;
+  word-break: break-word;
+}
+
+.adRowSellerName:hover {
+  color: var(--color-primary);
+}
+
+.ratingLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.stars {
+  color: #eab308;
+}
+
+.ratingText {
+  color: var(--color-muted, #6b7280);
+}
+
+.adRowActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.adRowShowPhoneBtn,
+.adRowPhoneLink {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.adRowShowPhoneBtn {
+  background: #ffffff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  color: var(--color-primary, #04492d);
+  cursor: pointer;
+  font: inherit;
+}
+
+.adRowShowPhoneBtn:hover {
+  background: var(--color-primary-hover, #033421);
+  border-color: var(--color-primary-hover, #033421);
+  color: #ffffff;
+}
+
+.adRowPhoneLink {
+  color: var(--color-primary, #04492d);
+  background: #ffffff;
+  border: 1px solid var(--color-border, #e5e7eb);
+}
+
+.adRowPhoneLink:hover {
+  background: var(--color-primary-hover, #033421);
+  border-color: var(--color-primary-hover, #033421);
+  color: #ffffff;
+}
+
+.adRowWriteBtn {
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: #ffffff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-primary, #04492d);
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adRowWriteBtn:hover {
+  background: var(--color-primary-hover, #033421);
+  border-color: var(--color-primary-hover, #033421);
+  color: #ffffff;
+}
+
+.adRowTelegramBtn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #075985;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adRowTelegramBtn:hover {
+  background: #bae6fd;
+  color: #075985;
+  border-color: #7dd3fc;
+}
+
+.cardImageWrap .sellerBadgeStore,
+.cardImageWrap .sellerBadgePrivate {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.cardImageWrap .sellerBadgeStore {
+  background: #059669;
+  color: #fff;
+}
+
+.cardImageWrap .sellerBadgePrivate {
+  background: #64748b;
+  color: #fff;
+}
+
+.heartIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.heartOutline {
+  stroke: #000;
+  fill: none;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
+}
+
+.heartFilled {
+  stroke: #000;
+  fill: #e11d48;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
+}
+
+@media (max-width: 767px) {
+  .adRow,
+  .adRowLink {
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 0;
+    gap: 10px;
+  }
+
+  .adRow {
+    padding: 10px 0 12px;
+    margin-bottom: 0;
+    min-height: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+  }
+
+  .adRowImageWrap,
+  .adRowGalleryWrap,
+  .adRowGallery {
+    width: 112px;
+    min-width: 112px;
+    height: 112px;
+    min-height: 112px;
+    aspect-ratio: 1;
+  }
+
+  .adRowImageWrap img {
+    min-height: 112px;
+  }
+
+  .adRowDesc,
+  .adRowSeller {
+    display: none;
+  }
+
+  .adRowTitle {
+    font-size: 15px;
+    padding-right: 28px;
+  }
+
+  .adRowPrice {
+    font-size: 17px;
+    font-weight: 700;
+  }
+}

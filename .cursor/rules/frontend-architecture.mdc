@@ -1,0 +1,27 @@
+---
+description: Куда класть frontend-код и как импортировать
+globs: frontend/src/**/*.{js,jsx,css}
+alwaysApply: false
+---
+
+# Frontend: слои
+
+Полная карта: `frontend/src/features/README.md`.
+
+- HTTP только из `@/api/<domain>` (`ads`, `auth`, `chat`, `users`, `reference`, `admin`, `business`, `currency`). Не создавать `features/*/services`.
+- Доменные страницы и секции — в `features/<name>/`. Не создавать `src/pages/`.
+- Оболочка приложения (Layout, гарды, OSMMap) — `src/components`. Не класть туда страницы фич.
+- Снаружи фичи — только её `index.js`. Не лезть в чужой `utils/` / `hooks/`.
+- Стили рядом с компонентом. Запрещён импорт `pages/Foo/Foo.module.css` из дочернего компонента.
+- Новый код в фиче: `pages/`, `components/` (папка + `index.js`), `hooks/`, `utils/`. Пустые папки не оставлять.
+- JSX > ~250 строк или CSS > ~300 — резать в том же изменении, не дописывать.
+
+```js
+// ✅
+import { adsApi } from '@/api/ads'
+import CreateAdPhotos from '../../components/CreateAdPhotos'
+
+// ❌
+import { adsApi } from '../../services/adApi'
+import styles from '../../pages/AdsList/AdsList.module.css'
+```

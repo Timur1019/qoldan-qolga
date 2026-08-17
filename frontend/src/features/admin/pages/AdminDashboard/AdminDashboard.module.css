@@ -1,0 +1,247 @@
+.message {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--color-muted, #64748b);
+}
+
+.error {
+  color: var(--color-error, #dc2626);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.success {
+  color: #059669;
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.muted {
+  color: var(--color-muted, #64748b);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.section {
+  margin-top: 1rem;
+}
+
+.sectionTitle {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.statsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.statCard {
+  flex: 1;
+  min-width: 140px;
+  padding: 1rem 1.25rem;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.formCard {
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: flex-end;
+}
+
+.formRow > * {
+  flex: 1;
+  min-width: 160px;
+  margin-top: 0;
+}
+
+.rowField {
+  margin-top: 0;
+}
+
+.checkWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #475569;
+  user-select: none;
+  min-height: 2.5rem;
+}
+
+.categoryTree {
+  padding: 1rem 1.25rem;
+}
+
+.treeTitle {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.treeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.treeItem {
+  margin-bottom: 0.25rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.treeItem:last-of-type {
+  border-bottom: none;
+}
+
+.treeItemHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.treeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.treeIcon {
+  flex-shrink: 0;
+  color: var(--color-primary, #04492d);
+}
+
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #64748b;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.toggleBtn:hover {
+  color: var(--color-primary, #2563eb);
+  background: #f1f5f9;
+}
+
+.chevron {
+  display: inline-block;
+  font-size: 0.65rem;
+  transition: transform 0.2s;
+}
+
+.chevron[data-expanded='true'] {
+  transform: rotate(0deg);
+}
+
+.chevron[data-expanded='false'] {
+  transform: rotate(-90deg);
+}
+
+.togglePlaceholder {
+  display: inline-block;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.treeName {
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.code {
+  font-size: 0.8rem;
+  background: #f1f5f9;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  color: #64748b;
+  font-family: ui-monospace, monospace;
+}
+
+.subBtn {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  color: var(--color-primary, #2563eb);
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.subBtn:hover {
+  background: var(--color-primary, #2563eb);
+  color: #fff;
+  border-color: var(--color-primary, #2563eb);
+}
+
+.treeSublist {
+  list-style: none;
+  margin: 0.35rem 0 0 1rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid #e2e8f0;
+}
+
+.treeSublistNested {
+  list-style: none;
+  margin: 0.25rem 0 0 1rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid #e2e8f0;
+}
+
+.treeSubitem {
+  margin: 0.2rem 0;
+  padding: 0.25rem 0;
+}
+
+.treeSubitem .treeName {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.treeSubitem .code {
+  font-size: 0.75rem;
+}

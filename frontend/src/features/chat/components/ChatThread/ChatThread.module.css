@@ -1,0 +1,175 @@
+.threadEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  color: #9ca3af;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.threadEmpty i {
+  font-size: 2.75rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.35;
+}
+
+.threadEmpty p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.threadContent {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.threadHead {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #eef1ef;
+  background: #f8faf9;
+}
+
+.threadHeadMain {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.threadHeadText {
+  min-width: 0;
+  flex: 1;
+}
+
+.threadName,
+.threadAd {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.threadName {
+  font-weight: 600;
+  color: #111827;
+}
+
+.threadAd {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.threadAvatar {
+  width: 44px;
+  height: 44px;
+}
+
+.systemAvatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 73, 45, 0.12);
+  color: var(--color-primary, #04492d);
+  font-size: 1.15rem;
+}
+
+.countBadge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 0.75rem;
+}
+
+.viewAd {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  color: var(--color-primary, #04492d);
+  text-decoration: none;
+}
+
+.viewAd:hover {
+  text-decoration: underline;
+}
+
+.messages {
+  flex-grow: 1;
+  overflow: auto;
+  padding: 1rem;
+  min-height: 280px;
+  max-height: 480px;
+  background: #fcfdfc;
+}
+
+.messagesLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  padding: 2rem 0;
+}
+
+.dateWrap {
+  text-align: center;
+  margin: 0.75rem 0;
+}
+
+.dateWrap span {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: #eef2ef;
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.composer {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid #eef1ef;
+  background: #f8faf9;
+}
+
+.readonlyBar {
+  padding: 0.85rem 1rem;
+  border-top: 1px solid #eef1ef;
+  background: #f8faf9;
+  color: #6b7280;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .threadContent {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .composer {
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+  }
+}

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { referenceApi } from '../../api/client'
+import { referenceApi } from '@/api/reference'
 import { ROUTES, PARAMS } from '../../constants/routes'
 import styles from './Footer.module.css'
 

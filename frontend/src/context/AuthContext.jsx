@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { authApi } from '../api/client'
+import { authApi } from '@/api/auth'
 
 const STORAGE_KEY = 'token'
 

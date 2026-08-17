@@ -288,9 +288,15 @@ textarea:disabled {
   :root {
     --layout-pad: 12px;
   }
+}
 
-  html[data-shell="mobile"] body {
-    min-width: 0;
-  }
+html[data-shell="mobile"] {
+  overscroll-behavior-y: none;
+}
+
+html[data-shell="mobile"] body {
+  min-width: 0;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
-import { getWsBaseUrl } from '../api/client'
+import { getWsBaseUrl } from '@/api/client'
 
 /**
  * Подписка на новые сообщения в диалоге по WebSocket.

@@ -9,9 +9,12 @@ import com.test.qoldanqolga.model.ConversationRead;
 import com.test.qoldanqolga.repository.ChatMessageRepository;
 import com.test.qoldanqolga.repository.ConversationReadRepository;
 import com.test.qoldanqolga.repository.ConversationRepository;
+import com.test.qoldanqolga.config.SystemConversationProperties;
 import com.test.qoldanqolga.service.chat.ChatAccessService;
 import com.test.qoldanqolga.service.chat.ChatWebSocketService;
 import com.test.qoldanqolga.service.chat.MessageCommandService;
+import com.test.qoldanqolga.service.push.PushNotificationService;
+import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,8 @@ public class MessageCommandServiceImpl implements MessageCommandService {
     private final ChatMessageMapper chatMessageMapper;
     private final ChatAccessService chatAccessService;
     private final ChatWebSocketService chatWebSocketService;
+    private final PushNotificationService pushNotificationService;
+    private final SystemConversationProperties systemConversationProperties;
 
     @Override
     @Transactional
@@ -64,6 +69,19 @@ public class MessageCommandServiceImpl implements MessageCommandService {
         msg = messageRepository.save(msg);
         MessageDto dto = chatMessageMapper.toDto(msg);
         chatWebSocketService.sendToConversation(conversationId, dto);
+        String recipientId = resolveRecipientUserId(c, senderId);
+        String preview = dto.getText();
+        boolean systemSender = senderId != null && senderId.equals(systemConversationProperties.getUserId());
+        String systemUserId = systemConversationProperties.getUserId();
+        if (recipientId != null && !recipientId.equals(senderId) && !recipientId.equals(systemUserId)) {
+            AfterCommit.run(() -> {
+                if (systemSender) {
+                    pushNotificationService.notifySystem(recipientId, conversationId, "Уведомление", preview);
+                } else {
+                    pushNotificationService.notifyChatMessage(recipientId, conversationId, preview);
+                }
+            });
+        }
         LogUtil.debug(MessageCommandServiceImpl.class, "Message sent: conversation={} messageId={}", conversationId, dto.getId());
         return dto;
     }
@@ -108,5 +126,13 @@ public class MessageCommandServiceImpl implements MessageCommandService {
         }
         messageRepository.delete(msg);
         LogUtil.debug(MessageCommandServiceImpl.class, "Message deleted: conversation={} messageId={}", conversationId, messageId);
+    }
+
+    private static String resolveRecipientUserId(Conversation c, String senderId) {
+        String sellerId = c.getAd() != null ? c.getAd().getUserId() : null;
+        if (senderId != null && senderId.equals(c.getBuyerId())) {
+            return sellerId;
+        }
+        return c.getBuyerId();
     }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { adsApi } from '../../../../api/client'
+import { adsApi } from '@/api/ads'
 import { useLang } from '../../../../context/LangContext'
 
 /**

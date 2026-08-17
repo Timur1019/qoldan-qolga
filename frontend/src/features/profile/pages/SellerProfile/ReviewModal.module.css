@@ -1,0 +1,25 @@
+.ratingSelect {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ratingBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: var(--font-size-h3);
+  color: #d1d5db;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ratingBtn:hover {
+  background: #e5e7eb;
+}
+
+.ratingBtnActive {
+  color: #f59e0b;
+  background: #fffbeb;
+}

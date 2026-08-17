@@ -1,0 +1,24 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #1f2933;
+  padding: 0.25rem 0.4rem;
+  border-radius: 999px;
+}
+
+.row:hover {
+  background: #f3f4f6;
+}
+
+.row input {
+  accent-color: var(--color-primary);
+}

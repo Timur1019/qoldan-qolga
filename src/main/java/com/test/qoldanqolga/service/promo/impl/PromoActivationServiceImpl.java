@@ -9,6 +9,8 @@ import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.repository.PromoOrderRepository;
 import com.test.qoldanqolga.service.promo.PromoActivationService;
 import com.test.qoldanqolga.service.promo.PromoProperties;
+import com.test.qoldanqolga.service.push.PushNotificationService;
+import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class PromoActivationServiceImpl implements PromoActivationService {
     private final PromoOrderRepository promoOrderRepository;
     private final AdvertisementRepository advertisementRepository;
     private final PromoProperties promoProperties;
+    private final PushNotificationService pushNotificationService;
 
     @Override
     @Transactional
@@ -93,5 +96,15 @@ public class PromoActivationServiceImpl implements PromoActivationService {
         LogUtil.info(PromoActivationServiceImpl.class,
                 "Promo activated: orderId={} adId={} plan={} until={} priority={}",
                 order.getId(), ad.getId(), plan.getCode(), newUntil, priority);
+
+        String ownerId = ad.getUserId();
+        String adId = ad.getId();
+        String planName = plan.getCode();
+        AfterCommit.run(() -> pushNotificationService.notifyPromo(
+                ownerId,
+                adId,
+                "Продвижение включено",
+                "Тариф «" + planName + "» активирован для объявления"
+        ));
     }
 }

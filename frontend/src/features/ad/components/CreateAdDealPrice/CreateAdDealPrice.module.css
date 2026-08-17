@@ -1,0 +1,37 @@
+.priceRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+  margin-bottom: 0.75rem;
+}
+
+.priceInputWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.currencyBtns {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.currencyBtn {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.currencyBtn.active {
+  background: #334155;
+  color: #fff;
+  border-color: #334155;
+}
+
+.currencyBtn:not(.active):hover {
+  background: #f1f5f9;
+}

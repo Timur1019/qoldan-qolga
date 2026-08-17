@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { adsApi, favoritesApi, usersApi } from '../../services/adApi'
+import { adsApi, favoritesApi } from '@/api/ads'
+import { usersApi } from '@/api/users'
 
 const PAGE_SIZE = 80
 const REC_SIZE = 12

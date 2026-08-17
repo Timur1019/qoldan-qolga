@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { referenceApi } from '../../services/adApi'
+import { referenceApi } from '@/api/reference'
 import useVehicleSpecOptions from '../../hooks/useVehicleSpecOptions'
 import { vehicleSpecOptionLabel } from '../../../../constants/vehicleSpecOptions'
 import TransportBrandFilter from './TransportBrandFilter'

@@ -1,3 +1,4 @@
+import { UiAlert, UiButton, UiField, UiInput } from '@/shared/ui'
 import styles from './PhoneAuthForm.module.css'
 
 export default function PhoneAuthForm({
@@ -12,21 +13,14 @@ export default function PhoneAuthForm({
 }) {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
-      {error && (
-        <div className="alert alert-danger py-2 mb-3" role="alert">
-          <i className="bi bi-exclamation-circle me-2" aria-hidden /> {error}
-        </div>
-      )}
+      {error ? <UiAlert compact>{error}</UiAlert> : null}
       <p className={styles.hint}>{labels.phoneHint}</p>
-      <div className="mb-3">
-        <label className="form-label" htmlFor="auth-phone">
-          {labels.phone}
-        </label>
+      <UiField label={labels.phone} htmlFor="auth-phone">
         <div className={styles.phoneRow}>
           <span className={styles.prefix} aria-hidden>
             +998
           </span>
-          <input
+          <UiInput
             id="auth-phone"
             type="tel"
             inputMode="numeric"
@@ -35,10 +29,10 @@ export default function PhoneAuthForm({
             value={phone}
             onChange={(e) => onPhoneChange(e.target.value)}
             required
-            className={`form-control ${styles.phoneInput}`}
+            className={styles.phoneInput}
           />
         </div>
-      </div>
+      </UiField>
       {onRememberMeChange && (
         <div className="mb-3 form-check">
           <input
@@ -53,9 +47,9 @@ export default function PhoneAuthForm({
           </label>
         </div>
       )}
-      <button type="submit" disabled={submitting} className="btn btn-primary w-100">
+      <UiButton type="submit" fullWidth loading={submitting}>
         {submitting ? labels.loading : labels.sendCode}
-      </button>
+      </UiButton>
     </form>
   )
 }

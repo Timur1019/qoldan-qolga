@@ -57,6 +57,8 @@ export function PromoBanners({ banners, onPress }: Props) {
   return (
     <ScrollView
       horizontal
+      nestedScrollEnabled
+      directionalLockEnabled
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.list}
     >

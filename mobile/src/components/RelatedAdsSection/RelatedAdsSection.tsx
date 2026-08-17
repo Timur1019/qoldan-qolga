@@ -52,6 +52,8 @@ export function RelatedAdsSection({
         <FlatList
           data={ads}
           horizontal
+          nestedScrollEnabled
+          directionalLockEnabled
           keyExtractor={(a) => a.id}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.list}

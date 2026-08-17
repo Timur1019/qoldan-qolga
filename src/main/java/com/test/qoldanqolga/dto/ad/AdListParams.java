@@ -17,6 +17,14 @@ public class AdListParams {
     private String category;
     private String region;
     private String query;
+
+    /**
+     * Request alias for search query param {@code q}.
+     * Spring binds {@code ?q=} via this setter.
+     */
+    public void setQ(String q) {
+        this.query = q;
+    }
     /** Несколько значений: фильтр по любому из типов продавца (PRIVATE, BUSINESS). */
     private List<String> sellerType;
     private Boolean hasLicense;

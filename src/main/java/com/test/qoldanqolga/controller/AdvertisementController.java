@@ -16,6 +16,7 @@ import com.test.qoldanqolga.service.FavoriteService;
 import com.test.qoldanqolga.service.PromoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,7 +25,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -61,101 +61,16 @@ public class AdvertisementController {
     @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
     @GetMapping
     public ResponseEntity<Page<AdListItemDto>> list(
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String region,
-            @RequestParam(required = false) String brandId,
-            @RequestParam(required = false) String modelId,
-            @RequestParam(required = false) Integer yearFrom,
-            @RequestParam(required = false) Integer yearTo,
-            @RequestParam(required = false) Integer mileageFrom,
-            @RequestParam(required = false) Integer mileageTo,
-            @RequestParam(required = false) List<String> bodyType,
-            @RequestParam(required = false) List<String> transmission,
-            @RequestParam(required = false) List<String> fuelType,
-            @RequestParam(required = false) List<String> driveType,
-            @RequestParam(required = false) BigDecimal engineVolumeFrom,
-            @RequestParam(required = false) BigDecimal engineVolumeTo,
-            @RequestParam(required = false) List<String> exteriorColor,
-            @RequestParam(required = false) List<String> seats,
-            @RequestParam(required = false) List<String> steering,
-            @RequestParam(required = false) List<String> ownersCount,
-            @RequestParam(required = false) String district,
-            @RequestParam(required = false) List<String> dealType,
-            @RequestParam(required = false) List<String> rooms,
-            @RequestParam(required = false) BigDecimal areaFrom,
-            @RequestParam(required = false) BigDecimal areaTo,
-            @RequestParam(required = false) BigDecimal landAreaFrom,
-            @RequestParam(required = false) BigDecimal landAreaTo,
-            @RequestParam(required = false) Integer floorFrom,
-            @RequestParam(required = false) Integer floorTo,
-            @RequestParam(required = false) List<String> buildingType,
-            @RequestParam(required = false) List<String> renovation,
-            @RequestParam(required = false) Boolean furnished,
-            @RequestParam(required = false) String q,
-            @RequestParam(required = false) List<String> sellerType,
-            @RequestParam(required = false) Boolean hasLicense,
-            @RequestParam(required = false) Boolean worksByContract,
-            @RequestParam(required = false) BigDecimal priceFrom,
-            @RequestParam(required = false) BigDecimal priceTo,
-            @RequestParam(required = false) String currency,
-            @RequestParam(required = false) Boolean urgentBargain,
-            @RequestParam(required = false) Boolean canDeliver,
-            @RequestParam(required = false) Boolean giveAway,
-            @RequestParam(required = false) List<String> itemCondition,
-            @RequestParam(required = false) Boolean handMadeOnly,
-            @RequestParam(required = false) Boolean canRent,
+            @ParameterObject @ModelAttribute AdListParams params,
             @PageableDefault(size = 20, sort = {"promoPriority", "boostedAt", "createdAt"}, direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable,
             @AuthenticationPrincipal UserDetails user
     ) {
-        AdListParams params = AdListParams.builder()
-                .status(status)
-                .category(category)
-                .region(region)
-                .brandId(brandId)
-                .modelId(modelId)
-                .yearFrom(yearFrom)
-                .yearTo(yearTo)
-                .mileageFrom(mileageFrom)
-                .mileageTo(mileageTo)
-                .bodyType(bodyType)
-                .transmission(transmission)
-                .fuelType(fuelType)
-                .driveType(driveType)
-                .engineVolumeFrom(engineVolumeFrom)
-                .engineVolumeTo(engineVolumeTo)
-                .exteriorColor(exteriorColor)
-                .seats(seats)
-                .steering(steering)
-                .ownersCount(ownersCount)
-                .district(district)
-                .dealType(dealType)
-                .rooms(rooms)
-                .areaFrom(areaFrom)
-                .areaTo(areaTo)
-                .landAreaFrom(landAreaFrom)
-                .landAreaTo(landAreaTo)
-                .floorFrom(floorFrom)
-                .floorTo(floorTo)
-                .buildingType(buildingType)
-                .renovation(renovation)
-                .furnished(furnished)
-                .query(q)
-                .sellerType(sellerType)
-                .hasLicense(hasLicense)
-                .worksByContract(worksByContract)
-                .priceFrom(priceFrom)
-                .priceTo(priceTo)
-                .currency(currency)
-                .urgentBargain(urgentBargain)
-                .canDeliver(canDeliver)
-                .giveAway(giveAway)
-                .itemCondition(itemCondition)
-                .handMadeOnly(handMadeOnly)
-                .canRent(canRent)
-                .build();
         String userId = user != null ? user.getUsername() : null;
-        return ResponseEntity.ok(advertisementService.list(params, userId, pageable));
+        return ResponseEntity.ok(advertisementService.list(
+                params != null ? params : new AdListParams(),
+                userId,
+                pageable
+        ));
     }
 
     @Operation(summary = "Мои объявления", security = @SecurityRequirement(name = "bearerAuth"))

@@ -1,0 +1,16 @@
+.descWrap {
+  position: relative;
+  min-width: 0;
+}
+
+.descInput {
+  padding-bottom: 1.75rem;
+}
+
+.descCounter {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}

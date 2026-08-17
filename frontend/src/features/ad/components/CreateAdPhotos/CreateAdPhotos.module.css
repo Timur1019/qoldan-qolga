@@ -1,0 +1,40 @@
+.uploadZone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  background: #f8fafc;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.uploadZone:hover,
+.uploadZone.dragover {
+  border-color: var(--color-primary);
+  background: #eff6ff;
+}
+
+.previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.previewWrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.removeBtn {
+  width: 24px;
+  height: 24px;
+}

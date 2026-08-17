@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { adsApi, usersApi } from '../../../api/client'
+import { adsApi } from '@/api/ads'
+import { usersApi } from '@/api/users'
 import { mergeAdsLists } from '../utils/mergeAdsLists'
 
 const RELATED_LIMIT = 10

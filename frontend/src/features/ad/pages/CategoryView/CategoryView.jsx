@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
-import { referenceApi } from '../../services/adApi'
+import { referenceApi } from '@/api/reference'
 import { PARAMS, ROUTES, categoryPathWithParams, adsCategoryPathWithParams } from '../../../../constants/routes'
 import AdsFiltersSidebar from '../../components/AdsFiltersSidebar'
 import CategoryIcon from '../../../../components/ui/CategoryIcon'

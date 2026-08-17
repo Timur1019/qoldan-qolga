@@ -1,12 +1,10 @@
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
-import { imageUrl } from '../../services/adApi'
+import UserAvatar from '@/components/ui/UserAvatar'
 import { sellerPath } from '../../../../constants/routes'
 import { resolveSellerBadge } from '../../../../constants/sellerTypes'
 import styles from './SellerInfo.module.css'
-
-const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
 
 function SellerInfo({
   sellerId,
@@ -22,8 +20,6 @@ function SellerInfo({
   onSubscribe,
 }) {
   const { t } = useLang()
-  const isAvatarPhoto = sellerAvatar && (sellerAvatar.startsWith('/') || sellerAvatar.startsWith('http'))
-  const avatarEmoji = sellerAvatar && AVATAR_EMOJI[sellerAvatar] ? AVATAR_EMOJI[sellerAvatar] : null
   const badge = resolveSellerBadge({ sellerIsStore, sellerType })
 
   return (
@@ -47,15 +43,7 @@ function SellerInfo({
           )}
         </div>
         <div className={styles.sellerCardAvatarWrap}>
-          {isAvatarPhoto ? (
-            <img src={imageUrl(sellerAvatar)} alt="" className={styles.sellerCardAvatar} />
-          ) : avatarEmoji ? (
-            <span className={styles.sellerCardEmoji} aria-hidden>{avatarEmoji}</span>
-          ) : (
-            <span className={styles.sellerCardInitial} aria-hidden>
-              {sellerDisplayName?.charAt(0)?.toUpperCase() || '?'}
-            </span>
-          )}
+          <UserAvatar avatar={sellerAvatar} name={sellerDisplayName} size={56} />
         </div>
       </div>
       <div className={styles.sellerRatingLine}>{ratingText}</div>

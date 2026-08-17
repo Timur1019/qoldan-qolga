@@ -1,14 +1,8 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import { Layout, ProfileLayout, ProtectedRoute, AdminRoute, AdminLayout } from './components'
+import { Layout, ProtectedRoute, AdminRoute } from './components'
 import { IdVerificationProvider } from './context/IdVerificationContext'
 import { AdDetail, AdsList, CategoryView, CreateAd, Favorites } from './features/ad'
 import {
-  Home,
-  About,
-  Regions,
-  Rules,
-  RuleDocument,
-  BusinessSignup,
   AdminDashboard,
   AdminUsers,
   AdminReports,
@@ -16,14 +10,26 @@ import {
   AdminTopBanners,
   AdminLogin,
   AdminBusinessApplications,
+  AdminLayout,
+} from './features/admin'
+import {
+  EditProfile,
   MyAds,
   MyReviews,
-  EditProfile,
-  Chat,
   SellerProfile,
-  VerificationCallback,
+  ProfileLayout,
+} from './features/profile'
+import { Home } from './features/home'
+import { Chat } from './features/chat'
+import { BusinessSignup } from './features/business'
+import {
+  About,
+  Regions,
+  Rules,
+  RuleDocument,
   PromoResult,
-} from './pages'
+  VerificationCallback,
+} from './features/content'
 
 export default function App() {
   return (

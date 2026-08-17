@@ -1,0 +1,65 @@
+.adRowList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.noAds {
+  color: var(--color-muted, #666);
+}
+
+.listWrap {
+  position: relative;
+  min-height: 120px;
+  transition: opacity 0.28s ease;
+}
+
+.listRefreshing {
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+.listRefreshing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.42);
+  border-radius: 8px;
+  animation: listOverlayFade 0.22s ease-out;
+}
+
+@keyframes listOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.showMoreWrap {
+  text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.showMoreBtn {
+  display: inline-block;
+  min-width: 200px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.showMoreBtn:hover:not(:disabled) {
+  background: #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.showMoreBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

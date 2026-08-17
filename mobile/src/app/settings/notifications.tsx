@@ -1,46 +1,46 @@
-import * as SecureStore from 'expo-secure-store';
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Switch, Text, View } from 'react-native';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { colors } from '@/theme/colors';
-
+import {
+  getNotificationPrefs,
+  setNotificationPref,
+  type NotificationPrefKey,
+} from '@/notifications/notificationPrefs';
+import { syncExpoPushToken } from '@/notifications/syncExpoPushToken';
 import { styles } from '@/styles/screens/notifications.styles';
-
-const KEY_IMPORTANT = 'notif_important';
-const KEY_PROMO = 'notif_promo';
-
-async function readBool(key: string, fallback = true) {
-  try {
-    const v = await SecureStore.getItemAsync(key);
-    if (v == null) return fallback;
-    return v === '1';
-  } catch {
-    return fallback;
-  }
-}
-
-async function writeBool(key: string, value: boolean) {
-  try {
-    await SecureStore.setItemAsync(key, value ? '1' : '0');
-  } catch {
-    // ignore
-  }
-}
+import { colors } from '@/theme/colors';
 
 export default function NotificationsSettingsScreen() {
   const { t } = useLanguage();
-  const [important, setImportant] = useState(true);
+  const { isAuthenticated } = useAuth();
+  const [chat, setChat] = useState(true);
+  const [system, setSystem] = useState(true);
   const [promo, setPromo] = useState(true);
 
   useEffect(() => {
-    void Promise.all([readBool(KEY_IMPORTANT), readBool(KEY_PROMO)]).then(([a, b]) => {
-      setImportant(a);
-      setPromo(b);
+    void getNotificationPrefs().then((p) => {
+      setChat(p.chat);
+      setSystem(p.system);
+      setPromo(p.promo);
     });
   }, []);
+
+  const onToggle = (key: NotificationPrefKey, value: boolean) => {
+    if (key === 'chat') setChat(value);
+    if (key === 'system') setSystem(value);
+    if (key === 'promo') setPromo(value);
+    void (async () => {
+      await setNotificationPref(key, value);
+      if (isAuthenticated) {
+        await syncExpoPushToken().catch(() => {});
+      }
+    })();
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -48,15 +48,24 @@ export default function NotificationsSettingsScreen() {
       <View style={styles.card}>
         <View style={styles.row}>
           <View style={styles.textCol}>
-            <Text style={styles.title}>{t('settings.notifImportant')}</Text>
-            <Text style={styles.sub}>{t('settings.notifImportantSub')}</Text>
+            <Text style={styles.title}>{t('settings.notifChat')}</Text>
+            <Text style={styles.sub}>{t('settings.notifChatSub')}</Text>
           </View>
           <Switch
-            value={important}
-            onValueChange={(v) => {
-              setImportant(v);
-              void writeBool(KEY_IMPORTANT, v);
-            }}
+            value={chat}
+            onValueChange={(v) => onToggle('chat', v)}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={colors.white}
+          />
+        </View>
+        <View style={styles.row}>
+          <View style={styles.textCol}>
+            <Text style={styles.title}>{t('settings.notifSystem')}</Text>
+            <Text style={styles.sub}>{t('settings.notifSystemSub')}</Text>
+          </View>
+          <Switch
+            value={system}
+            onValueChange={(v) => onToggle('system', v)}
             trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor={colors.white}
           />
@@ -68,10 +77,7 @@ export default function NotificationsSettingsScreen() {
           </View>
           <Switch
             value={promo}
-            onValueChange={(v) => {
-              setPromo(v);
-              void writeBool(KEY_PROMO, v);
-            }}
+            onValueChange={(v) => onToggle('promo', v)}
             trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor={colors.white}
           />

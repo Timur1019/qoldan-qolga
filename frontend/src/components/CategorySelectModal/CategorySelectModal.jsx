@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLang } from '../../context/LangContext'
-import { referenceApi } from '../../api/client'
+import { referenceApi } from '@/api/reference'
 import CategoryIcon from '../ui/CategoryIcon'
 import styles from './CategorySelectModal.module.css'
 

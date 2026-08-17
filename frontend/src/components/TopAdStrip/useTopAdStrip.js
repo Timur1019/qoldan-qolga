@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { referenceApi } from '../../api/client'
+import { referenceApi } from '@/api/reference'
 import { invalidateCachedGet } from '../../api/ttlCache'
 import { dismissBannerForAWhile, isBannerDismissed } from './topAdStripDismiss'
 

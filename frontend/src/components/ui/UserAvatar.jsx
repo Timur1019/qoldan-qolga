@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { imageUrl } from '../../api/client'
+import { imageUrl } from '@/api/client'
 import styles from './UserAvatar.module.css'
 
 const AVATAR_EMOJI = {
@@ -29,6 +29,7 @@ export default function UserAvatar({
   initials,
   className = '',
   own = false,
+  size,
 }) {
   const [failed, setFailed] = useState(false)
   const emoji = avatar ? AVATAR_EMOJI[avatar] : null
@@ -36,7 +37,11 @@ export default function UserAvatar({
   const letters = initials || getInitials(name)
 
   return (
-    <span className={`${styles.avatar} ${own ? styles.own : ''} ${className}`.trim()} title={name || undefined}>
+    <span
+      className={`${styles.avatar} ${own ? styles.own : ''} ${className}`.trim()}
+      title={name || undefined}
+      style={size ? { '--avatar-size': `${size}px` } : undefined}
+    >
       {showPhoto ? (
         <img
           src={imageUrl(avatar)}

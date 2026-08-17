@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { favoritesApi } from '../api/client'
+import { favoritesApi } from '@/api/ads'
 import { useAuth } from '../context/AuthContext'
 
 /**

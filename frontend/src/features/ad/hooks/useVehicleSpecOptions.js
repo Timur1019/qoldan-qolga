@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { referenceApi } from '../services/adApi'
+import { referenceApi } from '@/api/reference'
 import { FALLBACK_VEHICLE_SPEC_OPTIONS } from '../../../constants/vehicleSpecOptions'
 
 function normalizeGroups(data) {

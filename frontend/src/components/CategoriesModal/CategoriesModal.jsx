@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../../context/LangContext'
-import { referenceApi } from '../../api/client'
+import { referenceApi } from '@/api/reference'
 import { categoryPath, adsCategoryPath } from '../../constants/routes'
 import CategoryIcon from '../ui/CategoryIcon'
 import styles from './CategoriesModal.module.css'

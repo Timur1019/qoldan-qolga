@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
 import { authApi, isAuthError, setToken } from '@/api/client';
+import { unregisterStoredPushToken } from '@/notifications/syncExpoPushToken';
 
 interface User {
   id: string;
@@ -33,7 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(token ? userData : null);
   }, []);
 
-  const logout = useCallback(() => setAuth(null), [setAuth]);
+  const logout = useCallback(async () => {
+    await unregisterStoredPushToken();
+    await setAuth(null);
+  }, [setAuth]);
 
   const loadUser = useCallback(async () => {
     try {

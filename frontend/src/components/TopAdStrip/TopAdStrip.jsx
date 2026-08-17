@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { imageUrl } from '../../api/client'
+import { imageUrl } from '@/api/client'
 import { useTopAdStrip } from './useTopAdStrip'
 import styles from './TopAdStrip.module.css'
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import useCategoryLabels from '../../hooks/useCategoryLabels'
 import AdCard from '../AdCard'
-import gridStyles from '../AdCardGrid/AdCardGrid.module.css'
+import AdCardGrid from '../AdCardGrid'
 import styles from './SimilarAdsSection.module.css'
 
 /**
@@ -28,7 +28,7 @@ export default function SimilarAdsSection({ ads = [] }) {
         <i className={`bi ${open ? 'bi-chevron-up' : 'bi-chevron-down'} ${styles.chevron}`} aria-hidden />
       </button>
       {open ? (
-        <ul className={gridStyles.gridCols5}>
+        <AdCardGrid variant="cols5">
           {ads.map((item) => (
             <AdCard
               key={item.id}
@@ -40,7 +40,7 @@ export default function SimilarAdsSection({ ads = [] }) {
               showDate={false}
             />
           ))}
-        </ul>
+        </AdCardGrid>
       ) : null}
     </section>
   )

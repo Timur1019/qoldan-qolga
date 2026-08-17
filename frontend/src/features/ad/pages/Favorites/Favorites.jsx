@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
-import { imageUrl } from '../../services/adApi'
 import { sellerPath } from '../../../../constants/routes'
+import UserAvatar from '@/components/ui/UserAvatar'
 import useCategoryLabels from '../../hooks/useCategoryLabels'
 import FavoritesAdsSection from './FavoritesAdsSection'
 import FavoritesEmptyState from './FavoritesEmptyState'
@@ -11,7 +11,15 @@ import ContentReveal from '../../../../components/ui/ContentReveal/ContentReveal
 import LoadMoreButton from '../../../../components/ui/LoadMoreButton/LoadMoreButton'
 import styles from './Favorites.module.css'
 
-const AVATAR_EMOJI = { star: '⭐', cactus: '🌵', donut: '🍩', duck: '🦆', cat: '🐱', alien: '👽' }
+function profileAvatarValue(p) {
+  const photo =
+    p?.avatarUrl ||
+    p?.uploadedAvatar ||
+    (p?.avatar && (String(p.avatar).startsWith('/') || String(p.avatar).startsWith('http'))
+      ? p.avatar
+      : null)
+  return photo || p?.avatar || ''
+}
 
 export default function Favorites() {
   const { t, lang } = useLang()
@@ -35,24 +43,6 @@ export default function Favorites() {
   const ads = items || []
   const recAds = recommended || []
   const categoryLabels = useCategoryLabels([...ads, ...recAds], lang)
-
-  const getProfileAvatar = (p) => {
-    const photoUrl =
-      p?.avatarUrl ||
-      p?.uploadedAvatar ||
-      (p?.avatar && (String(p.avatar).startsWith('/') || String(p.avatar).startsWith('http'))
-        ? p.avatar
-        : null)
-    if (photoUrl) return <img src={imageUrl(photoUrl)} alt="" className={styles.profileAvatarImg} />
-    const emoji = p?.avatar && AVATAR_EMOJI[p.avatar] ? AVATAR_EMOJI[p.avatar] : null
-    if (emoji) return <span className={styles.profileAvatarEmoji} aria-hidden>{emoji}</span>
-    const initials = (p?.displayName || '?').trim().split(/\s+/)
-    const initial =
-      initials.length >= 2
-        ? (initials[0][0] + initials[initials.length - 1][0]).toUpperCase()
-        : (p?.displayName || '?').slice(0, 2).toUpperCase()
-    return <span className={styles.profileAvatarInitial} aria-hidden>{initial}</span>
-  }
 
   if (loading) {
     return (
@@ -112,7 +102,9 @@ export default function Favorites() {
               {profiles.map((p) => (
                 <li key={p.id} className={`app-card ${styles.profileCard}`}>
                   <Link to={sellerPath(p.id)} className={styles.profileCardLink}>
-                    <div className={styles.profileCardAvatar}>{getProfileAvatar(p)}</div>
+                    <div className={styles.profileCardAvatar}>
+                      <UserAvatar avatar={profileAvatarValue(p)} name={p.displayName || ''} size={48} />
+                    </div>
                     <div className={styles.profileCardBody}>
                       <h2 className={styles.profileCardName}>{p.displayName || t('ads.seller')}</h2>
                       <p className={styles.profileMeta}>

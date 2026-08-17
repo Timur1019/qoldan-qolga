@@ -1,0 +1,18 @@
+---
+description: Формы и кнопки только через shared/ui
+globs: frontend/src/**/*.{js,jsx,css}
+alwaysApply: false
+---
+
+# Frontend: UI-kit
+
+Список: `frontend/src/shared/ui/README.md`.
+
+- Новая форма: `UiField`, `UiInput`, `UiButton`, `UiSelect`, `UiToggle`, `UiChoiceList`, `UiAlert` из `@/shared/ui`.
+- Не копировать `btn btn-primary` / `form-control` в новый код. Не добавлять кнопки форм в `src/components/ui`.
+- Файл, который открыли по задаче, при правке формы переводить на kit, старый дубль удалять.
+- `UiToggle.onChange(nextChecked)` — boolean, не DOM-событие.
+- Модалка / пагинация — `UiModal`, `UiPagination` из `@/shared/ui`. Empty / confirm / tabs, если нужны в двух местах — сначала компонент в `shared/ui`.
+- Не копировать `AVATAR_EMOJI`: есть `UserAvatar`.
+
+Образец: `features/ad/components/CreateAdFlags`, `features/auth/components/AuthModal`.

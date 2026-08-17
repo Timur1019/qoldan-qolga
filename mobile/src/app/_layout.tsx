@@ -6,10 +6,12 @@ import { AuthProvider } from '@/context/AuthContext';
 import { AuthRequiredProvider } from '@/context/AuthRequiredContext';
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import { RegionsProvider } from '@/context/RegionsContext';
+import { usePushNotifications } from '@/notifications/usePushNotifications';
 import { colors } from '@/theme/colors';
 
 function RootNavigator() {
   const { t } = useLanguage();
+  usePushNotifications();
 
   return (
     <>

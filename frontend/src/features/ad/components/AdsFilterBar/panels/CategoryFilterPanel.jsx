@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { referenceApi } from '../../../services/adApi'
+import { referenceApi } from '@/api/reference'
 import CategoryIcon from '../../../../../components/ui/CategoryIcon'
 import styles from '../AdsFilterBar.module.css'
 

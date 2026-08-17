@@ -1,0 +1,5 @@
+export { default as EditProfile } from './pages/EditProfile/EditProfile'
+export { default as MyAds } from './pages/MyAds/MyAds'
+export { default as MyReviews } from './pages/MyReviews/MyReviews'
+export { default as SellerProfile } from './pages/SellerProfile/SellerProfile'
+export { default as ProfileLayout } from './components/ProfileLayout/ProfileLayout'

@@ -256,6 +256,9 @@ export const uz: TranslationDict = {
   'notify.priceWatchDropped': 'Narx tushdi: {amount}',
   'notify.priceWatchRose': 'Narx oshdi: {amount}',
 
+  'notify.welcomeTitle': 'Xush kelibsiz',
+  'notify.welcomeBody': 'Bildirishnomalar yoqildi: xabarlar, holatlar va aksiyalar — oddiy ilovadagidek.',
+
   'settings.notifications': 'Bildirishnomalar',
   'settings.notificationsTitle': 'Bildirishnomalar sozlamasi',
   'settings.feed': 'Lenta sozlamalari',
@@ -266,10 +269,12 @@ export const uz: TranslationDict = {
   'settings.deleteAccount': "Akkauntni o'chirish",
   'settings.deleteHint':
     "Akkauntni o'chirish uchun qo'llab-quvvatlashga yozing. To'liq o'chirish veb-versiyada ham mavjud.",
-  'settings.notifImportant': 'Muhim bildirishnomalar',
-  'settings.notifImportantSub': "Buyurtma holati, yetkazib berish va xabarlar",
-  'settings.notifPromo': 'Aksiya va takliflar',
-  'settings.notifPromoSub': 'To‘plamlar, chegirmalar va tavsiyalar',
+  'settings.notifChat': 'Xabarlar',
+  'settings.notifChatSub': 'Sotuvchi va xaridor chatidagi yangi javoblar',
+  'settings.notifSystem': 'Tizim',
+  'settings.notifSystemSub': 'Moderatsiya, do‘kon holati va muhim voqealar',
+  'settings.notifPromo': 'Aksiya va reklama',
+  'settings.notifPromoSub': 'Tarif yoqilganda va e’lonlar tanlovi',
 
   'legal.privacy': "Shaxsiy ma'lumotlarni qayta ishlash siyosati",
   'legal.terms': 'Foydalanuvchi kelishuvi',
