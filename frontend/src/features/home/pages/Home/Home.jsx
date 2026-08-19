@@ -102,17 +102,17 @@ export default function Home() {
       <h1 className={styles.title}>{t('home.title')}</h1>
 
       <div className={styles.topRow}>
-        <div className={styles.topMain}>
+        <div className={styles.topCats}>
           {categoriesLoading ? (
             <HomeCategoryGridSkeleton />
           ) : (
             <HomeCategoryGrid categories={categories} lang={lang} t={t} />
           )}
-          <HomeSellBanner t={t} className={styles.homeSellBanner} />
         </div>
         <div className={styles.topSide}>
           <HomeBusinessPanel t={t} />
         </div>
+        <HomeSellBanner t={t} className={styles.homeSellBanner} />
       </div>
       <HomePromoSection banners={promoBanners} t={t} />
 

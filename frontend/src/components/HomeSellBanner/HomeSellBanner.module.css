@@ -1,30 +1,21 @@
 .banner {
   --sell-banner-height: 168px;
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(20rem, 38%) minmax(0, 62%);
-  align-items: stretch;
+  display: block;
   width: 100%;
   height: var(--sell-banner-height);
   margin: var(--layout-gap, 0.85rem) 0 1.25rem;
   overflow: hidden;
   box-sizing: border-box;
   border-radius: 24px;
-  background:
-    radial-gradient(80% 120% at 28% 0%, rgba(107, 205, 131, 0.2), transparent 55%),
-    linear-gradient(118deg, #033421 0%, #04492d 46%, #0a5c3a 100%);
+  background: linear-gradient(118deg, #033421 0%, #04492d 42%, #0a5c3a 100%);
   color: #fff;
   isolation: isolate;
   animation: bannerIn 0.55s ease both;
 }
 
 .glow {
-  position: absolute;
-  inset: auto -8% -50% 28%;
-  height: 110%;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.14), transparent 72%);
-  pointer-events: none;
-  z-index: 1;
+  display: none;
 }
 
 .copy {
@@ -34,9 +25,12 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.32rem;
-  padding: 0.85rem 0.9rem 0.85rem 1.4rem;
-  min-width: 0;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  width: min(42%, 22rem);
+  height: 100%;
+  padding: 0.9rem 1.5rem 0.9rem 1.5rem;
+  background: linear-gradient(90deg, #033421 0%, rgba(4, 73, 45, 0.94) 62%, rgba(4, 73, 45, 0) 100%);
 }
 
 .kicker {
@@ -50,7 +44,7 @@
 
 .title {
   margin: 0;
-  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
   font-weight: 750;
   letter-spacing: -0.02em;
   line-height: 1.18;
@@ -65,8 +59,8 @@
 
 .subtitle {
   margin: 0;
-  max-width: 36ch;
-  font-size: 0.88rem;
+  max-width: 32ch;
+  font-size: 0.84rem;
   line-height: 1.35;
   color: rgba(255, 255, 255, 0.74);
   display: -webkit-box;
@@ -80,13 +74,13 @@
   flex-shrink: 0;
   align-items: center;
   gap: 0.4rem;
-  margin-top: 0.2rem;
-  padding: 0.58rem 1.15rem;
+  margin-top: 0.15rem;
+  padding: 0.55rem 1.1rem;
   border-radius: 999px;
   background: #fff;
   color: #04492d;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1;
   text-decoration: none;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
@@ -100,21 +94,14 @@
 }
 
 .artWrap {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 0;
-  min-width: 0;
-  min-height: 0;
   overflow: hidden;
 }
 
 .artWrap::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 22%;
-  background: linear-gradient(90deg, #04492d 0%, rgba(4, 73, 45, 0) 100%);
-  pointer-events: none;
-  z-index: 1;
+  display: none;
 }
 
 .art {
@@ -124,13 +111,13 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center right;
-  transform: scale(1.02);
+  object-position: 62% center;
+  transform: scale(1.04);
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .banner:hover .art {
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
 @keyframes bannerIn {
@@ -145,8 +132,8 @@
 }
 
 @media (max-width: 1100px) {
-  .banner {
-    grid-template-columns: minmax(16rem, 44%) minmax(0, 56%);
+  .copy {
+    width: min(52%, 20rem);
   }
 }
 
@@ -154,7 +141,6 @@
   .banner {
     display: flex;
     align-items: center;
-    grid-template-columns: none;
     height: auto;
     gap: 8px;
     margin-top: 10px;
@@ -175,8 +161,10 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    height: auto;
     gap: 8px;
     padding: 0;
+    background: none;
   }
 
   .title {

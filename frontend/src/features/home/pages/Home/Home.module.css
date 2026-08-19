@@ -14,28 +14,32 @@
 .topRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-areas:
+    'cats biz'
+    'banner .';
   gap: var(--layout-gap, 0.85rem);
   align-items: stretch;
   margin: 1.15rem 0 0;
   min-width: 0;
 }
 
-.topMain {
+.topCats {
+  grid-area: cats;
   min-width: 0;
   min-height: 0;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: var(--layout-gap, 0.85rem);
 }
 
 .homeSellBanner {
+  grid-area: banner;
   margin: 0;
 }
 
 .topSide {
+  grid-area: biz;
   min-width: 0;
   min-height: 0;
   display: grid;
+  align-self: stretch;
 }
 
 @media (max-width: 767px) {
@@ -45,6 +49,9 @@
 
   .topRow {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'cats'
+      'banner';
     margin-top: 4px;
   }
 
