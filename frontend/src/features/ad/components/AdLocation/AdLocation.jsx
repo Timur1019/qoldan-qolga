@@ -4,11 +4,13 @@ import OSMMap from '../../../../components/OSMMap/OSMMap'
 import { TASHKENT } from '../../utils/constants'
 import styles from './AdLocation.module.css'
 
-function AdLocation({ region, district, address, landmark, canDeliver }) {
+function AdLocation({ region, district, address, landmark, canDeliver, lat, lng }) {
   const { t } = useLang()
 
   const addressText = address || [region, district].filter(Boolean).join(', ')
   const hasLocation = addressText || landmark
+  const hasCoords = Number.isFinite(Number(lat)) && Number.isFinite(Number(lng))
+  const mapPos = hasCoords ? [Number(lat), Number(lng)] : TASHKENT
 
   return (
     <section className={styles.section}>
@@ -22,7 +24,7 @@ function AdLocation({ region, district, address, landmark, canDeliver }) {
       )}
 
       <div className={styles.mapWrap}>
-        <OSMMap center={TASHKENT} position={TASHKENT} />
+        <OSMMap center={mapPos} position={mapPos} />
       </div>
 
       {hasLocation && (

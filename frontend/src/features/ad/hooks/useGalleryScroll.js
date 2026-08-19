@@ -34,11 +34,10 @@ export function useGalleryScroll(count) {
     if (!el || count < 2) return undefined
     const onWheel = (e) => {
       if (el.scrollWidth <= el.clientWidth) return
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
-      el.scrollLeft += e.deltaY
-      e.preventDefault()
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+      el.scrollLeft += e.deltaX
     }
-    el.addEventListener('wheel', onWheel, { passive: false })
+    el.addEventListener('wheel', onWheel, { passive: true })
     return () => el.removeEventListener('wheel', onWheel)
   }, [count])
 

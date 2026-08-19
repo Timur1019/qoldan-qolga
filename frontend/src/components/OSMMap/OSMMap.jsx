@@ -62,7 +62,7 @@ export default function OSMMap({ center, position, onPositionChange, className }
         center={position || initialCenter}
         zoom={13}
         className={styles.map}
-        scrollWheelZoom
+        scrollWheelZoom={Boolean(onPositionChange)}
         attributionControl={false}
       >
         <TileLayer

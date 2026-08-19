@@ -53,10 +53,10 @@ export function useCardGalleryPeek(count) {
     if (!el || count < 2) return undefined
 
     const onWheel = (e) => {
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+      const delta = e.deltaX
       if (!delta) return
       e.preventDefault()
-      e.stopPropagation()
       accRef.current += delta
       if (Math.abs(accRef.current) < 36) return
       const dir = accRef.current > 0 ? 1 : -1

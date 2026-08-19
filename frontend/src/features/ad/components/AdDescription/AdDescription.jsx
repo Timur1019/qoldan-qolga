@@ -4,6 +4,7 @@ import { QUICK_QUESTIONS } from '../../utils/constants'
 import { descriptionWithoutLocation } from '../../utils/descriptionLocation'
 import CategoryIcon from '../../../../components/ui/CategoryIcon'
 import AdVehicleCharacteristics from './AdVehicleCharacteristics'
+import AdRealEstateCharacteristics from './AdRealEstateCharacteristics'
 import AdJobCharacteristics from './AdJobCharacteristics'
 import styles from './AdDescription.module.css'
 

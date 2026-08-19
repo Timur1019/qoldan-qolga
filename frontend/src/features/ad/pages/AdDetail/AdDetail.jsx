@@ -161,6 +161,8 @@ export default function AdDetail() {
                 address={ad.address || locationFromDescription.address}
                 landmark={ad.landmark || locationFromDescription.landmark}
                 canDeliver={ad.canDeliver}
+                lat={ad.locationLat}
+                lng={ad.locationLng}
               />
             </div>
             <div className={styles.leftCard}>
