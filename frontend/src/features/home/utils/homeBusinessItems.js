@@ -1,6 +1,7 @@
 import { adsCategoryPath, categoryPath } from '@/constants/routes'
+import { JOB_ROOT } from '@/constants/jobCategories'
 
-/** Пункты блока «для дела» на главной — 5 направлений Qoldan Qolga. */
+/** Популярные направления блока «для дела» — полный ряд 3×2. */
 export const HOME_BUSINESS_ITEMS = [
   {
     id: 'transport',
@@ -13,6 +14,12 @@ export const HOME_BUSINESS_ITEMS = [
     code: 'Nedvizhimost',
     to: categoryPath('Nedvizhimost'),
     labelKey: 'home.bizRealty',
+  },
+  {
+    id: 'jobs',
+    code: JOB_ROOT,
+    to: categoryPath(JOB_ROOT),
+    labelKey: 'home.bizJobs',
   },
   {
     id: 'services',

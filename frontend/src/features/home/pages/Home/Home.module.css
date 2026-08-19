@@ -16,7 +16,7 @@
   grid-template-columns: minmax(0, 1fr) 260px;
   grid-template-areas:
     'cats biz'
-    'banner .';
+    'banner biz';
   gap: var(--layout-gap, 0.85rem);
   align-items: stretch;
   margin: 1.15rem 0 0;
