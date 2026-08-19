@@ -16,4 +16,5 @@ export const referenceApi = {
   getHomePromoBanners: () => cachedGet('promo-banners', () => apiRequest('/home-promo-banners'), 5 * 60 * 1000),
   getSiteTopBanners: () => cachedGet('site-top-banners', () => apiRequest('/site-top-banners'), 60 * 1000),
   getHomeSellBanners: () => cachedGet('home-sell-banners', () => apiRequest('/home-sell-banners'), 60 * 1000),
+  getAdSidebarBanners: () => cachedGet('ad-sidebar-banners', () => apiRequest('/ad-sidebar-banners'), 60 * 1000),
 }

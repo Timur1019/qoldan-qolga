@@ -1,0 +1,160 @@
+.page {
+  max-width: 720px;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.muted {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.loading {
+  margin: 0 0 0.5rem;
+  color: #64748b;
+}
+
+.empty {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.75rem 1rem;
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: #111827;
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+  margin-bottom: 0.65rem;
+  color: #fff;
+}
+
+.previewArt {
+  width: 56px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.previewArtFallback {
+  width: 56px;
+  height: 72px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: #a7f3d0;
+  flex-shrink: 0;
+}
+
+.previewText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+  font-size: 0.875rem;
+}
+
+.previewLink {
+  color: #bbf7d0;
+  font-weight: 500;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badgeOn,
+.badgeOff {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.badgeOn {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.badgeOff {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.formTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #334155;
+  margin-top: 0.85rem;
+}
+
+.imageRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.imageRow > *:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}

@@ -71,6 +71,21 @@ export const adminApi = {
     apiRequest(`/admin/home-sell-banners/${encodeURIComponent(id)}`, {
       method: 'DELETE',
     }),
+  getAdSidebarBanners: () => apiRequest('/admin/ad-sidebar-banners'),
+  createAdSidebarBanner: (body) =>
+    apiRequest('/admin/ad-sidebar-banners', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  updateAdSidebarBanner: (id, body) =>
+    apiRequest(`/admin/ad-sidebar-banners/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  deleteAdSidebarBanner: (id) =>
+    apiRequest(`/admin/ad-sidebar-banners/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   getBusinessApplications: (params) =>
     apiRequest(`/admin/business-applications${buildQueryString(params)}`),
   getBusinessApplication: (id) =>

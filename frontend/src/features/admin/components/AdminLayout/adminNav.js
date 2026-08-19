@@ -7,4 +7,5 @@ export const ADMIN_NAV = [
   { to: '/admin/banners', icon: 'bi-image', labelKey: 'adminPanel.navHomeBanners' },
   { to: '/admin/top-banners', icon: 'bi-window', labelKey: 'adminPanel.navTopBanners' },
   { to: '/admin/sell-banners', icon: 'bi-megaphone', labelKey: 'adminPanel.navSellBanners' },
+  { to: '/admin/ad-sidebar-banners', icon: 'bi-layout-sidebar-inset-reverse', labelKey: 'adminPanel.navAdSidebarBanners' },
 ]

@@ -78,4 +78,5 @@
     <include file="changes/073-insert-job-categories.xml" relativeToChangelogFile="true"/>
     <include file="changes/074-add-job-ad-fields.xml" relativeToChangelogFile="true"/>
     <include file="changes/075-home-sell-banners.xml" relativeToChangelogFile="true"/>
+    <include file="changes/076-ad-sidebar-banners.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

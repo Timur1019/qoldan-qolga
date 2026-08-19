@@ -6,5 +6,6 @@ export { default as AdminBusinessApplications } from './pages/AdminBusinessAppli
 export { default as AdminBanners } from './pages/AdminBanners/AdminBanners'
 export { default as AdminTopBanners } from './pages/AdminTopBanners/AdminTopBanners'
 export { default as AdminSellBanners } from './pages/AdminSellBanners/AdminSellBanners'
+export { default as AdminAdSidebarBanners } from './pages/AdminAdSidebarBanners/AdminAdSidebarBanners'
 export { default as AdminLogin } from './pages/AdminLogin/AdminLogin'
 export { default as AdminLayout } from './components/AdminLayout/AdminLayout'

@@ -2,8 +2,25 @@
   max-width: var(--layout-max, 1280px);
 }
 
+.canvas {
+  position: relative;
+}
+
+.canvas::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 60% at 100% 0%, rgba(4, 73, 45, 0.1), transparent 46%),
+    radial-gradient(70% 50% at 0% 100%, rgba(4, 73, 45, 0.06), transparent 50%),
+    linear-gradient(180deg, #e7eee9 0%, #f3f6f4 42%, #eef2f0 100%);
+}
+
 .mainContent {
-  background: var(--color-bg, #fff);
+  background: transparent;
+  padding-bottom: 1.5rem;
 }
 
 .threeCol {

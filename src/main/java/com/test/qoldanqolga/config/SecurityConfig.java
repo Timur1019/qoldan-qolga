@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/home-promo-banners").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/site-top-banners").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/home-sell-banners").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ad-sidebar-banners").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/currency/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/business-applications").permitAll()
                         .requestMatchers("/api/payments/payme", "/api/payments/click/**").permitAll()

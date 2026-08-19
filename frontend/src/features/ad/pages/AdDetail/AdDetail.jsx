@@ -19,6 +19,8 @@ import AdDetailTopBar from '../../components/AdDetailTopBar'
 import AdDetailMeta from '../../components/AdDetailMeta'
 import AdGallerySellerFooter from '../../components/AdGallerySellerFooter'
 import AdReportModal from '../../components/AdReportModal'
+import AdSidebarPromo from '../../components/AdSidebarPromo/AdSidebarPromo'
+import useAdSidebarBanners from '../../hooks/useAdSidebarBanners'
 import { buildPriceInsight } from '../../utils/priceInsight'
 import { extractLocationFromDescription } from '../../utils/descriptionLocation'
 import { isSellerStore } from '../../utils/isSellerStore'
@@ -43,6 +45,7 @@ export default function AdDetail() {
   } = useAdDetail(id)
 
   const extras = useAdDetailExtras(ad, user, isAuthenticated, lang)
+  const sidebarBanners = useAdSidebarBanners()
   const regionLabel = useRegionLabel(ad?.region)
   const actions = useAdActions(ad, user, { setAd, setError })
   const priceWatch = usePriceWatch(ad)
@@ -105,7 +108,7 @@ export default function AdDetail() {
   const priceInsight = buildPriceInsight(ad, similar?.content, extras.usdToUzs)
 
   return (
-    <div className={`page-container app-page ${styles.widePage}`}>
+    <div className={`page-container app-page ${styles.widePage} ${styles.canvas}`}>
       {!isMobile && (
         <AdDetailTopBar
           ad={ad}
@@ -205,6 +208,7 @@ export default function AdDetail() {
                 />
               )}
             </div>
+            <AdSidebarPromo banners={sidebarBanners} />
           </div>
         </div>
 
