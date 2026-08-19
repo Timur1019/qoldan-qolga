@@ -6,7 +6,7 @@ import { bannerCtaHref } from './bannerCtaHref'
 import HomeSellBannerCta from './HomeSellBannerCta'
 import styles from './HomeSellBanner.module.css'
 
-export default function HomeSellBanner({ t, compact = false }) {
+export default function HomeSellBanner({ t }) {
   const { banner, loaded } = useHomeSellBanner()
   if (loaded && !banner) return null
 
@@ -18,7 +18,7 @@ export default function HomeSellBanner({ t, compact = false }) {
   const artSrc = banner?.imageUrl ? imageUrl(banner.imageUrl) : bannerArt
 
   return (
-    <section className={`${styles.banner} ${compact ? styles.compact : ''}`} aria-label={title}>
+    <section className={styles.banner} aria-label={title}>
       <div className={styles.glow} aria-hidden />
       <div className={styles.copy}>
         {kicker ? <p className={styles.kicker}>{kicker}</p> : null}

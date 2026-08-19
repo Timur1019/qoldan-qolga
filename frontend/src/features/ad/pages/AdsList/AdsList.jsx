@@ -240,7 +240,7 @@ export default function AdsList() {
               t={t}
             />
           )}
-          {!isMobile && <HomeSellBanner t={t} compact />}
+          {!isMobile && <HomeSellBanner t={t} />}
           {!isMobile && (
             <h1 className="h2 mb-3 d-inline-flex align-items-center gap-2">
               {currentCategory ? <CategoryIcon code={currentCategory.code} parentCode={currentCategory.parentCode} /> : null}

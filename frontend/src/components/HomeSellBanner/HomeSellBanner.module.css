@@ -1,31 +1,21 @@
 .banner {
+  --sell-banner-height: 212px;
   position: relative;
   display: grid;
-  grid-template-columns: minmax(280px, 30%) minmax(0, 70%);
+  grid-template-columns: minmax(20rem, 38%) minmax(0, 62%);
   align-items: stretch;
   width: 100%;
-  height: 188px;
-  min-height: 188px;
-  max-height: 188px;
-  margin: var(--layout-gap, 0.85rem) 0 0;
+  height: var(--sell-banner-height);
+  margin: var(--layout-gap, 0.85rem) 0 1.25rem;
   overflow: hidden;
   box-sizing: border-box;
-  border-radius: 28px;
+  border-radius: 24px;
   background:
     radial-gradient(80% 120% at 28% 0%, rgba(107, 205, 131, 0.2), transparent 55%),
     linear-gradient(118deg, #033421 0%, #04492d 46%, #0a5c3a 100%);
   color: #fff;
   isolation: isolate;
   animation: bannerIn 0.55s ease both;
-}
-
-.compact {
-  margin-top: 0;
-  margin-bottom: 1.25rem;
-  height: 148px;
-  min-height: 148px;
-  max-height: 148px;
-  border-radius: 22px;
 }
 
 .glow {
@@ -44,15 +34,14 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 1.1rem 1rem 1.1rem 1.75rem;
-  min-height: 0;
-  overflow: hidden;
+  gap: 0.45rem;
+  padding: 1.15rem 1.1rem 1.15rem 1.75rem;
+  min-width: 0;
 }
 
 .kicker {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -61,16 +50,14 @@
 
 .title {
   margin: 0;
-  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
   font-weight: 750;
   letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.18;
   color: #fff;
 }
 
 .accent {
-  position: relative;
-  display: inline;
   background-image: linear-gradient(transparent 62%, rgba(107, 205, 131, 0.45) 62%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
@@ -78,23 +65,29 @@
 
 .subtitle {
   margin: 0;
-  max-width: 34ch;
-  font-size: 0.92rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.72);
+  max-width: 36ch;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.74);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .cta {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.35rem;
-  padding: 0.7rem 1.2rem;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+  padding: 0.58rem 1.15rem;
   border-radius: 999px;
   background: #fff;
   color: #04492d;
   font-weight: 700;
-  font-size: 0.98rem;
+  font-size: 0.9rem;
+  line-height: 1;
   text-decoration: none;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -118,7 +111,7 @@
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 28%;
+  width: 22%;
   background: linear-gradient(90deg, #04492d 0%, rgba(4, 73, 45, 0) 100%);
   pointer-events: none;
   z-index: 1;
@@ -137,11 +130,7 @@
 }
 
 .banner:hover .art {
-  transform: scale(1.06);
-}
-
-.compact .copy {
-  padding: 1.15rem 1rem 1.15rem 1.35rem;
+  transform: scale(1.05);
 }
 
 @keyframes bannerIn {
@@ -155,13 +144,9 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .banner {
-    grid-template-columns: minmax(240px, 36%) minmax(0, 64%);
-  }
-
-  .copy {
-    padding: 1.35rem 1rem 1.35rem 1.5rem;
+    grid-template-columns: minmax(18rem, 44%) minmax(0, 56%);
   }
 }
 
@@ -171,10 +156,9 @@
     align-items: center;
     grid-template-columns: none;
     height: auto;
-    min-height: 0;
-    max-height: none;
     gap: 8px;
     margin-top: 10px;
+    margin-bottom: 0.85rem;
     padding: 12px 14px;
     border-radius: 14px;
   }
