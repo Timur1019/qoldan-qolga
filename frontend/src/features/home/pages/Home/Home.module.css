@@ -24,7 +24,15 @@
   min-width: 0;
   min-height: 0;
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--layout-gap, 0.85rem);
 }
+
+.homeSellBanner {
+  margin: 0;
+}
+
+.topSide {
 
 .topSide {
   min-width: 0;

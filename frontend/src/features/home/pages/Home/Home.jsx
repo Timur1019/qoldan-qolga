@@ -108,12 +108,12 @@ export default function Home() {
           ) : (
             <HomeCategoryGrid categories={categories} lang={lang} t={t} />
           )}
+          <HomeSellBanner t={t} className={styles.homeSellBanner} />
         </div>
         <div className={styles.topSide}>
           <HomeBusinessPanel t={t} />
         </div>
       </div>
-      <HomeSellBanner t={t} />
       <HomePromoSection banners={promoBanners} t={t} />
 
       <section className={styles.adsSection}>
