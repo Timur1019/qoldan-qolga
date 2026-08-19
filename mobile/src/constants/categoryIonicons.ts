@@ -1,11 +1,15 @@
 import type { ComponentProps } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
+import { JOB_HIRE, JOB_ROOT, JOB_SEEK } from './jobCategories';
+
 type IoniconName = ComponentProps<typeof Ionicons>['name'];
 
 const ROOT_ICONS: Record<string, IoniconName> = {
   Xizmatlar: 'clipboard-outline',
-  Ish: 'briefcase-outline',
+  [JOB_ROOT]: 'briefcase-outline',
+  [JOB_SEEK]: 'person-outline',
+  [JOB_HIRE]: 'person-add-outline',
   Transport: 'car-outline',
   Nedvizhimost: 'home-outline',
   Elektronika: 'phone-portrait-outline',
@@ -22,5 +26,8 @@ const ROOT_ICONS: Record<string, IoniconName> = {
 
 export function categoryIonicon(code?: string | null): IoniconName {
   if (!code) return 'grid-outline';
-  return ROOT_ICONS[code] || 'grid-outline';
+  if (ROOT_ICONS[code]) return ROOT_ICONS[code];
+  if (code.startsWith('JobSeek_')) return ROOT_ICONS[JOB_SEEK];
+  if (code.startsWith('Hire_')) return ROOT_ICONS[JOB_HIRE];
+  return 'grid-outline';
 }

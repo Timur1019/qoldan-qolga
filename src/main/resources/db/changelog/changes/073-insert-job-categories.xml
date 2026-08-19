@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="073-insert-job-mid" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ish qidiraman', 'Ищу работу', 'Ish_qidirish', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Xodim qidiraman', 'Ищу сотрудника', 'Ishchi_qidirish', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="073-insert-job-seek-leaves" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Arxitektura va dizayn', 'Архитектура и дизайн', 'JobSeek_architecture', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Bank va moliyaviy xizmatlar', 'Банковские и финансовые услуги', 'JobSeek_banking', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Maishiy va shaxsiy xizmatlar', 'Бытовые и персональные услуги', 'JobSeek_personal_services', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Davlat xizmati', 'Госслужба', 'JobSeek_gov', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mehmonxona biznesi va turizm', 'Гостиничный бизнес и туризм', 'JobSeek_hotel_tourism', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ko''mir, ruda va boshqa qazilmalarni qazib olish, qayta ishlash', 'Добыча, переработка угля, руд и других полезных ископаемых', 'JobSeek_mining', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Neft va gazni qazib olish, qayta ishlash, tashish', 'Добыча, переработка, транспортировка нефти и газа', 'JobSeek_oil_gas', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yetkazib berish, yuk tashish va logistika', 'Доставка, грузоперевозки и логистика', 'JobSeek_logistics', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kommunal xo''jalik va shahar infratuzilmasi', 'ЖКХ и городская инфраструктура', 'JobSeek_utilities', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qimor biznesi', 'Игорный бизнес', 'JobSeek_gambling', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Axborot texnologiyalari', 'Информационные технологии', 'JobSeek_it', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'San''at va ko''ngilochar', 'Искусство и развлечения', 'JobSeek_arts', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Klinning', 'Клининг', 'JobSeek_cleaning', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Konsalting', 'Консалтинг', 'JobSeek_consulting', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'O''rmon va yog''ochsozlik sanoati', 'Лесная и деревообрабатывающая промышленность', 'JobSeek_forestry', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Marketing, reklama va PR', 'Маркетинг, реклама и PR', 'JobSeek_marketing', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tibbiyot va farmatsevtika', 'Медицина и фармацевтика', 'JobSeek_medicine', 17, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Metallurgiya sanoati', 'Металлургическая промышленность', 'JobSeek_metallurgy', 18, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'NNT va jamoat faoliyati', 'НКО и общественная деятельность', 'JobSeek_nko', 19, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mudofaa sanoati', 'Оборонная промышленность', 'JobSeek_defense', 20, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ta''lim va fan', 'Образование и наука', 'JobSeek_education', 21, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Umumiy ovqatlanish', 'Общественное питание', 'JobSeek_catering', 22, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tadbirlarni tashkil etish', 'Организация мероприятий', 'JobSeek_events', 23, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qo''riqlash va jamoat tartibi', 'Охрана и общественный порядок', 'JobSeek_security', 24, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Chiqindilarni qayta ishlash', 'Переработка отходов', 'JobSeek_waste', 25, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Oziq-ovqat sanoati', 'Пищевая промышленность', 'JobSeek_food_industry', 26, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtomobillarni sotish va servis', 'Продажа и обслуживание автомобилей', 'JobSeek_auto_sales', 27, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ko''chmas mulkni sotish va boshqarish', 'Продажа и управление недвижимостью', 'JobSeek_realestate', 28, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Nooziq-ovqat iste''mol tovarlari ishlab chiqarish', 'Производство непродовольственных потребительских товаров', 'JobSeek_consumer_goods', 29, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sanoat uskunalari va stanoklar ishlab chiqarish', 'Производство промышленного оборудования и станков', 'JobSeek_machinery', 30, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Mato, kiyim va poyabzal ishlab chiqarish', 'Производство тканей, одежды и обуви', 'JobSeek_textiles', 31, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektro- va optik uskunalar ishlab chiqarish', 'Производство электро- и оптического оборудования', 'JobSeek_electro_opt', 32, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Elektronika va maishiy texnika ishlab chiqarish', 'Производство электроники и бытовой техники', 'JobSeek_electronics', 33, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Raketa-kosmik sanoat', 'Ракетно-космическая промышленность', 'JobSeek_aerospace', 34, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Xonalarni ta''mirlash va pardozlash', 'Ремонт и отделка помещений', 'JobSeek_renovation', 35, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ritual xizmatlar', 'Ритуальные услуги', 'JobSeek_funeral', 36, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Chakana va ulgurji savdo', 'Розничная и оптовая торговля', 'JobSeek_trade', 37, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qishloq xo''jaligi', 'Сельское хозяйство', 'JobSeek_agriculture', 38, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Omborlar va saqlash', 'Склады и хранилища', 'JobSeek_warehouses', 39, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'OAV va nashriyot', 'СМИ и издательское дело', 'JobSeek_media', 40, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sug''urta', 'Страхование', 'JobSeek_insurance', 41, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Turar-joy va tijorat ob''ektlari qurilishi', 'Строительство жилых и коммерческих объектов', 'JobSeek_build_civil', 42, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sanoat va infratuzilma ob''ektlari qurilishi', 'Строительство промышленных и инфраструктурных объектов', 'JobSeek_build_infra', 43, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Taksi va yo''lovchi tashish', 'Такси и пассажирские перевозки', 'JobSeek_taxi', 44, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Telekommunikatsiya va aloqa', 'Телекоммуникации и связь', 'JobSeek_telecom', 45, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Texnika va uskunalarni texnik xizmat, ta''mirlash', 'Техническое обслуживание, ремонт техники и оборудования', 'JobSeek_tech_repair', 46, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Transport mashinasozligi', 'Транспортное машиностроение', 'JobSeek_transport_eng', 47, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Og''ir mashinasozlik', 'Тяжёлое машиностроение', 'JobSeek_heavy_eng', 48, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Xodimlarni boshqarish', 'Управление персоналом', 'JobSeek_hr', 49, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Transport infratuzilmasini boshqarish', 'Управление транспортной инфраструктурой', 'JobSeek_transport_infra', 50, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Fitnes-klublar, spa va go''zallik salonlari', 'Фитнес-клубы, спа и салоны красоты', 'JobSeek_fitness', 51, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kimyo sanoati', 'Химическая промышленность', 'JobSeek_chemical', 52, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Energetika', 'Энергетика', 'JobSeek_energy', 53, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yurisprudensiya', 'Юриспруденция', 'JobSeek_legal', 54, false, id, NOW(), NOW() FROM categories WHERE code = 'Ish_qidirish' LIMIT 1;</sql>
+    </changeSet>
+
+    <changeSet id="073-insert-job-hire-leaves" author="qoldan-qolga">
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'IT, internet, telekom', 'IT, интернет, телеком', 'Hire_it', 1, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Avtomobil biznesi', 'Автомобильный бизнес', 'Hire_auto', 2, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ma''muriy ish', 'Административная работа', 'Hire_admin', 3, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Banklar, investitsiyalar', 'Банки, инвестиции', 'Hire_banks', 4, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tajribasiz, talabalar', 'Без опыта, студенты', 'Hire_no_experience', 5, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Buxgalteriya, moliya', 'Бухгалтерия, финансы', 'Hire_accounting', 6, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Oliy menejment', 'Высший менеджмент', 'Hire_top_mgmt', 7, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Davlat xizmati, NNT', 'Госслужба, НКО', 'Hire_gov_nko', 8, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Uy xodimlari', 'Домашний персонал', 'Hire_household', 9, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kommunal xo''jalik, ekspluatatsiya', 'ЖКХ, эксплуатация', 'Hire_utilities', 10, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'San''at, ko''ngilochar', 'Искусство, развлечения', 'Hire_arts', 11, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Konsalting', 'Консультирование', 'Hire_consulting', 12, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Kuryer yetkazib berish', 'Курьерская доставка', 'Hire_courier', 13, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Marketing, reklama, PR', 'Маркетинг, реклама, PR', 'Hire_marketing', 14, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Tibbiyot, farmatsevtika', 'Медицина, фармацевтика', 'Hire_medicine', 15, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ta''lim, fan', 'Образование, наука', 'Hire_education', 16, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qo''riqlash, xavfsizlik', 'Охрана, безопасность', 'Hire_security', 17, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sotuvlar', 'Продажи', 'Hire_sales', 18, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Ishlab chiqarish, xomashyo, qishloq xo''jaligi', 'Производство, сырьё, с/х', 'Hire_production', 19, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Sug''urta', 'Страхование', 'Hire_insurance', 20, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Qurilish', 'Строительство', 'Hire_construction', 21, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Taksi', 'Такси', 'Hire_taxi', 22, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Transport, logistika', 'Транспорт, логистика', 'Hire_logistics', 23, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Turizm, restoranlar', 'Туризм, рестораны', 'Hire_tourism', 24, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Xodimlarni boshqarish', 'Управление персоналом', 'Hire_hr', 25, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Fitnes, go''zallik salonlari', 'Фитнес, салоны красоты', 'Hire_fitness', 26, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+        <sql>INSERT INTO categories (id, name_uz, name_ru, code, sort_order, show_on_home, parent_id, created_at, updated_at)
+            SELECT gen_random_uuid()::text, 'Yurisprudensiya', 'Юриспруденция', 'Hire_legal', 27, false, id, NOW(), NOW() FROM categories WHERE code = 'Ishchi_qidirish' LIMIT 1;</sql>
+    </changeSet>
+
+</databaseChangeLog>

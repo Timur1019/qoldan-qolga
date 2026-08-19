@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="074-add-job-columns-to-ads" author="qoldan-qolga">
+        <addColumn tableName="advertisements">
+            <column name="job_profession" type="VARCHAR(80)"/>
+            <column name="job_industry" type="VARCHAR(50)"/>
+            <column name="job_priority" type="VARCHAR(30)"/>
+            <column name="job_employment" type="VARCHAR(80)"/>
+            <column name="job_schedule" type="VARCHAR(80)"/>
+            <column name="job_work_format" type="VARCHAR(30)"/>
+            <column name="job_salary_period" type="VARCHAR(20)"/>
+            <column name="job_pay_frequency" type="VARCHAR(80)"/>
+            <column name="job_experience" type="VARCHAR(30)"/>
+            <column name="job_citizenship" type="VARCHAR(40)"/>
+            <column name="job_age_from" type="INT"/>
+            <column name="job_age_to" type="INT"/>
+            <column name="job_company_verified" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_large_company" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_benefits" type="VARCHAR(120)"/>
+            <column name="job_for_candidates" type="VARCHAR(120)"/>
+        </addColumn>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_job_profession">
+            <column name="job_profession"/>
+        </createIndex>
+        <createIndex tableName="advertisements" indexName="idx_advertisements_job_industry">
+            <column name="job_industry"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

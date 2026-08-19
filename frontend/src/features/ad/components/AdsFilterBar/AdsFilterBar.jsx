@@ -190,6 +190,7 @@ export default function AdsFilterBar({
         </div>
         )}
 
+        {filterFlags.sellerType !== false && (
         <div className={styles.chipSlot}>
           <FilterChip
             label={t('ads.sellerType')}
@@ -211,6 +212,7 @@ export default function AdsFilterBar({
             />
           </FilterPopover>
         </div>
+        )}
 
         {filterFlags.giveAway !== false && (
           <FilterChip
@@ -228,6 +230,8 @@ export default function AdsFilterBar({
           />
         )}
 
+        {!filterFlags.jobs && (
+        <>
         <div className={styles.chipSlot}>
           <FilterChip
             label={t('ads.currency')}
@@ -270,6 +274,8 @@ export default function AdsFilterBar({
             />
           </FilterPopover>
         </div>
+        </>
+        )}
         </>
         )}
       </div>

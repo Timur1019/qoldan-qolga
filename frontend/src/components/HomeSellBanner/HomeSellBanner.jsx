@@ -1,28 +1,38 @@
-import { Link } from 'react-router-dom'
+import { imageUrl } from '@/api/client'
 import { ROUTES } from '../../constants/routes'
 import bannerArt from '../../img/baner/baner.png'
+import useHomeSellBanner from './useHomeSellBanner'
+import { bannerCtaHref } from './bannerCtaHref'
+import HomeSellBannerCta from './HomeSellBannerCta'
 import styles from './HomeSellBanner.module.css'
 
-/**
- * CTA «продавайте» — тёмный brand-баннер с коллажем товаров (baner.png).
- */
 export default function HomeSellBanner({ t, compact = false }) {
+  const { banner, loaded } = useHomeSellBanner()
+  if (loaded && !banner) return null
+
+  const kicker = banner?.kicker || 'Qoldan Qolga'
+  const title = banner?.title || t('ads.sellAndEarn')
+  const subtitle = banner?.subtitle || t('profile.ctaReviewsHint')
+  const ctaText = banner?.ctaText || t('ads.postAd')
+  const href = bannerCtaHref(banner?.ctaUrl, ROUTES.ADS_CREATE)
+  const artSrc = banner?.imageUrl ? imageUrl(banner.imageUrl) : bannerArt
+
   return (
-    <section className={`${styles.banner} ${compact ? styles.compact : ''}`} aria-label={t('ads.sellAndEarn')}>
+    <section className={`${styles.banner} ${compact ? styles.compact : ''}`} aria-label={title}>
       <div className={styles.glow} aria-hidden />
       <div className={styles.copy}>
-        <p className={styles.kicker}>Qoldan Qolga</p>
+        {kicker ? <p className={styles.kicker}>{kicker}</p> : null}
         <h2 className={styles.title}>
-          <span className={styles.accent}>{t('ads.sellAndEarn')}</span>
+          <span className={styles.accent}>{title}</span>
         </h2>
-        <p className={styles.subtitle}>{t('profile.ctaReviewsHint')}</p>
-        <Link to={ROUTES.ADS_CREATE} className={styles.cta}>
-          {t('ads.postAd')}
+        {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
+        <HomeSellBannerCta href={href} className={styles.cta}>
+          {ctaText}
           <i className="bi bi-arrow-up-right" aria-hidden />
-        </Link>
+        </HomeSellBannerCta>
       </div>
       <div className={styles.artWrap}>
-        <img src={bannerArt} alt="" className={styles.art} />
+        <img src={artSrc} alt="" className={styles.art} />
       </div>
     </section>
   )

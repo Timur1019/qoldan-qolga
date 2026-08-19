@@ -11,6 +11,7 @@ import {
   type CategoryFiltersState,
   type RegionOption,
 } from '@/components/CategoryFiltersSheet/CategoryFiltersSheet';
+import { JobModeBar } from '@/components/JobModeBar/JobModeBar';
 import { AdCardSkeleton } from '@/components/ui/AdCardSkeleton/AdCardSkeleton';
 import { useFavoriteClick } from '@/hooks/useFavoriteClick';
 import { useLanguage } from '@/context/LanguageContext';
@@ -18,6 +19,7 @@ import { colors } from '@/theme/colors';
 import type { AdListItemDto, CategoryDto, PageResponse } from '@/types/api';
 import { filtersToListApiParams, isFiltersActive } from '@/utils/categoryFiltersState';
 import { localizedName } from '@/utils/localizedName';
+import { isJobTree } from '@/constants/jobCategories';
 
 import { styles } from '@/styles/screens/category.styles';
 
@@ -98,7 +100,9 @@ export default function CategoryScreen() {
         </ScrollView>
       ) : null}
 
-      {children.length > 0 ? (
+      <JobModeBar categoryCode={code} breadcrumb={breadcrumb} />
+
+      {children.length > 0 && !isJobTree(code, breadcrumb) ? (
         <View style={styles.subChipsWrap}>
           {children.map((c) => (
             <Pressable key={c.code} style={styles.subChip} onPress={() => router.push(`/categories/${c.code}`)}>

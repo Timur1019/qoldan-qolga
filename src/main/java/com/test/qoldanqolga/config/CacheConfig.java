@@ -36,6 +36,7 @@ public class CacheConfig {
                 cache("currencyRate", 8, 2, TimeUnit.HOURS),
                 cache("promoBanners", 16, 15, TimeUnit.MINUTES),
                 cache("siteTopBanners", 16, 15, TimeUnit.MINUTES),
+                cache("homeSellBanners", 16, 15, TimeUnit.MINUTES),
                 cache("authUsers", 2_000, 60, TimeUnit.SECONDS)
         ));
         return manager;

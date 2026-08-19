@@ -1,6 +1,7 @@
 import { isClothingTree } from './routes'
 import { isTransportTree } from './transport'
 import { isRealEstateTree } from './realEstate'
+import { isJobTree } from './jobCategories'
 
 const SERVICES_ROOT = 'Xizmatlar'
 const ELECTRONICS_ROOT = 'Elektronika'
@@ -21,21 +22,23 @@ export function categoryFilterFlags(categoryCode, breadcrumb = []) {
   const electronics = inTree(categoryCode, breadcrumb, [ELECTRONICS_ROOT])
   const appliances = inTree(categoryCode, breadcrumb, [APPLIANCES_ROOT])
   const animals = inTree(categoryCode, breadcrumb, [ANIMALS_ROOT])
-  const handmade = !services && !transport && !realEstate && !electronics && !appliances && !animals
+  const jobs = isJobTree(categoryCode, breadcrumb)
+  const handmade = !services && !transport && !realEstate && !electronics && !appliances && !animals && !jobs
 
   return {
     services,
     clothing,
-    condition: !services && !realEstate,
+    jobs,
+    condition: !services && !realEstate && !jobs,
     handmade,
     canRent: clothing,
     license: services,
     contract: services,
-    giveAway: !services && !transport && !realEstate,
-    canDeliver: !services && !realEstate,
-    sellerType: true,
+    giveAway: !services && !transport && !realEstate && !jobs,
+    canDeliver: !services && !realEstate && !jobs,
+    sellerType: !jobs,
     onlineShowing: realEstate,
     price: true,
-    urgentBargain: !services,
+    urgentBargain: !services && !jobs,
   }
 }

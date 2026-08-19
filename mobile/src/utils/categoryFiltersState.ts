@@ -41,6 +41,23 @@ export interface CategoryFiltersState {
   buildingType: string[];
   renovation: string[];
   furnished: boolean;
+  jobProfession: string[];
+  jobIndustry: string[];
+  jobPriority: string;
+  jobEmployment: string[];
+  jobSchedule: string[];
+  jobWorkFormat: string;
+  jobSalaryPeriod: string;
+  jobPayFrequency: string[];
+  jobExperience: string;
+  jobCitizenship: string;
+  jobAgeFrom: string;
+  jobAgeTo: string;
+  jobCompanyVerified: boolean;
+  jobLargeCompany: boolean;
+  jobBenefits: string[];
+  jobForCandidates: string[];
+  query: string;
 }
 
 export const EMPTY_CATEGORY_FILTERS: CategoryFiltersState = {
@@ -82,6 +99,23 @@ export const EMPTY_CATEGORY_FILTERS: CategoryFiltersState = {
   buildingType: [],
   renovation: [],
   furnished: false,
+  jobProfession: [],
+  jobIndustry: [],
+  jobPriority: 'ANY',
+  jobEmployment: [],
+  jobSchedule: [],
+  jobWorkFormat: 'ANY',
+  jobSalaryPeriod: 'ANY',
+  jobPayFrequency: [],
+  jobExperience: '',
+  jobCitizenship: '',
+  jobAgeFrom: '',
+  jobAgeTo: '',
+  jobCompanyVerified: false,
+  jobLargeCompany: false,
+  jobBenefits: [],
+  jobForCandidates: [],
+  query: '',
 };
 
 function numOrUndef(v: string) {
@@ -100,6 +134,7 @@ export function filtersToListApiParams(
     size: 20,
     sort: filters.sort,
   };
+  if (filters.query.trim()) params.q = filters.query.trim();
   if (filters.region) params.region = filters.region;
   if (filters.district) params.district = filters.district;
   const priceFrom = numOrUndef(filters.priceFrom);
@@ -153,6 +188,24 @@ export function filtersToListApiParams(
   if (filters.buildingType.length) params.buildingType = filters.buildingType;
   if (filters.renovation.length) params.renovation = filters.renovation;
   if (filters.furnished) params.furnished = true;
+  if (filters.jobProfession.length) params.jobProfession = filters.jobProfession;
+  if (filters.jobIndustry.length) params.jobIndustry = filters.jobIndustry;
+  if (filters.jobPriority && filters.jobPriority !== 'ANY') params.jobPriority = filters.jobPriority;
+  if (filters.jobEmployment.length) params.jobEmployment = filters.jobEmployment;
+  if (filters.jobSchedule.length) params.jobSchedule = filters.jobSchedule;
+  if (filters.jobWorkFormat && filters.jobWorkFormat !== 'ANY') params.jobWorkFormat = filters.jobWorkFormat;
+  if (filters.jobSalaryPeriod && filters.jobSalaryPeriod !== 'ANY') params.jobSalaryPeriod = filters.jobSalaryPeriod;
+  if (filters.jobPayFrequency.length) params.jobPayFrequency = filters.jobPayFrequency;
+  if (filters.jobExperience) params.jobExperience = filters.jobExperience;
+  if (filters.jobCitizenship) params.jobCitizenship = filters.jobCitizenship;
+  const jobAgeFrom = numOrUndef(filters.jobAgeFrom);
+  const jobAgeTo = numOrUndef(filters.jobAgeTo);
+  if (jobAgeFrom != null) params.jobAgeFrom = jobAgeFrom;
+  if (jobAgeTo != null) params.jobAgeTo = jobAgeTo;
+  if (filters.jobCompanyVerified) params.jobCompanyVerified = true;
+  if (filters.jobLargeCompany) params.jobLargeCompany = true;
+  if (filters.jobBenefits.length) params.jobBenefits = filters.jobBenefits;
+  if (filters.jobForCandidates.length) params.jobForCandidates = filters.jobForCandidates;
 
   return params;
 }
@@ -197,6 +250,23 @@ export function isFiltersActive(filters: CategoryFiltersState) {
     filters.floorTo !== '' ||
     filters.buildingType.length > 0 ||
     filters.renovation.length > 0 ||
-    filters.furnished
+    filters.furnished ||
+    filters.jobProfession.length > 0 ||
+    filters.jobIndustry.length > 0 ||
+    (filters.jobPriority !== 'ANY' && filters.jobPriority !== '') ||
+    filters.jobEmployment.length > 0 ||
+    filters.jobSchedule.length > 0 ||
+    (filters.jobWorkFormat !== 'ANY' && filters.jobWorkFormat !== '') ||
+    (filters.jobSalaryPeriod !== 'ANY' && filters.jobSalaryPeriod !== '') ||
+    filters.jobPayFrequency.length > 0 ||
+    filters.jobExperience !== '' ||
+    filters.jobCitizenship !== '' ||
+    filters.jobAgeFrom !== '' ||
+    filters.jobAgeTo !== '' ||
+    filters.jobCompanyVerified ||
+    filters.jobLargeCompany ||
+    filters.jobBenefits.length > 0 ||
+    filters.jobForCandidates.length > 0 ||
+    filters.query.trim() !== ''
   );
 }

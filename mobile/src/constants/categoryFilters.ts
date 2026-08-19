@@ -19,6 +19,7 @@ import {
   RE_ROOT,
   TRANSPORT_ROOT,
 } from '@/constants/categoryTree';
+import { isJobTree } from '@/constants/jobCategories';
 
 function inTree(categoryCode: string | undefined, breadcrumb: CategoryDto[], roots: string[]) {
   if (!categoryCode) return false;
@@ -39,24 +40,26 @@ export function categoryFilterFlags(categoryCode?: string, breadcrumb: CategoryD
   const electronics = inTree(categoryCode, breadcrumb, ['Elektronika']);
   const appliances = inTree(categoryCode, breadcrumb, ['Bytovaya_tekhnika']);
   const animals = inTree(categoryCode, breadcrumb, ['Zhivotnye']);
-  const handmade = !services && !transport && !realEstate && !electronics && !appliances && !animals;
+  const jobs = isJobTree(categoryCode, breadcrumb);
+  const handmade = !services && !transport && !realEstate && !electronics && !appliances && !animals && !jobs;
 
   return {
     services,
     clothing,
     transport,
     realEstate,
-    condition: !services && !realEstate,
+    jobs,
+    condition: !services && !realEstate && !jobs,
     handmade,
     canRent: clothing,
     license: services,
     contract: services,
-    giveAway: !services && !transport && !realEstate,
-    canDeliver: !services && !realEstate,
-    sellerType: true,
+    giveAway: !services && !transport && !realEstate && !jobs,
+    canDeliver: !services && !realEstate && !jobs,
+    sellerType: !jobs,
     onlineShowing: realEstate,
     price: true,
-    urgentBargain: !services,
+    urgentBargain: !services && !jobs,
   };
 }
 

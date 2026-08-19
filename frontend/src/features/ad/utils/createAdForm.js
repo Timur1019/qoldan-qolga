@@ -1,9 +1,16 @@
 import { EMPTY_TRANSPORT_FIELDS } from '../../../constants/transport'
 import { EMPTY_REAL_ESTATE_FIELDS } from '../../../constants/realEstate'
+import { EMPTY_JOB_FIELDS } from '../../../constants/jobCategories'
 import { seatsFromApi, seatsToApi, ownersFromApi, ownersToApi } from './transportFormValues'
 import { appendLocationToDescription, extractLocationFromDescription } from './descriptionLocation'
 import { normalizeSellerType } from '../../../constants/sellerTypes'
 import { sortImagesMainFirst } from './galleryImageUrls'
+
+function splitCsv(value) {
+  if (Array.isArray(value)) return value.filter(Boolean)
+  if (!value) return []
+  return String(value).split(',').map((s) => s.trim()).filter(Boolean)
+}
 
 export function createEmptyAdForm() {
   return {
@@ -14,6 +21,7 @@ export function createEmptyAdForm() {
     category: 'Xizmatlar',
     ...EMPTY_TRANSPORT_FIELDS,
     ...EMPTY_REAL_ESTATE_FIELDS,
+    ...EMPTY_JOB_FIELDS,
     itemCondition: 'USED',
     canRent: false,
     phone: '',
@@ -72,6 +80,22 @@ export function formFromAdDetail(ad) {
     buildingType: ad.buildingType || '',
     renovation: ad.renovation || '',
     furnished: !!ad.furnished,
+    jobProfession: ad.jobProfession || '',
+    jobIndustry: ad.jobIndustry || '',
+    jobPriority: ad.jobPriority || 'ANY',
+    jobEmployment: splitCsv(ad.jobEmployment),
+    jobSchedule: splitCsv(ad.jobSchedule),
+    jobWorkFormat: ad.jobWorkFormat || 'ANY',
+    jobSalaryPeriod: ad.jobSalaryPeriod || 'ANY',
+    jobPayFrequency: splitCsv(ad.jobPayFrequency),
+    jobExperience: ad.jobExperience || '',
+    jobCitizenship: ad.jobCitizenship || '',
+    jobAgeFrom: ad.jobAgeFrom != null ? String(ad.jobAgeFrom) : '',
+    jobAgeTo: ad.jobAgeTo != null ? String(ad.jobAgeTo) : '',
+    jobCompanyVerified: !!ad.jobCompanyVerified,
+    jobLargeCompany: !!ad.jobLargeCompany,
+    jobBenefits: splitCsv(ad.jobBenefits),
+    jobForCandidates: splitCsv(ad.jobForCandidates),
     itemCondition: ad.itemCondition || 'USED',
     canRent: !!ad.canRent,
     phone: ad.phone || '',
@@ -166,5 +190,21 @@ export function buildCreateAdPayload(form, uploadedUrls, { lang, filterFlags, re
     telegramUsername: form.contactByTelegram
       ? ((form.telegramUsername || '').trim().replace(/^@/, '') || null)
       : null,
+    jobProfession: form.jobProfession || undefined,
+    jobIndustry: form.jobIndustry || undefined,
+    jobPriority: form.jobPriority && form.jobPriority !== 'ANY' ? form.jobPriority : undefined,
+    jobEmployment: (form.jobEmployment || []).length ? form.jobEmployment : undefined,
+    jobSchedule: (form.jobSchedule || []).length ? form.jobSchedule : undefined,
+    jobWorkFormat: form.jobWorkFormat && form.jobWorkFormat !== 'ANY' ? form.jobWorkFormat : undefined,
+    jobSalaryPeriod: form.jobSalaryPeriod && form.jobSalaryPeriod !== 'ANY' ? form.jobSalaryPeriod : undefined,
+    jobPayFrequency: (form.jobPayFrequency || []).length ? form.jobPayFrequency : undefined,
+    jobExperience: form.jobExperience || undefined,
+    jobCitizenship: form.jobCitizenship || undefined,
+    jobAgeFrom: form.jobAgeFrom !== '' && form.jobAgeFrom != null ? parseInt(form.jobAgeFrom, 10) : undefined,
+    jobAgeTo: form.jobAgeTo !== '' && form.jobAgeTo != null ? parseInt(form.jobAgeTo, 10) : undefined,
+    jobCompanyVerified: !!form.jobCompanyVerified,
+    jobLargeCompany: !!form.jobLargeCompany,
+    jobBenefits: (form.jobBenefits || []).length ? form.jobBenefits : undefined,
+    jobForCandidates: (form.jobForCandidates || []).length ? form.jobForCandidates : undefined,
   }
 }

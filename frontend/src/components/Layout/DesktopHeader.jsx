@@ -1,12 +1,8 @@
-import { Link } from 'react-router-dom'
-import { ROUTES } from '../../constants/routes'
 import TopAdStrip from '../TopAdStrip/TopAdStrip'
 import DesktopRegionSelect from './DesktopRegionSelect'
-import DesktopProfileMenu from './DesktopProfileMenu'
 import DesktopHeaderBrand from './DesktopHeaderBrand'
 import DesktopHeaderSearch from './DesktopHeaderSearch'
-import DesktopHeaderLang from './DesktopHeaderLang'
-import { NavIcons } from './headerNavIcons'
+import DesktopHeaderTop from './DesktopHeaderTop'
 import headerStyles from './DesktopHeader.module.css'
 import styles from './Layout.module.css'
 
@@ -44,6 +40,23 @@ export default function DesktopHeader({ layout }) {
   return (
     <header ref={headerRef} className={styles.header}>
       <TopAdStrip />
+      <DesktopHeaderTop
+        t={t}
+        lang={lang}
+        setLang={setLang}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        logout={logout}
+        isAdmin={isAdmin}
+        profileOpen={profileOpen}
+        setProfileOpen={setProfileOpen}
+        setBusinessModalOpen={setBusinessModalOpen}
+        openAuthModal={openAuthModal}
+        openIdVerificationModal={openIdVerificationModal}
+        chatUnreadCount={chatUnreadCount}
+        favoritesCount={favoritesCount}
+        onOpenCategories={() => setCategoriesOpen(true)}
+      />
       <div className={headerStyles.bar}>
         <div className={headerStyles.inner}>
           <DesktopHeaderBrand categoryTitle={categoryTitle} />
@@ -73,65 +86,6 @@ export default function DesktopHeader({ layout }) {
             onClose={() => setRegionOpen(false)}
             onSelect={handleSelectRegion}
           />
-          <DesktopHeaderLang lang={lang} onChange={setLang} />
-          <nav className={styles.nav}>
-            <Link to={ROUTES.ADS_MY} className={styles.navLink}>
-              <span className={styles.navIcon}>{NavIcons.ads}</span>
-              <span className={styles.navLabel}>{t('nav.myAds')}</span>
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <Link to={ROUTES.FAVORITES} className={styles.navLink}>
-                  <span className={styles.navLinkWrap}>
-                    <span className={styles.navIcon}>{NavIcons.heart}</span>
-                    {favoritesCount > 0 && (
-                      <span className={styles.navBadge} aria-label={t('nav.favorites')}>
-                        {favoritesCount > 99 ? '99+' : favoritesCount}
-                      </span>
-                    )}
-                  </span>
-                  <span className={styles.navLabel}>{t('nav.favorites')}</span>
-                </Link>
-                <Link to={ROUTES.CHAT} className={styles.navLink}>
-                  <span className={styles.navLinkWrap}>
-                    <span className={styles.navIcon}>{NavIcons.message}</span>
-                    {chatUnreadCount > 0 && (
-                      <span className={styles.navBadge} aria-label={t('chat.messagesCount')}>
-                        {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
-                      </span>
-                    )}
-                  </span>
-                  <span className={styles.navLabel}>{t('profile.chat')}</span>
-                </Link>
-                <DesktopProfileMenu
-                  open={profileOpen}
-                  user={user}
-                  isAdmin={isAdmin}
-                  favoritesCount={favoritesCount}
-                  chatUnreadCount={chatUnreadCount}
-                  lang={lang}
-                  t={t}
-                  onToggle={() => setProfileOpen(!profileOpen)}
-                  onClose={() => setProfileOpen(false)}
-                  onIdCheck={openIdVerificationModal}
-                  onBusiness={() => setBusinessModalOpen(true)}
-                  onLogout={logout}
-                />
-                <Link to={ROUTES.ADS_CREATE} className={`btn btn-primary text-white ${headerStyles.sellBtn}`}>
-                  {lang === 'ru' ? 'Продать' : 'Sotish'}
-                </Link>
-              </>
-            ) : (
-              <>
-                <button type="button" className="btn btn-outline-primary btn-sm" onClick={openAuthModal}>
-                  {t('nav.login')}
-                </button>
-                <Link to={ROUTES.ADS_CREATE} className={`btn btn-primary text-white ${headerStyles.sellBtn}`}>
-                  {lang === 'ru' ? 'Продать' : 'Sotish'}
-                </Link>
-              </>
-            )}
-          </nav>
         </div>
       </div>
     </header>

@@ -1,12 +1,11 @@
 .search {
   display: flex;
   align-items: stretch;
-  flex: 1 1 280px;
-  min-width: 220px;
-  max-width: 640px;
-  height: 44px;
-  padding: 3px;
-  border-radius: 12px;
+  flex: 1 1 320px;
+  min-width: 240px;
+  height: 48px;
+  padding: 4px;
+  border-radius: 24px;
   background: linear-gradient(90deg, #0a6b42 0%, #04492d 100%);
 }
 
@@ -16,9 +15,9 @@
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
-  padding: 0 0.85rem;
+  padding: 0 0.95rem;
   background: #fff;
-  border-radius: 9px;
+  border-radius: 20px;
 }
 
 .icon {
@@ -49,8 +48,8 @@
 
 .find {
   flex-shrink: 0;
-  min-width: 5.5rem;
-  padding: 0 1.1rem;
+  min-width: 5.75rem;
+  padding: 0 1.2rem;
   border: 0;
   background: transparent;
   color: #fff;

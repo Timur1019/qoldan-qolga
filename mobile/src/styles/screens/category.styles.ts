@@ -34,6 +34,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   subChipText: { fontSize: 13, fontWeight: '600', color: colors.text },
+  subChipOn: { backgroundColor: colors.primary },
+  subChipTextOn: { color: colors.white },
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',

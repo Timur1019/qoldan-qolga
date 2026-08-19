@@ -4,7 +4,7 @@ import { QUICK_QUESTIONS } from '../../utils/constants'
 import { descriptionWithoutLocation } from '../../utils/descriptionLocation'
 import CategoryIcon from '../../../../components/ui/CategoryIcon'
 import AdVehicleCharacteristics from './AdVehicleCharacteristics'
-import AdRealEstateCharacteristics from './AdRealEstateCharacteristics'
+import AdJobCharacteristics from './AdJobCharacteristics'
 import styles from './AdDescription.module.css'
 
 function AdDescription({
@@ -47,7 +47,8 @@ function AdDescription({
           )}
           <AdVehicleCharacteristics ad={ad} lang={lang} t={t} />
           <AdRealEstateCharacteristics ad={ad} t={t} />
-          {ad?.itemCondition && ad?.dealType == null && (
+          <AdJobCharacteristics ad={ad} lang={lang} />
+          {ad?.itemCondition && ad?.dealType == null && !ad?.jobProfession && (
             <div className={styles.charRow}>
               <dt>{t('ads.conditionLabel')}</dt>
               <dd>

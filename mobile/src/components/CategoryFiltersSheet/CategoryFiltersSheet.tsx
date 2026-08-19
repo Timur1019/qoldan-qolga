@@ -24,7 +24,7 @@ import { CommonFiltersSection } from './CommonFiltersSection';
 import { styles } from './CategoryFiltersSheet.styles';
 import { RangeInputs, SectionTitle } from './FilterFieldRows';
 import { RealEstateFiltersSection } from './RealEstateFiltersSection';
-import { TransportFiltersSection } from './TransportFiltersSection';
+import { JobFiltersSection } from './JobFiltersSection';
 
 export type { CategoryFiltersState };
 export { EMPTY_CATEGORY_FILTERS };
@@ -154,7 +154,7 @@ export function CategoryFiltersSheet({
               </>
             ) : null}
 
-            {flags.price ? (
+            {flags.price && !flags.jobs ? (
               <>
                 <SectionTitle>Narx</SectionTitle>
                 <RangeInputs
@@ -180,6 +180,7 @@ export function CategoryFiltersSheet({
 
             <TransportFiltersSection flags={transport} draft={draft} patch={patch} />
             <RealEstateFiltersSection flags={realEstate} draft={draft} patch={patch} />
+            <JobFiltersSection categoryCode={categoryCode} breadcrumb={breadcrumb} draft={draft} patch={patch} />
             <CommonFiltersSection
               flags={flags}
               draft={draft}

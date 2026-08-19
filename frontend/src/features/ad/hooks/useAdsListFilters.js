@@ -82,6 +82,22 @@ export function readFiltersFromSearchParams(params) {
     itemCondition: params.getAll(PARAMS.ITEM_CONDITION) || [],
     handMadeOnly: handMade,
     canRent: canRent === true ? true : canRent === false ? false : '',
+    jobProfession: params.getAll(PARAMS.JOB_PROFESSION) || [],
+    jobIndustry: params.getAll(PARAMS.JOB_INDUSTRY) || [],
+    jobPriority: params.get(PARAMS.JOB_PRIORITY) || '',
+    jobEmployment: params.getAll(PARAMS.JOB_EMPLOYMENT) || [],
+    jobSchedule: params.getAll(PARAMS.JOB_SCHEDULE) || [],
+    jobWorkFormat: params.get(PARAMS.JOB_WORK_FORMAT) || '',
+    jobSalaryPeriod: params.get(PARAMS.JOB_SALARY_PERIOD) || '',
+    jobPayFrequency: params.getAll(PARAMS.JOB_PAY_FREQUENCY) || [],
+    jobExperience: params.get(PARAMS.JOB_EXPERIENCE) || '',
+    jobCitizenship: params.get(PARAMS.JOB_CITIZENSHIP) || '',
+    jobAgeFrom: params.get(PARAMS.JOB_AGE_FROM) || '',
+    jobAgeTo: params.get(PARAMS.JOB_AGE_TO) || '',
+    jobCompanyVerified: params.get(PARAMS.JOB_COMPANY_VERIFIED) === 'true',
+    jobLargeCompany: params.get(PARAMS.JOB_LARGE_COMPANY) === 'true',
+    jobBenefits: params.getAll(PARAMS.JOB_BENEFITS) || [],
+    jobForCandidates: params.getAll(PARAMS.JOB_FOR_CANDIDATES) || [],
     sort: params.get(PARAMS.SORT) || SORT_VALUES.NEWEST,
     page: Math.max(0, parseInt(params.get(PARAMS.PAGE) || '0', 10) || 0),
   }
@@ -141,6 +157,22 @@ export function filtersToListApiParams(filters, { pageSize = 40 } = {}) {
   if (filters.handMadeOnly === false) params.handMadeOnly = false
   if (filters.canRent === true) params.canRent = true
   if (filters.canRent === false) params.canRent = false
+  if (filters.jobProfession?.length) params.jobProfession = filters.jobProfession
+  if (filters.jobIndustry?.length) params.jobIndustry = filters.jobIndustry
+  if (filters.jobPriority) params.jobPriority = filters.jobPriority
+  if (filters.jobEmployment?.length) params.jobEmployment = filters.jobEmployment
+  if (filters.jobSchedule?.length) params.jobSchedule = filters.jobSchedule
+  if (filters.jobWorkFormat) params.jobWorkFormat = filters.jobWorkFormat
+  if (filters.jobSalaryPeriod) params.jobSalaryPeriod = filters.jobSalaryPeriod
+  if (filters.jobPayFrequency?.length) params.jobPayFrequency = filters.jobPayFrequency
+  if (filters.jobExperience) params.jobExperience = filters.jobExperience
+  if (filters.jobCitizenship) params.jobCitizenship = filters.jobCitizenship
+  if (filters.jobAgeFrom) params.jobAgeFrom = filters.jobAgeFrom
+  if (filters.jobAgeTo) params.jobAgeTo = filters.jobAgeTo
+  if (filters.jobCompanyVerified) params.jobCompanyVerified = true
+  if (filters.jobLargeCompany) params.jobLargeCompany = true
+  if (filters.jobBenefits?.length) params.jobBenefits = filters.jobBenefits
+  if (filters.jobForCandidates?.length) params.jobForCandidates = filters.jobForCandidates
   return params
 }
 
@@ -217,6 +249,22 @@ export function useAdsListFilters() {
       if (merged.canRent === true) next.set(PARAMS.CAN_RENT, 'true')
       else if (merged.canRent === false) next.set(PARAMS.CAN_RENT, 'false')
       else next.delete(PARAMS.CAN_RENT)
+      setArray(next, PARAMS.JOB_PROFESSION, merged.jobProfession)
+      setArray(next, PARAMS.JOB_INDUSTRY, merged.jobIndustry)
+      setOrDelete(next, PARAMS.JOB_PRIORITY, merged.jobPriority || undefined)
+      setArray(next, PARAMS.JOB_EMPLOYMENT, merged.jobEmployment)
+      setArray(next, PARAMS.JOB_SCHEDULE, merged.jobSchedule)
+      setOrDelete(next, PARAMS.JOB_WORK_FORMAT, merged.jobWorkFormat || undefined)
+      setOrDelete(next, PARAMS.JOB_SALARY_PERIOD, merged.jobSalaryPeriod || undefined)
+      setArray(next, PARAMS.JOB_PAY_FREQUENCY, merged.jobPayFrequency)
+      setOrDelete(next, PARAMS.JOB_EXPERIENCE, merged.jobExperience || undefined)
+      setOrDelete(next, PARAMS.JOB_CITIZENSHIP, merged.jobCitizenship || undefined)
+      setOrDelete(next, PARAMS.JOB_AGE_FROM, merged.jobAgeFrom || undefined)
+      setOrDelete(next, PARAMS.JOB_AGE_TO, merged.jobAgeTo || undefined)
+      setOrDelete(next, PARAMS.JOB_COMPANY_VERIFIED, merged.jobCompanyVerified ? 'true' : undefined)
+      setOrDelete(next, PARAMS.JOB_LARGE_COMPANY, merged.jobLargeCompany ? 'true' : undefined)
+      setArray(next, PARAMS.JOB_BENEFITS, merged.jobBenefits)
+      setArray(next, PARAMS.JOB_FOR_CANDIDATES, merged.jobForCandidates)
       if (!merged.sort || merged.sort === SORT_VALUES.NEWEST) next.delete(PARAMS.SORT)
       else next.set(PARAMS.SORT, merged.sort)
 

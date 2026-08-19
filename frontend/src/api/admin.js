@@ -56,6 +56,21 @@ export const adminApi = {
     apiRequest(`/admin/site-top-banners/${encodeURIComponent(id)}`, {
       method: 'DELETE',
     }),
+  getHomeSellBanners: () => apiRequest('/admin/home-sell-banners'),
+  createHomeSellBanner: (body) =>
+    apiRequest('/admin/home-sell-banners', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  updateHomeSellBanner: (id, body) =>
+    apiRequest(`/admin/home-sell-banners/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  deleteHomeSellBanner: (id) =>
+    apiRequest(`/admin/home-sell-banners/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   getBusinessApplications: (params) =>
     apiRequest(`/admin/business-applications${buildQueryString(params)}`),
   getBusinessApplication: (id) =>

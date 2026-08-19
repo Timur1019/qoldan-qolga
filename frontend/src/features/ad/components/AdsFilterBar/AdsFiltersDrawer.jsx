@@ -3,6 +3,9 @@ import AdsFiltersDrawerTransport from './AdsFiltersDrawerTransport'
 import AdsFiltersDrawerRealEstate from './AdsFiltersDrawerRealEstate'
 import AdsFiltersDrawerBrand from './AdsFiltersDrawerBrand'
 import { sellerTypeOptionsForCategory } from '../../../../constants/sellerTypes'
+import { jobFieldFlags } from '../../../../constants/jobCategories'
+import JobModeToggle from '../AdsFiltersSidebar/JobModeToggle'
+import JobSidebarFields from '../AdsFiltersSidebar/JobSidebarFields'
 import styles from './AdsFilterBar.module.css'
 
 export default function AdsFiltersDrawer({
@@ -111,6 +114,7 @@ function DrawerBody({ filters, onClose, onApply, onReset, t, lang, transportFlag
     value: o.value,
     label: t(o.labelKey),
   }))
+  const jobFlags = jobFieldFlags(filters.category)
   const currencyOptions = [
     { value: 'FROM_AD', label: t('ads.currencyFromAd') },
     { value: 'UZS', label: t('ads.currencyUzs') },
@@ -133,6 +137,13 @@ function DrawerBody({ filters, onClose, onApply, onReset, t, lang, transportFlag
           </button>
         </div>
         <div className={styles.drawerBody}>
+          {jobFlags.jobs ? <JobModeToggle lang={lang} flags={jobFlags} /> : null}
+          <JobSidebarFields
+            flags={jobFlags}
+            filterDraft={draft}
+            setFilterDraft={setDraft}
+            lang={lang}
+          />
           <AdsFiltersDrawerTransport
             flags={transportFlags}
             draft={draft}
@@ -173,6 +184,7 @@ function DrawerBody({ filters, onClose, onApply, onReset, t, lang, transportFlag
             ))}
           </div>
           )}
+          {filterFlags.sellerType !== false && (
           <div className={styles.drawerBlock}>
             <p className={styles.drawerBlockTitle}>{t('ads.sellerType')}</p>
             {sellerOptions.map((o) => (
@@ -187,6 +199,9 @@ function DrawerBody({ filters, onClose, onApply, onReset, t, lang, transportFlag
               </label>
             ))}
           </div>
+          )}
+          {!jobFlags.jobs && (
+          <>
           <div className={styles.drawerBlock}>
             <p className={styles.drawerBlockTitle}>{t('ads.currency')}</p>
             {currencyOptions.map((o) => (
@@ -223,6 +238,8 @@ function DrawerBody({ filters, onClose, onApply, onReset, t, lang, transportFlag
               />
             </div>
           </div>
+          </>
+          )}
           {(filterFlags.urgentBargain !== false || filterFlags.canDeliver !== false || filterFlags.giveAway !== false) && (
           <div className={styles.drawerBlock}>
             <p className={styles.drawerBlockTitle}>{t('ads.extra')}</p>

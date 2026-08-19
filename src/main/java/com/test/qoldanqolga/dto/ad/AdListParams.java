@@ -69,4 +69,21 @@ public class AdListParams {
     private List<String> buildingType;
     private List<String> renovation;
     private Boolean furnished;
+
+    private List<String> jobProfession;
+    private List<String> jobIndustry;
+    private String jobPriority;
+    private List<String> jobEmployment;
+    private List<String> jobSchedule;
+    private String jobWorkFormat;
+    private String jobSalaryPeriod;
+    private List<String> jobPayFrequency;
+    private String jobExperience;
+    private String jobCitizenship;
+    private Integer jobAgeFrom;
+    private Integer jobAgeTo;
+    private Boolean jobCompanyVerified;
+    private Boolean jobLargeCompany;
+    private List<String> jobBenefits;
+    private List<String> jobForCandidates;
 }

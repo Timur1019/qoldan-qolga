@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import UserAvatar from '../ui/UserAvatar'
 import { ROUTES } from '../../constants/routes'
-import styles from './Layout.module.css'
+import styles from './DesktopProfileMenu.module.css'
 
 export default function DesktopProfileMenu({
   open,
@@ -18,10 +18,10 @@ export default function DesktopProfileMenu({
   onLogout,
 }) {
   return (
-    <div className={`${styles.profileWrap} flex-shrink-0`}>
+    <div className={styles.wrap}>
       <button
         type="button"
-        className={`btn btn-link p-0 text-dark text-decoration-none d-flex flex-column align-items-center gap-1 ${open ? 'text-primary' : ''}`}
+        className={styles.trigger}
         onClick={onToggle}
         aria-haspopup="true"
         aria-expanded={open}
@@ -30,22 +30,22 @@ export default function DesktopProfileMenu({
         <UserAvatar
           avatar={user?.avatar}
           name={user?.displayName || ''}
-          size={38}
+          size={24}
           own
-          className={styles.profileAvatar}
+          className={styles.avatar}
         />
-        <span className={`${styles.navLabel} text-nowrap`}>{t('nav.profile')}</span>
+        <span className={styles.name}>{user?.displayName || t('nav.profile')}</span>
       </button>
       {open && (
         <>
           <button
             type="button"
-            className={styles.profileOverlay}
+            className={styles.overlay}
             onClick={onClose}
             aria-hidden
           />
-          <div className={`bg-white shadow rounded ${styles.profileDropdown}`} role="menu">
-            <nav className={'list-group list-group-flush ' + styles.profileMenu}>
+          <div className={`bg-white shadow rounded ${styles.dropdown}`} role="menu">
+            <nav className={'list-group list-group-flush ' + styles.menu}>
               <Link to={ROUTES.FAVORITES} className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={onClose}>
                 <i className="bi bi-heart text-secondary" aria-hidden />
                 <span className="flex-grow-1">{t('nav.favorites')}</span>
@@ -77,7 +77,7 @@ export default function DesktopProfileMenu({
                 <i className="bi bi-building text-secondary" aria-hidden />
                 <span>{lang === 'ru' ? 'Qoldan Qolga для бизнеса' : 'Qoldan Qolga biznes uchun'}</span>
               </button>
-              <a href="mailto:support@example.com" className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={onClose}>
+              <a href="mailto:support@qoldanqolga.uz" className="list-group-item list-group-item-action d-flex align-items-center gap-2 bg-white border-0 border-bottom" onClick={onClose}>
                 <i className="bi bi-envelope text-secondary" aria-hidden />
                 <span>{lang === 'ru' ? 'Служба поддержки' : 'Qo\'llab-quvvatlash'}</span>
               </a>

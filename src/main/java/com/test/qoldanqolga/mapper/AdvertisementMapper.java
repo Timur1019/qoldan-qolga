@@ -91,11 +91,40 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "canRent", expression = "java(Boolean.TRUE.equals(request.getCanRent()))")
     @Mapping(target = "furnished", expression = "java(Boolean.TRUE.equals(request.getFurnished()))")
     @Mapping(target = "engineVolume", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.normalizeEngineVolume(request.getEngineVolume()))")
+    @Mapping(target = "jobProfession", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobProfession()))")
+    @Mapping(target = "jobIndustry", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobIndustry()))")
+    @Mapping(target = "jobPriority", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobPriority()))")
+    @Mapping(target = "jobEmployment", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobEmployment()))")
+    @Mapping(target = "jobSchedule", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobSchedule()))")
+    @Mapping(target = "jobWorkFormat", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobWorkFormat()))")
+    @Mapping(target = "jobSalaryPeriod", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobSalaryPeriod()))")
+    @Mapping(target = "jobPayFrequency", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobPayFrequency()))")
+    @Mapping(target = "jobExperience", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobExperience()))")
+    @Mapping(target = "jobCitizenship", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobCitizenship()))")
+    @Mapping(target = "jobCompanyVerified", expression = "java(Boolean.TRUE.equals(request.getJobCompanyVerified()))")
+    @Mapping(target = "jobLargeCompany", expression = "java(Boolean.TRUE.equals(request.getJobLargeCompany()))")
+    @Mapping(target = "jobBenefits", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobBenefits()))")
+    @Mapping(target = "jobForCandidates", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobForCandidates()))")
     Advertisement toEntity(CreateAdRequest request, @Context String userId);
 
     @AfterMapping
     default void setUserId(@MappingTarget Advertisement ad, @Context String userId) {
         if (userId != null) ad.setUserId(userId);
+        fillJobIndustry(ad);
+    }
+
+    @AfterMapping
+    default void afterUpdate(@MappingTarget Advertisement ad) {
+        fillJobIndustry(ad);
+    }
+
+    default void fillJobIndustry(Advertisement ad) {
+        if (ad == null) return;
+        if (ad.getJobIndustry() != null && !ad.getJobIndustry().isBlank()) return;
+        String cat = ad.getCategory();
+        if (cat != null && (cat.startsWith("JobSeek_") || cat.startsWith("Hire_"))) {
+            ad.setJobIndustry(cat);
+        }
     }
 
     @Mapping(target = "id", ignore = true)
@@ -140,6 +169,20 @@ public interface AdvertisementMapper extends BaseMapper<Advertisement, AdListIte
     @Mapping(target = "canRent", expression = "java(Boolean.TRUE.equals(request.getCanRent()))")
     @Mapping(target = "furnished", expression = "java(Boolean.TRUE.equals(request.getFurnished()))")
     @Mapping(target = "engineVolume", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.normalizeEngineVolume(request.getEngineVolume()))")
+    @Mapping(target = "jobProfession", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobProfession()))")
+    @Mapping(target = "jobIndustry", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobIndustry()))")
+    @Mapping(target = "jobPriority", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobPriority()))")
+    @Mapping(target = "jobEmployment", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobEmployment()))")
+    @Mapping(target = "jobSchedule", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobSchedule()))")
+    @Mapping(target = "jobWorkFormat", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobWorkFormat()))")
+    @Mapping(target = "jobSalaryPeriod", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobSalaryPeriod()))")
+    @Mapping(target = "jobPayFrequency", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobPayFrequency()))")
+    @Mapping(target = "jobExperience", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobExperience()))")
+    @Mapping(target = "jobCitizenship", expression = "java(com.test.qoldanqolga.util.CreateAdMapperHelper.trimOrNull(request.getJobCitizenship()))")
+    @Mapping(target = "jobCompanyVerified", expression = "java(Boolean.TRUE.equals(request.getJobCompanyVerified()))")
+    @Mapping(target = "jobLargeCompany", expression = "java(Boolean.TRUE.equals(request.getJobLargeCompany()))")
+    @Mapping(target = "jobBenefits", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobBenefits()))")
+    @Mapping(target = "jobForCandidates", expression = "java(com.test.qoldanqolga.util.CsvListUtil.join(request.getJobForCandidates()))")
     void updateEntity(CreateAdRequest request, @MappingTarget Advertisement ad);
 
     /**

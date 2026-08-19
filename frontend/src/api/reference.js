@@ -15,4 +15,5 @@ export const referenceApi = {
   getVehicleSpecOptions: () => cachedGet('vehicle-spec-options', () => apiRequest('/vehicle-spec-options'), 30 * 60 * 1000),
   getHomePromoBanners: () => cachedGet('promo-banners', () => apiRequest('/home-promo-banners'), 5 * 60 * 1000),
   getSiteTopBanners: () => cachedGet('site-top-banners', () => apiRequest('/site-top-banners'), 60 * 1000),
+  getHomeSellBanners: () => cachedGet('home-sell-banners', () => apiRequest('/home-sell-banners'), 60 * 1000),
 }

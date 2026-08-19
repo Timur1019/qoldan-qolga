@@ -73,7 +73,9 @@ export function buildEditAdSummary(
     specs.push(`${t('edit.brand', 'Brend')}: ${form.brandLabel || form.brandId}`);
   }
   if (form.year) specs.push(`${t('edit.year', 'Yil')}: ${form.year}`);
-  if (form.mileage) specs.push(`${t('edit.mileage', 'Yurgan')}: ${form.mileage} km`);
+  if (form.jobProfession) {
+    specs.push(`${t('edit.profession', 'Kasb')}: ${form.jobProfession}`);
+  }
 
   const locationParts = [opts.regionLabel, form.district, form.address].filter(Boolean);
   const locationLines = [

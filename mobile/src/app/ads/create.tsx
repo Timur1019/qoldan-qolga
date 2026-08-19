@@ -17,6 +17,7 @@ import { CreateAdLocationSection } from '@/components/CreateAdForm/CreateAdLocat
 import { CreateAdLookupSheets } from '@/components/CreateAdForm/CreateAdLookupSheets';
 import { CreateAdPhotosSection } from '@/components/CreateAdForm/CreateAdPhotosSection';
 import { CreateAdRealEstateSection } from '@/components/CreateAdForm/CreateAdRealEstateSection';
+import { CreateAdJobSection } from '@/components/CreateAdForm/CreateAdJobSection';
 import { CreateAdTransportSection } from '@/components/CreateAdForm/CreateAdTransportSection';
 import { EditAdSectionSheet } from '@/components/EditAd/EditAdSectionSheet';
 import { EditAdSummary } from '@/components/EditAd/EditAdSummary';
@@ -211,6 +212,12 @@ export default function CreateAdScreen() {
           hasModels={modelItems.length > 0}
         />
         <CreateAdRealEstateSection flags={realEstate} form={form} patch={patch} />
+        <CreateAdJobSection
+          categoryCode={form.category?.code}
+          breadcrumb={breadcrumb}
+          form={form}
+          patch={patch}
+        />
         <CreateAdBrandSection
           visible={!transport.brand && brands.length > 0}
           brandLabel={form.brandLabel}

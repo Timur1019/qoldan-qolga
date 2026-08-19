@@ -177,6 +177,54 @@ public class Advertisement extends BaseEntity {
     @Column(name = "furnished", nullable = false)
     private Boolean furnished = false;
 
+    @Column(name = "job_profession", length = 80)
+    private String jobProfession;
+
+    @Column(name = "job_industry", length = 50)
+    private String jobIndustry;
+
+    @Column(name = "job_priority", length = 30)
+    private String jobPriority;
+
+    @Column(name = "job_employment", length = 80)
+    private String jobEmployment;
+
+    @Column(name = "job_schedule", length = 80)
+    private String jobSchedule;
+
+    @Column(name = "job_work_format", length = 30)
+    private String jobWorkFormat;
+
+    @Column(name = "job_salary_period", length = 20)
+    private String jobSalaryPeriod;
+
+    @Column(name = "job_pay_frequency", length = 80)
+    private String jobPayFrequency;
+
+    @Column(name = "job_experience", length = 30)
+    private String jobExperience;
+
+    @Column(name = "job_citizenship", length = 40)
+    private String jobCitizenship;
+
+    @Column(name = "job_age_from")
+    private Integer jobAgeFrom;
+
+    @Column(name = "job_age_to")
+    private Integer jobAgeTo;
+
+    @Column(name = "job_company_verified", nullable = false)
+    private Boolean jobCompanyVerified = false;
+
+    @Column(name = "job_large_company", nullable = false)
+    private Boolean jobLargeCompany = false;
+
+    @Column(name = "job_benefits", length = 120)
+    private String jobBenefits;
+
+    @Column(name = "job_for_candidates", length = 120)
+    private String jobForCandidates;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;

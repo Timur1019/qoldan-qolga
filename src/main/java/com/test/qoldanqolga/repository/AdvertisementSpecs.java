@@ -244,8 +244,79 @@ public final class AdvertisementSpecs {
             if (p.getFurnished() != null) {
                 predicates.add(cb.equal(root.get("furnished"), p.getFurnished()));
             }
+            if (p.getJobProfession() != null && !p.getJobProfession().isEmpty()) {
+                predicates.add(root.get("jobProfession").in(p.getJobProfession()));
+            }
+            if (p.getJobIndustry() != null && !p.getJobIndustry().isEmpty()) {
+                predicates.add(cb.or(
+                        root.get("jobIndustry").in(p.getJobIndustry()),
+                        root.get("category").in(p.getJobIndustry())
+                ));
+            }
+            if (p.getJobPriority() != null && !p.getJobPriority().isBlank()
+                    && !"ANY".equalsIgnoreCase(p.getJobPriority())) {
+                predicates.add(cb.equal(root.get("jobPriority"), p.getJobPriority()));
+            }
+            addCsvAny(predicates, cb, root.get("jobEmployment"), p.getJobEmployment());
+            addCsvAny(predicates, cb, root.get("jobSchedule"), p.getJobSchedule());
+            if (p.getJobWorkFormat() != null && !p.getJobWorkFormat().isBlank()
+                    && !"ANY".equalsIgnoreCase(p.getJobWorkFormat())) {
+                predicates.add(cb.equal(root.get("jobWorkFormat"), p.getJobWorkFormat()));
+            }
+            if (p.getJobSalaryPeriod() != null && !p.getJobSalaryPeriod().isBlank()
+                    && !"ANY".equalsIgnoreCase(p.getJobSalaryPeriod())) {
+                predicates.add(cb.equal(root.get("jobSalaryPeriod"), p.getJobSalaryPeriod()));
+            }
+            addCsvAny(predicates, cb, root.get("jobPayFrequency"), p.getJobPayFrequency());
+            if (p.getJobExperience() != null && !p.getJobExperience().isBlank()) {
+                predicates.add(cb.equal(root.get("jobExperience"), p.getJobExperience()));
+            }
+            if (p.getJobCitizenship() != null && !p.getJobCitizenship().isBlank()) {
+                predicates.add(cb.equal(root.get("jobCitizenship"), p.getJobCitizenship()));
+            }
+            if (p.getJobAgeFrom() != null) {
+                predicates.add(cb.or(
+                        cb.isNull(root.get("jobAgeTo")),
+                        cb.greaterThanOrEqualTo(root.get("jobAgeTo"), p.getJobAgeFrom())
+                ));
+            }
+            if (p.getJobAgeTo() != null) {
+                predicates.add(cb.or(
+                        cb.isNull(root.get("jobAgeFrom")),
+                        cb.lessThanOrEqualTo(root.get("jobAgeFrom"), p.getJobAgeTo())
+                ));
+            }
+            if (Boolean.TRUE.equals(p.getJobCompanyVerified())) {
+                predicates.add(cb.equal(root.get("jobCompanyVerified"), true));
+            }
+            if (Boolean.TRUE.equals(p.getJobLargeCompany())) {
+                predicates.add(cb.equal(root.get("jobLargeCompany"), true));
+            }
+            addCsvAny(predicates, cb, root.get("jobBenefits"), p.getJobBenefits());
+            addCsvAny(predicates, cb, root.get("jobForCandidates"), p.getJobForCandidates());
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    private static void addCsvAny(
+            List<Predicate> predicates,
+            jakarta.persistence.criteria.CriteriaBuilder cb,
+            jakarta.persistence.criteria.Path<String> path,
+            List<String> codes
+    ) {
+        if (codes == null || codes.isEmpty()) {
+            return;
+        }
+        List<Predicate> or = new ArrayList<>();
+        for (String code : codes) {
+            if (code == null || code.isBlank()) {
+                continue;
+            }
+            or.add(cb.like(path, com.test.qoldanqolga.util.CsvListUtil.likeToken(code)));
+        }
+        if (!or.isEmpty()) {
+            predicates.add(cb.or(or.toArray(new Predicate[0])));
+        }
     }
 }

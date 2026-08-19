@@ -60,6 +60,22 @@ export default function useAdsListFilterDraft({
     filters.giveAway ? 'true' : null,
     searchParams.get(PARAMS.HAND_MADE_ONLY),
     searchParams.get(PARAMS.CAN_RENT),
+    (filters.jobProfession || []).join(','),
+    (filters.jobIndustry || []).join(','),
+    filters.jobPriority,
+    (filters.jobEmployment || []).join(','),
+    (filters.jobSchedule || []).join(','),
+    filters.jobWorkFormat,
+    filters.jobSalaryPeriod,
+    (filters.jobPayFrequency || []).join(','),
+    filters.jobExperience,
+    filters.jobCitizenship,
+    filters.jobAgeFrom,
+    filters.jobAgeTo,
+    filters.jobCompanyVerified,
+    filters.jobLargeCompany,
+    (filters.jobBenefits || []).join(','),
+    (filters.jobForCandidates || []).join(','),
   ].join('|')
 
   const [filterDraft, setFilterDraft] = useState(() => buildAdsFilterDraftFromParams(searchParams))

@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react'
 import CategoryIcon from '../../../../components/ui/CategoryIcon'
+import { sellerTypeOptionsForCategory } from '@/constants/sellerTypes'
+import styles from './AdsFiltersSidebar.module.css'
 import TransportSidebarFields from './TransportSidebarFields'
 import RealEstateSidebarFields from './RealEstateSidebarFields'
 import FilterCheckboxBlock from './FilterCheckboxBlock'
@@ -10,8 +12,9 @@ import FilterRegionBlock from './FilterRegionBlock'
 import FilterCurrencyBlock from './FilterCurrencyBlock'
 import FilterPriceBlock from './FilterPriceBlock'
 import FilterExtraToggles from './FilterExtraToggles'
-import { sellerTypeOptionsForCategory } from '../../../../constants/sellerTypes'
-import styles from './AdsFiltersSidebar.module.css'
+import JobModeToggle from './JobModeToggle'
+import JobSidebarFields from './JobSidebarFields'
+import { jobFieldFlags } from '../../../../constants/jobCategories'
 
 export default function AdsFiltersSidebar({
   regions = [],
@@ -29,6 +32,8 @@ export default function AdsFiltersSidebar({
   transportFlags = {},
   realEstateFlags = {},
   filterFlags = {},
+  searchParams,
+  categoryBreadcrumb = [],
   t,
   lang,
 }) {
@@ -64,6 +69,7 @@ export default function AdsFiltersSidebar({
       })),
     [currentCategoryCode, t]
   )
+  const jobFlags = jobFieldFlags(currentCategoryCode, categoryBreadcrumb)
   const yesLabel = lang === 'ru' ? 'Да' : 'Ha'
   const noLabel = lang === 'ru' ? 'Нет' : "Yo'q"
 
@@ -73,15 +79,19 @@ export default function AdsFiltersSidebar({
         {currentCategoryCode ? <CategoryIcon code={currentCategoryCode} className={styles.sidebarTitleIcon} /> : null}
         <span>{title}</span>
       </h2>
-      <FilterCategoryList
-        sidebarCategories={sidebarCategories}
-        currentCategoryCode={currentCategoryCode}
-        buildAdsLink={buildAdsLink}
-        expanded={expanded}
-        onToggleExpanded={() => setExpanded((e) => !e)}
-        categoryName={categoryName}
-        t={t}
-      />
+      {jobFlags.jobs ? (
+        <JobModeToggle lang={lang} flags={jobFlags} />
+      ) : (
+        <FilterCategoryList
+          sidebarCategories={sidebarCategories}
+          currentCategoryCode={currentCategoryCode}
+          buildAdsLink={buildAdsLink}
+          expanded={expanded}
+          onToggleExpanded={() => setExpanded((e) => !e)}
+          categoryName={categoryName}
+          t={t}
+        />
+      )}
       <FilterRegionBlock
         regions={regions}
         region={filterDraft.region}
@@ -150,14 +160,23 @@ export default function AdsFiltersSidebar({
         t={t}
       />
 
-      <FilterCheckboxBlock
-        title={t('ads.sellerType')}
-        options={sellerTypeOptions}
-        value={filterDraft.sellerType}
-        fieldKey="sellerType"
-        idPrefix="sellerType"
+      <JobSidebarFields
+        flags={jobFlags}
+        filterDraft={filterDraft}
         setFilterDraft={setFilterDraft}
+        lang={lang}
       />
+
+      {filterFlags.sellerType !== false && (
+        <FilterCheckboxBlock
+          title={t('ads.sellerType')}
+          options={sellerTypeOptions}
+          value={filterDraft.sellerType}
+          fieldKey="sellerType"
+          idPrefix="sellerType"
+          setFilterDraft={setFilterDraft}
+        />
+      )}
 
       {filterFlags.license && (
         <FilterYesNoCheckboxes
@@ -183,24 +202,28 @@ export default function AdsFiltersSidebar({
         />
       )}
 
-      <FilterCurrencyBlock
-        currency={filterDraft.currency}
-        setFilterDraft={setFilterDraft}
-        onCurrencyChange={onCurrencyChange}
-        t={t}
-      />
-      <FilterPriceBlock
-        priceFrom={filterDraft.priceFrom}
-        priceTo={filterDraft.priceTo}
-        setFilterDraft={setFilterDraft}
-        t={t}
-      />
-      <FilterExtraToggles
-        filterFlags={filterFlags}
-        filterDraft={filterDraft}
-        setFilterDraft={setFilterDraft}
-        t={t}
-      />
+      {!jobFlags.jobs && (
+        <>
+          <FilterCurrencyBlock
+            currency={filterDraft.currency}
+            setFilterDraft={setFilterDraft}
+            onCurrencyChange={onCurrencyChange}
+            t={t}
+          />
+          <FilterPriceBlock
+            priceFrom={filterDraft.priceFrom}
+            priceTo={filterDraft.priceTo}
+            setFilterDraft={setFilterDraft}
+            t={t}
+          />
+          <FilterExtraToggles
+            filterFlags={filterFlags}
+            filterDraft={filterDraft}
+            setFilterDraft={setFilterDraft}
+            t={t}
+          />
+        </>
+      )}
 
       <div className="d-flex gap-2 mt-3">
         <button type="button" className="btn btn-outline-secondary btn-sm flex-grow-1" onClick={onReset}>

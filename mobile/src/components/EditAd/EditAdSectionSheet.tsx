@@ -5,6 +5,7 @@ import { imageUrl } from '@/api/client';
 import { CreateAdExtrasSection } from '@/components/CreateAdForm/CreateAdExtrasSection';
 import { CreateAdLocationSection } from '@/components/CreateAdForm/CreateAdLocationSection';
 import { CreateAdRealEstateSection } from '@/components/CreateAdForm/CreateAdRealEstateSection';
+import { CreateAdJobSection } from '@/components/CreateAdForm/CreateAdJobSection';
 import { CreateAdTransportSection } from '@/components/CreateAdForm/CreateAdTransportSection';
 import type {
   CategoryFilterFlags,
@@ -214,6 +215,12 @@ export function EditAdSectionSheet({
                   hasModels={hasModels}
                 />
                 <CreateAdRealEstateSection flags={realEstate} form={form} patch={patch} />
+                <CreateAdJobSection
+                  categoryCode={form.category?.code}
+                  breadcrumb={breadcrumb}
+                  form={form}
+                  patch={patch}
+                />
                 <CreateAdExtrasSection flags={flags} form={form} patch={patch} breadcrumb={breadcrumb} />
               </View>
             ) : null}

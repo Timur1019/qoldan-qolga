@@ -1,4 +1,5 @@
 import { CATEGORY_PARENTS } from './categoryParents'
+import { JOB_CATEGORY_ICONS } from './jobCategories'
 
 const CATEGORY_ICONS = {
   "Xizmatlar": "clipboard-check",
@@ -51,7 +52,7 @@ const CATEGORY_ICONS = {
   "Prazdniki_meropriyatiya": "gift",
   "Ohrana_bezopasnost": "shield-check",
   "Xizmatlar_drugoe": "three-dots",
-  "ish_qidirish": "person-workspace",
+  ...JOB_CATEGORY_ICONS,
   "Avtomobili": "car-front",
   "Elektrosamokaty": "lightning-charge",
   "Transport_velosipedy": "bicycle",

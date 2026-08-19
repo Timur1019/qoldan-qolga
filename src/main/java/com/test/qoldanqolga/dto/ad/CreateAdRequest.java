@@ -103,6 +103,45 @@ public class CreateAdRequest {
 
     private Boolean furnished = false;
 
+    @Size(max = 80)
+    private String jobProfession;
+
+    @Size(max = 50)
+    private String jobIndustry;
+
+    @Size(max = 30)
+    private String jobPriority;
+
+    private List<String> jobEmployment;
+
+    private List<String> jobSchedule;
+
+    @Size(max = 30)
+    private String jobWorkFormat;
+
+    @Size(max = 20)
+    private String jobSalaryPeriod;
+
+    private List<String> jobPayFrequency;
+
+    @Size(max = 30)
+    private String jobExperience;
+
+    @Size(max = 40)
+    private String jobCitizenship;
+
+    private Integer jobAgeFrom;
+
+    private Integer jobAgeTo;
+
+    private Boolean jobCompanyVerified = false;
+
+    private Boolean jobLargeCompany = false;
+
+    private List<String> jobBenefits;
+
+    private List<String> jobForCandidates;
+
     @NotBlank
     @Size(max = 20)
     private String phone;

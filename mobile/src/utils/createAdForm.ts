@@ -4,6 +4,7 @@ import {
   realEstateFieldFlags,
   transportFieldFlags,
 } from '@/constants/categoryFilters';
+import { jobFieldFlags } from '@/constants/jobCategories';
 import { normalizeEngineVolume } from '@/utils/engineVolume';
 import { normalizeSellerType } from '@/constants/sellerTypes';
 import { appendLocationToDescription } from '@/utils/descriptionLocation';
@@ -58,6 +59,22 @@ export interface CreateAdFormState {
   buildingType: string;
   renovation: string;
   furnished: boolean;
+  jobProfession: string;
+  jobIndustry: string;
+  jobPriority: string;
+  jobEmployment: string[];
+  jobSchedule: string[];
+  jobWorkFormat: string;
+  jobSalaryPeriod: string;
+  jobPayFrequency: string[];
+  jobExperience: string;
+  jobCitizenship: string;
+  jobAgeFrom: string;
+  jobAgeTo: string;
+  jobCompanyVerified: boolean;
+  jobLargeCompany: boolean;
+  jobBenefits: string[];
+  jobForCandidates: string[];
   localImages: string[];
 }
 
@@ -109,6 +126,22 @@ export const EMPTY_CREATE_AD: CreateAdFormState = {
   buildingType: '',
   renovation: '',
   furnished: false,
+  jobProfession: '',
+  jobIndustry: '',
+  jobPriority: 'ANY',
+  jobEmployment: [],
+  jobSchedule: [],
+  jobWorkFormat: 'ANY',
+  jobSalaryPeriod: 'ANY',
+  jobPayFrequency: [],
+  jobExperience: '',
+  jobCitizenship: '',
+  jobAgeFrom: '',
+  jobAgeTo: '',
+  jobCompanyVerified: false,
+  jobLargeCompany: false,
+  jobBenefits: [],
+  jobForCandidates: [],
   localImages: [],
 };
 
@@ -138,6 +171,8 @@ export function validateCreateAd(form: CreateAdFormState, breadcrumb: CategoryDt
   const code = form.category.code;
   const transport = transportFieldFlags(code, breadcrumb);
   const realEstate = realEstateFieldFlags(code, breadcrumb);
+  const jobs = jobFieldFlags(code, breadcrumb);
+  if (jobs.jobs && !form.jobProfession.trim()) return 'Kasbni tanlang';
 
   if (realEstate.dealType && !form.dealType) return 'Bitim turini tanlang';
   if (realEstate.rooms && form.rooms === '') return 'Xonalar sonini tanlang';
@@ -244,6 +279,27 @@ export function buildCreateAdPayload(
     if (realEstate.furnished) body.furnished = form.furnished;
   }
 
+  if (jobFieldFlags(code, breadcrumb).jobs) {
+    if (form.jobProfession) body.jobProfession = form.jobProfession;
+    if (form.jobIndustry) body.jobIndustry = form.jobIndustry;
+    if (form.jobPriority && form.jobPriority !== 'ANY') body.jobPriority = form.jobPriority;
+    if (form.jobEmployment.length) body.jobEmployment = form.jobEmployment;
+    if (form.jobSchedule.length) body.jobSchedule = form.jobSchedule;
+    if (form.jobWorkFormat && form.jobWorkFormat !== 'ANY') body.jobWorkFormat = form.jobWorkFormat;
+    if (form.jobSalaryPeriod && form.jobSalaryPeriod !== 'ANY') body.jobSalaryPeriod = form.jobSalaryPeriod;
+    if (form.jobPayFrequency.length) body.jobPayFrequency = form.jobPayFrequency;
+    if (form.jobExperience) body.jobExperience = form.jobExperience;
+    if (form.jobCitizenship) body.jobCitizenship = form.jobCitizenship;
+    const jobAgeFrom = intOrUndef(form.jobAgeFrom);
+    const jobAgeTo = intOrUndef(form.jobAgeTo);
+    if (jobAgeFrom != null) body.jobAgeFrom = jobAgeFrom;
+    if (jobAgeTo != null) body.jobAgeTo = jobAgeTo;
+    body.jobCompanyVerified = form.jobCompanyVerified;
+    body.jobLargeCompany = form.jobLargeCompany;
+    if (form.jobBenefits.length) body.jobBenefits = form.jobBenefits;
+    if (form.jobForCandidates.length) body.jobForCandidates = form.jobForCandidates;
+  }
+
   return body;
 }
 
@@ -275,6 +331,22 @@ export function resetCategoryFields(partial: Partial<CreateAdFormState> = {}): P
     renovation: '',
     furnished: false,
     onlineShowing: false,
+    jobProfession: '',
+    jobIndustry: '',
+    jobPriority: 'ANY',
+    jobEmployment: [],
+    jobSchedule: [],
+    jobWorkFormat: 'ANY',
+    jobSalaryPeriod: 'ANY',
+    jobPayFrequency: [],
+    jobExperience: '',
+    jobCitizenship: '',
+    jobAgeFrom: '',
+    jobAgeTo: '',
+    jobCompanyVerified: false,
+    jobLargeCompany: false,
+    jobBenefits: [],
+    jobForCandidates: [],
     ...partial,
   };
 }

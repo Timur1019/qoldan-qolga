@@ -1,3 +1,5 @@
+import { JOB_CATEGORY_PARENTS } from './jobCategories'
+
 /** Parent codes for icon inheritance when a leaf is not in CATEGORY_ICONS. */
 export const CATEGORY_PARENTS = {
   "Abaya": "Zhenskaya_odezhda",
@@ -504,7 +506,6 @@ export const CATEGORY_PARENTS = {
   "Zhenskaya_odezhda_drugoe": "Zhenskaya_odezhda",
   "Zhurnalnye_stoliki": "Mebel_i_interer",
   "Zonty": "Odezhda_aksessuary",
-  "ish_qidirish": "Ish",
   "Kvartiry": "Nedvizhimost",
   "Kvartiry_novostroyki": "Kvartiry",
   "Kvartiry_vtorichka": "Kvartiry",
@@ -517,4 +518,5 @@ export const CATEGORY_PARENTS = {
   "Sklady": "Kommercheskaya",
   "Kommercheskaya_prochee": "Kommercheskaya",
   "Garazhi_parkovki": "Nedvizhimost",
+  ...JOB_CATEGORY_PARENTS,
 }

@@ -9,6 +9,7 @@ import {
   AdminReports,
   AdminBanners,
   AdminTopBanners,
+  AdminSellBanners,
   AdminLogin,
   AdminBusinessApplications,
   AdminLayout,
@@ -104,6 +105,7 @@ export default function App() {
         <Route path="business-applications" element={<AdminBusinessApplications />} />
         <Route path="banners" element={<AdminBanners />} />
         <Route path="top-banners" element={<AdminTopBanners />} />
+        <Route path="sell-banners" element={<AdminSellBanners />} />
       </Route>
     </Routes>
     </IdVerificationProvider>

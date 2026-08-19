@@ -93,6 +93,22 @@ export const PARAMS = {
   BUILDING_TYPE: 'buildingType',
   RENOVATION: 'renovation',
   FURNISHED: 'furnished',
+  JOB_PROFESSION: 'jobProfession',
+  JOB_INDUSTRY: 'jobIndustry',
+  JOB_PRIORITY: 'jobPriority',
+  JOB_EMPLOYMENT: 'jobEmployment',
+  JOB_SCHEDULE: 'jobSchedule',
+  JOB_WORK_FORMAT: 'jobWorkFormat',
+  JOB_SALARY_PERIOD: 'jobSalaryPeriod',
+  JOB_PAY_FREQUENCY: 'jobPayFrequency',
+  JOB_EXPERIENCE: 'jobExperience',
+  JOB_CITIZENSHIP: 'jobCitizenship',
+  JOB_AGE_FROM: 'jobAgeFrom',
+  JOB_AGE_TO: 'jobAgeTo',
+  JOB_COMPANY_VERIFIED: 'jobCompanyVerified',
+  JOB_LARGE_COMPANY: 'jobLargeCompany',
+  JOB_BENEFITS: 'jobBenefits',
+  JOB_FOR_CANDIDATES: 'jobForCandidates',
 }
 
 /** Код корневой категории «Одежда и обувь» — от него зависят фильтры (состояние, аренда). */

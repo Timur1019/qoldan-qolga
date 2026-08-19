@@ -11,6 +11,7 @@ import CreateAdPhotos from '../../components/CreateAdPhotos'
 import CreateAdBrandField from '../../components/CreateAdBrandField'
 import CreateAdTransportFields from '../../components/CreateAdTransportFields'
 import CreateAdRealEstateFields from '../../components/CreateAdRealEstateFields'
+import CreateAdJobFields from '../../components/CreateAdJobFields'
 import CreateAdDealPrice from '../../components/CreateAdDealPrice'
 import CreateAdSellerTypeFields from '../../components/CreateAdSellerTypeFields'
 import CreateAdFlags from '../../components/CreateAdFlags'
@@ -21,6 +22,7 @@ import { isClothingTree } from '@/constants/routes'
 import { EMPTY_TRANSPORT_FIELDS, transportFieldFlags } from '@/constants/transport'
 import { EMPTY_REAL_ESTATE_FIELDS, realEstateFieldFlags } from '@/constants/realEstate'
 import { categoryFilterFlags } from '@/constants/categoryFilters'
+import { jobFieldFlags } from '@/constants/jobCategories'
 import {
   createEmptyAdForm,
   formFromAdDetail,
@@ -114,6 +116,12 @@ export default function CreateAd({ edit: editMode }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    const jobFlags = jobFieldFlags(form.category, categoryBreadcrumb)
+    if (jobFlags.jobs && !form.jobProfession) {
+      setError(lang === 'ru' ? 'Выберите профессию' : 'Kasbni tanlang')
+      setSubmitting(false)
+      return
+    }
     setSubmitting(true)
     try {
       const payload = buildCreateAdPayload(form, uploadedUrls, {
@@ -197,7 +205,7 @@ export default function CreateAd({ edit: editMode }) {
           brands={brands}
           brandId={form.brandId}
           onSelect={(brandId) => patchForm({ brandId })}
-          visible={!transportFlags.transport && !realEstateFlags.realEstate}
+          visible={!transportFlags.transport && !realEstateFlags.realEstate && !filterFlags.jobs}
           t={t}
           lang={lang}
         />
@@ -218,6 +226,14 @@ export default function CreateAd({ edit: editMode }) {
           form={form}
           onChange={patchForm}
           t={t}
+        />
+
+        <CreateAdJobFields
+          categoryCode={form.category}
+          categoryBreadcrumb={categoryBreadcrumb}
+          form={form}
+          onChange={patchForm}
+          lang={lang}
         />
 
         <CreateAdDealPrice

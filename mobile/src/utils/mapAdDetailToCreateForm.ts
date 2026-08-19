@@ -2,6 +2,15 @@ import type { AdDetailDto, CategoryDto } from '@/types/api';
 import { EMPTY_CREATE_AD, type CreateAdFormState } from '@/utils/createAdForm';
 import { extractLocationFromDescription } from '@/utils/descriptionLocation';
 
+function splitCsv(value: unknown): string[] {
+  if (Array.isArray(value)) return value.filter(Boolean).map(String);
+  if (!value) return [];
+  return String(value)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function str(v: unknown) {
   if (v == null || v === '') return '';
   return String(v);
@@ -69,6 +78,22 @@ export function mapAdDetailToCreateForm(
       buildingType: str(detail.buildingType),
       renovation: str(detail.renovation),
       furnished: !!detail.furnished,
+      jobProfession: str(detail.jobProfession),
+      jobIndustry: str(detail.jobIndustry),
+      jobPriority: str(detail.jobPriority) || 'ANY',
+      jobEmployment: splitCsv(detail.jobEmployment),
+      jobSchedule: splitCsv(detail.jobSchedule),
+      jobWorkFormat: str(detail.jobWorkFormat) || 'ANY',
+      jobSalaryPeriod: str(detail.jobSalaryPeriod) || 'ANY',
+      jobPayFrequency: splitCsv(detail.jobPayFrequency),
+      jobExperience: str(detail.jobExperience),
+      jobCitizenship: str(detail.jobCitizenship),
+      jobAgeFrom: str(detail.jobAgeFrom),
+      jobAgeTo: str(detail.jobAgeTo),
+      jobCompanyVerified: !!detail.jobCompanyVerified,
+      jobLargeCompany: !!detail.jobLargeCompany,
+      jobBenefits: splitCsv(detail.jobBenefits),
+      jobForCandidates: splitCsv(detail.jobForCandidates),
       localImages: [],
     },
   };

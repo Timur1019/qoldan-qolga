@@ -78,4 +78,20 @@ public class AdDetailDto {
     private Boolean isTop;
     private Boolean isHighlighted;
     private Instant promoUntil;
+    private String jobProfession;
+    private String jobIndustry;
+    private String jobPriority;
+    private String jobEmployment;
+    private String jobSchedule;
+    private String jobWorkFormat;
+    private String jobSalaryPeriod;
+    private String jobPayFrequency;
+    private String jobExperience;
+    private String jobCitizenship;
+    private Integer jobAgeFrom;
+    private Integer jobAgeTo;
+    private Boolean jobCompanyVerified;
+    private Boolean jobLargeCompany;
+    private String jobBenefits;
+    private String jobForCandidates;
 }

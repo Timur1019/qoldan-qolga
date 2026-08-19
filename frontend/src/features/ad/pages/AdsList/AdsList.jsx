@@ -211,6 +211,8 @@ export default function AdsList() {
               brands={brands}
               buildCategoryLink={(c) => categoryPathWithParams(c, searchParams)}
               buildAdsLink={(c) => adsCategoryPathWithParams(c, searchParams)}
+              searchParams={searchParams}
+              categoryBreadcrumb={categoryBreadcrumb}
               t={t}
               lang={lang}
             />

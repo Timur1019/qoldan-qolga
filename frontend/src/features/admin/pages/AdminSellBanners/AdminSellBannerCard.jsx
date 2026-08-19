@@ -1,0 +1,35 @@
+import { imageUrl } from '@/api/client'
+import { UiButton } from '@/shared/ui'
+import styles from './AdminSellBanners.module.css'
+
+export default function AdminSellBannerCard({ item, onEdit, onDelete }) {
+  return (
+    <div className={styles.card}>
+      <div className={styles.preview}>
+        {item.imageUrl ? (
+          <img src={imageUrl(item.imageUrl)} alt="" className={styles.previewArt} />
+        ) : (
+          <span className={styles.previewArtFallback} aria-hidden>
+            <i className="bi bi-image" />
+          </span>
+        )}
+        <div className={styles.previewText}>
+          {item.kicker ? <span className={styles.kicker}>{item.kicker}</span> : null}
+          <strong>{item.title}</strong>
+          {item.ctaText ? <span className={styles.previewLink}>{item.ctaText}</span> : null}
+        </div>
+        <span className={item.enabled ? styles.badgeOn : styles.badgeOff}>
+          {item.enabled ? 'Вкл' : 'Выкл'}
+        </span>
+      </div>
+      <div className={styles.cardActions}>
+        <UiButton type="button" variant="outline" size="sm" onClick={() => onEdit(item)}>
+          Изменить
+        </UiButton>
+        <UiButton type="button" variant="danger" size="sm" onClick={() => onDelete(item.id)}>
+          Удалить
+        </UiButton>
+      </div>
+    </div>
+  )
+}

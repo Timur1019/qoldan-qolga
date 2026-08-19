@@ -1,0 +1,88 @@
+.modeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.modeBtn {
+  border: 0;
+  background: none;
+  padding: 0;
+  text-align: left;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.modeBtnActive {
+  font-weight: 700;
+}
+
+.searchInput {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: #f1f2f4;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.875rem;
+}
+
+.searchInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.15rem rgba(4, 73, 45, 0.2);
+}
+
+.radioInput {
+  appearance: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.radioInput:checked {
+  border-color: var(--color-text);
+  background: radial-gradient(circle, #111 45%, #fff 48%);
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.chip {
+  border: 0;
+  background: #f1f2f4;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.chipOn {
+  background: #111;
+  color: #fff;
+}
+
+.moreLink {
+  border: 0;
+  background: none;
+  padding: 0.35rem 0 0;
+  color: var(--color-primary, #0d6efd);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.salaryRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}

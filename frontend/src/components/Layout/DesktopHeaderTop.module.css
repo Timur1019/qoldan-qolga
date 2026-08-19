@@ -1,0 +1,101 @@
+.top {
+  background: #fff;
+  border-bottom: 1px solid #eef1f0;
+}
+
+.inner {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  max-width: var(--layout-max, 1280px);
+  margin: 0 auto;
+  padding: 0.35rem var(--layout-pad, 1.5rem);
+  min-height: 40px;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem 1.1rem;
+  min-width: 0;
+}
+
+.link,
+.catalog {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #6b7280;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:hover,
+.catalog:hover {
+  color: #04492d;
+  text-decoration: none;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-shrink: 0;
+}
+
+.tool {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #111827;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tool:hover {
+  color: #04492d;
+  text-decoration: none;
+}
+
+.tool i {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.badge {
+  position: absolute;
+  top: -7px;
+  left: 10px;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.2rem;
+  border-radius: 8px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .tool span {
+    display: none;
+  }
+
+  .tools {
+    gap: 0.65rem;
+  }
+}
