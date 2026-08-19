@@ -1,5 +1,5 @@
 import { UiAlert, UiButton, UiField, UiInput, UiSelect, UiToggle } from '@/shared/ui'
-import styles from './AdminDashboard.module.css'
+import styles from './AdminCategoryForm.module.css'
 
 export default function AdminCategoryForm({
   form,
@@ -9,11 +9,12 @@ export default function AdminCategoryForm({
   error,
   success,
   onSubmit,
+  t,
 }) {
   return (
     <form className={styles.form} onSubmit={onSubmit}>
-      <div className={styles.formRow}>
-        <UiField className={styles.rowField} label="Название (UZ)" htmlFor="cat-uz">
+      <div className={styles.row}>
+        <UiField className={styles.field} label={t('adminPanel.nameUz')} htmlFor="cat-uz">
           <UiInput
             id="cat-uz"
             value={form.nameUz}
@@ -22,7 +23,7 @@ export default function AdminCategoryForm({
             placeholder="Kategoriya nomi"
           />
         </UiField>
-        <UiField className={styles.rowField} label="Название (RU)" htmlFor="cat-ru">
+        <UiField className={styles.field} label={t('adminPanel.nameRu')} htmlFor="cat-ru">
           <UiInput
             id="cat-ru"
             value={form.nameRu}
@@ -32,8 +33,8 @@ export default function AdminCategoryForm({
           />
         </UiField>
       </div>
-      <div className={styles.formRow}>
-        <UiField className={styles.rowField} label="Код (латиница, уникальный)" htmlFor="cat-code">
+      <div className={styles.row}>
+        <UiField className={styles.field} label={t('adminPanel.code')} htmlFor="cat-code">
           <UiInput
             id="cat-code"
             value={form.code}
@@ -42,14 +43,14 @@ export default function AdminCategoryForm({
             placeholder="category-code"
           />
         </UiField>
-        <UiField className={styles.rowField} label="Родительская категория (для подкатегории)" htmlFor="cat-parent">
+        <UiField className={styles.field} label={t('adminPanel.parent')} htmlFor="cat-parent">
           <UiSelect
             id="cat-parent"
             value={form.parentId}
             onChange={(e) => setForm((f) => ({ ...f, parentId: e.target.value }))}
-            placeholder="— корневая —"
+            placeholder={t('adminPanel.parentRoot')}
           >
-            <option value="">— корневая —</option>
+            <option value="">{t('adminPanel.parentRoot')}</option>
             {rootCategories.flatMap((root) => [
               <option key={root.id} value={root.id}>
                 {root.nameRu} ({root.code})
@@ -63,8 +64,8 @@ export default function AdminCategoryForm({
           </UiSelect>
         </UiField>
       </div>
-      <div className={styles.formRow}>
-        <UiField className={styles.rowField} label="Порядок сортировки" htmlFor="cat-sort">
+      <div className={styles.row}>
+        <UiField className={styles.field} label={t('adminPanel.sortOrder')} htmlFor="cat-sort">
           <UiInput
             id="cat-sort"
             type="number"
@@ -72,17 +73,17 @@ export default function AdminCategoryForm({
             onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value === '' ? 0 : Number(e.target.value) }))}
           />
         </UiField>
-        <div className={styles.checkWrap}>
+        <div className={styles.check}>
           <UiToggle
             checked={form.showOnHome}
             onChange={(showOnHome) => setForm((f) => ({ ...f, showOnHome }))}
           />
-          <span>Показывать на главной</span>
+          <span>{t('adminPanel.showOnHome')}</span>
         </div>
       </div>
       {error ? <UiAlert>{error}</UiAlert> : null}
       {success ? <UiAlert variant="success">{success}</UiAlert> : null}
-      <UiButton type="submit">Добавить категорию</UiButton>
+      <UiButton type="submit">{t('adminPanel.addCategory')}</UiButton>
     </form>
   )
 }

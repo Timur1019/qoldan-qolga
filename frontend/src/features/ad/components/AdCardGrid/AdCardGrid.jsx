@@ -2,6 +2,7 @@ import styles from './AdCardGrid.module.css'
 
 const VARIANTS = {
   default: styles.grid,
+  cols2: styles.gridCols2,
   cols5: styles.gridCols5,
   besideNav: styles.gridBesideNav,
 }

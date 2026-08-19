@@ -51,7 +51,10 @@ public class AdListQueryServiceImpl implements AdListQueryService {
         for (String adId : adIds) {
             List<AdImage> list = allImages.stream()
                     .filter(img -> img.getAdId().equals(adId))
-                    .sorted(Comparator.comparing(AdImage::getOrderNum).thenComparing(AdImage::getId))
+                    .sorted(Comparator
+                            .comparing((AdImage img) -> Boolean.TRUE.equals(img.getIsMain()) ? 0 : 1)
+                            .thenComparing(AdImage::getOrderNum)
+                            .thenComparing(AdImage::getId))
                     .collect(Collectors.toList());
             List<String> urls = list.stream().map(AdImage::getUrl).collect(Collectors.toList());
             urlsByAdId.put(adId, urls);

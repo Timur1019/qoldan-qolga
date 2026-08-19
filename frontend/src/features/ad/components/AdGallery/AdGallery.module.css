@@ -45,21 +45,34 @@
   position: relative;
 }
 
-.mainImageClickable {
-  position: relative;
-  cursor: pointer;
-  display: block;
+.track {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
   max-height: 70vh;
-  /* Вертикальный скролл страницы; горизонталь обрабатывает useGalleryPointer */
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
+  touch-action: pan-x pan-y;
 }
 
-.mainImageClickable:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: zoom-in;
+  display: block;
 }
 
 .mainImageHoverOverlay {
@@ -71,16 +84,27 @@
   background: rgba(0, 0, 0, 0.35);
   opacity: 0;
   transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 3;
 }
 
-.mainImageClickable:hover .mainImageHoverOverlay,
-.mainImageClickable:focus-visible .mainImageHoverOverlay {
+.mainImageWrap:hover .mainImageHoverOverlay,
+.mainImageWrap:focus-within .mainImageHoverOverlay {
   opacity: 1;
 }
 
 @media (hover: none) {
   .mainImageHoverOverlay {
-    display: none;
+    opacity: 1;
+    background: transparent;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0.7rem;
+  }
+
+  .enlargeText {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
   }
 }
 
@@ -102,15 +126,21 @@
   display: flex;
   gap: 0.4rem;
   z-index: 5;
-  pointer-events: none;
+  pointer-events: auto;
+  border: 0;
+  background: none;
+  padding: 0;
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.6);
   transition: background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
 .dotActive {
@@ -147,12 +177,17 @@
   }
 
   .mainImageWrap,
-  .mainImageClickable,
+  .track,
+  .slide,
   .mainImage,
   .mainImagePlaceholder {
     max-height: none;
     aspect-ratio: 1;
     border-radius: 0;
+  }
+
+  .lightboxNav {
+    display: none;
   }
 }
 
@@ -197,13 +232,38 @@
 .lightboxImageWrap {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   min-height: 0;
+  min-width: 0;
   position: relative;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
+}
+
+.lightboxTrack {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.lightboxTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.lightboxSlide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lightboxDots {
@@ -214,7 +274,35 @@
   display: flex;
   gap: 0.4rem;
   z-index: 10;
-  pointer-events: none;
+}
+
+.lightboxNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightboxNav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.lightboxNavPrev {
+  left: 0.75rem;
+}
+
+.lightboxNavNext {
+  right: 0.75rem;
 }
 
 .dotLightbox {
@@ -225,18 +313,11 @@
   background: #ffffff;
 }
 
-.lightboxContent {
-  max-width: 75vw;
-  max-height: 75vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .lightboxImage {
-  max-width: 100%;
-  max-height: 75vh;
+  max-width: min(92vw, 1100px);
+  max-height: 78vh;
   object-fit: contain;
+  pointer-events: none;
 }
 
 .lightboxFooter {

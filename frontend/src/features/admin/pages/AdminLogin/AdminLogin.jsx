@@ -3,6 +3,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useLang } from '@/context/LangContext'
 import { PARAMS, ROUTES } from '@/constants/routes'
 import { UiAlert, UiButton, UiField, UiInput } from '@/shared/ui'
+import AdminLangSwitch from '../../components/AdminLangSwitch/AdminLangSwitch'
 import { useAdminLogin } from './useAdminLogin'
 import styles from './AdminLogin.module.css'
 
@@ -10,7 +11,7 @@ export default function AdminLogin() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { isAuthenticated, isAdmin, loading, setAuth, refreshUser } = useAuth()
-  const { t } = useLang()
+  const { t, lang, setLang } = useLang()
   const redirectTo = searchParams.get(PARAMS.FROM) || ROUTES.ADMIN
   const form = useAdminLogin({
     setAuth,
@@ -33,13 +34,16 @@ export default function AdminLogin() {
 
   return (
     <div className={styles.page}>
+      <div className={styles.lang}>
+        <AdminLangSwitch lang={lang} onChange={setLang} />
+      </div>
       <div className={styles.card}>
         <div className={styles.head}>
           <span className={styles.icon} aria-hidden>
             <i className="bi bi-shield-lock" />
           </span>
-          <h1 className={styles.title}>Вход в админку</h1>
-          <p className={styles.muted}>Email и пароль администратора</p>
+          <h1 className={styles.title}>{t('adminPanel.loginTitle')}</h1>
+          <p className={styles.muted}>{t('adminPanel.loginHint')}</p>
         </div>
 
         <form className={styles.form} onSubmit={form.submit}>
@@ -55,7 +59,7 @@ export default function AdminLogin() {
               required
             />
           </UiField>
-          <UiField label="Пароль" htmlFor="admin-password">
+          <UiField label={t('adminPanel.password')} htmlFor="admin-password">
             <UiInput
               id="admin-password"
               type="password"
@@ -66,12 +70,12 @@ export default function AdminLogin() {
             />
           </UiField>
           <UiButton type="submit" fullWidth loading={form.submitting} className={styles.submit}>
-            {form.submitting ? 'Вход…' : 'Войти'}
+            {form.submitting ? t('adminPanel.loading') : t('adminPanel.loginBtn')}
           </UiButton>
         </form>
 
         <Link to="/" className={styles.back}>
-          ← На сайт
+          ← {t('adminPanel.toSite')}
         </Link>
       </div>
     </div>

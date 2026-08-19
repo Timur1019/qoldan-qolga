@@ -40,6 +40,8 @@ export default function AdsFilterBar({
   filterFlags = {},
   brands = [],
   showSort = true,
+  endSlot = null,
+  compact = false,
 }) {
   const [openPop, setOpenPop] = useState(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -104,6 +106,8 @@ export default function AdsFilterBar({
           />
         </div>
 
+        {!compact && (
+        <>
         <div className={styles.chipSlot}>
           <FilterChip
             label={categoryChipLabel}
@@ -266,11 +270,19 @@ export default function AdsFilterBar({
             />
           </FilterPopover>
         </div>
+        </>
+        )}
       </div>
 
       {showSort && (
-        <AdsSortMenu value={filters.sort} onChange={setSort} t={t} />
+        <div className={styles.toolbarEnd}>
+          {endSlot}
+          <AdsSortMenu value={filters.sort} onChange={setSort} t={t} />
+        </div>
       )}
+      {!showSort && endSlot ? (
+        <div className={styles.toolbarEnd}>{endSlot}</div>
+      ) : null}
 
       <AdsFiltersDrawer
         open={drawerOpen}

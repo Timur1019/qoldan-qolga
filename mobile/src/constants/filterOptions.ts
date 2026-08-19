@@ -12,6 +12,7 @@ export const CONDITION_OPTIONS: FilterOption[] = [
   { value: 'USED_LIKE_NEW', label: 'Deyarli yangi' },
   { value: 'USED_GOOD', label: 'Yaxshi' },
   { value: 'USED_FAIR', label: "O'rtacha" },
+  { value: 'HANDMADE', label: "Qo'lda yasalgan" },
 ];
 
 export const DEAL_TYPE_OPTIONS: FilterOption[] = [

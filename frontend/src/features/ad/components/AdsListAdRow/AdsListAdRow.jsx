@@ -9,6 +9,7 @@ import { adsPath, sellerPath } from '../../../../constants/routes'
 import HeartIcon from '../../../../components/ui/HeartIcon'
 import { useRegionLabel } from '../../../../context/RegionsContext'
 import CardGallery from '../CardGallery'
+import { galleryImageUrls } from '../../utils/galleryImageUrls'
 import AdImageBadges from '../AdImageBadges/AdImageBadges'
 import AdsListAdRowRating from './AdsListAdRowRating'
 import styles from './AdsListAdRow.module.css'
@@ -32,9 +33,11 @@ export default function AdsListAdRow({
   onFavoriteClick,
   onWriteSeller,
   onShowPhone,
+  active = false,
+  onHover,
 }) {
   const regionLabel = useRegionLabel(ad?.region)
-  const urls = ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])
+  const urls = galleryImageUrls(ad)
   const sellerName = ad.userDisplayName || t('ads.seller')
   const desc = (ad.description || '').trim()
   const dateLabels = { today: t('chat.today'), yesterday: t('chat.yesterday') }
@@ -42,7 +45,11 @@ export default function AdsListAdRow({
   const isOwnAd = ad.userId && String(ad.userId) === String(userId)
 
   return (
-    <li className={`${styles.adRow} ${ad.isHighlighted ? styles.adRowHighlighted : ''}`.trim()}>
+    <li
+      className={`${styles.adRow} ${ad.isHighlighted ? styles.adRowHighlighted : ''} ${active ? styles.adRowActive : ''}`.trim()}
+      onMouseEnter={() => onHover?.(ad.id)}
+      onMouseLeave={() => onHover?.(null)}
+    >
       <Link to={adsPath(ad.id)} className={styles.adRowLink}>
         <span className={styles.adRowImageWrap}>
           <AdImageBadges ad={ad} t={t} />

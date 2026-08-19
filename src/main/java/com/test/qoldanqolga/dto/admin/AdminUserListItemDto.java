@@ -21,4 +21,7 @@ public class AdminUserListItemDto {
     private Instant verificationRequestedAt;
     private Instant bannedUntil;
     private String banReason;
+    private String phone;
+    private Instant createdAt;
+    private Instant lastSeenAt;
 }

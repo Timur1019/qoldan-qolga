@@ -1,0 +1,88 @@
+.wrap {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  contain: layout paint;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: #e8eef3;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  background: linear-gradient(135deg, #d7e4ef 0%, #eef3f7 55%, #c9dce8 100%);
+}
+
+.credit {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 400;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #111827;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.wrap :global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  z-index: 0 !important;
+  background: #dce6ee;
+}
+
+.wrap :global(.leaflet-pane),
+.wrap :global(.leaflet-top),
+.wrap :global(.leaflet-bottom),
+.wrap :global(.leaflet-control-container) {
+  z-index: 1 !important;
+}
+
+.wrap :global(.leaflet-control-attribution) {
+  display: none !important;
+}
+
+.wrap :global(.leaflet-tile-container img) {
+  image-rendering: auto;
+}
+
+.markerRoot {
+  background: transparent !important;
+  border: none !important;
+}
+
+.dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
+}
+
+.pin {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 7px 3px 0;
+  background: #e11d48;
+  border: 2.5px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.45);
+}

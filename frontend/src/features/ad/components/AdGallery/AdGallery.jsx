@@ -1,21 +1,22 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { useLang } from '../../../../context/LangContext'
 import { imageUrl } from '@/api/client'
-import { useGalleryPointer } from '../../hooks/useGalleryPointer'
+import { sortImagesMainFirst } from '../../utils/galleryImageUrls'
+import { useGalleryScroll } from '../../hooks/useGalleryScroll'
 import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
+import AdGalleryLightbox from './AdGalleryLightbox'
+import AdGalleryNav from './AdGalleryNav'
 import styles from './AdGallery.module.css'
 
 export default function AdGallery({ images: rawImages, lightboxFooter, overlay }) {
   const { t } = useLang()
-  const [selectedIndex, setSelectedIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [failedUrls, setFailedUrls] = useState(() => new Set())
 
-  const images = (rawImages?.length
-    ? [...rawImages].sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0))
-    : []
-  ).filter((img) => img?.url && !failedUrls.has(img.url))
-  const mainImage = images[selectedIndex] || images[0]
+  const images = sortImagesMainFirst(rawImages)
+    .filter((img) => img?.url && !failedUrls.has(img.url))
+
+  const gallery = useGalleryScroll(images.length)
 
   const markFailed = (url) => {
     if (!url) return
@@ -25,27 +26,8 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
       next.add(url)
       return next
     })
-    setSelectedIndex(0)
+    gallery.goTo(0, 'auto')
   }
-
-  useEffect(() => {
-    if (!lightboxOpen) return
-    const onKey = (e) => { if (e.key === 'Escape') setLightboxOpen(false) }
-    window.addEventListener('keydown', onKey)
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
-    }
-  }, [lightboxOpen])
-
-  const openLightbox = useCallback(() => {
-    if (mainImage) setLightboxOpen(true)
-  }, [mainImage])
-
-  const pointer = useGalleryPointer(images.length, setSelectedIndex, { onTap: openLightbox })
-  const lightboxPointer = useGalleryPointer(images.length, setSelectedIndex)
 
   return (
     <>
@@ -54,10 +36,10 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
           <div className={styles.thumbStrip}>
             {images.map((img, idx) => (
               <button
-                key={img.id}
+                key={img.id || `${img.url}-${idx}`}
                 type="button"
-                className={`${styles.thumbBtn} ${selectedIndex === idx ? styles.thumbBtnActive : ''}`}
-                onClick={() => setSelectedIndex(idx)}
+                className={`${styles.thumbBtn} ${gallery.index === idx ? styles.thumbBtnActive : ''}`}
+                onClick={() => gallery.goTo(idx)}
               >
                 <img src={imageUrl(img.url)} alt="" loading="lazy" decoding="async" onError={() => markFailed(img.url)} />
               </button>
@@ -65,44 +47,65 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
           </div>
         )}
         <div className={styles.mainImageWrap}>
-          <div
-            className={styles.mainImageClickable}
-            onPointerDown={pointer.onPointerDown}
-            onPointerMove={pointer.onPointerMove}
-            onPointerUp={pointer.onPointerUp}
-            onPointerCancel={pointer.onPointerCancel}
-            onClickCapture={pointer.onClickCapture}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                openLightbox()
-              }
-            }}
-            aria-label={t('ads.enlarge')}
-          >
-            {mainImage ? (
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.mainImage} decoding="async" draggable={false} onError={() => markFailed(mainImage.url)} />
-            ) : (
-              <AdImagePlaceholder className={styles.mainImagePlaceholder} />
-            )}
-            {mainImage && (
-              <div className={styles.mainImageHoverOverlay}>
-                <span className={styles.enlargeText}>{t('ads.enlarge')}</span>
-              </div>
-            )}
-          </div>
+          {images.length === 0 ? (
+            <AdImagePlaceholder className={styles.mainImagePlaceholder} />
+          ) : (
+            <div
+              ref={gallery.trackRef}
+              className={styles.track}
+              onScroll={gallery.onScroll}
+            >
+              {images.map((img, idx) => (
+                <div
+                  key={img.id || `${img.url}-${idx}`}
+                  className={styles.slide}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setLightboxOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setLightboxOpen(true)
+                    }
+                  }}
+                  aria-label={t('ads.enlarge')}
+                >
+                  <img
+                    src={imageUrl(img.url)}
+                    alt=""
+                    className={styles.mainImage}
+                    decoding="async"
+                    draggable={false}
+                    onError={() => markFailed(img.url)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {images.length > 0 && (
+            <div className={styles.mainImageHoverOverlay} aria-hidden>
+              <span className={styles.enlargeText}>{t('ads.enlarge')}</span>
+            </div>
+          )}
           {overlay}
+          <AdGalleryNav
+            index={gallery.index}
+            count={images.length}
+            onPrev={() => gallery.goTo(gallery.index - 1)}
+            onNext={() => gallery.goTo(gallery.index + 1)}
+            prevLabel={t('ads.prevImage')}
+            nextLabel={t('ads.nextImage')}
+          />
           {images.length > 1 && (
             <div className={styles.dots} role="tablist" aria-label={t('ads.imageCount')}>
               {images.map((_, idx) => (
-                <span
+                <button
                   key={idx}
-                  className={`${styles.dot} ${selectedIndex === idx ? styles.dotActive : ''}`}
-                  role="tab"
-                  aria-selected={selectedIndex === idx}
+                  type="button"
+                  className={`${styles.dot} ${gallery.index === idx ? styles.dotActive : ''}`}
+                  aria-selected={gallery.index === idx}
                   aria-label={`${idx + 1} / ${images.length}`}
+                  onClick={() => gallery.goTo(idx)}
                 />
               ))}
             </div>
@@ -110,53 +113,15 @@ export default function AdGallery({ images: rawImages, lightboxFooter, overlay }
         </div>
       </div>
 
-      {lightboxOpen && mainImage && (
-        <div
-          className={styles.lightboxOverlay}
-          onClick={() => setLightboxOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={t('ads.enlarge')}
-        >
-          <button
-            type="button"
-            className={styles.lightboxClose}
-            onClick={(e) => { e.stopPropagation(); setLightboxOpen(false) }}
-            aria-label={t('common.cancel')}
-          >
-            ✕
-          </button>
-          <div
-            className={styles.lightboxImageWrap}
-            onClick={(e) => e.stopPropagation()}
-            onPointerDown={lightboxPointer.onPointerDown}
-            onPointerMove={lightboxPointer.onPointerMove}
-            onPointerUp={lightboxPointer.onPointerUp}
-            onPointerCancel={lightboxPointer.onPointerCancel}
-          >
-            <div className={styles.lightboxContent}>
-              <img src={imageUrl(mainImage.url)} alt="" className={styles.lightboxImage} decoding="async" draggable={false} onError={() => markFailed(mainImage.url)} />
-            </div>
-            {images.length > 1 && (
-              <div className={styles.lightboxDots} role="tablist" aria-label={t('ads.imageCount')}>
-                {images.map((_, idx) => (
-                  <span
-                    key={idx}
-                    className={`${styles.dot} ${styles.dotLightbox} ${selectedIndex === idx ? styles.dotActive : ''}`}
-                    role="tab"
-                    aria-selected={selectedIndex === idx}
-                    aria-label={`${idx + 1} / ${images.length}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-          {lightboxFooter && (
-            <div className={styles.lightboxFooter} onClick={(e) => e.stopPropagation()}>
-              {lightboxFooter}
-            </div>
-          )}
-        </div>
+      {lightboxOpen && images.length > 0 && (
+        <AdGalleryLightbox
+          images={images}
+          startIndex={gallery.index}
+          onClose={() => setLightboxOpen(false)}
+          onIndexChange={(i) => gallery.goTo(i, 'auto')}
+          footer={lightboxFooter}
+          onImageError={markFailed}
+        />
       )}
     </>
   )

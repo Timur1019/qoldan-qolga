@@ -19,10 +19,11 @@
   font-size: 0.85rem;
 }
 
-.codeInput {
-  font-size: 1.35rem;
-  letter-spacing: 0.35em;
-  font-weight: 600;
+.smsHint {
+  margin: 0.65rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-muted, #6b7280);
 }
 
 .actions {

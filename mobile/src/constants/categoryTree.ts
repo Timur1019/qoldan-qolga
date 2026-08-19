@@ -22,7 +22,9 @@ export const TRANSPORT_WATER = 'Vodnyy_transport';
 function hasCode(categoryCode: string | undefined, breadcrumb: CategoryDto[], codes: string[]) {
   if (!categoryCode) return false;
   if (codes.includes(categoryCode)) return true;
-  return breadcrumb.some((c) => codes.includes(c.code));
+  return breadcrumb.some(
+    (c) => codes.includes(c.code) || (c.parentCode != null && codes.includes(c.parentCode))
+  );
 }
 
 export function isTransportTree(categoryCode?: string, breadcrumb: CategoryDto[] = []) {

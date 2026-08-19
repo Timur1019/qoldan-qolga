@@ -1,4 +1,4 @@
-import styles from './Layout.module.css'
+import styles from './DesktopRegionSelect.module.css'
 
 export default function DesktopRegionSelect({
   regionOpen,
@@ -6,33 +6,33 @@ export default function DesktopRegionSelect({
   selectedRegionCode,
   regions,
   lang,
+  allRegionsLabel,
   onToggle,
   onClose,
   onSelect,
 }) {
   return (
-    <div className={styles.regionWrap}>
+    <div className={styles.wrap}>
       <button
         type="button"
-        className={`btn btn-sm btn-outline-light border ${styles.regionBtn}`}
+        className={styles.btn}
         onClick={onToggle}
         aria-haspopup="listbox"
         aria-expanded={regionOpen}
         aria-label={lang === 'ru' ? 'Выбрать регион' : 'Hududni tanlash'}
       >
-        <i className="bi bi-geo-alt me-1" aria-hidden />
-        <span className={styles.regionLabel}>{regionLabel}</span>
-        <i className={`bi ms-1 ${regionOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`} aria-hidden />
+        <i className={`bi bi-send-fill ${styles.icon}`} aria-hidden />
+        <span className={styles.label}>{regionLabel}</span>
       </button>
       {regionOpen && (
         <>
           <button
             type="button"
-            className={styles.regionOverlay}
+            className={styles.overlay}
             onClick={onClose}
             aria-hidden
           />
-          <div className={`dropdown-menu show ${styles.regionDropdown}`} role="listbox">
+          <div className={`dropdown-menu show ${styles.dropdown}`} role="listbox">
             <button
               type="button"
               className={`dropdown-item ${!selectedRegionCode ? 'active' : ''}`}
@@ -40,7 +40,7 @@ export default function DesktopRegionSelect({
               role="option"
               aria-selected={!selectedRegionCode}
             >
-              {lang === 'ru' ? 'Все регионы' : 'Barcha hududlar'}
+              {allRegionsLabel}
             </button>
             {regions.map((r) => (
               <button

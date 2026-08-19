@@ -23,6 +23,8 @@ interface Props {
   form: CreateAdFormState;
   patch: (partial: Partial<CreateAdFormState>) => void;
   onOpenBrand: () => void;
+  onOpenModel?: () => void;
+  hasModels?: boolean;
 }
 
 function ChipSelect({
@@ -57,7 +59,14 @@ function ChipSelect({
   );
 }
 
-export function CreateAdTransportSection({ flags, form, patch, onOpenBrand }: Props) {
+export function CreateAdTransportSection({
+  flags,
+  form,
+  patch,
+  onOpenBrand,
+  onOpenModel,
+  hasModels,
+}: Props) {
   const { t } = useLanguage();
   if (!flags.motorVehicle) return null;
 
@@ -79,13 +88,24 @@ export function CreateAdTransportSection({ flags, form, patch, onOpenBrand }: Pr
       {flags.model ? (
         <View>
           <Text style={styles.label}>Model{flags.cars ? ' *' : ''}</Text>
-          <TextInput
-            style={styles.input}
-            value={form.modelCustom}
-            onChangeText={(modelCustom) => patch({ modelCustom, modelId: '' })}
-            placeholder="Cobalt, Malibu..."
-            placeholderTextColor={colors.muted}
-          />
+          {hasModels && onOpenModel ? (
+            <Pressable style={styles.selectBtn} onPress={onOpenModel}>
+              <Text
+                style={[styles.selectText, !form.modelCustom && styles.selectPlaceholder]}
+                numberOfLines={1}
+              >
+                {form.modelCustom || 'Tanlang'}
+              </Text>
+            </Pressable>
+          ) : (
+            <TextInput
+              style={styles.input}
+              value={form.modelCustom}
+              onChangeText={(modelCustom) => patch({ modelCustom, modelId: '' })}
+              placeholder="Cobalt, Malibu..."
+              placeholderTextColor={colors.muted}
+            />
+          )}
         </View>
       ) : null}
 

@@ -22,7 +22,7 @@ import {
 | `UiChoiceList` | группа вариантов (да/нет, состояние) |
 | `UiAlert` | ошибка / успех |
 | `UiModal` | оверлей + панель, `footer`, `wide` |
-| `UiPagination` | назад / вперёд для админ-таблиц |
+| `UiPagination` | диапазон записей, размер страницы, номера страниц |
 
 Образец: Auth, CreateAd, админка, EditProfile, ReviewModal.
 

@@ -16,6 +16,7 @@ export type RegionInfo = {
   code: string;
   nameUz?: string;
   nameRu?: string;
+  districts?: { id: number | string; nameUz?: string; nameRu?: string }[];
 };
 
 type RegionsContextValue = {

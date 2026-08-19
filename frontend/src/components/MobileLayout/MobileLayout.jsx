@@ -64,23 +64,18 @@ export default function MobileLayout() {
   const handleSearchSubmit = (e) => {
     e?.preventDefault()
     const q = (typeof searchValue === 'string' ? searchValue : '').trim()
-    const onAds = location.pathname === ROUTES.ADS || location.pathname.startsWith('/categories/')
-    const next = new URLSearchParams(onAds || location.pathname === ROUTES.HOME ? searchParams : '')
+    const onAds = location.pathname === ROUTES.ADS
+    const next = new URLSearchParams(onAds ? searchParams : '')
+    if (!onAds) {
+      const region = searchParams.get(PARAMS.REGION)
+      if (region) next.set(PARAMS.REGION, region)
+    }
     next.delete(PARAMS.PAGE)
     next.delete(PARAMS.AUTH)
     if (q) next.set(PARAMS.QUERY, q)
     else next.delete(PARAMS.QUERY)
-    if (onAds) {
-      setSearchParams(next)
-      if (location.pathname.startsWith('/categories/')) {
-        const qs = next.toString()
-        navigate(qs ? `${ROUTES.ADS}?${qs}` : ROUTES.ADS)
-      }
-      return
-    }
-    next.delete(PARAMS.CATEGORY)
     const qs = next.toString()
-    navigate(qs ? `${ROUTES.HOME}?${qs}` : ROUTES.HOME)
+    navigate(qs ? `${ROUTES.ADS}?${qs}` : ROUTES.ADS)
   }
 
   const handleBack = () => {
@@ -105,7 +100,7 @@ export default function MobileLayout() {
             onSearchSubmit={handleSearchSubmit}
             onOpenCategories={() => setCategoriesOpen(true)}
             onBack={handleBack}
-            placeholder={lang === 'ru' ? 'Найти объявление…' : 'E\'lon qidirish…'}
+            placeholder={t('header.searchPlaceholder')}
             backLabel={t('common.back')}
             lang={lang}
             onLangChange={setLang}

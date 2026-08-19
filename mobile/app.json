@@ -44,6 +44,12 @@
           "color": "#208AEF",
           "defaultChannel": "system"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Чтобы показать объявления рядом и заполнить адрес / E'lonlarni yaqin-atrofdan ko'rsatish uchun."
+        }
       ]
     ],
     "experiments": {

@@ -1,0 +1,93 @@
+.overlay {
+  position: fixed;
+  inset: var(--layout-header-height, 72px) 0 0;
+  z-index: 25;
+  display: flex;
+  background: #fff;
+}
+
+.side {
+  width: min(440px, 42vw);
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.sideHead {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem 0.35rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #111827;
+}
+
+.sideBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.75rem 1rem 1.25rem;
+}
+
+.mapPane {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.listBtn {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  z-index: 1100;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #111827;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.listBtn:hover {
+  box-shadow: 0 6px 22px rgba(15, 23, 42, 0.26);
+}
+
+@media (max-width: 767px) {
+  .overlay {
+    flex-direction: column-reverse;
+  }
+
+  .side {
+    width: 100%;
+    min-width: 0;
+    height: 48%;
+    border-right: none;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .mapPane {
+    height: 52%;
+  }
+
+  .listBtn {
+    bottom: 12px;
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+  }
+}

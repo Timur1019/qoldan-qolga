@@ -1,36 +1,37 @@
-import UiButton from '../UiButton/UiButton'
+import { useLang } from '@/context/LangContext'
+import { DEFAULT_PAGE_SIZE } from './pageSizeOptions'
+import UiPaginationMeta from './UiPaginationMeta'
+import UiPaginationNav from './UiPaginationNav'
 import styles from './UiPagination.module.css'
 
 export default function UiPagination({
-  page,
-  totalPages,
+  page = 0,
+  size = DEFAULT_PAGE_SIZE,
+  totalElements = 0,
+  totalPages = 0,
   onPageChange,
-  prevLabel = 'Назад',
-  nextLabel = 'Вперёд',
+  onSizeChange,
 }) {
-  if (!totalPages || totalPages <= 1) return null
+  const { t } = useLang()
+  if (!totalElements) return null
 
   return (
     <div className={styles.bar}>
-      <UiButton
-        variant="outline"
-        size="sm"
-        disabled={page <= 0}
-        onClick={() => onPageChange(page - 1)}
-      >
-        {prevLabel}
-      </UiButton>
-      <span className={styles.info}>
-        {page + 1} / {totalPages}
-      </span>
-      <UiButton
-        variant="outline"
-        size="sm"
-        disabled={page >= totalPages - 1}
-        onClick={() => onPageChange(page + 1)}
-      >
-        {nextLabel}
-      </UiButton>
+      <UiPaginationMeta
+        page={page}
+        size={size}
+        totalElements={totalElements}
+        onSizeChange={onSizeChange}
+        rangeTemplate={t('pagination.recordsRange')}
+        sizeLabel={t('pagination.pageSize')}
+      />
+      <UiPaginationNav
+        page={page}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        prevLabel={t('pagination.prev')}
+        nextLabel={t('pagination.next')}
+      />
     </div>
   )
 }

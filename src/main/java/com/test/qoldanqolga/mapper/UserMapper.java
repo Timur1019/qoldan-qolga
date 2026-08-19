@@ -43,5 +43,6 @@ public interface UserMapper extends BaseMapper<User, UserInfo> {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "myidSessionId", ignore = true)
+    @Mapping(target = "lastSeenAt", ignore = true)
     User toUser(RegisterRequest request);
 }

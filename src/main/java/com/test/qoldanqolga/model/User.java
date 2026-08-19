@@ -61,6 +61,9 @@ public class User extends BaseEntity {
     @Column(name = "myid_session_id", length = 64)
     private String myidSessionId;
 
+    @Column(name = "last_seen_at")
+    private Instant lastSeenAt;
+
     /** Пользователь заблокирован: есть дата окончания бана в будущем. */
     public boolean isCurrentlyBanned() {
         return bannedUntil != null && bannedUntil.isAfter(Instant.now());

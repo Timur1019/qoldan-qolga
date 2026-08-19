@@ -79,6 +79,8 @@ export const PARAMS = {
   CAN_RENT: 'canRent',
   /** Сортировка ленты: recommended | newest | priceAsc | priceDesc */
   SORT: 'sort',
+  /** Вид ленты: list | grid | map */
+  VIEW: 'view',
   DISTRICT: 'district',
   DEAL_TYPE: 'dealType',
   ROOMS: 'rooms',

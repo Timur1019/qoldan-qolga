@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import HeartIcon from '../../../../components/ui/HeartIcon'
 import CardGallery from '../CardGallery'
+import { galleryImageUrls } from '../../utils/galleryImageUrls'
 import AdCategoryMeta from '../AdCategoryMeta/AdCategoryMeta'
 import AdImageBadges from '../AdImageBadges/AdImageBadges'
 import { useRegionLabel } from '../../../../context/RegionsContext'
@@ -22,6 +23,9 @@ export default function AdCard({
   showCategoryMeta = false,
   showDate = true,
   showFavorite = true,
+  active = false,
+  idPrefix,
+  onHover,
 }) {
   const regionLabel = useRegionLabel(ad?.region)
 
@@ -31,13 +35,18 @@ export default function AdCard({
   const isFav = favorite != null ? !!favorite : !!ad.favorite
 
   return (
-    <li className={`${styles.card} ${ad.isHighlighted ? styles.highlighted : ''}`.trim()}>
+    <li
+      id={idPrefix ? `${idPrefix}${ad.id}` : undefined}
+      className={`${styles.card} ${ad.isHighlighted ? styles.highlighted : ''} ${active ? styles.active : ''}`.trim()}
+      onMouseEnter={() => onHover?.(ad.id)}
+      onMouseLeave={() => onHover?.(null)}
+    >
       <Link to={href} className={styles.mediaLink}>
         <span className={styles.imageWrap}>
           <AdImageBadges ad={ad} t={t} />
           <CardGallery
             square
-            imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+            imageUrls={galleryImageUrls(ad)}
           />
         </span>
       </Link>

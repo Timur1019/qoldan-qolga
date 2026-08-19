@@ -1,18 +1,15 @@
 import { useState } from 'react'
 import { imageUrl } from '@/api/client'
-import { useGalleryPointer } from '../../hooks/useGalleryPointer'
+import { useCardGalleryPeek } from '../../hooks/useCardGalleryPeek'
 import AdImagePlaceholder from '../AdImagePlaceholder/AdImagePlaceholder'
 import styles from './CardGallery.module.css'
 
 export default function CardGallery({ imageUrls = [], className, imageWrapClassName, square = false }) {
   const urls = Array.isArray(imageUrls) ? imageUrls.filter(Boolean) : []
-  const [selectedIndex, setSelectedIndex] = useState(0)
   const [failed, setFailed] = useState(() => new Set())
-
   const usable = urls.filter((url) => !failed.has(url))
-  const safeIndex = usable.length === 0 ? 0 : Math.min(selectedIndex, usable.length - 1)
-  const mainUrl = usable[safeIndex]
-  const pointer = useGalleryPointer(usable.length, setSelectedIndex)
+  const peek = useCardGalleryPeek(usable.length)
+  const current = usable[peek.index] || usable[0]
 
   const handleError = (url) => {
     setFailed((prev) => {
@@ -21,12 +18,10 @@ export default function CardGallery({ imageUrls = [], className, imageWrapClassN
       next.add(url)
       return next
     })
-    setSelectedIndex(0)
+    peek.reset()
   }
 
-  const imageClass = `${styles.image} ${square ? styles.imageSquare : ''}`
-
-  if (!mainUrl) {
+  if (!usable.length) {
     return (
       <span className={`${styles.wrap} ${className || ''}`}>
         <AdImagePlaceholder className={imageWrapClassName} square={square} />
@@ -35,23 +30,25 @@ export default function CardGallery({ imageUrls = [], className, imageWrapClassN
   }
 
   return (
-    <span className={`${styles.wrap} ${className || ''}`}>
-      <span
-        className={`${imageWrapClassName || ''} ${styles.touchSurface}`}
-        onPointerDown={pointer.onPointerDown}
-        onPointerMove={pointer.onPointerMove}
-        onPointerUp={pointer.onPointerUp}
-        onPointerCancel={pointer.onPointerCancel}
-        onClickCapture={pointer.onClickCapture}
-      >
+    <span
+      ref={peek.wrapRef}
+      className={`${styles.wrap} ${className || ''}`}
+      onMouseMove={peek.onMove}
+      onMouseLeave={peek.reset}
+      onPointerDown={peek.onPointerDown}
+      onPointerUp={peek.onPointerUp}
+      onClickCapture={peek.onClickCapture}
+      onDragStart={(e) => e.preventDefault()}
+    >
+      <span className={`${imageWrapClassName || ''} ${styles.frame}`}>
         <img
-          src={imageUrl(mainUrl)}
+          src={imageUrl(current)}
           alt=""
-          className={imageClass}
+          className={styles.image}
           loading="lazy"
           decoding="async"
           draggable={false}
-          onError={() => handleError(mainUrl)}
+          onError={() => handleError(current)}
         />
       </span>
       {usable.length > 1 && (
@@ -59,9 +56,7 @@ export default function CardGallery({ imageUrls = [], className, imageWrapClassN
           {usable.map((_, idx) => (
             <span
               key={idx}
-              className={`${styles.dot} ${safeIndex === idx ? styles.dotActive : ''}`}
-              role="tab"
-              aria-selected={safeIndex === idx}
+              className={`${styles.dot} ${peek.index === idx ? styles.dotActive : ''}`}
             />
           ))}
         </span>

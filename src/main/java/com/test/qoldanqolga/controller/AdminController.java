@@ -1,5 +1,8 @@
 package com.test.qoldanqolga.controller;
 
+import com.test.qoldanqolga.dto.admin.AdminAdStatItemDto;
+import com.test.qoldanqolga.dto.admin.AdminCreateUserRequest;
+import com.test.qoldanqolga.dto.admin.AdminDashboardDto;
 import com.test.qoldanqolga.dto.admin.AdminReportListItemDto;
 import com.test.qoldanqolga.dto.admin.AdminUserListItemDto;
 import com.test.qoldanqolga.dto.admin.AdminUserUpdateRequest;
@@ -12,7 +15,8 @@ import com.test.qoldanqolga.dto.reference.CreateCategoryRequest;
 import com.test.qoldanqolga.dto.sitetop.CreateSiteTopBannerRequest;
 import com.test.qoldanqolga.dto.sitetop.SiteTopBannerDto;
 import com.test.qoldanqolga.dto.sitetop.UpdateSiteTopBannerRequest;
-import com.test.qoldanqolga.repository.UserRepository;
+import com.test.qoldanqolga.service.AdminDashboardService;
+import com.test.qoldanqolga.service.AdminStatsService;
 import com.test.qoldanqolga.service.AdminReportService;
 import com.test.qoldanqolga.service.AdminUserService;
 import com.test.qoldanqolga.service.AdminBusinessApplicationService;
@@ -25,8 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -38,9 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -57,21 +57,16 @@ public class AdminController {
     private final AdminUserService adminUserService;
     private final AdminReportService adminReportService;
     private final AdminBusinessApplicationService adminBusinessApplicationService;
-    private final UserRepository userRepository;
+    private final AdminDashboardService adminDashboardService;
+    private final AdminStatsService adminStatsService;
     private final HomePromoBannerService homePromoBannerService;
     private final SiteTopBannerService siteTopBannerService;
 
     @Operation(summary = "Дашборд", description = "Только для роли ADMIN", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "403", description = "Доступ запрещён")})
     @GetMapping("/dashboard")
-    public ResponseEntity<Map<String, Object>> dashboard(@AuthenticationPrincipal UserDetails user) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("message", "Панель администратора");
-        body.put("userId", user != null ? user.getUsername() : "");
-        body.put("totalUsers", userRepository.count());
-        body.put("verifiedUsers", userRepository.countByProfileVerifiedTrue());
-        body.put("pendingVerification", userRepository.countByVerificationRequestedAtNotNullAndProfileVerifiedFalse());
-        return ResponseEntity.ok(body);
+    public ResponseEntity<AdminDashboardDto> dashboard() {
+        return ResponseEntity.ok(adminDashboardService.getDashboard());
     }
 
     @Operation(summary = "Все категории (админ)", security = @SecurityRequirement(name = "bearerAuth"))
@@ -94,6 +89,34 @@ public class AdminController {
     public ResponseEntity<Page<AdminUserListItemDto>> getUsers(
             @PageableDefault(size = 20, sort = "createdAt") Pageable pageable) {
         return ResponseEntity.ok(adminUserService.getUsers(pageable));
+    }
+
+    @Operation(summary = "Создать пользователя (админ)", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "409", description = "Email уже занят")
+    })
+    @PostMapping("/users")
+    public ResponseEntity<AdminUserListItemDto> createUser(@Valid @RequestBody AdminCreateUserRequest request) {
+        return ResponseEntity.ok(adminUserService.createUser(request));
+    }
+
+    @Operation(summary = "Детализация пользователей по отчёту", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/stats/users")
+    public ResponseEntity<Page<AdminUserListItemDto>> getStatsUsers(
+            @RequestParam(defaultValue = "totalUsers") String filter,
+            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable) {
+        return ResponseEntity.ok(adminStatsService.getUsers(filter, pageable));
+    }
+
+    @Operation(summary = "Детализация объявлений по отчёту", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "OK"))
+    @GetMapping("/stats/ads")
+    public ResponseEntity<Page<AdminAdStatItemDto>> getStatsAds(
+            @RequestParam(defaultValue = "adsTotal") String filter,
+            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable) {
+        return ResponseEntity.ok(adminStatsService.getAds(filter, pageable));
     }
 
     @Operation(summary = "Обновить пользователя (подтверждение, роль, бан)", security = @SecurityRequirement(name = "bearerAuth"))

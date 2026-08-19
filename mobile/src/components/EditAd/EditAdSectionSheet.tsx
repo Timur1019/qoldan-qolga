@@ -13,8 +13,10 @@ import type {
 } from '@/constants/categoryFilters';
 import { useLanguage } from '@/context/LanguageContext';
 import { colors } from '@/theme/colors';
+import type { CategoryDto } from '@/types/api';
 import type { CreateAdFormState } from '@/utils/createAdForm';
 import type { EditAdSectionKey } from '@/utils/editAdSummary';
+import type { MatchableRegion } from '@/utils/matchRegionFromAddress';
 import { localizedName } from '@/utils/localizedName';
 
 import { styles as createStyles } from '@/styles/screens/createAd.styles';
@@ -40,6 +42,7 @@ interface Props {
   flags: CategoryFilterFlags;
   regionLabel: string;
   hasDistricts: boolean;
+  regions?: MatchableRegion[];
   onClose: () => void;
   patch: (partial: Partial<CreateAdFormState>) => void;
   setExistingImageUrls: (urls: string[] | ((prev: string[]) => string[])) => void;
@@ -47,6 +50,9 @@ interface Props {
   onOpenRegion: () => void;
   onOpenDistrict: () => void;
   onOpenBrand: () => void;
+  onOpenModel?: () => void;
+  hasModels?: boolean;
+  breadcrumb?: CategoryDto[];
   onPickImages: () => void;
 }
 
@@ -59,6 +65,7 @@ export function EditAdSectionSheet({
   flags,
   regionLabel,
   hasDistricts,
+  regions = [],
   onClose,
   patch,
   setExistingImageUrls,
@@ -66,6 +73,9 @@ export function EditAdSectionSheet({
   onOpenRegion,
   onOpenDistrict,
   onOpenBrand,
+  onOpenModel,
+  hasModels,
+  breadcrumb = [],
   onPickImages,
 }: Props) {
   const { language, t } = useLanguage();
@@ -189,7 +199,7 @@ export function EditAdSectionSheet({
                     ))}
                   </View>
                 </View>
-                <CreateAdExtrasSection flags={flags} form={form} patch={patch} />
+                <CreateAdExtrasSection flags={flags} form={form} patch={patch} breadcrumb={breadcrumb} />
               </View>
             ) : null}
 
@@ -200,9 +210,11 @@ export function EditAdSectionSheet({
                   form={form}
                   patch={patch}
                   onOpenBrand={onOpenBrand}
+                  onOpenModel={onOpenModel}
+                  hasModels={hasModels}
                 />
                 <CreateAdRealEstateSection flags={realEstate} form={form} patch={patch} />
-                <CreateAdExtrasSection flags={flags} form={form} patch={patch} />
+                <CreateAdExtrasSection flags={flags} form={form} patch={patch} breadcrumb={breadcrumb} />
               </View>
             ) : null}
 
@@ -214,6 +226,7 @@ export function EditAdSectionSheet({
                 onOpenRegion={onOpenRegion}
                 onOpenDistrict={onOpenDistrict}
                 hasDistricts={hasDistricts}
+                regions={regions}
               />
             ) : null}
 

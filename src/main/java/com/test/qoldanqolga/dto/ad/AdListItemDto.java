@@ -38,6 +38,9 @@ public class AdListItemDto {
     private String renovation;
     private Boolean furnished;
     private String region;
+    private String district;
+    private BigDecimal locationLat;
+    private BigDecimal locationLng;
     private String description;
     private String status;
     private Boolean isNegotiable;

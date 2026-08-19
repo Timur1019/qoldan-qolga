@@ -4,6 +4,7 @@ import { IdVerificationProvider } from './context/IdVerificationContext'
 import { AdDetail, AdsList, CategoryView, CreateAd, Favorites } from './features/ad'
 import {
   AdminDashboard,
+  AdminStats,
   AdminUsers,
   AdminReports,
   AdminBanners,
@@ -97,6 +98,7 @@ export default function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="stats" element={<AdminStats />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="business-applications" element={<AdminBusinessApplications />} />

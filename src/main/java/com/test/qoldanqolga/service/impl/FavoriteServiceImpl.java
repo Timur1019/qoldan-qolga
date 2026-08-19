@@ -139,7 +139,10 @@ public class FavoriteServiceImpl implements FavoriteService {
                     AdListItemDto dto = advertisementMapper.toListItemDto(ad);
                     dto.setMainImageUrl(advertisementMapper.getMainImageUrl(ad));
                     dto.setImageUrls(ad.getImages() == null ? List.of() : ad.getImages().stream()
-                            .sorted(Comparator.comparing(AdImage::getOrderNum).thenComparing(AdImage::getId))
+                            .sorted(Comparator
+                                    .comparing((AdImage img) -> Boolean.TRUE.equals(img.getIsMain()) ? 0 : 1)
+                                    .thenComparing(AdImage::getOrderNum)
+                                    .thenComparing(AdImage::getId))
                             .map(AdImage::getUrl)
                             .toList());
                     dto.setFavorite(true);

@@ -13,6 +13,7 @@ import com.test.qoldanqolga.model.User;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.security.JwtUtil;
 import com.test.qoldanqolga.service.AuthService;
+import com.test.qoldanqolga.service.UserLastSeenService;
 import com.test.qoldanqolga.util.JsonUtil;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
+    private final UserLastSeenService userLastSeenService;
 
     @Override
     @Transactional
@@ -40,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setDisplayName(request.getDisplayName().trim());
         user = userRepository.save(user);
+        userLastSeenService.touch(user);
         LogUtil.info(AuthServiceImpl.class, "User registered: id={} email={}", user.getId(), user.getEmail());
         return userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
     }
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
                 || !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new InvalidCredentialsException(ErrorCode.INVALID_CREDENTIALS);
         }
+        userLastSeenService.touch(user);
         LogUtil.debug(AuthServiceImpl.class, "User logged in: id={}", user.getId());
         return userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
     }
@@ -67,7 +71,10 @@ public class AuthServiceImpl implements AuthService {
         LogUtil.debug(AuthServiceImpl.class, "Get current user: userId={}", userId);
         return userRepository.findById(userId)
                 .filter(u -> !u.isDeleted())
-                .map(userMapper::toDto)
+                .map(user -> {
+                    userLastSeenService.touch(user);
+                    return userMapper.toDto(user);
+                })
                 .orElse(null);
     }
 

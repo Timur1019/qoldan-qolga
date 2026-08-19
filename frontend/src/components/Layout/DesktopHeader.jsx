@@ -3,7 +3,11 @@ import { ROUTES } from '../../constants/routes'
 import TopAdStrip from '../TopAdStrip/TopAdStrip'
 import DesktopRegionSelect from './DesktopRegionSelect'
 import DesktopProfileMenu from './DesktopProfileMenu'
+import DesktopHeaderBrand from './DesktopHeaderBrand'
+import DesktopHeaderSearch from './DesktopHeaderSearch'
+import DesktopHeaderLang from './DesktopHeaderLang'
 import { NavIcons } from './headerNavIcons'
+import headerStyles from './DesktopHeader.module.css'
 import styles from './Layout.module.css'
 
 export default function DesktopHeader({ layout }) {
@@ -28,75 +32,48 @@ export default function DesktopHeader({ layout }) {
     openIdVerificationModal,
     chatUnreadCount,
     favoritesCount,
-    selectedRegionCode,
     searchValue,
     setSearchValue,
     handleSearchSubmit,
     regionLabel,
     handleSelectRegion,
+    selectedRegionCode,
+    categoryTitle,
   } = layout
 
   return (
     <header ref={headerRef} className={styles.header}>
       <TopAdStrip />
-      <div className={styles.headerTop}>
-        <div className={styles.headerInner}>
-          <Link to="/" className={styles.logo}>
-            Qoldan Qolga
-          </Link>
-          <div className={styles.headerTopRight}>
-            <DesktopRegionSelect
-              regionOpen={regionOpen}
-              regionLabel={regionLabel}
-              selectedRegionCode={selectedRegionCode}
-              regions={regions}
-              lang={lang}
-              onToggle={() => setRegionOpen(!regionOpen)}
-              onClose={() => setRegionOpen(false)}
-              onSelect={handleSelectRegion}
-            />
-            <div className="btn-group btn-group-sm">
-              <button
-                type="button"
-                className={`btn ${lang === 'uz' ? 'btn-primary' : 'btn-outline-light'}`}
-                onClick={() => setLang('uz')}
-              >
-                OʻZB
-              </button>
-              <button
-                type="button"
-                className={`btn ${lang === 'ru' ? 'btn-primary' : 'btn-outline-light'}`}
-                onClick={() => setLang('ru')}
-              >
-                РУС
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={styles.headerBottom}>
-        <div className={styles.headerInner}>
+      <div className={headerStyles.bar}>
+        <div className={headerStyles.inner}>
+          <DesktopHeaderBrand categoryTitle={categoryTitle} />
           <button
             type="button"
-            className={`btn ${categoriesOpen ? 'btn-primary' : 'btn-outline-primary'} ${styles.categoriesBtn}`}
+            className={`${headerStyles.categoriesBtn} ${categoriesOpen ? headerStyles.categoriesBtnOpen : ''}`}
             onClick={() => setCategoriesOpen(!categoriesOpen)}
           >
-            <i className={`bi me-1 ${categoriesOpen ? 'bi-x-lg' : 'bi-list'}`} aria-hidden />
-            {lang === 'ru' ? 'Категории' : 'Kategoriyalar'}
+            <i className={`bi ${categoriesOpen ? 'bi-x-lg' : 'bi-grid-3x3-gap-fill'}`} aria-hidden />
+            <span>{t('home.allCategories')}</span>
           </button>
-          <form className={`input-group ${styles.searchWrap}`} onSubmit={handleSearchSubmit} role="search">
-            <input
-              type="search"
-              className="form-control"
-              placeholder={lang === 'ru' ? 'Найти объявление…' : 'E\'lon qidirish…'}
-              aria-label={t('common.search')}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-            <button type="submit" className="btn btn-primary" aria-label={t('common.search')}>
-              <i className="bi bi-search" aria-hidden />
-            </button>
-          </form>
+          <DesktopHeaderSearch
+            value={searchValue}
+            onChange={setSearchValue}
+            onSubmit={handleSearchSubmit}
+            placeholder={t('header.searchPlaceholder')}
+            findLabel={t('header.find')}
+          />
+          <DesktopRegionSelect
+            regionOpen={regionOpen}
+            regionLabel={regionLabel}
+            selectedRegionCode={selectedRegionCode}
+            regions={regions}
+            lang={lang}
+            allRegionsLabel={t('header.allRegions')}
+            onToggle={() => setRegionOpen(!regionOpen)}
+            onClose={() => setRegionOpen(false)}
+            onSelect={handleSelectRegion}
+          />
+          <DesktopHeaderLang lang={lang} onChange={setLang} />
           <nav className={styles.nav}>
             <Link to={ROUTES.ADS_MY} className={styles.navLink}>
               <span className={styles.navIcon}>{NavIcons.ads}</span>
@@ -140,20 +117,17 @@ export default function DesktopHeader({ layout }) {
                   onBusiness={() => setBusinessModalOpen(true)}
                   onLogout={logout}
                 />
-                <Link to={ROUTES.ADS_CREATE} className="btn btn-primary btn-sm ms-2 flex-shrink-0 text-white">
-                  <span className="me-1">{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
-                  <i className="bi bi-plus-lg text-white" aria-hidden />
+                <Link to={ROUTES.ADS_CREATE} className={`btn btn-primary text-white ${headerStyles.sellBtn}`}>
+                  {lang === 'ru' ? 'Продать' : 'Sotish'}
                 </Link>
               </>
             ) : (
               <>
                 <button type="button" className="btn btn-outline-primary btn-sm" onClick={openAuthModal}>
-                  <i className="bi bi-person me-1" aria-hidden />
-                  <span>{t('nav.login')}</span>
+                  {t('nav.login')}
                 </button>
-                <Link to={ROUTES.ADS_CREATE} className="btn btn-primary btn-sm ms-2 flex-shrink-0 text-white">
-                  <span className="me-1">{lang === 'ru' ? 'Продать' : 'Sotish'}</span>
-                  <i className="bi bi-plus-lg text-white" aria-hidden />
+                <Link to={ROUTES.ADS_CREATE} className={`btn btn-primary text-white ${headerStyles.sellBtn}`}>
+                  {lang === 'ru' ? 'Продать' : 'Sotish'}
                 </Link>
               </>
             )}

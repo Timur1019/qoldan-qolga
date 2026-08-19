@@ -20,6 +20,7 @@ import com.test.qoldanqolga.repository.PhoneOtpRepository;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.security.JwtUtil;
 import com.test.qoldanqolga.service.PhoneAuthService;
+import com.test.qoldanqolga.service.UserLastSeenService;
 import com.test.qoldanqolga.service.sms.DevSmsClient;
 import com.test.qoldanqolga.util.LogUtil;
 import com.test.qoldanqolga.util.PhoneUtil;
@@ -54,6 +55,7 @@ public class PhoneAuthServiceImpl implements PhoneAuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
+    private final UserLastSeenService userLastSeenService;
 
     @Override
     @Transactional
@@ -187,6 +189,7 @@ public class PhoneAuthServiceImpl implements PhoneAuthService {
             LogUtil.debug(PhoneAuthServiceImpl.class, "Phone user logged in: id={}", user.getId());
         }
 
+        userLastSeenService.touch(user);
         AuthResponse response = userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
         response.setPhone(user.getPhone());
         response.setNewUser(isNew);

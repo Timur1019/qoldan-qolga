@@ -75,7 +75,7 @@ export default function AuthModal({ open, onClose }) {
   }
 
   const handleVerifyCode = async (e) => {
-    e.preventDefault()
+    e?.preventDefault?.()
     phoneAuth.setError('')
     try {
       const res = await phoneAuth.verifyCode()
@@ -110,6 +110,7 @@ export default function AuthModal({ open, onClose }) {
     resend: t('auth.resendCode'),
     resendIn: t('auth.resendIn'),
     devCode: t('auth.devCode'),
+    smsAutofillHint: t('auth.smsAutofillHint'),
   }
 
   if (!open) return null

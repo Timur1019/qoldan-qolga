@@ -1,11 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
-import * as Location from 'expo-location';
 
 import { MAP_DEFAULT } from '@/constants/adDetail';
+import { useLanguage } from '@/context/LanguageContext';
+import { detectDeviceLocation } from '@/location/detectDeviceLocation';
 import { colors } from '@/theme/colors';
 import type { CreateAdFormState } from '@/utils/createAdForm';
+import type { MatchableRegion } from '@/utils/matchRegionFromAddress';
 
 import { styles } from './CreateAdLocationSection.styles';
 
@@ -16,6 +18,7 @@ interface Props {
   onOpenRegion: () => void;
   onOpenDistrict: () => void;
   hasDistricts: boolean;
+  regions?: MatchableRegion[];
 }
 
 function buildPickerHtml(lat: number, lng: number) {
@@ -60,7 +63,9 @@ export function CreateAdLocationSection({
   onOpenRegion,
   onOpenDistrict,
   hasDistricts,
+  regions = [],
 }: Props) {
+  const { t } = useLanguage();
   const [mapSeed, setMapSeed] = useState(() => ({
     lat: Number(form.locationLat) || MAP_DEFAULT.lat,
     lng: Number(form.locationLng) || MAP_DEFAULT.lng,
@@ -68,6 +73,16 @@ export function CreateAdLocationSection({
   }));
 
   const html = useMemo(() => buildPickerHtml(mapSeed.lat, mapSeed.lng), [mapSeed]);
+
+  useEffect(() => {
+    const lat = Number(form.locationLat);
+    const lng = Number(form.locationLng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || !lat || !lng) return;
+    setMapSeed((s) => {
+      if (Math.abs(s.lat - lat) < 0.00015 && Math.abs(s.lng - lng) < 0.00015) return s;
+      return { lat, lng, key: s.key + 1 };
+    });
+  }, [form.locationLat, form.locationLng]);
 
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
@@ -87,42 +102,49 @@ export function CreateAdLocationSection({
 
   const useMyLocation = async () => {
     try {
-      const perm = await Location.requestForegroundPermissionsAsync();
-      if (!perm.granted) {
-        Alert.alert('Ruxsat kerak', 'Joylashuvga ruxsat bering');
+      const loc = await detectDeviceLocation(regions);
+      if (!loc) {
+        Alert.alert(t('create.locationPermissionTitle'), t('create.locationPermission'));
         return;
       }
-      const pos = await Location.getCurrentPositionAsync({});
-      const lat = Number(pos.coords.latitude.toFixed(6));
-      const lng = Number(pos.coords.longitude.toFixed(6));
-      patch({ locationLat: String(lat), locationLng: String(lng) });
-      setMapSeed((s) => ({ lat, lng, key: s.key + 1 }));
+      patch({
+        locationLat: loc.lat,
+        locationLng: loc.lng,
+        address: loc.address || form.address,
+        region: loc.regionCode || form.region,
+        district: loc.district || form.district,
+      });
+      setMapSeed((s) => ({
+        lat: Number(loc.lat),
+        lng: Number(loc.lng),
+        key: s.key + 1,
+      }));
     } catch {
-      Alert.alert('Xatolik', 'Joylashuvni aniqlab bo‘lmadi');
+      Alert.alert(t('common.error'), t('create.locationFailed'));
     }
   };
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>Manzil</Text>
-      <Text style={styles.hint}>Xaritadan nuqtani tanlang yoki hududni belgilang</Text>
+      <Text style={styles.title}>{t('create.location')}</Text>
+      <Text style={styles.hint}>{t('create.locationHint')}</Text>
 
       <Pressable style={styles.selectBtn} onPress={onOpenRegion}>
         <Text style={[styles.selectText, !form.region && styles.placeholder]} numberOfLines={1}>
-          {form.region ? regionLabel : 'Hudud'}
+          {form.region ? regionLabel : t('create.region')}
         </Text>
       </Pressable>
 
       {form.region && hasDistricts ? (
         <Pressable style={styles.selectBtn} onPress={onOpenDistrict}>
           <Text style={[styles.selectText, !form.district && styles.placeholder]} numberOfLines={1}>
-            {form.district || 'Tuman / shahar'}
+            {form.district || t('create.district')}
           </Text>
         </Pressable>
       ) : null}
 
       <Pressable style={styles.myLocBtn} onPress={useMyLocation}>
-        <Text style={styles.myLocText}>Mening joylashuvim</Text>
+        <Text style={styles.myLocText}>{t('create.myLocation')}</Text>
       </Pressable>
 
       <View style={styles.mapWrap}>

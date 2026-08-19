@@ -3,6 +3,7 @@ import { EMPTY_REAL_ESTATE_FIELDS } from '../../../constants/realEstate'
 import { seatsFromApi, seatsToApi, ownersFromApi, ownersToApi } from './transportFormValues'
 import { appendLocationToDescription, extractLocationFromDescription } from './descriptionLocation'
 import { normalizeSellerType } from '../../../constants/sellerTypes'
+import { sortImagesMainFirst } from './galleryImageUrls'
 
 export function createEmptyAdForm() {
   return {
@@ -98,9 +99,8 @@ export function formFromAdDetail(ad) {
 }
 
 export function imageUrlsFromAd(ad) {
-  const imgs = ad.images || []
+  const imgs = sortImagesMainFirst(ad.images || [])
   return imgs
-    .sort((a, b) => (a.orderNum ?? 0) - (b.orderNum ?? 0))
     .map((i) => i.url || i)
     .filter(Boolean)
 }

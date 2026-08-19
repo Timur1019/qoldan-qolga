@@ -74,4 +74,5 @@
     <include file="changes/069-widen-engine-volume.xml" relativeToChangelogFile="true"/>
     <include file="changes/070-ad-promo.xml" relativeToChangelogFile="true"/>
     <include file="changes/071-device-push-tokens.xml" relativeToChangelogFile="true"/>
+    <include file="changes/072-users-last-seen.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

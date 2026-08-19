@@ -20,17 +20,11 @@ export const styles = StyleSheet.create({
     fontSize: 13,
   },
   label: { fontSize: 13, color: colors.textSecondary, marginBottom: 6 },
-  codeInput: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    fontSize: 22,
-    letterSpacing: 8,
-    textAlign: 'center',
-    fontWeight: '700',
-    color: colors.text,
+  smsHint: {
+    marginTop: 10,
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.textSecondary,
   },
   error: { color: colors.error, marginTop: 10, fontSize: 13 },
   button: {

@@ -1,0 +1,53 @@
+.wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 180px;
+  padding: 0.35rem 0.2rem;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  color: #04492d;
+}
+
+.icon {
+  font-size: 1rem;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 999;
+  margin-top: 0.35rem;
+  min-width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 0.35rem 0;
+}

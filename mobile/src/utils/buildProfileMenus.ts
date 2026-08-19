@@ -7,12 +7,14 @@ type Handlers = {
   favoritesCount: number;
   myAdsCount: number;
   chatUnread: number;
+  notificationsUnread?: number;
   storeVerified?: boolean;
   onPrize: () => void;
   onFavorites: () => void;
   onMyAds: () => void;
   onOrders: () => void;
   onMessages: () => void;
+  onNotifications: () => void;
   onBusiness: () => void;
   onIdVerify: () => void;
   onSupport: () => void;
@@ -66,6 +68,13 @@ export function buildProfileMenus(h: Handlers): {
         icon: 'chatbubble-ellipses-outline',
         badge: h.chatUnread,
         onPress: h.onMessages,
+      },
+      {
+        key: 'notifications',
+        label: t('profile.notifications'),
+        icon: 'notifications-outline',
+        badge: h.notificationsUnread,
+        onPress: h.onNotifications,
       },
     ],
     businessMenu: [

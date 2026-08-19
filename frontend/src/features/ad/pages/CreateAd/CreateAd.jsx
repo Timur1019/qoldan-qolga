@@ -59,8 +59,6 @@ export default function CreateAd({ edit: editMode }) {
     removeImage,
   } = useCreateAdUploads({ t, setError })
 
-  const { mapPosition, setMapPosition, setMyLocation } = useCreateAdMap({ lang, setForm })
-
   const {
     regions,
     categories,
@@ -69,6 +67,13 @@ export default function CreateAd({ edit: editMode }) {
     brands,
     categoryBreadcrumb,
   } = useCreateAdReferences(form.category)
+
+  const { mapPosition, setMapPosition, setMyLocation } = useCreateAdMap({
+    lang,
+    setForm,
+    regions,
+    skipAuto: Boolean(editMode),
+  })
 
   useEffect(() => {
     if (!editMode || !editId) return

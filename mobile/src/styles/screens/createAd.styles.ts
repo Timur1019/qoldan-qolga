@@ -58,6 +58,13 @@ export const styles = StyleSheet.create({
   chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipText: { fontSize: 13, fontWeight: '600', color: colors.text },
   chipTextOn: { color: colors.white },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+  },
+  switchLabel: { flex: 1, fontSize: 14, color: colors.text, paddingRight: spacing.md },
   photos: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   photoWrap: { position: 'relative' },
   photo: { width: 88, height: 88, borderRadius: radius.md, backgroundColor: colors.bgMuted },

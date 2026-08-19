@@ -1,4 +1,5 @@
 export { default as AdminDashboard } from './pages/AdminDashboard/AdminDashboard'
+export { default as AdminStats } from './pages/AdminStats/AdminStats'
 export { default as AdminUsers } from './pages/AdminUsers/AdminUsers'
 export { default as AdminReports } from './pages/AdminReports/AdminReports'
 export { default as AdminBusinessApplications } from './pages/AdminBusinessApplications/AdminBusinessApplications'

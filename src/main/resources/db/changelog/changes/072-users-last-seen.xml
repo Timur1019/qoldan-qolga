@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="072-users-last-seen" author="qoldan">
+        <addColumn tableName="users">
+            <column name="last_seen_at" type="timestamptz"/>
+        </addColumn>
+        <sql>
+            UPDATE users SET last_seen_at = updated_at WHERE last_seen_at IS NULL;
+        </sql>
+        <createIndex tableName="users" indexName="idx_users_last_seen">
+            <column name="last_seen_at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -295,9 +295,16 @@
 }
 
 /* Sort */
+.toolbarEnd {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
 .sortWrap {
   position: relative;
-  margin-left: auto;
 }
 
 .sortTrigger {

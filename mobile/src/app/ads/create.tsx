@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CreateAdBasicsSection } from '@/components/CreateAdForm/CreateAdBasicsSection';
+import { CreateAdBrandSection } from '@/components/CreateAdForm/CreateAdBrandSection';
 import { CreateAdContactsSection } from '@/components/CreateAdForm/CreateAdContactsSection';
 import { CreateAdExtrasSection } from '@/components/CreateAdForm/CreateAdExtrasSection';
 import { CreateAdLocationSection } from '@/components/CreateAdForm/CreateAdLocationSection';
@@ -44,7 +45,9 @@ export default function CreateAdScreen() {
     existingImageUrls,
     setExistingImageUrls,
     loadingEdit,
+    breadcrumb,
     brands,
+    models,
     transport,
     realEstate,
     flags,
@@ -54,11 +57,13 @@ export default function CreateAdScreen() {
     setLookup,
     submitting,
     error,
+    regions,
     selectedRegion,
     regionLabel,
     regionItems,
     districtItems,
     brandItems,
+    modelItems,
     pickImages,
     onCategorySelect,
     submit,
@@ -111,8 +116,10 @@ export default function CreateAdScreen() {
       regionItems={regionItems}
       districtItems={districtItems}
       brandItems={brandItems}
+      modelItems={modelItems}
       form={form}
       brands={brands}
+      models={models}
       language={language}
       patch={patch}
       t={t}
@@ -158,6 +165,7 @@ export default function CreateAdScreen() {
           flags={flags}
           regionLabel={regionLabel}
           hasDistricts={districtItems.length > 0}
+          regions={regions}
           onClose={() => setEditSection(null)}
           patch={patch}
           setExistingImageUrls={setExistingImageUrls}
@@ -165,6 +173,9 @@ export default function CreateAdScreen() {
           onOpenRegion={() => setLookup('region')}
           onOpenDistrict={() => setLookup('district')}
           onOpenBrand={() => setLookup('brand')}
+          onOpenModel={() => setLookup('model')}
+          hasModels={modelItems.length > 0}
+          breadcrumb={breadcrumb}
           onPickImages={() => void pickImages()}
         />
         {sheets}
@@ -196,9 +207,17 @@ export default function CreateAdScreen() {
           form={form}
           patch={patch}
           onOpenBrand={() => setLookup('brand')}
+          onOpenModel={() => setLookup('model')}
+          hasModels={modelItems.length > 0}
         />
         <CreateAdRealEstateSection flags={realEstate} form={form} patch={patch} />
-        <CreateAdExtrasSection flags={flags} form={form} patch={patch} />
+        <CreateAdBrandSection
+          visible={!transport.brand && brands.length > 0}
+          brandLabel={form.brandLabel}
+          onOpen={() => setLookup('brand')}
+          t={t}
+        />
+        <CreateAdExtrasSection flags={flags} form={form} patch={patch} breadcrumb={breadcrumb} />
         <CreateAdLocationSection
           form={form}
           patch={patch}
@@ -206,6 +225,7 @@ export default function CreateAdScreen() {
           onOpenRegion={() => setLookup('region')}
           onOpenDistrict={() => setLookup('district')}
           hasDistricts={districtItems.length > 0}
+          regions={regions}
         />
         <CreateAdContactsSection form={form} patch={patch} t={t} />
         {error ? <Text style={styles.error}>{error}</Text> : null}

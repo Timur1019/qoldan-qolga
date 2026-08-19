@@ -5,6 +5,8 @@ import { useLang } from '../../context/LangContext'
 import { useAuthModal, useChatUnreadCount, useFavoritesCount, useIdVerificationModal } from '../../hooks'
 import { referenceApi } from '@/api/reference'
 import { PARAMS, ROUTES } from '../../constants/routes'
+import { writeFeedRegion, FEED_REGION_ALL } from '@/utils/feedRegionStorage'
+import useDetectFeedRegion from '@/hooks/useDetectFeedRegion'
 
 export default function useDesktopLayout() {
   const { isAuthenticated, user, logout, isAdmin } = useAuth()
@@ -26,10 +28,11 @@ export default function useDesktopLayout() {
 
   const authParam = searchParams.get(PARAMS.AUTH)
   const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
-  const isCategoryAds = location.pathname === ROUTES.ADS && Boolean(searchParams.get(PARAMS.CATEGORY))
   const isAdsOrHome = location.pathname === ROUTES.HOME || location.pathname === ROUTES.ADS
   const selectedRegionCode = isAdsOrHome ? (searchParams.get(PARAMS.REGION) || '') : ''
+  const categoryCode = searchParams.get(PARAMS.CATEGORY) || ''
   const [searchValue, setSearchValue] = useState(() => searchParams.get(PARAMS.QUERY) || '')
+  const [categoryTitle, setCategoryTitle] = useState('')
 
   useEffect(() => {
     referenceApi.getRegions().then(setRegions).catch(() => setRegions([]))
@@ -52,30 +55,47 @@ export default function useDesktopLayout() {
     }
   }, [location.pathname, searchParams])
 
+  useEffect(() => {
+    if (!categoryCode) {
+      setCategoryTitle('')
+      return undefined
+    }
+    let cancelled = false
+    referenceApi
+      .getCategory(categoryCode)
+      .then((c) => {
+        if (cancelled || !c) return
+        setCategoryTitle(lang === 'ru' ? c.nameRu : c.nameUz)
+      })
+      .catch(() => {
+        if (!cancelled) setCategoryTitle('')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [categoryCode, lang])
+
   const handleSearchSubmit = (e) => {
     e?.preventDefault()
     const q = (typeof searchValue === 'string' ? searchValue : '').trim()
-    if (isCategoryAds) {
-      const next = new URLSearchParams(searchParams)
-      next.delete(PARAMS.PAGE)
-      if (q) next.set(PARAMS.QUERY, q)
-      else next.delete(PARAMS.QUERY)
-      setSearchParams(next)
-      return
+    const onAds = location.pathname === ROUTES.ADS
+    const next = new URLSearchParams(onAds ? searchParams : '')
+    if (!onAds) {
+      const region = searchParams.get(PARAMS.REGION)
+      if (region) next.set(PARAMS.REGION, region)
     }
-    const next = new URLSearchParams(location.pathname === ROUTES.HOME ? searchParams : '')
     next.delete(PARAMS.PAGE)
-    next.delete(PARAMS.CATEGORY)
+    next.delete(PARAMS.AUTH)
     if (q) next.set(PARAMS.QUERY, q)
     else next.delete(PARAMS.QUERY)
     const qs = next.toString()
-    navigate(qs ? `${ROUTES.HOME}?${qs}` : ROUTES.HOME)
+    navigate(qs ? `${ROUTES.ADS}?${qs}` : ROUTES.ADS)
   }
 
   const selectedRegion = regions.find((r) => r.code === selectedRegionCode)
   const regionLabel = selectedRegion
     ? (lang === 'ru' ? selectedRegion.nameRu : selectedRegion.nameUz)
-    : (lang === 'ru' ? 'Все регионы' : 'Barcha hududlar')
+    : t('header.allRegions')
 
   const closeCategories = useCallback(() => {
     setCategoriesOpen(false)
@@ -101,8 +121,9 @@ export default function useDesktopLayout() {
     }
   }, [])
 
-  const handleSelectRegion = (code) => {
+  const handleSelectRegion = useCallback((code) => {
     setRegionOpen(false)
+    writeFeedRegion(code || FEED_REGION_ALL)
     if (location.pathname === ROUTES.ADS || location.pathname === ROUTES.HOME) {
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev)
@@ -113,7 +134,15 @@ export default function useDesktopLayout() {
     } else {
       navigate(code ? `/?${PARAMS.REGION}=${encodeURIComponent(code)}` : '/')
     }
-  }
+  }, [location.pathname, navigate, setSearchParams])
+
+  useDetectFeedRegion({
+    regions,
+    selectedRegionCode,
+    isAdsOrHome,
+    lang,
+    onApply: handleSelectRegion,
+  })
 
   return {
     t,
@@ -147,5 +176,6 @@ export default function useDesktopLayout() {
     regionLabel,
     closeCategories,
     handleSelectRegion,
+    categoryTitle,
   }
 }

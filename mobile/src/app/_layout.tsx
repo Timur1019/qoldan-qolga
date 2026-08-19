@@ -36,6 +36,7 @@ function RootNavigator() {
           options={{ title: t('settings.notificationsTitle') }}
         />
         <Stack.Screen name="settings/feed" options={{ headerShown: false }} />
+        <Stack.Screen name="notifications" options={{ title: t('notify.inboxTitle') }} />
         <Stack.Screen name="users/[id]" options={{ title: t('create.seller') }} />
         <Stack.Screen name="categories/[code]" options={{ title: '' }} />
         <Stack.Screen name="chat/[id]" options={{ title: '' }} />

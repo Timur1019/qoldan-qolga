@@ -1,9 +1,15 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { detectBrowserLocation } from '@/utils/detectBrowserLocation'
+import {
+  addressLineFromNominatim,
+  matchRegionFromAddress,
+  nominatimToParts,
+} from '@/utils/matchRegionFromAddress'
 
 /**
  * Map position, geolocation and Nominatim reverse/forward geocode for CreateAd.
  */
-export default function useCreateAdMap({ lang, setForm }) {
+export default function useCreateAdMap({ lang, setForm, regions = [], skipAuto = false }) {
   const [mapPosition, setMapPosition] = useState(null)
 
   useEffect(() => {
@@ -15,38 +21,52 @@ export default function useCreateAdMap({ lang, setForm }) {
       locationLat: lat.toFixed(5),
       locationLng: lng.toFixed(5),
     }))
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang === 'ru' ? 'ru' : 'en'}`
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang === 'ru' ? 'ru' : 'uz'}`
     fetch(url, {
       headers: {
         'Accept-Language': lang === 'ru' ? 'ru' : 'uz',
-        'User-Agent': 'QoldanQolga/1.0 (contact@example.com)',
+        'User-Agent': 'QoldanQolga/1.0 (contact@qoldan-qolga.uz)',
       },
     })
       .then((r) => r.json())
       .then((data) => {
-        const addr = data?.address
-        if (!addr) return
-        const parts = []
-        if (addr.road) parts.push(addr.road)
-        if (addr.house_number) parts.push(addr.house_number)
-        if (addr.suburb || addr.neighbourhood) parts.push(addr.suburb || addr.neighbourhood)
-        if (addr.village || addr.town || addr.city || addr.state) {
-          parts.push(addr.village || addr.town || addr.city || addr.state)
-        }
-        if (parts.length === 0 && data.display_name) parts.push(data.display_name)
-        const addressStr = parts.join(', ')
-        if (addressStr) setForm((prev) => ({ ...prev, address: addressStr }))
+        const parts = nominatimToParts(data)
+        const match = matchRegionFromAddress(parts, regions)
+        const addressStr = addressLineFromNominatim(data)
+        setForm((prev) => ({
+          ...prev,
+          ...(addressStr ? { address: addressStr } : {}),
+          ...(match?.regionCode ? { region: match.regionCode, district: match.district || prev.district } : {}),
+        }))
       })
       .catch(() => {})
-  }, [mapPosition, lang, setForm])
+  }, [mapPosition, lang, setForm, regions])
 
   const setMyLocation = useCallback(() => {
-    if (!navigator.geolocation) return
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setMapPosition([pos.coords.latitude, pos.coords.longitude]),
-      () => {}
-    )
-  }, [])
+    detectBrowserLocation(regions, lang)
+      .then((loc) => {
+        const lat = Number(loc.lat)
+        const lng = Number(loc.lng)
+        if (Number.isFinite(lat) && Number.isFinite(lng)) setMapPosition([lat, lng])
+        setForm((prev) => ({
+          ...prev,
+          locationLat: loc.lat,
+          locationLng: loc.lng,
+          address: loc.address || prev.address,
+          region: loc.regionCode || prev.region,
+          district: loc.district || prev.district,
+        }))
+      })
+      .catch(() => {})
+  }, [lang, regions, setForm])
+
+  const autoDone = useRef(false)
+
+  useEffect(() => {
+    if (skipAuto || autoDone.current || !regions.length) return
+    autoDone.current = true
+    setMyLocation()
+  }, [skipAuto, regions, setMyLocation])
 
   const geocodeAddress = useCallback(async (address) => {
     const query = (address || '').trim()
@@ -56,7 +76,7 @@ export default function useCreateAdMap({ lang, setForm }) {
       const res = await fetch(url, {
         headers: {
           'Accept-Language': lang === 'ru' ? 'ru' : 'uz',
-          'User-Agent': 'QoldanQolga/1.0 (contact@example.com)',
+          'User-Agent': 'QoldanQolga/1.0 (contact@qoldan-qolga.uz)',
         },
       })
       const data = await res.json().catch(() => [])

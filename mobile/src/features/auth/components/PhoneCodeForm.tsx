@@ -1,6 +1,9 @@
-import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { useLanguage } from '@/context/LanguageContext';
+import { OtpBoxes } from '@/features/auth/components/OtpBoxes/OtpBoxes';
+import { OTP_LENGTH } from '@/features/auth/constants/otp';
 
 import { styles } from './PhoneCodeForm.styles';
 
@@ -30,6 +33,14 @@ export function PhoneCodeForm({
   debugCode,
 }: Props) {
   const { t } = useLanguage();
+  const submitted = useRef('');
+
+  useEffect(() => {
+    const next = code.replace(/\D/g, '');
+    if (next.length < OTP_LENGTH || submitting || submitted.current === next) return;
+    submitted.current = next;
+    onSubmit();
+  }, [code, submitting, onSubmit]);
 
   return (
     <View style={styles.wrap}>
@@ -42,21 +53,13 @@ export function PhoneCodeForm({
         </Text>
       )}
       <Text style={styles.label}>{t('auth.code')}</Text>
-      <TextInput
-        style={styles.codeInput}
-        value={code}
-        onChangeText={(v) => onCodeChange(v.replace(/\D/g, '').slice(0, 8))}
-        keyboardType="number-pad"
-        textContentType="oneTimeCode"
-        autoComplete="sms-otp"
-        maxLength={8}
-        autoFocus
-      />
+      <OtpBoxes value={code} onChange={onCodeChange} />
+      <Text style={styles.smsHint}>{t('auth.smsAutofillHint')}</Text>
       {!!error && <Text style={styles.error}>{error}</Text>}
       <Pressable
-        style={[styles.button, code.length < 4 && styles.buttonDisabled]}
+        style={[styles.button, code.length < OTP_LENGTH && styles.buttonDisabled]}
         onPress={onSubmit}
-        disabled={submitting || code.length < 4}
+        disabled={submitting || code.length < OTP_LENGTH}
       >
         {submitting ? (
           <ActivityIndicator color="#fff" />

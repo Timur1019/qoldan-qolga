@@ -1,5 +1,8 @@
 .wrap {
   position: relative;
+  z-index: 0;
+  isolation: isolate;
+  contain: layout paint;
   width: 100%;
   height: 280px;
   border-radius: var(--radius-card);
@@ -9,16 +12,44 @@
 }
 
 .map {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
+}
+
+.wrap :global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  z-index: 0 !important;
+}
+
+.wrap :global(.leaflet-pane),
+.wrap :global(.leaflet-top),
+.wrap :global(.leaflet-bottom),
+.wrap :global(.leaflet-control-container) {
+  z-index: 1 !important;
+}
+
+.wrap :global(.leaflet-control-attribution) {
+  display: none !important;
 }
 
 .placeholder {
   min-height: 120px;
 }
 
-.attribution {
-  z-index: 1000;
+.credit {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 1px 6px;
+  border-radius: 4px;
   font-size: 10px;
+  line-height: 1.4;
+  color: #111827;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.9);
 }

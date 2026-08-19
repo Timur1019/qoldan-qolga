@@ -1,0 +1,124 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 248px;
+  flex-shrink: 0;
+  padding: 1rem 0.85rem 0.85rem;
+  background: #f4f6f5;
+  border-right: 1px solid #e6ebe8;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0 0.35rem 1.15rem;
+  text-decoration: none;
+  color: #12251c;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #04492d;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.brandName {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.62rem 0.8rem;
+  border-radius: 12px;
+  color: #3d4f47;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.link i {
+  width: 1.15rem;
+  font-size: 1.05rem;
+  color: #6b7c74;
+}
+
+.link:hover {
+  background: #e7eee9;
+  color: #12251c;
+}
+
+.active {
+  background: #04492d;
+  color: #fff;
+}
+
+.active i {
+  color: #fff;
+}
+
+.logout {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.75rem;
+  padding: 0.62rem 0.8rem;
+  border: 0;
+  border-top: 1px solid #e6ebe8;
+  border-radius: 12px;
+  background: transparent;
+  color: #3d4f47;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout i {
+  width: 1.15rem;
+  font-size: 1.05rem;
+}
+
+.logout:hover {
+  background: #e7eee9;
+}
+
+@media (max-width: 860px) {
+  .sidebar {
+    width: 76px;
+    padding: 0.85rem 0.5rem;
+  }
+
+  .brandName,
+  .link span,
+  .logout span {
+    display: none;
+  }
+
+  .brand {
+    justify-content: center;
+    margin: 0 0 1rem;
+  }
+
+  .link,
+  .logout {
+    justify-content: center;
+    padding: 0.7rem 0;
+  }
+}

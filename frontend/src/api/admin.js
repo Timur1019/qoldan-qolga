@@ -9,6 +9,13 @@ export const adminApi = {
       body: JSON.stringify(body),
     }),
   getUsers: (params) => apiRequest(`/admin/users${buildQueryString(params)}`),
+  createUser: (body) =>
+    apiRequest('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  getStatsUsers: (params) => apiRequest(`/admin/stats/users${buildQueryString(params)}`),
+  getStatsAds: (params) => apiRequest(`/admin/stats/ads${buildQueryString(params)}`),
   updateUser: (userId, body) =>
     apiRequest(`/admin/users/${encodeURIComponent(userId)}`, {
       method: 'PATCH',

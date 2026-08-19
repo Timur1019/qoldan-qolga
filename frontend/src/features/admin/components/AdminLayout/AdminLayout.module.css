@@ -1,32 +1,23 @@
-.adminLayout {
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f6f8f7;
+}
+
+.body {
   display: flex;
   flex-direction: column;
-  min-height: 60vh;
-}
-
-.content {
-  display: flex;
   flex: 1;
-}
-
-.headerInner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.sidebar {
-  width: 200px;
-  padding: 1rem 0.75rem;
-  border-right: 1px solid var(--color-border, #e5e7eb);
-  background: var(--color-bg-subtle, #f8fafc);
+  min-width: 0;
 }
 
 .main {
   flex: 1;
-  padding: 1.25rem 1.5rem;
-  background: var(--color-bg);
+  padding: 1.25rem 1.5rem 2rem;
+}
+
+@media (max-width: 720px) {
+  .main {
+    padding: 1rem 0.85rem 1.5rem;
+  }
 }

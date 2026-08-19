@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,14 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, St
     Page<Advertisement> findByUserIdOrderByCreatedAtDesc(String userId, Pageable pageable);
 
     long countByUserIdAndStatus(String userId, String status);
+
+    long countByDeletedAtIsNullAndStatus(String status);
+
+    long countByDeletedAtIsNullAndCreatedAtGreaterThanEqual(Instant from);
+
+    Page<Advertisement> findByDeletedAtIsNullAndCreatedAtGreaterThanEqual(Instant from, Pageable pageable);
+
+    Page<Advertisement> findByDeletedAtIsNullAndStatus(String status, Pageable pageable);
 
     @Query("SELECT a FROM Advertisement a LEFT JOIN FETCH a.user LEFT JOIN FETCH a.images LEFT JOIN FETCH a.brand LEFT JOIN FETCH a.vehicleModel WHERE a.id = :id")
     Optional<Advertisement> findByIdWithUserAndImages(String id);

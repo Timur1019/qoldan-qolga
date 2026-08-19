@@ -80,7 +80,7 @@ export function CreateAdExtrasSection({ flags, form, patch, breadcrumb = [] }: P
           <Text style={styles.switchLabel}>{t('ads.giveAway')}</Text>
           <Switch
             value={!!form.giveAway}
-            onValueChange={(giveAway) => patch({ giveAway })}
+            onValueChange={(giveAway) => patch({ giveAway, ...(giveAway ? { price: '0' } : {}) })}
             trackColor={{ true: colors.primary }}
           />
         </View>

@@ -21,7 +21,7 @@ import {
   type CreateAdFormState,
 } from '@/utils/createAdForm';
 import { localizedName } from '@/utils/localizedName';
-import { mapAdDetailToCreateForm } from '@/utils/mapAdDetailToCreateForm';
+import { detectDeviceLocation } from '@/location/detectDeviceLocation';
 
 export type RegionDto = {
   code: string;
@@ -31,8 +31,9 @@ export type RegionDto = {
 };
 
 export type BrandDto = { id: string; nameUz?: string; nameRu?: string };
+export type ModelDto = { id: string; nameUz?: string; nameRu?: string; name?: string };
 
-export type LookupKind = 'region' | 'district' | 'brand' | null;
+export type LookupKind = 'region' | 'district' | 'brand' | 'model' | null;
 
 export function useCreateAdScreen(editId?: string) {
   const isEdit = Boolean(editId);
@@ -47,6 +48,7 @@ export function useCreateAdScreen(editId?: string) {
   const [breadcrumb, setBreadcrumb] = useState<CategoryDto[]>([]);
   const [regions, setRegions] = useState<RegionDto[]>([]);
   const [brands, setBrands] = useState<BrandDto[]>([]);
+  const [models, setModels] = useState<ModelDto[]>([]);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [lookup, setLookup] = useState<LookupKind>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -125,7 +127,7 @@ export function useCreateAdScreen(editId?: string) {
   );
 
   useEffect(() => {
-    if (!form.category || !transport.brand) {
+    if (!form.category) {
       setBrands([]);
       return;
     }
@@ -133,7 +135,42 @@ export function useCreateAdScreen(editId?: string) {
       .getBrandsByCategory(form.category.code)
       .then((list) => setBrands(Array.isArray(list) ? (list as BrandDto[]) : []))
       .catch(() => setBrands([]));
-  }, [form.category, transport.brand]);
+  }, [form.category]);
+
+  useEffect(() => {
+    if (!form.brandId) {
+      setModels([]);
+      return;
+    }
+    referenceApi
+      .getModelsByBrand(form.brandId)
+      .then((list) => setModels(Array.isArray(list) ? (list as ModelDto[]) : []))
+      .catch(() => setModels([]));
+  }, [form.brandId]);
+
+  useEffect(() => {
+    if (isEdit || !isAuthenticated || !regions.length || form.region) return;
+    let alive = true;
+    void detectDeviceLocation(regions)
+      .then((loc) => {
+        if (!alive || !loc) return;
+        setForm((prev) => {
+          if (prev.region) return prev;
+          return {
+            ...prev,
+            region: loc.regionCode || prev.region,
+            district: loc.district || prev.district,
+            address: loc.address || prev.address,
+            locationLat: loc.lat,
+            locationLng: loc.lng,
+          };
+        });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [isEdit, isAuthenticated, regions, form.region]);
 
   const selectedRegion = regions.find((r) => r.code === form.region);
   const regionLabel = selectedRegion
@@ -159,6 +196,14 @@ export function useCreateAdScreen(editId?: string) {
     () => brands.map((b) => ({ value: b.id, label: localizedName(b, language, b.id) })),
     [brands, language]
   );
+  const modelItems: LookupItem[] = useMemo(
+    () =>
+      models.map((m) => ({
+        value: m.id,
+        label: localizedName(m, language, m.name || m.id),
+      })),
+    [models, language]
+  );
 
   const pickImages = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -177,13 +222,14 @@ export function useCreateAdScreen(editId?: string) {
     patch({ localImages: [...form.localImages, ...uris].slice(0, 6) });
   };
 
-  const onCategorySelect = async (cat: CategoryDto) => {
+  const onCategorySelect = async (cat: CategoryDto, path: CategoryDto[] = []) => {
     patch(resetCategoryFields({ category: cat }));
+    if (path.length) setBreadcrumb(path);
     try {
       const list = await referenceApi.getCategoryBreadcrumb(cat.code);
-      setBreadcrumb(Array.isArray(list) ? (list as CategoryDto[]) : []);
+      if (Array.isArray(list) && list.length) setBreadcrumb(list as CategoryDto[]);
     } catch {
-      setBreadcrumb([]);
+      if (!path.length) setBreadcrumb([]);
     }
   };
 
@@ -230,6 +276,7 @@ export function useCreateAdScreen(editId?: string) {
     loadingEdit,
     breadcrumb,
     brands,
+    models,
     transport,
     realEstate,
     flags,
@@ -239,11 +286,13 @@ export function useCreateAdScreen(editId?: string) {
     setLookup,
     submitting,
     error,
+    regions,
     selectedRegion,
     regionLabel,
     regionItems,
     districtItems,
     brandItems,
+    modelItems,
     pickImages,
     onCategorySelect,
     submit,

@@ -63,9 +63,9 @@ export default function OSMMap({ center, position, onPositionChange, className }
         zoom={13}
         className={styles.map}
         scrollWheelZoom
+        attributionControl={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={pos} icon={defaultIcon()} />
@@ -76,7 +76,7 @@ export default function OSMMap({ center, position, onPositionChange, className }
         href="https://www.openstreetmap.org/copyright"
         target="_blank"
         rel="noopener noreferrer"
-        className={`position-absolute bottom-0 end-0 small text-dark text-decoration-none bg-white px-1 rounded ${styles.attribution}`}
+        className={styles.credit}
       >
         © OpenStreetMap
       </a>

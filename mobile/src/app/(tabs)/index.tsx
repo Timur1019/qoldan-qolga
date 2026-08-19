@@ -16,6 +16,7 @@ import { TopAdStrip } from '@/components/TopAdStrip/TopAdStrip';
 import { AdCardSkeletonGrid } from '@/components/ui/AdCardSkeletonGrid/AdCardSkeletonGrid';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRegions } from '@/context/RegionsContext';
+import { useAutoFeedRegion } from '@/hooks/useAutoFeedRegion';
 import { useFavoriteClick } from '@/hooks/useFavoriteClick';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import type { AdListItemDto, CategoryDto, PageResponse } from '@/types/api';
@@ -30,6 +31,7 @@ export default function HomeScreen() {
   const requireAuth = useRequireAuth();
   const { t } = useLanguage();
   const { getRegionLabel } = useRegions();
+  const { region: appliedRegion, setRegion: setAppliedRegion, ready: regionReady } = useAutoFeedRegion();
   const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [banners, setBanners] = useState<PromoBannerItem[]>([]);
@@ -40,7 +42,6 @@ export default function HomeScreen() {
   const [draftInterests, setDraftInterests] = useState<string[]>([]);
   const [appliedInterests, setAppliedInterests] = useState<string[]>([]);
   const [draftRegion, setDraftRegion] = useState('');
-  const [appliedRegion, setAppliedRegion] = useState('');
   const [data, setData] = useState<PageResponse<AdListItemDto>>({
     content: [],
     totalElements: 0,
@@ -92,21 +93,22 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
+    if (!regionReady) return;
     setLoading(true);
     loadPage(0, query, feedTab, appliedInterests, appliedRegion)
       .then(setData)
       .catch(() => setData((prev) => ({ ...prev, content: [] })))
       .finally(() => setLoading(false));
-  }, [query, feedTab, appliedInterests, appliedRegion, loadPage]);
+  }, [query, feedTab, appliedInterests, appliedRegion, loadPage, regionReady]);
 
   const loadMore = useCallback(() => {
-    if (loading || loadingMore || data.last) return;
+    if (loading || loadingMore || data.last || !regionReady) return;
     setLoadingMore(true);
     loadPage(data.number + 1, query, feedTab, appliedInterests, appliedRegion)
       .then((res) => setData((prev) => ({ ...res, content: [...prev.content, ...res.content] })))
       .catch(() => {})
       .finally(() => setLoadingMore(false));
-  }, [loading, loadingMore, data.last, data.number, query, feedTab, appliedInterests, appliedRegion, loadPage]);
+  }, [loading, loadingMore, data.last, data.number, query, feedTab, appliedInterests, appliedRegion, loadPage, regionReady]);
 
   const updateFavorite = useCallback((adId: string, favorite: boolean) => {
     setData((prev) => ({ ...prev, content: prev.content.map((a) => (a.id === adId ? { ...a, favorite } : a)) }));
@@ -168,7 +170,7 @@ export default function HomeScreen() {
     [draftQuery, bentoCategories, banners, feedTab, onPromoPress, regionLabel, openSettings, requireAuth, categoriesLoading, categories.length]
   );
 
-  const showInitialSkeleton = loading && data.content.length === 0;
+  const showInitialSkeleton = (!regionReady || loading) && data.content.length === 0;
   const showRefreshing = loading && data.content.length > 0;
 
   return (
@@ -215,14 +217,14 @@ export default function HomeScreen() {
         onChangeRegion={setDraftRegion}
         onSave={() => {
           setAppliedInterests(draftInterests);
-          setAppliedRegion(draftRegion);
+          void setAppliedRegion(draftRegion);
           setFeedSettingsOpen(false);
         }}
         onReset={() => {
           setDraftInterests([]);
           setAppliedInterests([]);
           setDraftRegion('');
-          setAppliedRegion('');
+          void setAppliedRegion('');
           setFeedSettingsOpen(false);
         }}
       />

@@ -18,7 +18,7 @@ interface Level {
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onSelect: (cat: CategoryDto) => void;
+  onSelect: (cat: CategoryDto, path: CategoryDto[]) => void;
 }
 
 export function CategoryTreeSheet({ visible, onClose, onSelect }: Props) {
@@ -47,10 +47,19 @@ export function CategoryTreeSheet({ visible, onClose, onSelect }: Props) {
   const level = stack[stack.length - 1];
   const nameOf = (c: CategoryDto) => localizedName(c, language);
 
+  const pathTo = (cat: CategoryDto) => {
+    const parents = stack.map((l) => l.parent).filter((p): p is CategoryDto => Boolean(p));
+    return [...parents, cat];
+  };
+
+  const pick = (cat: CategoryDto) => {
+    onSelect(cat, pathTo(cat));
+    onClose();
+  };
+
   const open = async (cat: CategoryDto) => {
     if (!cat.hasChildren) {
-      onSelect(cat);
-      onClose();
+      pick(cat);
       return;
     }
     setLoading(true);
@@ -59,8 +68,7 @@ export function CategoryTreeSheet({ visible, onClose, onSelect }: Props) {
       const list = await referenceApi.getCategoryChildren(cat.code);
       const items = Array.isArray(list) ? (list as CategoryDto[]) : [];
       if (items.length === 0) {
-        onSelect(cat);
-        onClose();
+        pick(cat);
         return;
       }
       setStack((prev) => [...prev, { parent: cat, items }]);
@@ -106,10 +114,7 @@ export function CategoryTreeSheet({ visible, onClose, onSelect }: Props) {
               {level?.parent ? (
                 <Pressable
                   style={styles.row}
-                  onPress={() => {
-                    onSelect(level.parent!);
-                    onClose();
-                  }}
+                  onPress={() => pick(level.parent!)}
                 >
                   <Text style={styles.rowText}>
                     {language === 'ru'

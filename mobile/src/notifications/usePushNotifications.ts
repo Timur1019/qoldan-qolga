@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { savePushInboxItem } from '@/notifications/inboxStorage';
+import { mapNotificationToInbox } from '@/notifications/mapNotificationToInbox';
 import { openFromNotification } from '@/notifications/openFromNotification';
 import { showWelcomeNotification } from '@/notifications/showWelcomeNotification';
 import {
@@ -25,8 +27,14 @@ export function usePushNotifications() {
   const { t } = useLanguage();
 
   useEffect(() => {
-    const sub = Notifications.addNotificationResponseReceivedListener(openFromNotification);
-    return () => sub.remove();
+    const tap = Notifications.addNotificationResponseReceivedListener(openFromNotification);
+    const received = Notifications.addNotificationReceivedListener((notification) => {
+      void savePushInboxItem(mapNotificationToInbox(notification));
+    });
+    return () => {
+      tap.remove();
+      received.remove();
+    };
   }, []);
 
   useEffect(() => {

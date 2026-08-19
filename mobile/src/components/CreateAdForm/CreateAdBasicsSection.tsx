@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Switch, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/theme/colors';
 import type { CreateAdFormState } from '@/utils/createAdForm';
@@ -82,6 +82,14 @@ export function CreateAdBasicsSection({
               </Pressable>
             ))}
           </View>
+        </View>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t('edit.negotiable')}</Text>
+          <Switch
+            value={form.isNegotiable}
+            onValueChange={(isNegotiable) => patch({ isNegotiable })}
+            trackColor={{ true: colors.primary }}
+          />
         </View>
       </View>
     </>

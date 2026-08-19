@@ -25,7 +25,7 @@ import type { CategoryDto } from '@/types/api';
 import { buildProfileMenus } from '@/utils/buildProfileMenus';
 import { isPhotoAvatar } from '@/utils/isPhotoAvatar';
 import { pickProfileImage } from '@/utils/pickProfileImage';
-import { uploadAndSaveProfilePhoto } from '@/utils/uploadAndSaveProfilePhoto';
+import { loadPushInbox, unreadPushCount } from '@/notifications/inboxStorage';
 
 import { styles } from '@/styles/screens/profile.styles';
 
@@ -55,6 +55,7 @@ export default function ProfileScreen() {
   const [myAdsCount, setMyAdsCount] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [chatUnread, setChatUnread] = useState(0);
+  const [notificationsUnread, setNotificationsUnread] = useState(0);
 
   const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [draftInterests, setDraftInterests] = useState<string[]>([]);
@@ -77,6 +78,9 @@ export default function ProfileScreen() {
   }, []);
 
   const refreshBadges = useCallback(() => {
+    void loadPushInbox()
+      .then((items) => setNotificationsUnread(unreadPushCount(items)))
+      .catch(() => setNotificationsUnread(0));
     if (!isAuthenticated) {
       setMyAdsCount(0);
       setFavoritesCount(0);
@@ -123,12 +127,14 @@ export default function ProfileScreen() {
     favoritesCount,
     myAdsCount,
     chatUnread,
+    notificationsUnread,
     storeVerified,
     onPrize: () => setInfoKind('prize'),
     onFavorites: () => requireAuth(() => router.push('/(tabs)/favorites')),
     onMyAds: () => requireAuth(() => router.push('/(tabs)/sell')),
     onOrders: () => requireAuth(() => setInfoKind('orders')),
     onMessages: () => requireAuth(() => router.push('/(tabs)/chat')),
+    onNotifications: () => router.push('/notifications'),
     onBusiness: () => requireAuth(() => router.push('/business')),
     onIdVerify: () => requireAuth(() => setIdVerifyOpen(true)),
     onSupport: () => {

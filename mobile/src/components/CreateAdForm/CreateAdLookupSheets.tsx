@@ -1,6 +1,6 @@
 import { CategoryTreeSheet } from '@/components/CategoryTreeSheet/CategoryTreeSheet';
 import { LookupSheet, type LookupItem } from '@/components/LookupSheet/LookupSheet';
-import type { BrandDto, LookupKind } from '@/hooks/useCreateAdScreen';
+import type { BrandDto, LookupKind, ModelDto } from '@/hooks/useCreateAdScreen';
 import type { AppLanguage } from '@/i18n/types';
 import type { CategoryDto } from '@/types/api';
 import type { CreateAdFormState } from '@/utils/createAdForm';
@@ -9,14 +9,16 @@ import { localizedName } from '@/utils/localizedName';
 type Props = {
   categoryOpen: boolean;
   onCloseCategory: () => void;
-  onCategorySelect: (cat: CategoryDto) => void;
+  onCategorySelect: (cat: CategoryDto, path: CategoryDto[]) => void;
   lookup: LookupKind;
   onCloseLookup: () => void;
   regionItems: LookupItem[];
   districtItems: LookupItem[];
   brandItems: LookupItem[];
+  modelItems: LookupItem[];
   form: CreateAdFormState;
   brands: BrandDto[];
+  models: ModelDto[];
   language: AppLanguage;
   patch: (partial: Partial<CreateAdFormState>) => void;
   t: (key: string, fallback?: string) => string;
@@ -31,8 +33,10 @@ export function CreateAdLookupSheets({
   regionItems,
   districtItems,
   brandItems,
+  modelItems,
   form,
   brands,
+  models,
   language,
   patch,
   t,
@@ -75,6 +79,21 @@ export function CreateAdLookupSheets({
             brandLabel: b ? localizedName(b, language, brandId) : brandId,
             modelId: '',
             modelCustom: '',
+          });
+        }}
+      />
+      <LookupSheet
+        visible={lookup === 'model'}
+        title={t('create.model')}
+        items={modelItems}
+        value={form.modelId}
+        allowClear={false}
+        onClose={onCloseLookup}
+        onSelect={(modelId) => {
+          const m = models.find((x) => x.id === modelId);
+          patch({
+            modelId,
+            modelCustom: m ? localizedName(m, language, m.name || modelId) : modelId,
           });
         }}
       />

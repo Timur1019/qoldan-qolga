@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../../../../context/LangContext'
 import { adsApi } from '@/api/ads'
 import CardGallery from '../../../ad/components/CardGallery'
+import { galleryImageUrls } from '../../../ad/utils/galleryImageUrls'
 import PromoModal from '../../../ad/components/PromoModal'
 import { ROUTES, adsEditPath } from '../../../../constants/routes'
 import styles from './MyAds.module.css'
@@ -243,7 +244,7 @@ export default function MyAds() {
                     <Link to={`/ads/${ad.id}`} className={styles.rowLink}>
                       <span className={styles.rowImageWrap}>
                         <CardGallery
-                          imageUrls={ad.imageUrls ?? (ad.mainImageUrl ? [ad.mainImageUrl] : [])}
+                          imageUrls={galleryImageUrls(ad)}
                           imageWrapClassName={styles.rowImage}
                         />
                       </span>

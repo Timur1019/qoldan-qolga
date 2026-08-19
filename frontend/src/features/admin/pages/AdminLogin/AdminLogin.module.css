@@ -1,12 +1,19 @@
 .page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
   background:
-    radial-gradient(ellipse at top, rgba(0, 170, 255, 0.08), transparent 55%),
-    #f1f5f9;
+    radial-gradient(ellipse at top, rgba(4, 73, 45, 0.08), transparent 55%),
+    #f4f6f5;
+}
+
+.lang {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
 }
 
 .card {
@@ -31,8 +38,8 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: #eff6ff;
-  color: #0284c7;
+  background: #e8f4ee;
+  color: #04492d;
   font-size: 1.35rem;
   margin-bottom: 0.75rem;
 }
@@ -69,5 +76,5 @@
 }
 
 .back:hover {
-  color: #0ea5e9;
+  color: #04492d;
 }
