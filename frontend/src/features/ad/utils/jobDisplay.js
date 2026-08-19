@@ -1,4 +1,3 @@
-import { JOB_PROFESSIONS, jobOptionLabel } from '../../constants/jobFilterOptions'
 import {
   JOB_BENEFIT_OPTIONS,
   JOB_CANDIDATE_OPTIONS,
@@ -9,9 +8,11 @@ import {
   JOB_INDUSTRY_SEEK,
   JOB_PAY_FREQUENCY_OPTIONS,
   JOB_PRIORITY_OPTIONS,
+  JOB_PROFESSIONS,
   JOB_SALARY_PERIOD_OPTIONS,
   JOB_SCHEDULE_OPTIONS,
-} from '../../constants/jobFilterOptions'
+  jobOptionLabel,
+} from '../../../constants/jobFilterOptions'
 
 function findLabel(options, value, lang) {
   const opt = options.find((o) => o.value === value)
