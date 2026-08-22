@@ -13,7 +13,7 @@ function SellerAds({ ads = [], titleKey = 'ads.sellerAdsTitle' }) {
 
   return (
     <section className={`${styles.wrap} mt-4`}>
-      <h2 className="h5 mb-3">{t(titleKey)}</h2>
+      <h2 className={styles.title}>{t(titleKey)}</h2>
       <AdCardGrid variant="cols5">
         {ads.map((item) => (
           <AdCard

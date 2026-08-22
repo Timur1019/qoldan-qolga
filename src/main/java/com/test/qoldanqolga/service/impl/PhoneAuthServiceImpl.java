@@ -21,6 +21,7 @@ import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.security.JwtUtil;
 import com.test.qoldanqolga.service.PhoneAuthService;
 import com.test.qoldanqolga.service.UserLastSeenService;
+import com.test.qoldanqolga.service.notification.AuthLoginNotificationPublisher;
 import com.test.qoldanqolga.service.sms.DevSmsClient;
 import com.test.qoldanqolga.util.LogUtil;
 import com.test.qoldanqolga.util.PhoneUtil;
@@ -56,6 +57,7 @@ public class PhoneAuthServiceImpl implements PhoneAuthService {
     private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
     private final UserLastSeenService userLastSeenService;
+    private final AuthLoginNotificationPublisher authLoginNotificationPublisher;
 
     @Override
     @Transactional
@@ -190,6 +192,9 @@ public class PhoneAuthServiceImpl implements PhoneAuthService {
         }
 
         userLastSeenService.touch(user);
+        if (!isNew) {
+            authLoginNotificationPublisher.publishLogin(user.getId(), request.getDeviceId(), request.getPlatform());
+        }
         AuthResponse response = userMapper.toAuthResponse(user, jwtUtil.createToken(user.getId(), user.getEmail()));
         response.setPhone(user.getPhone());
         response.setNewUser(isNew);

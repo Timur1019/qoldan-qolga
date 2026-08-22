@@ -84,3 +84,9 @@
 .secondary:hover {
   color: var(--color-text, #111827);
 }
+
+@media (max-width: 767px) {
+  .page {
+    padding: 1rem 12px calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+}

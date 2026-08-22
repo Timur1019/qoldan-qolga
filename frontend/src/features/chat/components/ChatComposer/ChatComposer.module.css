@@ -1,0 +1,141 @@
+.composer {
+  border-top: 1px solid #eef1ef;
+  background: #f8faf9;
+}
+
+.form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  padding: 0.65rem 1rem 0.85rem;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.toolBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.toolBtn:hover:not(:disabled) {
+  background: #eef1ef;
+  color: #374151;
+}
+
+.toolBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.inputWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgba(4, 73, 45, 0.45);
+  box-shadow: 0 0 0 3px rgba(4, 73, 45, 0.08);
+}
+
+.sendBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-primary, #04492d);
+  color: #fff;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.emojiPanel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0 1rem 0.65rem;
+}
+
+.emojiBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.emojiBtn:hover {
+  background: #eef1ef;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.uploading {
+  padding: 0 1rem 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+@media (max-width: 767px) {
+  .composer {
+    flex-shrink: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .form {
+    padding: 0.5rem 0.75rem 0.65rem;
+    gap: 0.3rem;
+  }
+
+  .form > .toolBtn {
+    display: none;
+  }
+
+  .sendBtn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .toolBtn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .input {
+    font-size: 16px;
+  }
+}

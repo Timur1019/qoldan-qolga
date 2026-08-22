@@ -15,6 +15,7 @@ import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.repository.PromoOrderRepository;
 import com.test.qoldanqolga.service.payment.PaymentGateway;
 import com.test.qoldanqolga.service.payment.PaymentGatewayResolver;
+import com.test.qoldanqolga.service.notification.PaymentNotificationPublisher;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class PromoOrderService {
     private final PromoOrderRepository promoOrderRepository;
     private final PromoCatalogue promoCatalogue;
     private final PaymentGatewayResolver paymentGatewayResolver;
+    private final PaymentNotificationPublisher paymentNotificationPublisher;
 
     @Transactional
     public PromoOrderResponse createOrder(String adId, String serviceCode, String provider, String userId) {
@@ -58,6 +60,8 @@ public class PromoOrderService {
         String paymentUrl = gateway.createCheckout(order);
         order.setPaymentUrl(paymentUrl);
         promoOrderRepository.save(order);
+
+        paymentNotificationPublisher.publishPending(order);
 
         LogUtil.info(PromoOrderService.class,
                 "Promo order created: orderId={} adId={} service={} provider={} amount={}",

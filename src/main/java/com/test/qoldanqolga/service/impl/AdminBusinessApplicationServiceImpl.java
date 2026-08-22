@@ -1,6 +1,7 @@
 package com.test.qoldanqolga.service.impl;
 
 import com.test.qoldanqolga.dto.business.BusinessApplicationDto;
+import com.test.qoldanqolga.dto.chat.SendMessageRequest;
 import com.test.qoldanqolga.mapper.BusinessApplicationMapper;
 import com.test.qoldanqolga.model.BusinessApplication;
 import com.test.qoldanqolga.repository.BusinessApplicationRepository;
@@ -69,7 +70,9 @@ public class AdminBusinessApplicationServiceImpl implements AdminBusinessApplica
             });
             String convId = conversationCommandService.getOrCreateSystemConversation(userId);
             String systemUserId = systemConversationProperties.getUserId();
-            messageCommandService.sendMessage(convId, systemUserId, STORE_APPROVED_MESSAGE);
+            SendMessageRequest messageRequest = new SendMessageRequest();
+            messageRequest.setText(STORE_APPROVED_MESSAGE);
+            messageCommandService.sendMessage(convId, systemUserId, messageRequest);
         }
         LogUtil.info(AdminBusinessApplicationServiceImpl.class, "Business application approved: id={} userId={}", id, userId);
     }

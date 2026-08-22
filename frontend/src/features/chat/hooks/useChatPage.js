@@ -3,9 +3,18 @@ import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useLang } from '@/context/LangContext'
 import { chatApi } from '@/api/chat'
+import { adsApi } from '@/api/ads'
 import { useIsMobile, useStompChat } from '@/hooks'
+import { notifyToast } from '@/utils/toastBus'
 import { isSystemConversation, takePendingChat } from '@/features/ad'
 import { asMessageList, upsertMessage } from '../utils/chatListUtils'
+import { applyReadStatus, parseChatWsEvent } from '../utils/chatWsEvent'
+import {
+  blockUser,
+  isConversationMuted,
+  isUserBlocked,
+  toggleMuteConversation,
+} from '../utils/chatPreferences'
 
 export default function useChatPage() {
   const { user, isAuthenticated } = useAuth()
@@ -22,9 +31,15 @@ export default function useChatPage() {
   const [error, setError] = useState('')
   const [sendText, setSendText] = useState('')
   const [sending, setSending] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [messageMenuId, setMessageMenuId] = useState(null)
   const [editingMessageId, setEditingMessageId] = useState(null)
   const [editingText, setEditingText] = useState('')
+  const [threadMenuOpen, setThreadMenuOpen] = useState(false)
+  const [reportModalOpen, setReportModalOpen] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
+  const [muted, setMuted] = useState(false)
   const messagesEndRef = useRef(null)
   const messagesContainerRef = useRef(null)
 
@@ -34,6 +49,11 @@ export default function useChatPage() {
 
   useEffect(() => {
     selectedIdRef.current = selectedId
+  }, [selectedId])
+
+  useEffect(() => {
+    setMuted(selectedId ? isConversationMuted(selectedId) : false)
+    setThreadMenuOpen(false)
   }, [selectedId])
 
   useEffect(() => {
@@ -57,7 +77,8 @@ export default function useChatPage() {
     chatApi
       .getConversations()
       .then((list) => {
-        setConversations(asMessageList(list))
+        const filtered = asMessageList(list).filter((c) => !isUserBlocked(c.otherPartyId))
+        setConversations(filtered)
         window.dispatchEvent(new CustomEvent('chat-count-refresh'))
       })
       .catch((e) => setError(e.message))
@@ -76,7 +97,7 @@ export default function useChatPage() {
       .getOrCreateConversation(pending.adId)
       .then(async (conv) => {
         if (pending.text) {
-          await chatApi.sendMessage(conv.id, pending.text)
+          await chatApi.sendMessage(conv.id, { text: pending.text })
         }
         setSearchParams({ conversation: conv.id }, { replace: true })
         loadConversations()
@@ -129,10 +150,37 @@ export default function useChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleIncomingMessage = useCallback((msg) => {
-    if (!msg || !msg.conversationId) return
+  const updateConversationPreview = useCallback((conversationId, msg) => {
+    const preview = msg.text || (msg.messageType === 'IMAGE' ? '📷' : msg.attachmentUrl ? '📎' : '')
+    setConversations((prev) =>
+      prev.map((c) => {
+        if (c.id !== conversationId) return c
+        return {
+          ...c,
+          lastMessageText: preview,
+          lastMessageAt: msg.createdAt || c.lastMessageAt,
+          messageCount: (c.messageCount ?? 0) + 1,
+        }
+      })
+    )
+  }, [])
+
+  const handleWsEvent = useCallback((body) => {
+    const event = parseChatWsEvent(body)
+    if (!event) return
+
+    if (event.kind === 'read') {
+      if (event.readerId !== user?.id) {
+        setMessages((prev) => applyReadStatus(prev, event.readAt, user?.id))
+      }
+      return
+    }
+
+    const msg = event.message
+    if (!msg?.conversationId) return
     const fromOther = msg.senderId !== user?.id
-    const isViewingThis = msg.conversationId === selectedId
+    const isViewingThis = msg.conversationId === selectedIdRef.current
+
     if (isViewingThis) {
       setMessages((prev) => upsertMessage(prev, msg))
       if (fromOther) {
@@ -141,10 +189,12 @@ export default function useChatPage() {
         }).catch(() => {})
       }
     }
+
+    updateConversationPreview(msg.conversationId, msg)
     setConversations((prev) =>
       prev.map((c) => {
         if (c.id !== msg.conversationId) return c
-        const next = { ...c, messageCount: (c.messageCount ?? 0) + 1 }
+        const next = { ...c }
         if (fromOther && !isViewingThis) {
           next.unreadCount = (c.unreadCount ?? 0) + 1
           window.dispatchEvent(new CustomEvent('chat-count-refresh'))
@@ -152,28 +202,47 @@ export default function useChatPage() {
         return next
       })
     )
-  }, [selectedId, user?.id])
+  }, [updateConversationPreview, user?.id])
 
-  useStompChat(selectedId, handleIncomingMessage)
+  useStompChat(selectedId, handleWsEvent)
+
+  const sendPayload = useCallback((payload) => {
+    if (!selectedId || sending || isSystemChat) return Promise.resolve(null)
+    setSending(true)
+    return chatApi
+      .sendMessage(selectedId, payload)
+      .then((created) => {
+        if (created) {
+          setMessages((prev) => upsertMessage(prev, created))
+          updateConversationPreview(selectedId, created)
+        }
+        return created
+      })
+      .catch(() => null)
+      .finally(() => setSending(false))
+  }, [selectedId, sending, isSystemChat, updateConversationPreview])
 
   const handleSend = (e) => {
     e.preventDefault()
     const text = sendText.trim()
-    if (!text || !selectedId || sending || isSystemChat) return
-    setSending(true)
-    chatApi
-      .sendMessage(selectedId, text)
-      .then((created) => {
-        setSendText('')
-        if (created) setMessages((prev) => upsertMessage(prev, created))
-      })
-      .catch(() => {})
-      .finally(() => setSending(false))
+    if (!text) return
+    sendPayload({ text }).then(() => setSendText(''))
+  }
+
+  const handleSendAttachment = (attachmentUrl, messageType) => {
+    setUploading(true)
+    sendPayload({ text: '', attachmentUrl, messageType })
+      .finally(() => setUploading(false))
   }
 
   const selectConversation = (id) => {
     setSelectedId(id)
     setSearchParams({ conversation: id }, { replace: true })
+  }
+
+  const handleBack = () => {
+    setSelectedId(null)
+    setSearchParams({}, { replace: true })
   }
 
   const handleDeleteMessage = (messageId) => {
@@ -208,27 +277,77 @@ export default function useChatPage() {
     setEditingText('')
   }
 
+  const closeMobileThread = useCallback(() => {
+    setSelectedId(null)
+    setMessages([])
+    setSearchParams({}, { replace: true })
+  }, [setSearchParams])
+
+  const applyConversationAfterRemove = useCallback((nextConversations) => {
+    if (isMobile) {
+      closeMobileThread()
+      return
+    }
+    const nextId = nextConversations[0]?.id ?? null
+    setSelectedId(nextId)
+    setMessages([])
+    setSearchParams(nextId ? { conversation: nextId } : {}, { replace: true })
+  }, [isMobile, closeMobileThread, setSearchParams])
+
   const handleDeleteChat = () => {
     if (!selectedId || !window.confirm(t('chat.confirmDeleteChat'))) return
+    setThreadMenuOpen(false)
     chatApi
       .deleteConversation(selectedId)
       .then(() => {
         const next = conversations.filter((c) => c.id !== selectedId)
         setConversations(next)
-        setSelectedId(next[0]?.id ?? null)
-        setMessages([])
-        setSearchParams(next[0] ? { conversation: next[0].id } : {}, { replace: true })
+        applyConversationAfterRemove(next)
         window.dispatchEvent(new CustomEvent('chat-count-refresh'))
       })
       .catch(() => {})
   }
 
+  const handleMute = () => {
+    const nowMuted = toggleMuteConversation(selectedId)
+    setMuted(nowMuted)
+    setThreadMenuOpen(false)
+    notifyToast('success', nowMuted ? t('chat.muted') : t('chat.unmuted'))
+  }
+
+  const handleBlock = () => {
+    if (!selected?.otherPartyId) return
+    if (!window.confirm(t('chat.confirmBlock'))) return
+    blockUser(selected.otherPartyId)
+    setThreadMenuOpen(false)
+    notifyToast('success', t('chat.blocked'))
+    const next = conversations.filter((c) => c.otherPartyId !== selected.otherPartyId)
+    setConversations(next)
+    applyConversationAfterRemove(next)
+  }
+
+  const handleReportOpen = () => {
+    setThreadMenuOpen(false)
+    setReportReason('')
+    setReportModalOpen(true)
+  }
+
+  const handleReportSubmit = () => {
+    if (!selected?.adId || !reportReason || reportSubmitting) return
+    setReportSubmitting(true)
+    adsApi
+      .report(selected.adId, { reason: reportReason })
+      .then(() => {
+        notifyToast('success', t('notify.reportSent'))
+        setReportModalOpen(false)
+      })
+      .catch(() => {})
+      .finally(() => setReportSubmitting(false))
+  }
+
   const threadTitle = isSystemChat
     ? t('chat.notifications')
     : (selected?.otherPartyName || '—')
-  const threadSubtitle = isSystemChat
-    ? t('chat.notificationsFrom')
-    : selected?.adTitle
 
   return {
     t,
@@ -244,6 +363,7 @@ export default function useChatPage() {
     sendText,
     setSendText,
     sending,
+    uploading,
     messageMenuId,
     setMessageMenuId,
     editingMessageId,
@@ -253,13 +373,26 @@ export default function useChatPage() {
     messagesContainerRef,
     isSystemChat,
     threadTitle,
-    threadSubtitle,
+    threadMenuOpen,
+    muted,
+    reportModalOpen,
+    reportReason,
+    reportSubmitting,
     handleSend,
+    handleSendAttachment,
+    handleBack,
     selectConversation,
     handleDeleteMessage,
     handleStartEdit,
     handleSaveEdit,
     handleCancelEdit,
     handleDeleteChat,
+    handleMute,
+    handleBlock,
+    handleReportOpen,
+    handleReportSubmit,
+    setReportModalOpen,
+    setReportReason,
+    setThreadMenuOpen,
   }
 }

@@ -71,7 +71,7 @@ public class ChatController {
         if (user == null) {
             return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(chatService.sendMessage(conversationId, user.getUsername(), request.getText()));
+        return ResponseEntity.ok(chatService.sendMessage(conversationId, user.getUsername(), request));
     }
 
     @Operation(summary = "Отметить прочитанным", security = @SecurityRequirement(name = "bearerAuth"))

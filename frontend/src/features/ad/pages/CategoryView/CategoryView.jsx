@@ -167,7 +167,7 @@ export default function CategoryView() {
             <p className="mb-0 fw-semibold">{t('ads.sellAndEarn')}</p>
             <Link to="/ads/create" className="btn btn-primary">{t('ads.postAd')}</Link>
           </div>
-          <h1 className="h2 mb-3 d-inline-flex align-items-center gap-2">
+          <h1 className={`h2 mb-3 d-inline-flex align-items-center gap-2 ${styles.pageTitle}`}>
             <CategoryIcon code={category.code} parentCode={category.parentCode} />
             {name(category)}
           </h1>

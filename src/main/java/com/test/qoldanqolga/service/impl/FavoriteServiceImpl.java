@@ -11,6 +11,9 @@ import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.repository.FavoriteRepository;
 import com.test.qoldanqolga.repository.UserRepository;
 import com.test.qoldanqolga.service.FavoriteService;
+import com.test.qoldanqolga.service.notification.NotificationEventFactory;
+import com.test.qoldanqolga.service.notification.NotificationService;
+import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import com.test.qoldanqolga.util.SellerStatusUtil;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final AdvertisementRepository advertisementRepository;
     private final UserRepository userRepository;
     private final AdvertisementMapper advertisementMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -49,10 +53,15 @@ public class FavoriteServiceImpl implements FavoriteService {
         if (!advertisementRepository.existsById(advertisementId)) {
             throw new ResourceNotFoundException("Объявление", advertisementId);
         }
+        Advertisement ad = advertisementRepository.findById(advertisementId).orElseThrow();
         Favorite f = new Favorite();
         f.setUserId(userId);
         f.setAdvertisementId(advertisementId);
         favoriteRepository.save(f);
+        if (ad.getUserId() != null && !ad.getUserId().equals(userId)) {
+            AfterCommit.run(() -> notificationService.publish(
+                    NotificationEventFactory.favoriteAdded(ad.getUserId(), ad, userId)));
+        }
         LogUtil.debug(FavoriteServiceImpl.class, "Favorite added: userId={} adId={}", userId, advertisementId);
     }
 

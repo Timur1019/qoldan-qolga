@@ -6,12 +6,9 @@ import { radius, spacing } from '@/theme/spacing';
 export const styles = StyleSheet.create({
   wrap: {
     gap: spacing.sm,
-    marginBottom: spacing.lg,
-    paddingTop: spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
+    marginTop: spacing.md,
   },
-  title: { fontSize: 15, fontWeight: '700', color: colors.text },
+  title: { fontSize: 16, fontWeight: '700', color: colors.text, letterSpacing: -0.2 },
   deliverRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   deliverText: { fontSize: 13, color: colors.muted },
   mapWrap: {

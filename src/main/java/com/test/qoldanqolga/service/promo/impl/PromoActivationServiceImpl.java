@@ -9,7 +9,9 @@ import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.repository.PromoOrderRepository;
 import com.test.qoldanqolga.service.promo.PromoActivationService;
 import com.test.qoldanqolga.service.promo.PromoProperties;
-import com.test.qoldanqolga.service.push.PushNotificationService;
+import com.test.qoldanqolga.service.notification.NotificationEventFactory;
+import com.test.qoldanqolga.service.notification.NotificationService;
+import com.test.qoldanqolga.service.notification.PaymentNotificationPublisher;
 import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,8 @@ public class PromoActivationServiceImpl implements PromoActivationService {
     private final PromoOrderRepository promoOrderRepository;
     private final AdvertisementRepository advertisementRepository;
     private final PromoProperties promoProperties;
-    private final PushNotificationService pushNotificationService;
+    private final NotificationService notificationService;
+    private final PaymentNotificationPublisher paymentNotificationPublisher;
 
     @Override
     @Transactional
@@ -100,11 +103,9 @@ public class PromoActivationServiceImpl implements PromoActivationService {
         String ownerId = ad.getUserId();
         String adId = ad.getId();
         String planName = plan.getCode();
-        AfterCommit.run(() -> pushNotificationService.notifyPromo(
-                ownerId,
-                adId,
-                "Продвижение включено",
-                "Тариф «" + planName + "» активирован для объявления"
-        ));
+        AfterCommit.run(() -> {
+            paymentNotificationPublisher.publishSuccess(order);
+            notificationService.publish(NotificationEventFactory.promotionActive(ownerId, adId, planName));
+        });
     }
 }

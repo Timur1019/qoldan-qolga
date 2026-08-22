@@ -2,9 +2,59 @@
   margin-bottom: 1.25rem;
 }
 
+.sectionTitle {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #111;
+}
+
+.delivery {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: var(--font-size-body, 1.0625rem);
+  color: #6b7280;
+}
+
+.placeList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.placeRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.placeIcon {
+  margin-top: 0.2rem;
+  color: var(--color-primary, #04492d);
+}
+
+.placeMain {
+  font-size: var(--font-size-body, 1.0625rem);
+  line-height: 1.4;
+  font-weight: 500;
+  color: #111;
+}
+
+.placeMeta {
+  margin-top: 0.1rem;
+  font-size: var(--font-size-small, 0.8125rem);
+  line-height: 1.35;
+  color: #6b7280;
+}
+
 .mapWrap {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-bg-subtle);

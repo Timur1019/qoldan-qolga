@@ -1,17 +1,17 @@
-import { router } from 'expo-router';
 import type { NotificationResponse } from 'expo-notifications';
+
+import { openNotificationTarget } from '@/utils/openNotificationTarget';
 
 export function openFromNotification(response: NotificationResponse) {
   const data = response.notification.request.content.data as {
     type?: string;
+    entityType?: string;
+    entityId?: string;
+    chatId?: string;
     conversationId?: string;
     adId?: string;
+    listingId?: string;
   };
-  if (data?.conversationId) {
-    router.push(`/chat/${data.conversationId}`);
-    return;
-  }
-  if (data?.adId) {
-    router.push(`/ads/${data.adId}`);
-  }
+  if (!data) return;
+  openNotificationTarget(data);
 }

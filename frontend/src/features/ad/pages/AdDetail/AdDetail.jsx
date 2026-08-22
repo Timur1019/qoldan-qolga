@@ -179,36 +179,38 @@ export default function AdDetail() {
           </div>
 
           <div className={styles.rightCol}>
-            <div className={styles.rightCard}>
-              <PricePanel
-                ad={ad}
-                onChat={actions.handleWriteSeller}
-                chatGoing={actions.chatGoing}
-                isOwner={ad.userId === user?.id}
-                isAuthenticated={isAuthenticated}
-                phoneRevealed={extras.phoneRevealed}
-                onPhoneClick={handlePhoneClick}
-                priceWatching={priceWatch.watching}
-                onTrackPrice={priceWatch.toggle}
-                onFavorite={isMobile ? actions.handleFavorite : undefined}
-              />
-              {ad.userId && (
-                <SellerInfo
-                  sellerId={ad.userId}
-                  sellerDisplayName={sellerDisplayName}
-                  sellerAvatar={sellerAvatar}
-                  sellerIsStore={isSellerStore(ad)}
-                  sellerType={ad.sellerType}
-                  adsCount={sellerProfile?.adsCount ?? 0}
-                  sinceIso={sellerProfile?.createdAt}
-                  ratingText={ratingText}
-                  subscribed={extras.sellerSubscribed}
+            <div className={styles.rightSticky}>
+              <div className={styles.rightCard}>
+                <PricePanel
+                  ad={ad}
+                  onChat={actions.handleWriteSeller}
+                  chatGoing={actions.chatGoing}
                   isOwner={ad.userId === user?.id}
-                  onSubscribe={() => actions.handleSubscribe(extras.setSellerSubscribed)}
+                  isAuthenticated={isAuthenticated}
+                  phoneRevealed={extras.phoneRevealed}
+                  onPhoneClick={handlePhoneClick}
+                  priceWatching={priceWatch.watching}
+                  onTrackPrice={priceWatch.toggle}
+                  onFavorite={isMobile ? actions.handleFavorite : undefined}
                 />
-              )}
+                {ad.userId && (
+                  <SellerInfo
+                    sellerId={ad.userId}
+                    sellerDisplayName={sellerDisplayName}
+                    sellerAvatar={sellerAvatar}
+                    sellerIsStore={isSellerStore(ad)}
+                    sellerType={ad.sellerType}
+                    adsCount={sellerProfile?.adsCount ?? 0}
+                    sinceIso={sellerProfile?.createdAt}
+                    ratingText={ratingText}
+                    subscribed={extras.sellerSubscribed}
+                    isOwner={ad.userId === user?.id}
+                    onSubscribe={() => actions.handleSubscribe(extras.setSellerSubscribed)}
+                  />
+                )}
+              </div>
+              <AdSidebarPromo banners={sidebarBanners} />
             </div>
-            <AdSidebarPromo banners={sidebarBanners} />
           </div>
         </div>
 

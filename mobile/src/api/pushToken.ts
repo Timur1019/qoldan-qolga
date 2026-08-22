@@ -1,16 +1,24 @@
 import { apiRequest } from '@/api/client';
-import { getNotificationPrefs } from '@/notifications/notificationPrefs';
+import {
+  getCachedNotificationPrefs,
+  loadNotificationPrefs,
+} from '@/notifications/notificationPrefs';
+import { mapNotificationPrefsToPushToken } from '@/utils/mapNotificationPrefsToPushToken';
 
 export async function registerPushTokenOnServer(token: string, platform: string) {
-  const prefs = await getNotificationPrefs();
+  let prefs = getCachedNotificationPrefs();
+  try {
+    prefs = await loadNotificationPrefs();
+  } catch {
+    /* use cache / defaults */
+  }
+  const channels = mapNotificationPrefsToPushToken(prefs);
   await apiRequest('/push/token', {
     method: 'POST',
     body: JSON.stringify({
       token,
       platform,
-      chatEnabled: prefs.chat,
-      systemEnabled: prefs.system,
-      promoEnabled: prefs.promo,
+      ...channels,
     }),
   });
 }

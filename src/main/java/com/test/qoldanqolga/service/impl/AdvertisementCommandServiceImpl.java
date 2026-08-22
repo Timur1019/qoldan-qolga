@@ -11,7 +11,10 @@ import com.test.qoldanqolga.service.FavoriteService;
 import com.test.qoldanqolga.service.chat.ConversationCommandService;
 import com.test.qoldanqolga.service.component.AdImageService;
 import com.test.qoldanqolga.service.component.AdPermissionService;
+import com.test.qoldanqolga.service.notification.NotificationEventFactory;
+import com.test.qoldanqolga.service.notification.NotificationService;
 import com.test.qoldanqolga.service.validation.AdValidationService;
+import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -29,6 +32,7 @@ public class AdvertisementCommandServiceImpl implements AdvertisementCommandServ
     private final AdValidationService adValidationService;
     private final FavoriteService favoriteService;
     private final ConversationCommandService conversationCommandService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -38,6 +42,9 @@ public class AdvertisementCommandServiceImpl implements AdvertisementCommandServ
         Advertisement ad = advertisementMapper.toEntity(request, userId);
         ad = advertisementRepository.save(ad);
         adImageService.saveImages(request, ad);
+        final Advertisement savedAd = ad;
+        AfterCommit.run(() -> notificationService.publish(
+                NotificationEventFactory.adPublished(userId, savedAd)));
         LogUtil.info(AdvertisementCommandServiceImpl.class, "Ad created: id={} userId={}", ad.getId(), userId);
         return advertisementMapper.toDetailDto(ad);
     }

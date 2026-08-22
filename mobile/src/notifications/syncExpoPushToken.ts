@@ -11,18 +11,25 @@ const TOKEN_KEY = 'expo_push_token';
 export async function ensureAndroidChannels() {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync('chat', {
-    name: 'Сообщения',
-    importance: Notifications.AndroidImportance.HIGH,
+    name: 'Xabarlar',
+    description: 'Chat xabarlari — ovoz va tebranish bilan',
+    importance: Notifications.AndroidImportance.MAX,
     sound: 'default',
+    enableVibrate: true,
+    vibrationPattern: [0, 250, 250, 250],
+    showBadge: true,
+    lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
   });
   await Notifications.setNotificationChannelAsync('system', {
-    name: 'Системные',
-    importance: Notifications.AndroidImportance.DEFAULT,
+    name: 'Tizim',
+    importance: Notifications.AndroidImportance.HIGH,
     sound: 'default',
+    enableVibrate: true,
   });
   await Notifications.setNotificationChannelAsync('promo', {
-    name: 'Акции',
+    name: 'Aksiyalar',
     importance: Notifications.AndroidImportance.DEFAULT,
+    sound: 'default',
   });
 }
 

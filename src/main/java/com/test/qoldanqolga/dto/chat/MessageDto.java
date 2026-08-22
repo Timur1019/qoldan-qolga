@@ -18,8 +18,12 @@ public class MessageDto {
     private String senderId;
     private String senderName;
     private String senderAvatar;
-    /** Отправитель подтверждён как магазин. */
     private Boolean senderIsStore;
     private String text;
+    private String attachmentUrl;
+    /** TEXT, IMAGE, FILE */
+    private String messageType;
+    /** SENT, DELIVERED, READ — только для своих сообщений */
+    private String status;
     private Instant createdAt;
 }

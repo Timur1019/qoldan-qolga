@@ -9,10 +9,10 @@ export const chatApi = {
     }),
   getMessages: (conversationId) =>
     apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`),
-  sendMessage: (conversationId, text) =>
+  sendMessage: (conversationId, payload) =>
     apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ text }),
+      body: JSON.stringify(typeof payload === 'string' ? { text: payload } : payload),
     }),
   markAsRead: (conversationId) =>
     apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/read`, { method: 'POST' }),

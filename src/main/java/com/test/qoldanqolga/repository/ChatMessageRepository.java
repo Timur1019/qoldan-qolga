@@ -39,4 +39,12 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, String
     @Modifying
     @Query("DELETE FROM ChatMessage m WHERE m.conversationId = :conversationId")
     void deleteAllByConversationId(@Param("conversationId") String conversationId);
+
+    @Query(value = """
+            SELECT DISTINCT ON (m.conversation_id) m.conversation_id, m.text, m.created_at, m.message_type, m.attachment_url
+            FROM messages m
+            WHERE m.conversation_id IN (:conversationIds)
+            ORDER BY m.conversation_id, m.created_at DESC
+            """, nativeQuery = true)
+    List<Object[]> findLastMessagesByConversationIds(@Param("conversationIds") List<String> conversationIds);
 }

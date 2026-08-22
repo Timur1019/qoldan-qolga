@@ -1,110 +1,61 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { chatApi } from '@/api/client';
+import { ChatAdCard } from '@/components/ChatThread/ChatAdCard';
 import { ChatBubble } from '@/components/ChatThread/ChatBubble';
 import { ChatComposer, ChatComposerGuest } from '@/components/ChatThread/ChatComposer';
 import { ChatDateSeparator } from '@/components/ChatThread/ChatDateSeparator';
 import { ChatThreadEmpty } from '@/components/ChatThread/ChatThreadEmpty';
 import { ChatThreadHeader } from '@/components/ChatThread/ChatThreadHeader';
+import { ChatThreadMenuSheet } from '@/components/ChatThread/ChatThreadMenuSheet';
+import { ReportSheet } from '@/components/ReportSheet/ReportSheet';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useConversationScreen } from '@/hooks/useConversationScreen';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useStompChat } from '@/hooks/useStompChat';
 import { colors } from '@/theme/colors';
-import type { MessageDto } from '@/types/api';
 import { groupMessagesByDate, type ChatListItem } from '@/utils/chatFormat';
-import { asMessageList, upsertMessage } from '@/utils/pendingChat';
 
 import { styles } from '@/styles/screens/conversation.styles';
 
 export default function ConversationScreen() {
-  const params = useLocalSearchParams<{
-    id: string | string[];
-    title?: string | string[];
-    subtitle?: string | string[];
-  }>();
+  const params = useLocalSearchParams<{ id: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const titleParam = Array.isArray(params.title) ? params.title[0] : params.title;
-  const subtitleParam = Array.isArray(params.subtitle) ? params.subtitle[0] : params.subtitle;
 
   const { user, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const requireAuth = useRequireAuth();
-  const [messages, setMessages] = useState<MessageDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [text, setText] = useState('');
-  const [sending, setSending] = useState(false);
   const listRef = useRef<FlatList<ChatListItem>>(null);
 
-  useEffect(() => {
-    if (!id || !isAuthenticated) {
-      setLoading(false);
-      setMessages([]);
-      return undefined;
-    }
-    let cancelled = false;
-    setLoading(true);
-    chatApi
-      .getMessages(id)
-      .then((list) => {
-        if (!cancelled) setMessages(asMessageList<MessageDto>(list));
-      })
-      .catch(() => {
-        if (!cancelled) setMessages([]);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    chatApi.markAsRead(id).catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [id, isAuthenticated, user?.id]);
+  const chat = useConversationScreen(id);
+  useStompChat(isAuthenticated ? id : undefined, chat.handleIncoming);
 
-  const handleIncoming = useCallback(
-    (raw: unknown) => {
-      const msg = raw as MessageDto;
-      setMessages((prev) => upsertMessage(prev, msg));
-      if (msg.senderId !== user?.id) {
-        chatApi.markAsRead(id).catch(() => {});
-      }
-    },
-    [id, user?.id]
+  const items = useMemo(() => groupMessagesByDate(chat.messages), [chat.messages]);
+
+  const headerRight = useCallback(
+    () =>
+      chat.isSystemChat ? null : (
+        <Pressable onPress={() => chat.setMenuVisible(true)} hitSlop={8} style={{ marginRight: 4 }}>
+          <Ionicons name="ellipsis-vertical" size={20} color={colors.text} />
+        </Pressable>
+      ),
+    [chat.isSystemChat, chat.setMenuVisible]
   );
-  useStompChat(isAuthenticated ? id : undefined, handleIncoming);
 
-  const items = useMemo(() => groupMessagesByDate(messages), [messages]);
-  const headerTitle = titleParam || 'Suhbat';
-  const headerSubtitle = subtitleParam || '';
-
-  const send = async () => {
-    if (!requireAuth()) return;
-    const value = text.trim();
-    if (!value || !id) return;
-    setSending(true);
-    setText('');
-    try {
-      const msg = (await chatApi.sendMessage(id, value)) as MessageDto;
-      setMessages((prev) => upsertMessage(prev, msg));
-    } catch {
-      setText(value);
-    } finally {
-      setSending(false);
-    }
-  };
-
-  if (loading) {
+  if (chat.loading) {
     return (
       <View style={styles.loaderWrap}>
-        <Stack.Screen options={{ title: headerTitle, headerBackTitle: t('common.back') }} />
+        <Stack.Screen options={{ title: chat.threadTitle, headerBackTitle: t('common.back') }} />
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -120,10 +71,28 @@ export default function ConversationScreen() {
         options={{
           headerBackTitle: t('common.back'),
           headerTitle: () => (
-            <ChatThreadHeader title={headerTitle} subtitle={headerSubtitle || undefined} />
+            <ChatThreadHeader
+              title={chat.threadTitle}
+              subtitle={chat.conversation?.adTitle || undefined}
+              lastSeenAt={chat.conversation?.otherPartyLastSeenAt}
+              isSystem={chat.isSystemChat}
+            />
           ),
+          headerRight,
         }}
       />
+
+      {!chat.isSystemChat && chat.conversation?.adId ? (
+        <ChatAdCard
+          adId={chat.conversation.adId}
+          title={chat.conversation.adTitle}
+          image={chat.conversation.adImageUrl}
+          price={chat.conversation.adPrice ?? null}
+          currency={chat.conversation.adCurrency}
+          region={chat.conversation.adRegion}
+          onPress={chat.openAd}
+        />
+      ) : null}
 
       <FlatList
         ref={listRef}
@@ -140,17 +109,43 @@ export default function ConversationScreen() {
         }}
       />
 
-      {isAuthenticated ? (
+      {isAuthenticated && !chat.isSystemChat ? (
         <ChatComposer
-          value={text}
-          onChangeText={setText}
-          onSend={() => void send()}
-          sending={sending}
+          value={chat.text}
+          onChangeText={chat.setText}
+          onQuickReply={chat.setText}
+          onSend={() => void chat.send()}
+          onAttachLibrary={() => void chat.attachFromLibrary()}
+          onAttachCamera={() => void chat.attachFromCamera()}
+          sending={chat.sending}
+          uploading={chat.uploading}
           onFocus={() => requireAuth()}
         />
-      ) : (
+      ) : chat.isSystemChat ? null : (
         <ChatComposerGuest onLogin={() => requireAuth()} />
       )}
+
+      <ChatThreadMenuSheet
+        visible={chat.menuVisible}
+        muted={chat.muted}
+        onClose={() => chat.setMenuVisible(false)}
+        onMute={() => void chat.handleMute()}
+        onBlock={chat.handleBlock}
+        onReport={() => {
+          chat.setMenuVisible(false);
+          chat.setReportVisible(true);
+        }}
+        onDelete={chat.handleDelete}
+      />
+
+      {chat.conversation?.adId ? (
+        <ReportSheet
+          visible={chat.reportVisible}
+          adId={chat.conversation.adId}
+          onClose={() => chat.setReportVisible(false)}
+          onAuthRequired={() => requireAuth()}
+        />
+      ) : null}
     </KeyboardAvoidingView>
   );
 }

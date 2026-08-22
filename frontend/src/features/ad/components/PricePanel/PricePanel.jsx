@@ -35,7 +35,7 @@ function PricePanel({
         </span>
       )}
       <div className={styles.titleRow}>
-        <h1 className={`h5 mb-0 ${styles.title}`}>{ad?.title}</h1>
+        <h1 className={styles.title}>{ad?.title}</h1>
         {onFavorite && (
           <button
             type="button"

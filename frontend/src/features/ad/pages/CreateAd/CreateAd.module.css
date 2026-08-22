@@ -2,6 +2,10 @@
   .pageTitle {
     display: none;
   }
+
+  .form {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .form {

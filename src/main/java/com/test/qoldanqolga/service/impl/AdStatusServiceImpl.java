@@ -6,6 +6,9 @@ import com.test.qoldanqolga.model.Advertisement;
 import com.test.qoldanqolga.repository.AdvertisementRepository;
 import com.test.qoldanqolga.service.AdStatusService;
 import com.test.qoldanqolga.service.component.AdPermissionService;
+import com.test.qoldanqolga.service.notification.NotificationEventFactory;
+import com.test.qoldanqolga.service.notification.NotificationService;
+import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,6 +21,7 @@ public class AdStatusServiceImpl implements AdStatusService {
 
     private final AdvertisementRepository advertisementRepository;
     private final AdPermissionService adPermissionService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -28,6 +32,8 @@ public class AdStatusServiceImpl implements AdStatusService {
         adPermissionService.validateOwnership(ad, userId);
         ad.setStatus(AdConstants.STATUS_ARCHIVED);
         advertisementRepository.save(ad);
+        AfterCommit.run(() -> notificationService.publish(
+                NotificationEventFactory.adHidden(userId, ad)));
         LogUtil.info(AdStatusServiceImpl.class, "Ad archived: id={} userId={}", id, userId);
     }
 
@@ -40,6 +46,8 @@ public class AdStatusServiceImpl implements AdStatusService {
         adPermissionService.validateOwnership(ad, userId);
         ad.setStatus(AdConstants.STATUS_ACTIVE);
         advertisementRepository.save(ad);
+        AfterCommit.run(() -> notificationService.publish(
+                NotificationEventFactory.adPublished(userId, ad)));
         LogUtil.info(AdStatusServiceImpl.class, "Ad restored: id={} userId={}", id, userId);
     }
 }

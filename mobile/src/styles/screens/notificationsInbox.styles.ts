@@ -19,4 +19,15 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
+  loader: { marginTop: 48 },
+  footerLoader: { paddingVertical: 16 },
+  markAll: { color: colors.primary, fontSize: 14, fontWeight: '600', marginRight: 4 },
+  loginBtn: {
+    marginTop: 16,
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  loginBtnText: { color: colors.white, fontWeight: '700', fontSize: 14 },
 });

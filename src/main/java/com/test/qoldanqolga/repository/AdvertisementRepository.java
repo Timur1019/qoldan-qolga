@@ -88,4 +88,12 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, St
             @Param("status") String status,
             @Param("brandIds") Collection<String> brandIds,
             @Param("categories") Collection<String> categories);
+
+    @Query("SELECT a FROM Advertisement a WHERE a.status = 'ACTIVE' AND a.deletedAt IS NULL "
+            + "AND a.expiresAt > :from AND a.expiresAt <= :to")
+    List<Advertisement> findExpiringBetween(@Param("from") Instant from, @Param("to") Instant to);
+
+    @Query("SELECT a FROM Advertisement a WHERE a.status = 'ACTIVE' AND a.deletedAt IS NULL "
+            + "AND a.expiresAt <= :now")
+    List<Advertisement> findExpiredActive(@Param("now") Instant now);
 }

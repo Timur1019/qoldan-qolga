@@ -5,16 +5,14 @@ import { spacing } from '@/theme/spacing';
 
 export const styles = StyleSheet.create({
   wrap: {
-    marginTop: spacing.lg,
+    marginTop: spacing.sm,
+    marginBottom: spacing.md,
     paddingBottom: spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-    paddingTop: spacing.md,
   },
   toggle: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     marginBottom: spacing.sm,
     gap: 8,
   },
@@ -25,7 +23,7 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
   },
   titleStandalone: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     marginBottom: spacing.sm,
   },
   badge: {

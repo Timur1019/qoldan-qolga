@@ -117,6 +117,7 @@ export const referenceApi = {
   getModelsByBrand: (brandId: string) => apiRequest(`/brands/${encodeURIComponent(brandId)}/models`),
   getHomePromoBanners: () => apiRequest('/home-promo-banners'),
   getSiteTopBanners: () => apiRequest('/site-top-banners'),
+  getAdSidebarBanners: () => apiRequest('/ad-sidebar-banners'),
   getCurrencyRate: () => apiRequest('/currency/rate'),
 };
 
@@ -166,6 +167,12 @@ export const favoritesApi = {
   list: (params: Record<string, unknown> = {}) => apiRequest(`/favorites${buildQueryString(params)}`),
 };
 
+export type SendChatMessagePayload = {
+  text?: string;
+  attachmentUrl?: string;
+  messageType?: string;
+};
+
 /** Чат с продавцом/покупателем (WebSocket + REST) */
 export const chatApi = {
   getConversations: () => apiRequest('/chat/conversations'),
@@ -173,13 +180,15 @@ export const chatApi = {
     apiRequest('/chat/conversations', { method: 'POST', body: JSON.stringify({ adId }) }),
   getMessages: (conversationId: string) =>
     apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`),
-  sendMessage: (conversationId: string, text: string) =>
+  sendMessage: (conversationId: string, payload: string | SendChatMessagePayload) =>
     apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ text }),
+      body: JSON.stringify(typeof payload === 'string' ? { text: payload } : payload),
     }),
   markAsRead: (conversationId: string) =>
     apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}/read`, { method: 'POST' }),
+  deleteConversation: (conversationId: string) =>
+    apiRequest(`/chat/conversations/${encodeURIComponent(conversationId)}`, { method: 'DELETE' }),
 };
 
 export const usersApi = {

@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
-import UserAvatar from '@/components/ui/UserAvatar'
-import { adsPath } from '@/constants/routes'
+import ChatAdCard from '../ChatAdCard'
+import ChatComposer from '../ChatComposer'
+import ChatThreadHeader from '../ChatThreadHeader'
 import { formatDateHeader, groupMessagesByDate } from '../../utils/chatFormat'
 import { asMessageList } from '../../utils/chatListUtils'
 import ChatMessage from '../ChatMessage'
@@ -11,25 +11,36 @@ export default function ChatThread({
   selected,
   selectedId,
   isSystemChat,
+  isMobile,
   threadTitle,
-  threadSubtitle,
   messages,
   messagesLoading,
   user,
   sendText,
   sending,
+  uploading,
   messageMenuId,
   editingMessageId,
   editingText,
+  threadMenuOpen,
+  muted,
   messagesEndRef,
   messagesContainerRef,
+  onBack,
   onSend,
   onSendTextChange,
+  onQuickReply,
+  onSendAttachment,
   onToggleMenu,
   onStartEdit,
   onSaveEdit,
   onCancelEdit,
   onDeleteMessage,
+  onToggleThreadMenu,
+  onCloseThreadMenu,
+  onMute,
+  onBlock,
+  onReport,
   onDeleteChat,
   onEditingTextChange,
   t,
@@ -48,42 +59,38 @@ export default function ChatThread({
   return (
     <section className={className}>
       <div key={selectedId} className={styles.threadContent}>
-        <div className={styles.threadHead}>
-          <div className={styles.threadHeadMain}>
-            {isSystemChat ? (
-              <span className={styles.systemAvatar} aria-hidden>
-                <i className="bi bi-bell" />
-              </span>
-            ) : (
-              <UserAvatar
-                avatar={selected?.otherPartyAvatar}
-                name={selected?.otherPartyName || ''}
-                className={styles.threadAvatar}
-              />
-            )}
-            <div className={styles.threadHeadText}>
-              <span className={styles.threadName}>{threadTitle}</span>
-              {threadSubtitle ? <span className={styles.threadAd}>{threadSubtitle}</span> : null}
-            </div>
-            <span className={styles.countBadge}>
-              <i className="bi bi-chat-dots" aria-hidden /> {messages.length}
-            </span>
-            <button
-              type="button"
-              className="btn btn-outline-danger btn-sm"
-              onClick={onDeleteChat}
-              title={t('chat.deleteChat')}
-              aria-label={t('chat.deleteChat')}
-            >
-              <i className="bi bi-trash" aria-hidden />
-            </button>
-          </div>
-          {selected?.adId && !isSystemChat && (
-            <Link to={adsPath(selected.adId)} className={styles.viewAd} target="_blank" rel="noopener noreferrer">
-              <i className="bi bi-box-arrow-up-right" aria-hidden /> {t('chat.viewAd')}
-            </Link>
-          )}
-        </div>
+        {selected?.adId && !isSystemChat && (
+          <ChatAdCard
+            adId={selected.adId}
+            title={selected.adTitle}
+            imageUrl={selected.adImageUrl}
+            price={selected.adPrice}
+            currency={selected.adCurrency}
+            region={selected.adRegion}
+            compact={isMobile}
+            t={t}
+          />
+        )}
+        <ChatThreadHeader
+          isSystemChat={isSystemChat}
+          isMobile={isMobile}
+          isTopBar={isMobile}
+          title={threadTitle}
+          subtitle={selected?.adTitle}
+          avatar={selected?.otherPartyAvatar}
+          lastSeenAt={selected?.otherPartyLastSeenAt}
+          isTyping={false}
+          menuOpen={threadMenuOpen}
+          muted={muted}
+          onBack={onBack}
+          onToggleMenu={onToggleThreadMenu}
+          onCloseMenu={onCloseThreadMenu}
+          onMute={onMute}
+          onBlock={onBlock}
+          onReport={onReport}
+          onDelete={onDeleteChat}
+          t={t}
+        />
         <div className={styles.messages} ref={messagesContainerRef}>
           {messagesLoading ? (
             <div className={styles.messagesLoading}>
@@ -129,20 +136,16 @@ export default function ChatThread({
         {isSystemChat ? (
           <div className={styles.readonlyBar}>{t('chat.systemReadonly')}</div>
         ) : (
-          <form className={styles.composer} onSubmit={onSend}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder={t('chat.placeholder')}
-              value={sendText}
-              onChange={(e) => onSendTextChange(e.target.value)}
-              maxLength={2000}
-              disabled={sending}
-            />
-            <button type="submit" className="btn btn-primary flex-shrink-0" disabled={sending || !sendText.trim()}>
-              <i className="bi bi-send-fill" aria-hidden /> <span className="d-none d-sm-inline">{t('chat.send')}</span>
-            </button>
-          </form>
+          <ChatComposer
+            sendText={sendText}
+            sending={sending}
+            uploading={uploading}
+            onSendTextChange={onSendTextChange}
+            onQuickReply={onQuickReply}
+            onSubmit={onSend}
+            onSendAttachment={onSendAttachment}
+            t={t}
+          />
         )}
       </div>
     </section>

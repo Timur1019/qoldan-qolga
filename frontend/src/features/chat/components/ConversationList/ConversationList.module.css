@@ -57,12 +57,20 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.12rem;
+}
+
+.topLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .title,
-.subtitle {
-  display: block;
+.adTitle,
+.preview,
+.time {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -73,12 +81,31 @@
   font-weight: 600;
   color: #111827;
   line-height: 1.3;
+  min-width: 0;
 }
 
-.subtitle {
+.time {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.adTitle {
+  font-size: 0.78rem;
+  color: var(--color-primary, #04492d);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.preview {
   font-size: 0.8rem;
   color: #6b7280;
   line-height: 1.3;
+}
+
+.rowUnread .preview {
+  color: #374151;
+  font-weight: 500;
 }
 
 .badge {

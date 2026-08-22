@@ -8,6 +8,7 @@ import com.test.qoldanqolga.model.PromoOrder;
 import com.test.qoldanqolga.model.PromoOrderStatus;
 import com.test.qoldanqolga.repository.PromoOrderRepository;
 import com.test.qoldanqolga.service.promo.PromoActivationService;
+import com.test.qoldanqolga.service.notification.PaymentNotificationPublisher;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class PaymeMerchantService {
     private final PaymentProperties paymentProperties;
     private final PromoOrderRepository promoOrderRepository;
     private final PromoActivationService promoActivationService;
+    private final PaymentNotificationPublisher paymentNotificationPublisher;
     private final ObjectMapper objectMapper;
 
     public boolean authenticate(String authorizationHeader) {
@@ -158,6 +160,7 @@ public class PaymeMerchantService {
         if (order != null && !PromoOrderStatus.PAID.equals(order.getStatus())) {
             order.setStatus(PromoOrderStatus.CANCELLED);
             promoOrderRepository.save(order);
+            paymentNotificationPublisher.publishFailed(order);
         }
         ObjectNode result = objectMapper.createObjectNode();
         result.put("transaction", order != null ? order.getId() : "");

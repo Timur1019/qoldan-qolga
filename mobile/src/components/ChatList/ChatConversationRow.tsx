@@ -5,6 +5,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { imageUrl } from '@/api/client';
 import { isSystemConversation } from '@/constants/system';
+import { useLanguage } from '@/context/LanguageContext';
 import { colors } from '@/theme/colors';
 import type { ConversationDto } from '@/types/api';
 import { formatChatListTime } from '@/utils/chatFormat';
@@ -16,19 +17,23 @@ interface Props {
   onPress: () => void;
 }
 
+function previewText(item: ConversationDto, t: (key: string, fallback?: string) => string) {
+  if (item.lastMessageText) return item.lastMessageText;
+  if ((item.messageCount ?? 0) > 0) return t('chat.hasMessages', 'Xabarlar bor');
+  if (isSystemConversation(item)) return t('chat.systemPreview', 'Tizim bildirishnomalari');
+  return t('chat.startChat', 'Suhbatni boshlang');
+}
+
 export function ChatConversationRow({ item, onPress }: Props) {
+  const { t } = useLanguage();
   const [avatarBroken, setAvatarBroken] = useState(false);
   const system = isSystemConversation(item);
-  const title = system ? 'Bildirishnomalar' : item.otherPartyName || 'Suhbat';
-  const subtitle = system ? 'Qoldan Qolga xabarlari' : item.adTitle || 'E\'lon bo\'yicha suhbat';
+  const title = system ? t('chat.notifications', 'Bildirishnomalar') : item.otherPartyName || t('chat.conversation', 'Suhbat');
+  const adTitle = system ? t('chat.notificationsFrom', 'Qoldan Qolga') : item.adTitle || '';
   const unread = Number(item.unreadCount || 0);
   const showPhoto = Boolean(item.otherPartyAvatar) && !system && !avatarBroken;
-  const preview =
-    item.messageCount > 0
-      ? `${item.messageCount} ta xabar`
-      : system
-        ? 'Tizim bildirishnomalari'
-        : 'Suhbatni boshlang';
+  const preview = previewText(item, t);
+  const time = formatChatListTime(item.lastMessageAt || item.createdAt);
 
   return (
     <Pressable
@@ -57,13 +62,13 @@ export function ChatConversationRow({ item, onPress }: Props) {
           <Text style={[styles.name, unread > 0 && styles.nameUnread]} numberOfLines={1}>
             {title}
           </Text>
-          <Text style={[styles.time, unread > 0 && styles.timeUnread]}>
-            {formatChatListTime(item.createdAt)}
-          </Text>
+          {time ? <Text style={[styles.time, unread > 0 && styles.timeUnread]}>{time}</Text> : null}
         </View>
-        <Text style={styles.adTitle} numberOfLines={1}>
-          {subtitle}
-        </Text>
+        {adTitle ? (
+          <Text style={styles.adTitle} numberOfLines={1}>
+            {adTitle}
+          </Text>
+        ) : null}
         <Text style={[styles.preview, unread > 0 && styles.previewUnread]} numberOfLines={1}>
           {preview}
         </Text>

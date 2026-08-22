@@ -1,0 +1,19 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.25rem;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.sent {
+  color: #9ca3af;
+}
+
+.delivered {
+  color: #9ca3af;
+}
+
+.read {
+  color: #3b82f6;
+}

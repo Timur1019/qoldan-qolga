@@ -10,9 +10,11 @@ import {
 } from 'react-native';
 
 import { referenceApi } from '@/api/client';
+import { AdDetailCharacteristics } from '@/components/AdDetailCharacteristics/AdDetailCharacteristics';
 import { AdDetailContacts } from '@/components/AdDetailContacts/AdDetailContacts';
 import { AdDetailGallery } from '@/components/AdDetailGallery/AdDetailGallery';
 import { AdDetailHeader } from '@/components/AdDetailHeader/AdDetailHeader';
+import { AdDetailPromoBanners } from '@/components/AdDetailPromoBanners/AdDetailPromoBanners';
 import { AdDetailSellerCard } from '@/components/AdDetailSellerCard/AdDetailSellerCard';
 import { AdDetailStickyBar } from '@/components/AdDetailStickyBar/AdDetailStickyBar';
 import { AdLocationBlock } from '@/components/AdLocationBlock/AdLocationBlock';
@@ -28,6 +30,7 @@ import { useFavoriteClick } from '@/hooks/useFavoriteClick';
 import { usePriceWatch } from '@/hooks/usePriceWatch';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { colors } from '@/theme/colors';
+import { buildAdCharacteristicRows } from '@/utils/adCharacteristicRows';
 import { hasTelegramContact } from '@/utils/contacts';
 import { extractLocationFromDescription } from '@/utils/descriptionLocation';
 import { buildPriceInsight } from '@/utils/priceInsight';
@@ -107,6 +110,16 @@ export default function AdDetailScreen() {
     () => extractLocationFromDescription(ad?.description),
     [ad?.description]
   );
+  const characteristicRows = useMemo(
+    () =>
+      buildAdCharacteristicRows(ad, {
+        language,
+        categoryLabel,
+        regionLabel: regionLabel || ad?.region || '',
+        t,
+      }),
+    [ad, categoryLabel, language, regionLabel, t]
+  );
 
   if (loading) {
     return <ActivityIndicator style={styles.loader} size="large" color={colors.primary} />;
@@ -114,7 +127,7 @@ export default function AdDetailScreen() {
   if (!ad) {
     return (
       <View style={styles.center}>
-        <Text>E'lon topilmadi</Text>
+        <Text>{t('ads.notFound', "E'lon topilmadi")}</Text>
       </View>
     );
   }
@@ -123,7 +136,7 @@ export default function AdDetailScreen() {
   const isOwner = user?.id === ad.userId;
   const showTelegram = hasTelegramContact(ad.telegramUsername, ad.phone);
   const sellerName =
-    (sellerProfile?.displayName as string) || ad.userDisplayName || 'Sotuvchi';
+    (sellerProfile?.displayName as string) || ad.userDisplayName || t('ads.seller', 'Sotuvchi');
   const sellerAvatarRaw =
     (sellerProfile?.avatar as string) || (sellerProfile?.avatarUrl as string) || null;
   const subscribed = Boolean(sellerProfile?.subscribed);
@@ -131,6 +144,8 @@ export default function AdDetailScreen() {
   const sellerBadge = resolveSellerBadge(ad);
   const sellerTypeLabel = t(sellerBadge.labelKey);
   const priceInsight = buildPriceInsight(ad, similar, usdToUzs);
+  const address = ad.address || location.address;
+  const landmark = ad.landmark || location.landmark;
 
   return (
     <View style={styles.container}>
@@ -139,6 +154,7 @@ export default function AdDetailScreen() {
         nestedScrollEnabled
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
       >
         <Stack.Screen
           options={{
@@ -198,24 +214,39 @@ export default function AdDetailScreen() {
           {!isOwner ? (
             <Pressable style={styles.reportLink} onPress={() => requireAuth(() => setReportOpen(true))}>
               <Ionicons name="flag-outline" size={16} color={colors.error} />
-              <Text style={styles.reportLinkText}>Shikoyat qilish</Text>
+              <Text style={styles.reportLinkText}>{t('ads.report', 'Shikoyat qilish')}</Text>
             </Pressable>
           ) : null}
+        </View>
 
-          <Text style={styles.sectionTitle}>Tavsif</Text>
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>{t('ads.description', 'Tavsif')}</Text>
           <Text style={styles.description}>{location.description || ad.description}</Text>
 
+          <AdDetailCharacteristics
+            title={t('ads.characteristics', 'Xususiyatlar')}
+            rows={characteristicRows}
+          />
+
           <AdLocationBlock
+            title={t('ads.locationTitle', 'Manzil')}
             regionLabel={regionLabel || ad.region}
             district={ad.district}
-            address={location.address}
-            landmark={location.landmark}
+            address={address}
+            landmark={landmark}
             canDeliver={ad.canDeliver}
+            lat={ad.locationLat}
+            lng={ad.locationLng}
+            deliverLabel={t('ads.possibleDelivery', 'Yetkazib berish mumkin')}
+            landmarkLabel={t('edit.landmark', "Yo'nalish")}
+            openMapsLabel={t('ads.openOnMap', 'Xaritada ochish')}
           />
         </View>
 
+        <AdDetailPromoBanners />
+
         <RelatedAdsSection
-          title="Sotuvchining e'lonlari"
+          title={t('ads.sellerAdsTitle', "Sotuvchining e'lonlari")}
           ads={sellerAds}
           onToggleFavorite={handleRelatedFavorite}
         />

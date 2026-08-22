@@ -32,4 +32,16 @@ public class DevicePushToken extends BaseEntity {
 
     @Column(name = "promo_enabled", nullable = false)
     private Boolean promoEnabled = true;
+
+    @Column(name = "device_id", length = 64)
+    private String deviceId;
+
+    @Column(name = "app_version", length = 32)
+    private String appVersion;
+
+    @Column(length = 8)
+    private String language;
+
+    @Column(name = "last_seen")
+    private java.time.Instant lastSeen;
 }

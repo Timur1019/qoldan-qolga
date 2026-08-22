@@ -2,6 +2,7 @@ package com.test.qoldanqolga.service.chat;
 
 import com.test.qoldanqolga.dto.chat.ConversationDto;
 import com.test.qoldanqolga.dto.chat.MessageDto;
+import com.test.qoldanqolga.dto.chat.SendMessageRequest;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface ChatService {
 
     void markAsRead(String conversationId, String userId);
 
-    MessageDto sendMessage(String conversationId, String senderId, String text);
+    MessageDto sendMessage(String conversationId, String senderId, SendMessageRequest request);
 
     MessageDto updateMessage(String conversationId, String messageId, String userId, String newText);
 

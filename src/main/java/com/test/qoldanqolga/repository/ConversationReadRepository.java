@@ -18,6 +18,8 @@ public interface ConversationReadRepository extends JpaRepository<ConversationRe
 
     List<ConversationRead> findByConversationIdInAndUserId(List<String> conversationIds, String userId);
 
+    List<ConversationRead> findByConversationIdIn(List<String> conversationIds);
+
     @Modifying
     @Query("DELETE FROM ConversationRead r WHERE r.conversationId = :conversationId")
     void deleteAllByConversationId(@Param("conversationId") String conversationId);

@@ -41,13 +41,34 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 21,
   },
+  meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 2,
+    marginTop: 4,
+  },
   time: {
     fontSize: 10,
     color: colors.muted,
-    marginTop: 4,
-    alignSelf: 'flex-end',
   },
   timeMine: {
     color: 'rgba(255,255,255,0.72)',
+  },
+  attachmentImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 6,
+  },
+  fileLink: {
+    color: colors.primary,
+    fontSize: 14,
+    marginBottom: 6,
+  },
+  fileLinkMine: {
+    color: 'rgba(255,255,255,0.92)',
+    fontSize: 14,
+    marginBottom: 6,
   },
 });

@@ -5,6 +5,7 @@ import { AuthRequiredSheet } from '@/components/AuthRequiredSheet/AuthRequiredSh
 import { AuthProvider } from '@/context/AuthContext';
 import { AuthRequiredProvider } from '@/context/AuthRequiredContext';
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
+import { NotificationPermissionProvider } from '@/context/NotificationPermissionContext';
 import { RegionsProvider } from '@/context/RegionsContext';
 import { usePushNotifications } from '@/notifications/usePushNotifications';
 import { colors } from '@/theme/colors';
@@ -52,9 +53,11 @@ export default function RootLayout() {
     <LanguageProvider>
       <AuthProvider>
         <AuthRequiredProvider>
-          <RegionsProvider>
-            <RootNavigator />
-          </RegionsProvider>
+          <NotificationPermissionProvider>
+            <RegionsProvider>
+              <RootNavigator />
+            </RegionsProvider>
+          </NotificationPermissionProvider>
         </AuthRequiredProvider>
       </AuthProvider>
     </LanguageProvider>

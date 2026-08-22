@@ -1,5 +1,8 @@
 import { ROUTES } from '../constants/routes'
 
+/** Высота нижней tab bar — должна совпадать с MobileTabBar.module.css */
+export const MOBILE_TAB_BAR_HEIGHT = 'calc(52px + max(env(safe-area-inset-bottom, 0px), 10px))'
+
 export function getMobileTab(pathname) {
   if (pathname === ROUTES.HOME || pathname === ROUTES.ADS || pathname.startsWith('/categories/')) return 'search'
   if (pathname === ROUTES.FAVORITES || pathname.startsWith(`${ROUTES.FAVORITES}/`)) return 'favorites'

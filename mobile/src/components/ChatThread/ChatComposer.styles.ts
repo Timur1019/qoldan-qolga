@@ -5,14 +5,26 @@ import { radius, spacing } from '@/theme/spacing';
 
 export const styles = StyleSheet.create({
   wrap: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
     backgroundColor: colors.bg,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+  },
+  tools: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  toolBtn: {
+    width: 34,
+    height: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   field: {
     flex: 1,
@@ -39,6 +51,35 @@ export const styles = StyleSheet.create({
   },
   sendBtnDisabled: {
     opacity: 0.45,
+  },
+  uploadRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xs,
+  },
+  uploadText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  emojiRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.xs,
+  },
+  emojiBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.bgMuted,
+  },
+  emojiText: {
+    fontSize: 20,
   },
   guestWrap: {
     paddingHorizontal: spacing.lg,

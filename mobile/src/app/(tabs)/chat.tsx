@@ -9,12 +9,15 @@ import { ChatConversationRow } from '@/components/ChatList/ChatConversationRow';
 import { ChatEmptyState } from '@/components/ChatList/ChatEmptyState';
 import { ChatGuestState } from '@/components/ChatList/ChatGuestState';
 import { ChatListHeader } from '@/components/ChatList/ChatListHeader';
+import { ChatListSearch } from '@/components/ChatList/ChatListSearch';
 import { isSystemConversation } from '@/constants/system';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useNotificationPermission } from '@/context/NotificationPermissionContext';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { colors } from '@/theme/colors';
 import type { ConversationDto } from '@/types/api';
+import { getBlockedUserIds } from '@/utils/chatPreferences';
 import { takePendingChat } from '@/utils/pendingChat';
 
 import { styles } from '@/styles/screens/chatList.styles';
@@ -27,7 +30,9 @@ function sortConversations(list: ConversationDto[]) {
     const aUnread = a.unreadCount > 0 ? 0 : 1;
     const bUnread = b.unreadCount > 0 ? 0 : 1;
     if (aUnread !== bUnread) return aUnread - bUnread;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    const aTime = new Date(a.lastMessageAt || a.createdAt).getTime();
+    const bTime = new Date(b.lastMessageAt || b.createdAt).getTime();
+    return bTime - aTime;
   });
 }
 
@@ -35,9 +40,11 @@ export default function ChatListScreen() {
   const { isAuthenticated } = useAuth();
   const requireAuth = useRequireAuth();
   const { t } = useLanguage();
+  const { promptIfNeeded } = useNotificationPermission();
   const [conversations, setConversations] = useState<ConversationDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [query, setQuery] = useState('');
 
   const load = useCallback(async (mode: 'full' | 'refresh' = 'full') => {
     if (!isAuthenticated) {
@@ -48,8 +55,9 @@ export default function ChatListScreen() {
     if (mode === 'full') setLoading(true);
     if (mode === 'refresh') setRefreshing(true);
     try {
-      const list = await chatApi.getConversations();
-      setConversations(Array.isArray(list) ? (list as ConversationDto[]) : []);
+      const [list, blocked] = await Promise.all([chatApi.getConversations(), getBlockedUserIds()]);
+      const rows = (Array.isArray(list) ? list : []) as ConversationDto[];
+      setConversations(rows.filter((c) => !blocked.has(c.otherPartyId)));
     } catch {
       setConversations([]);
     } finally {
@@ -62,19 +70,32 @@ export default function ChatListScreen() {
     useCallback(() => {
       void load('full');
       if (!isAuthenticated) return;
+      void promptIfNeeded();
       const pending = takePendingChat();
       if (!pending?.adId) return;
       void chatApi.getOrCreateConversation(pending.adId).then(async (conv) => {
         const c = conv as { id: string };
         if (pending.text) {
-          await chatApi.sendMessage(c.id, pending.text);
+          await chatApi.sendMessage(c.id, { text: pending.text });
         }
         router.push(`/chat/${c.id}`);
       });
-    }, [isAuthenticated, load])
+    }, [isAuthenticated, load, promptIfNeeded])
   );
 
-  const ordered = useMemo(() => sortConversations(conversations), [conversations]);
+  const ordered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const sorted = sortConversations(conversations);
+    if (!q) return sorted;
+    return sorted.filter((c) => {
+      const system = isSystemConversation(c);
+      const title = system ? t('chat.notifications', 'Bildirishnomalar') : c.otherPartyName || '';
+      const ad = c.adTitle || '';
+      const preview = c.lastMessageText || '';
+      return [title, ad, preview].some((s) => s.toLowerCase().includes(q));
+    });
+  }, [conversations, query, t]);
+
   const unreadTotal = useMemo(
     () => ordered.reduce((sum, c) => sum + (Number(c.unreadCount) || 0), 0),
     [ordered]
@@ -100,6 +121,7 @@ export default function ChatListScreen() {
               : undefined
         }
       />
+      <ChatListSearch value={query} onChangeText={setQuery} />
       {loading ? (
         <ActivityIndicator style={styles.loader} size="large" color={colors.primary} />
       ) : (
@@ -114,25 +136,12 @@ export default function ChatListScreen() {
               tintColor={colors.primary}
             />
           }
-          renderItem={({ item }) => {
-            const system = isSystemConversation(item);
-            const title = system ? 'Bildirishnomalar' : item.otherPartyName || 'Suhbat';
-            return (
-              <ChatConversationRow
-                item={item}
-                onPress={() =>
-                  router.push({
-                    pathname: '/chat/[id]',
-                    params: {
-                      id: item.id,
-                      title,
-                      subtitle: system ? 'Qoldan Qolga' : item.adTitle || '',
-                    },
-                  })
-                }
-              />
-            );
-          }}
+          renderItem={({ item }) => (
+            <ChatConversationRow
+              item={item}
+              onPress={() => router.push(`/chat/${item.id}`)}
+            />
+          )}
           ListEmptyComponent={
             <ChatEmptyState onBrowseAds={() => router.push('/(tabs)')} />
           }

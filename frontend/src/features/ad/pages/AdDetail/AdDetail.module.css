@@ -27,7 +27,7 @@
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   gap: 1.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .leftCol {
@@ -51,12 +51,18 @@
 }
 
 .rightCol {
+  min-width: 0;
+}
+
+.rightSticky {
   position: sticky;
   top: calc(var(--layout-header-height, 72px) + 12px);
-  align-self: start;
   z-index: 6;
-  max-height: calc(100vh - var(--layout-header-height, 72px) - 24px);
-  overflow: auto;
+  max-height: calc(100dvh - var(--layout-header-height, 72px) - 24px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 @media (max-width: 1024px) {
@@ -76,6 +82,10 @@
   .rightCol {
     order: 2;
     padding-top: 0;
+  }
+
+  .rightSticky {
+    position: static;
     max-height: none;
     overflow: visible;
   }
@@ -99,29 +109,51 @@
 }
 
 @media (max-width: 767px) {
-  .leftCard,
-  .rightCard {
-    padding: 12px 0;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    overflow: visible;
+  :global(.page-container).widePage {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .mainContent {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   }
 
   .threeCol {
-    gap: 12px;
+    gap: 10px;
   }
 
-  .leftCol {
-    display: flex;
+  .leftCard,
+  .rightCard {
+    margin: 0 12px;
+    padding: 14px;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    overflow: visible;
+    background: var(--color-bg-card, #fff);
+  }
+
+  .leftCol > :first-child {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    overflow: hidden;
   }
 
   .rightCol {
-    position: static;
-    z-index: auto;
     order: 2;
-    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0;
+  }
+
+  .rightSticky {
+    position: static;
     max-height: none;
     overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 }

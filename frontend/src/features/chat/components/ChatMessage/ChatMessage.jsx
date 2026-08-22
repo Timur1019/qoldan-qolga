@@ -1,5 +1,7 @@
 import UserAvatar from '@/components/ui/UserAvatar'
+import { imageUrl } from '@/api/client'
 import { formatTime } from '../../utils/chatFormat'
+import ChatMessageStatus from '../ChatMessageStatus'
 import styles from './ChatMessage.module.css'
 
 export default function ChatMessage({
@@ -20,6 +22,9 @@ export default function ChatMessage({
   onDelete,
   t,
 }) {
+  const hasImage = m.messageType === 'IMAGE' || (m.attachmentUrl && /\.(jpg|jpeg|png|gif|webp)/i.test(m.attachmentUrl))
+  const attachmentSrc = m.attachmentUrl ? imageUrl(m.attachmentUrl) : ''
+
   return (
     <div className={`${styles.msgRow} ${isOwn ? styles.msgRowOwn : ''}`}>
       {!isOwn && (
@@ -65,8 +70,21 @@ export default function ChatMessage({
                 {m.senderIsStore ? 'Магазин' : 'Частный'}
               </span>
             )}
-            <p className={styles.msgText}>{m.text}</p>
-            <span className={styles.msgTime}>{formatTime(m.createdAt)}</span>
+            {attachmentSrc && hasImage ? (
+              <a href={attachmentSrc} target="_blank" rel="noopener noreferrer" className={styles.attachmentLink}>
+                <img src={attachmentSrc} alt="" className={styles.attachmentImage} loading="lazy" />
+              </a>
+            ) : null}
+            {attachmentSrc && !hasImage ? (
+              <a href={attachmentSrc} target="_blank" rel="noopener noreferrer" className={styles.fileLink}>
+                <i className="bi bi-paperclip" aria-hidden /> {t('chat.downloadFile')}
+              </a>
+            ) : null}
+            {m.text ? <p className={styles.msgText}>{m.text}</p> : null}
+            <span className={styles.msgMeta}>
+              <span className={styles.msgTime}>{formatTime(m.createdAt)}</span>
+              {isOwn ? <ChatMessageStatus status={m.status || 'DELIVERED'} /> : null}
+            </span>
             {isOwn && menuOpen && (
               <div className={styles.msgMenu} onClick={(e) => e.stopPropagation()}>
                 <button type="button" className="btn btn-light btn-sm p-1" onClick={() => onStartEdit(m)} title={t('chat.edit')} aria-label={t('chat.edit')}>

@@ -25,6 +25,7 @@ import { styles } from './CategoryFiltersSheet.styles';
 import { RangeInputs, SectionTitle } from './FilterFieldRows';
 import { RealEstateFiltersSection } from './RealEstateFiltersSection';
 import { JobFiltersSection } from './JobFiltersSection';
+import { TransportFiltersSection } from './TransportFiltersSection';
 
 export type { CategoryFiltersState };
 export { EMPTY_CATEGORY_FILTERS };

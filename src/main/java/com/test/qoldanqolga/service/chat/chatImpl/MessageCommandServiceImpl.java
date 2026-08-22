@@ -1,6 +1,7 @@
 package com.test.qoldanqolga.service.chat.chatImpl;
 
 import com.test.qoldanqolga.dto.chat.MessageDto;
+import com.test.qoldanqolga.dto.chat.SendMessageRequest;
 import com.test.qoldanqolga.exception.ResourceNotFoundException;
 import com.test.qoldanqolga.mapper.ChatMessageMapper;
 import com.test.qoldanqolga.model.ChatMessage;
@@ -13,7 +14,10 @@ import com.test.qoldanqolga.config.SystemConversationProperties;
 import com.test.qoldanqolga.service.chat.ChatAccessService;
 import com.test.qoldanqolga.service.chat.ChatWebSocketService;
 import com.test.qoldanqolga.service.chat.MessageCommandService;
-import com.test.qoldanqolga.service.push.PushNotificationService;
+import com.test.qoldanqolga.dto.notification.NotificationEvent;
+import com.test.qoldanqolga.notification.NotificationEntityType;
+import com.test.qoldanqolga.notification.NotificationType;
+import com.test.qoldanqolga.service.notification.NotificationService;
 import com.test.qoldanqolga.util.AfterCommit;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +37,7 @@ public class MessageCommandServiceImpl implements MessageCommandService {
     private final ChatMessageMapper chatMessageMapper;
     private final ChatAccessService chatAccessService;
     private final ChatWebSocketService chatWebSocketService;
-    private final PushNotificationService pushNotificationService;
+    private final NotificationService notificationService;
     private final SystemConversationProperties systemConversationProperties;
 
     @Override
@@ -53,34 +58,55 @@ public class MessageCommandServiceImpl implements MessageCommandService {
                             conversationReadRepository.save(r);
                         }
                 );
+        chatWebSocketService.sendReadEvent(conversationId, userId, now);
         LogUtil.debug(MessageCommandServiceImpl.class, "Conversation marked as read: conversationId={} userId={}", conversationId, userId);
     }
 
     @Override
     @Transactional
-    public MessageDto sendMessage(String conversationId, String senderId, String text) {
+    public MessageDto sendMessage(String conversationId, String senderId, SendMessageRequest request) {
         Conversation c = conversationRepository.findByIdWithAd(conversationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Диалог", conversationId));
         chatAccessService.ensureParticipant(c, senderId);
+        String text = request.getText() != null ? request.getText().trim() : "";
+        String attachmentUrl = request.getAttachmentUrl() != null ? request.getAttachmentUrl().trim() : null;
+        String messageType = request.getMessageType() != null && !request.getMessageType().isBlank()
+                ? request.getMessageType().trim().toUpperCase()
+                : (attachmentUrl != null && !attachmentUrl.isBlank() ? "IMAGE" : "TEXT");
+
         ChatMessage msg = new ChatMessage();
         msg.setConversationId(conversationId);
         msg.setSenderId(senderId);
-        msg.setText(text != null ? text.trim() : "");
+        msg.setText(text);
+        msg.setAttachmentUrl(attachmentUrl);
+        msg.setMessageType(messageType);
         msg = messageRepository.save(msg);
         MessageDto dto = chatMessageMapper.toDto(msg);
-        chatWebSocketService.sendToConversation(conversationId, dto);
+        dto.setStatus("DELIVERED");
+        chatWebSocketService.sendMessageEvent(conversationId, dto);
         String recipientId = resolveRecipientUserId(c, senderId);
-        String preview = dto.getText();
+        String preview = dto.getText() != null && !dto.getText().isBlank()
+                ? dto.getText()
+                : ("IMAGE".equals(dto.getMessageType()) ? "Фото" : "Вложение");
         boolean systemSender = senderId != null && senderId.equals(systemConversationProperties.getUserId());
         String systemUserId = systemConversationProperties.getUserId();
         if (recipientId != null && !recipientId.equals(senderId) && !recipientId.equals(systemUserId)) {
-            AfterCommit.run(() -> {
-                if (systemSender) {
-                    pushNotificationService.notifySystem(recipientId, conversationId, "Уведомление", preview);
-                } else {
-                    pushNotificationService.notifyChatMessage(recipientId, conversationId, preview);
-                }
-            });
+            NotificationType type = resolveMessageType(systemSender, dto.getMessageType());
+            String title = systemSender
+                    ? "Уведомление"
+                    : (dto.getSenderName() != null && !dto.getSenderName().isBlank() ? dto.getSenderName().trim() : "Сообщение");
+            AfterCommit.run(() -> notificationService.publish(NotificationEvent.builder()
+                    .type(type)
+                    .recipientUserId(recipientId)
+                    .title(title)
+                    .body(preview)
+                    .entityType(NotificationEntityType.CHAT)
+                    .entityId(conversationId)
+                    .payload(Map.of(
+                            "chatId", conversationId,
+                            "senderName", dto.getSenderName() != null ? dto.getSenderName() : ""
+                    ))
+                    .build()));
         }
         LogUtil.debug(MessageCommandServiceImpl.class, "Message sent: conversation={} messageId={}", conversationId, dto.getId());
         return dto;
@@ -103,7 +129,7 @@ public class MessageCommandServiceImpl implements MessageCommandService {
         msg.setText(newText != null ? newText.trim() : "");
         msg = messageRepository.save(msg);
         MessageDto dto = chatMessageMapper.toDto(msg);
-        chatWebSocketService.sendToConversation(conversationId, dto);
+        chatWebSocketService.sendMessageEvent(conversationId, dto);
         LogUtil.debug(MessageCommandServiceImpl.class, "Message updated: conversation={} messageId={}", conversationId, messageId);
         return dto;
     }
@@ -126,6 +152,19 @@ public class MessageCommandServiceImpl implements MessageCommandService {
         }
         messageRepository.delete(msg);
         LogUtil.debug(MessageCommandServiceImpl.class, "Message deleted: conversation={} messageId={}", conversationId, messageId);
+    }
+
+    private static NotificationType resolveMessageType(boolean systemSender, String messageType) {
+        if (systemSender) {
+            return NotificationType.SYSTEM_MESSAGE;
+        }
+        if ("IMAGE".equalsIgnoreCase(messageType)) {
+            return NotificationType.PHOTO_MESSAGE;
+        }
+        if ("VOICE".equalsIgnoreCase(messageType)) {
+            return NotificationType.VOICE_MESSAGE;
+        }
+        return NotificationType.NEW_MESSAGE;
     }
 
     private static String resolveRecipientUserId(Conversation c, String senderId) {

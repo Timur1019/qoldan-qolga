@@ -5,6 +5,7 @@ import com.test.qoldanqolga.model.PromoOrder;
 import com.test.qoldanqolga.model.PromoOrderStatus;
 import com.test.qoldanqolga.repository.PromoOrderRepository;
 import com.test.qoldanqolga.service.promo.PromoActivationService;
+import com.test.qoldanqolga.service.notification.PaymentNotificationPublisher;
 import com.test.qoldanqolga.util.LogUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class ClickMerchantService {
     private final PaymentProperties paymentProperties;
     private final PromoOrderRepository promoOrderRepository;
     private final PromoActivationService promoActivationService;
+    private final PaymentNotificationPublisher paymentNotificationPublisher;
 
     @Transactional
     public Map<String, Object> prepare(Map<String, String> params) {
@@ -71,6 +73,7 @@ public class ClickMerchantService {
                 if (!PromoOrderStatus.PAID.equals(order.getStatus())) {
                     order.setStatus(PromoOrderStatus.CANCELLED);
                     promoOrderRepository.save(order);
+                    paymentNotificationPublisher.publishFailed(order);
                 }
                 Map<String, Object> result = new HashMap<>();
                 result.put("click_trans_id", params.get("click_trans_id"));

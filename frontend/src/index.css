@@ -292,11 +292,28 @@ textarea:disabled {
 
 html[data-shell="mobile"] {
   overscroll-behavior-y: none;
+  overflow-x: clip;
 }
 
 html[data-shell="mobile"] body {
   min-width: 0;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
+  overflow-x: clip;
+}
+
+html[data-shell="mobile"][data-chat-thread="open"] {
+  height: 100%;
+  overflow: hidden;
+}
+
+html[data-shell="mobile"][data-chat-thread="open"] body {
+  height: 100%;
+  overflow: hidden;
+}
+
+html[data-shell="mobile"] .page-container {
+  max-width: 100%;
+  overflow-x: clip;
 }
 

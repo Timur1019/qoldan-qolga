@@ -16,12 +16,18 @@ public class ConversationDto {
     private String id;
     private String adId;
     private String adTitle;
-    private String otherPartyName;  // продавец для покупателя, покупатель для продавца
+    private String adImageUrl;
+    private java.math.BigDecimal adPrice;
+    private String adCurrency;
+    private String adRegion;
+    private String otherPartyName;
     private String otherPartyId;
     private String otherPartyAvatar;
+    private Instant otherPartyLastSeenAt;
     private Instant createdAt;
     private long messageCount;
     private long incomingMessageCount;
-    /** Непрочитанных сообщений от собеседника — пока не откроешь диалог */
     private long unreadCount;
+    private String lastMessageText;
+    private Instant lastMessageAt;
 }

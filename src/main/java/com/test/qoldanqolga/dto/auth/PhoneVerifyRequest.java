@@ -18,4 +18,10 @@ public class PhoneVerifyRequest {
 
     @Size(max = 100)
     private String displayName;
+
+    @Size(max = 64)
+    private String deviceId;
+
+    @Size(max = 16)
+    private String platform;
 }

@@ -30,3 +30,9 @@
   font-size: 0.9375rem;
   line-height: 1.45;
 }
+
+@media (max-width: 767px) {
+  .wrap {
+    padding: 1rem 12px calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+}

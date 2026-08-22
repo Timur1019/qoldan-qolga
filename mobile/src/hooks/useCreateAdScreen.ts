@@ -21,6 +21,7 @@ import {
   type CreateAdFormState,
 } from '@/utils/createAdForm';
 import { localizedName } from '@/utils/localizedName';
+import { mapAdDetailToCreateForm } from '@/utils/mapAdDetailToCreateForm';
 import { detectDeviceLocation } from '@/location/detectDeviceLocation';
 
 export type RegionDto = {

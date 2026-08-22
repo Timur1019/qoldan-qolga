@@ -1,26 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, Text, View } from 'react-native';
 
-import type { PushInboxItem } from '@/notifications/inboxStorage';
+import type { NotificationItem } from '@/api/notifications';
 import { colors } from '@/theme/colors';
 
 import { styles } from './NotificationInboxRow.styles';
 
-function formatTime(ts: number) {
-  const d = new Date(ts);
+function formatTime(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
   return d.toLocaleString();
 }
 
 type Props = {
-  item: PushInboxItem;
+  item: NotificationItem;
   isLast?: boolean;
   onPress: () => void;
 };
 
 export function NotificationInboxRow({ item, isLast, onPress }: Props) {
+  const body =
+    item.groupCount != null && item.groupCount > 1
+      ? `${item.body} (${item.groupCount})`
+      : item.body;
+
   return (
     <Pressable
-      style={[styles.row, !item.read && styles.unread, !isLast && styles.border]}
+      style={[styles.row, !item.isRead && styles.unread, !isLast && styles.border]}
       onPress={onPress}
     >
       <View style={styles.iconWrap}>
@@ -30,14 +36,14 @@ export function NotificationInboxRow({ item, isLast, onPress }: Props) {
         <Text style={styles.title} numberOfLines={1}>
           {item.title || 'Qoldan Qolga'}
         </Text>
-        {item.body ? (
+        {body ? (
           <Text style={styles.text} numberOfLines={3}>
-            {item.body}
+            {body}
           </Text>
         ) : null}
-        <Text style={styles.time}>{formatTime(item.receivedAt)}</Text>
+        <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
       </View>
-      {!item.read ? <View style={styles.dot} /> : null}
+      {!item.isRead ? <View style={styles.dot} /> : null}
     </Pressable>
   );
 }

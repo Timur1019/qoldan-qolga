@@ -71,6 +71,38 @@
   color: #9ca3af;
 }
 
+.msgMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.attachmentLink {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.attachmentImage {
+  max-width: 220px;
+  max-height: 220px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.fileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--color-primary, #04492d);
+  text-decoration: none;
+}
+
+.fileLink:hover {
+  text-decoration: underline;
+}
+
 .msgMenu {
   position: absolute;
   top: 0.25rem;

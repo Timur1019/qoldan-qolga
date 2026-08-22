@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="079-user-known-devices" author="qoldan">
+        <createTable tableName="user_known_devices">
+            <column name="id" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="device_id" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="platform" type="varchar(16)"/>
+            <column name="last_seen_at" type="timestamptz"/>
+            <column name="created_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="timestamptz"/>
+        </createTable>
+        <createIndex tableName="user_known_devices" indexName="idx_known_devices_user_device" unique="true">
+            <column name="user_id"/>
+            <column name="device_id"/>
+        </createIndex>
+        <addForeignKeyConstraint
+                baseTableName="user_known_devices"
+                baseColumnNames="user_id"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_known_devices_user"/>
+    </changeSet>
+</databaseChangeLog>

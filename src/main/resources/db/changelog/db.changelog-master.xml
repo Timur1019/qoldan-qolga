@@ -79,4 +79,7 @@
     <include file="changes/074-add-job-ad-fields.xml" relativeToChangelogFile="true"/>
     <include file="changes/075-home-sell-banners.xml" relativeToChangelogFile="true"/>
     <include file="changes/076-ad-sidebar-banners.xml" relativeToChangelogFile="true"/>
+    <include file="changes/077-add-chat-message-attachments.xml" relativeToChangelogFile="true"/>
+    <include file="changes/078-notifications-system.xml" relativeToChangelogFile="true"/>
+    <include file="changes/079-user-known-devices.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

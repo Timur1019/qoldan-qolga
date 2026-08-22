@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-
 import { useLang } from '../../context/LangContext'
 import { useChatUnreadCount, useFavoritesCount } from '../../hooks'
 import { PARAMS, ROUTES } from '../../constants/routes'
-import { getMobileTitle, isMobileStackPath, showMobileSearch } from '../../utils/mobileShell'
+import { getMobileTitle, isMobileStackPath, MOBILE_TAB_BAR_HEIGHT, showMobileSearch } from '../../utils/mobileShell'
 import { BusinessModalProvider } from '../../context/BusinessModalContext'
 import { AuthModal } from '../../features/auth'
 import CategoriesOverlay from '../CategoriesModal/CategoriesOverlay'
@@ -30,9 +30,12 @@ export default function MobileLayout() {
   const authOpen = authParam === PARAMS.AUTH_LOGIN || authParam === PARAMS.AUTH_REGISTER
   const chatOpen = location.pathname === ROUTES.CHAT && Boolean(searchParams.get('conversation'))
   const stackPath = isMobileStackPath(location.pathname) || chatOpen
+  const hideShellHeader = chatOpen
   const searchMode = showMobileSearch(location.pathname) && !stackPath
-  const headerMode = searchMode ? 'search' : (stackPath ? 'back' : 'title')
+  const headerMode = searchMode ? 'search' : (stackPath && !hideShellHeader ? 'back' : 'title')
   const showTabs = !stackPath
+  const effectiveHeaderOffset = hideShellHeader ? 0 : headerOffset
+  const tabBarHeight = MOBILE_TAB_BAR_HEIGHT
 
   useEffect(() => {
     document.documentElement.dataset.shell = 'mobile'
@@ -40,6 +43,17 @@ export default function MobileLayout() {
       delete document.documentElement.dataset.shell
     }
   }, [])
+
+  useEffect(() => {
+    if (chatOpen) {
+      document.documentElement.dataset.chatThread = 'open'
+    } else {
+      delete document.documentElement.dataset.chatThread
+    }
+    return () => {
+      delete document.documentElement.dataset.chatThread
+    }
+  }, [chatOpen])
 
   useEffect(() => {
     const el = headerRef.current
@@ -88,30 +102,38 @@ export default function MobileLayout() {
   }
 
   return (
-    <div className={styles.layout} style={{ '--layout-header-height': `${headerOffset}px` }}>
+    <div
+      className={styles.layout}
+      style={{
+        '--layout-header-height': `${effectiveHeaderOffset}px`,
+        '--layout-tab-height': showTabs ? tabBarHeight : '0px',
+      }}
+    >
       <BusinessModalProvider openModal={() => setBusinessModalOpen(true)}>
-        <header ref={headerRef} className={styles.top}>
-          {location.pathname === ROUTES.HOME && <TopAdStrip />}
-          <MobileHeader
-            mode={headerMode}
-            title={getMobileTitle(location.pathname, t)}
-            searchValue={searchValue}
-            onSearchChange={setSearchValue}
-            onSearchSubmit={handleSearchSubmit}
-            onOpenCategories={() => setCategoriesOpen(true)}
-            onBack={handleBack}
-            placeholder={t('header.searchPlaceholder')}
-            backLabel={t('common.back')}
-            lang={lang}
-            onLangChange={setLang}
-          />
-        </header>
+        {!hideShellHeader && (
+          <header ref={headerRef} className={styles.top}>
+            {location.pathname === ROUTES.HOME && <TopAdStrip />}
+            <MobileHeader
+              mode={headerMode}
+              title={getMobileTitle(location.pathname, t)}
+              searchValue={searchValue}
+              onSearchChange={setSearchValue}
+              onSearchSubmit={handleSearchSubmit}
+              onOpenCategories={() => setCategoriesOpen(true)}
+              onBack={handleBack}
+              placeholder={t('header.searchPlaceholder')}
+              backLabel={t('common.back')}
+              lang={lang}
+              onLangChange={setLang}
+            />
+          </header>
+        )}
         <CategoriesOverlay
           open={categoriesOpen}
           onClose={closeCategories}
           headerOffset={headerOffset}
         />
-        <main className={`${styles.main} ${showTabs ? styles.mainWithTabs : ''}`}>
+        <main className={`${styles.main} ${showTabs ? styles.mainWithTabs : ''} ${chatOpen ? styles.mainChatThread : ''}`}>
           <Outlet />
         </main>
         {showTabs && (

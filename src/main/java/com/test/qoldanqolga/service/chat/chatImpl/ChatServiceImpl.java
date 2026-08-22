@@ -2,6 +2,7 @@ package com.test.qoldanqolga.service.chat.chatImpl;
 
 import com.test.qoldanqolga.dto.chat.ConversationDto;
 import com.test.qoldanqolga.dto.chat.MessageDto;
+import com.test.qoldanqolga.dto.chat.SendMessageRequest;
 import com.test.qoldanqolga.service.chat.ChatService;
 import com.test.qoldanqolga.service.chat.ConversationCommandService;
 import com.test.qoldanqolga.service.chat.ConversationQueryService;
@@ -48,9 +49,9 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public MessageDto sendMessage(String conversationId, String senderId, String text) {
+    public MessageDto sendMessage(String conversationId, String senderId, SendMessageRequest request) {
         LogUtil.debug(ChatServiceImpl.class, "Send message: conversationId={} senderId={}", conversationId, senderId);
-        return messageCommandService.sendMessage(conversationId, senderId, text);
+        return messageCommandService.sendMessage(conversationId, senderId, request);
     }
 
     @Override

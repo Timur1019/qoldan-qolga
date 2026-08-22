@@ -20,14 +20,14 @@ import { useAuth } from '@/context/AuthContext';
 import { useAuthRequired } from '@/context/AuthRequiredContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
+import { useNotificationUnreadCount } from '@/hooks/useNotificationUnreadCount';
 import { colors } from '@/theme/colors';
+import { styles } from '@/styles/screens/profile.styles';
 import type { CategoryDto } from '@/types/api';
 import { buildProfileMenus } from '@/utils/buildProfileMenus';
 import { isPhotoAvatar } from '@/utils/isPhotoAvatar';
 import { pickProfileImage } from '@/utils/pickProfileImage';
-import { loadPushInbox, unreadPushCount } from '@/notifications/inboxStorage';
-
-import { styles } from '@/styles/screens/profile.styles';
+import { uploadAndSaveProfilePhoto } from '@/utils/uploadAndSaveProfilePhoto';
 
 const SUPPORT_URL = 'https://t.me/qoldanqolga';
 const WEB_VERIFY_HINT =
@@ -55,7 +55,8 @@ export default function ProfileScreen() {
   const [myAdsCount, setMyAdsCount] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [chatUnread, setChatUnread] = useState(0);
-  const [notificationsUnread, setNotificationsUnread] = useState(0);
+  const { count: notificationsUnread, refresh: refreshNotifyUnread } =
+    useNotificationUnreadCount(isAuthenticated);
 
   const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [draftInterests, setDraftInterests] = useState<string[]>([]);
@@ -78,9 +79,7 @@ export default function ProfileScreen() {
   }, []);
 
   const refreshBadges = useCallback(() => {
-    void loadPushInbox()
-      .then((items) => setNotificationsUnread(unreadPushCount(items)))
-      .catch(() => setNotificationsUnread(0));
+    void refreshNotifyUnread();
     if (!isAuthenticated) {
       setMyAdsCount(0);
       setFavoritesCount(0);
@@ -110,7 +109,7 @@ export default function ProfileScreen() {
         setChatUnread(arr.reduce((sum: number, c: { unreadCount?: number }) => sum + (c.unreadCount || 0), 0));
       })
       .catch(() => setChatUnread(0));
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refreshNotifyUnread]);
 
   useFocusEffect(
     useCallback(() => {

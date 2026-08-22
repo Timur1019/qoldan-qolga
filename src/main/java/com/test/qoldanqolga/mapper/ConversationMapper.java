@@ -20,6 +20,13 @@ public interface ConversationMapper extends BaseMapper<Conversation, Conversatio
     @Mapping(target = "messageCount", source = "stats.messageCount")
     @Mapping(target = "incomingMessageCount", source = "stats.incomingMessageCount")
     @Mapping(target = "unreadCount", source = "stats.unreadCount")
+    @Mapping(target = "adImageUrl", ignore = true)
+    @Mapping(target = "adPrice", ignore = true)
+    @Mapping(target = "adCurrency", ignore = true)
+    @Mapping(target = "adRegion", ignore = true)
+    @Mapping(target = "otherPartyLastSeenAt", ignore = true)
+    @Mapping(target = "lastMessageText", ignore = true)
+    @Mapping(target = "lastMessageAt", ignore = true)
     ConversationDto toDto(Conversation conversation, String otherPartyId, User otherUser, ConversationStatistics stats);
 
     @Override

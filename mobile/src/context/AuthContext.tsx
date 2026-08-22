@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
 import { authApi, isAuthError, setToken } from '@/api/client';
+import { clearNotificationPrefsCache } from '@/notifications/notificationPrefs';
 import { unregisterStoredPushToken } from '@/notifications/syncExpoPushToken';
 
 interface User {
@@ -36,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await unregisterStoredPushToken();
+    clearNotificationPrefsCache();
     await setAuth(null);
   }, [setAuth]);
 

@@ -42,3 +42,9 @@
   font-size: 1rem;
   color: var(--color-muted, #6b7280);
 }
+
+@media (max-width: 767px) {
+  .wrap {
+    padding: 0 12px;
+  }
+}

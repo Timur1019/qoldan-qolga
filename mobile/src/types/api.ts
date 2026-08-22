@@ -55,6 +55,10 @@ export interface AdDetailDto {
   email: string | null;
   region: string;
   district: string | null;
+  address?: string | null;
+  landmark?: string | null;
+  locationLat?: number | null;
+  locationLng?: number | null;
   status: string;
   isNegotiable: boolean;
   canDeliver: boolean;
@@ -67,6 +71,37 @@ export interface AdDetailDto {
   createdAt: string;
   images: AdImageDto[];
   favorite: boolean;
+  year?: number | null;
+  mileage?: number | null;
+  bodyType?: string | null;
+  transmission?: string | null;
+  fuelType?: string | null;
+  driveType?: string | null;
+  engineVolume?: number | null;
+  exteriorColor?: string | null;
+  seats?: number | null;
+  steering?: string | null;
+  ownersCount?: number | null;
+  brandNameUz?: string | null;
+  brandNameRu?: string | null;
+  modelNameUz?: string | null;
+  modelNameRu?: string | null;
+  modelCustom?: string | null;
+  dealType?: string | null;
+  rooms?: number | null;
+  areaM2?: number | null;
+  landAreaM2?: number | null;
+  floor?: number | null;
+  floorsTotal?: number | null;
+  buildingType?: string | null;
+  renovation?: string | null;
+  furnished?: boolean | null;
+  canRent?: boolean | null;
+  jobProfession?: string | null;
+  jobIndustry?: string | null;
+  jobEmployment?: string | null;
+  jobSchedule?: string | null;
+  jobExperience?: string | null;
 }
 
 export interface PageResponse<T> {
@@ -89,6 +124,13 @@ export interface ConversationDto {
   messageCount: number;
   incomingMessageCount: number;
   unreadCount: number;
+  adImageUrl?: string | null;
+  adPrice?: number | null;
+  adCurrency?: string | null;
+  adRegion?: string | null;
+  otherPartyLastSeenAt?: string | null;
+  lastMessageText?: string | null;
+  lastMessageAt?: string | null;
 }
 
 export interface MessageDto {
@@ -99,5 +141,8 @@ export interface MessageDto {
   senderAvatar: string | null;
   senderIsStore: boolean | null;
   text: string;
+  attachmentUrl?: string | null;
+  messageType?: string | null;
+  status?: 'SENT' | 'DELIVERED' | 'READ' | null;
   createdAt: string;
 }
